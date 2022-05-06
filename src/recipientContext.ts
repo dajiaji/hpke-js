@@ -17,7 +17,7 @@ export class RecipientContext extends EncryptionContext {
         iv: this.computeNonce(),
         additionalData: aad,
       };
-      pt = await window.crypto.subtle.decrypt(alg, this.key, data);
+      pt = await this._crypto.decrypt(alg, this.key, data);
     } catch (e: unknown) {
       throw new errors.OpenError(e);
     }

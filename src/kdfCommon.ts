@@ -1,15 +1,18 @@
+import { WebCrypto } from './webCrypto';
+
 import * as consts from './consts';
 
-export class KdfCommon {
+export class KdfCommon extends WebCrypto {
 
   protected readonly suiteId: Uint8Array;
   protected readonly algHash: HmacKeyGenParams;
   protected readonly _nH: number;
 
-  public constructor(suiteId: Uint8Array, algHash: HmacKeyGenParams) {
+  public constructor(crypto: SubtleCrypto, suiteId: Uint8Array, algHash: HmacKeyGenParams) {
     if (algHash.length === undefined) {
       throw new Error('Unknown hash size');
     }
+    super(crypto);
     this.suiteId = suiteId;
     this.algHash = algHash;
     this._nH = algHash.length / 8;
@@ -33,17 +36,17 @@ export class KdfCommon {
     ret.set(info, 9 + this.suiteId.byteLength + label.byteLength);
     return ret;
   }
-  
+
   protected async extract(salt: ArrayBuffer, ikm: ArrayBuffer): Promise<ArrayBuffer> {
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this._nH);
     }
-    const key = await window.crypto.subtle.importKey('raw', salt, this.algHash, false, ['sign']);
-    return await window.crypto.subtle.sign('HMAC', key, ikm);
+    const key = await this._crypto.importKey('raw', salt, this.algHash, false, ['sign']);
+    return await this._crypto.sign('HMAC', key, ikm);
   }
 
   protected async expand(prk: ArrayBuffer, info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
-    const key = await window.crypto.subtle.importKey('raw', prk, this.algHash, false, ['sign']);
+    const key = await this._crypto.importKey('raw', prk, this.algHash, false, ['sign']);
 
     const okm = new ArrayBuffer(len);
 
@@ -55,14 +58,14 @@ export class KdfCommon {
     if (len > 255 * this._nH) {
       throw new Error('Entropy limit reached');
     }
-    
+
     const tmp = new Uint8Array(this._nH + mid.length + 1);
     for (let i = 1; p.length > 0; i++) {
       tail[0] = i;
       tmp.set(prev, 0);
       tmp.set(mid, prev.length);
       tmp.set(tail, prev.length + mid.length);
-      prev = new Uint8Array(await window.crypto.subtle.sign('HMAC', key, tmp.slice(0, prev.length + mid.length + 1)));
+      prev = new Uint8Array(await this._crypto.sign('HMAC', key, tmp.slice(0, prev.length + mid.length + 1)));
       if (p.length >= prev.length) {
         p.set(prev, 0);
       } else {
@@ -74,8 +77,8 @@ export class KdfCommon {
   }
 
   protected async extractAndExpand(salt: ArrayBuffer, ikm: ArrayBuffer, info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
-    const baseKey = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
-    return await window.crypto.subtle.deriveBits(
+    const baseKey = await this._crypto.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+    return await this._crypto.deriveBits(
       {
         name: 'HKDF',
         hash: this.algHash.hash,

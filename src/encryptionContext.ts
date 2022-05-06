@@ -11,8 +11,8 @@ export class EncryptionContext extends ExporterContext {
   protected readonly baseNonce: Uint8Array;
   protected seq: number;
 
-  public constructor(kdf: KdfContext, params: AeadParams) {
-    super(kdf, params.exporterSecret);
+  public constructor(crypto: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
+    super(crypto, kdf, params.exporterSecret);
 
     if (params.key === undefined || params.baseNonce === undefined || params.seq === undefined) {
       throw new errors.ValidationError('Required parameters are missing');

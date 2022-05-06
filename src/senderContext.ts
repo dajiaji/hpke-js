@@ -11,8 +11,8 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
 
   public readonly enc: ArrayBuffer;
 
-  public constructor(kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
-    super(kdf, params);
+  public constructor(crypto: SubtleCrypto, kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
+    super(crypto, kdf, params);
     this.enc = enc;
     return;
   }
@@ -25,9 +25,9 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
         iv: this.computeNonce(),
         additionalData: aad,
       };
-      ct = await window.crypto.subtle.encrypt(alg, this.key, data);
+      ct = await this._crypto.encrypt(alg, this.key, data);
     } catch (e: unknown) {
-      throw new errors.OpenError(e);
+      throw new errors.SealError(e);
     }
     this.incrementSeq();
     return ct;

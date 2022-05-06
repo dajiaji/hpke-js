@@ -17,14 +17,6 @@ export function bytesToBase64Url(v: Uint8Array): string {
     .replace(/=*$/g, '');
 }
 
-export async function bytesToCryptoKeyPair(skm: Uint8Array, pkm: Uint8Array, alg: EcKeyGenParams): Promise<CryptoKeyPair> {
-  const pk = await window.crypto.subtle.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
-  const jwk = await window.crypto.subtle.exportKey('jwk', pk);
-  jwk['d'] = bytesToBase64Url(skm);
-  const sk = await window.crypto.subtle.importKey('jwk', jwk, alg, true, ['deriveKey', 'deriveBits']);
-  return { privateKey: sk, publicKey: pk };
-}
-
 export function kemToKeyGenAlgorithm(kem: Kem): EcKeyGenParams {
   switch (kem) {
     case Kem.DhkemP256HkdfSha256:

@@ -1,4 +1,10 @@
 /**
+ * Checks whether the execution env is browser or not.
+ */
+export const isBrowser = () =>
+  typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+/**
  * Checks whetehr the type of input is CryptoKeyPair or not.
  */
 export const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
