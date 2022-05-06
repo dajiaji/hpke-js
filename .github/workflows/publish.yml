@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Publish
 
 on:
   release:
@@ -15,7 +15,7 @@ jobs:
       - run: npm ci
       - run: npm test
 
-  publish-npm:
+  publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
