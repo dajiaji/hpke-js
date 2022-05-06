@@ -3,6 +3,7 @@
 <div align="center">
 
 [![Stable Release](https://img.shields.io/npm/v/hpke-js.svg)](https://npm.im/hpke-js)
+![Github CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
 
 </div>
 
