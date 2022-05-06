@@ -9,31 +9,46 @@ import { KdfContext } from './kdfContext';
 import { KemContext } from './kemContext';
 import { RecipientContext } from './recipientContext';
 import { SenderContext } from './senderContext';
+import { loadSubtleCrypto } from './webCrypto';
+
+import * as errors from './errors';
 
 export class CipherSuite {
   public readonly kem: Kem;
   public readonly kdf: Kdf;
   public readonly aead: Aead;
 
-  private _kem: KemContext;
-  private _kdf: KdfContext;
+  private _kem: KemContext | undefined;
+  private _kdf: KdfContext | undefined;
 
   public constructor(params: CipherSuiteParams) {
     this.kem = params.kem;
     this.kdf = params.kdf;
     this.aead = params.aead;
 
-    this._kem = new KemContext(params.kem);
-    this._kdf = new KdfContext(params);
+    // this._kem = new KemContext(params.kem);
+    // this._kdf = new KdfContext(params);
+    this._kem = undefined;
+    this._kdf = undefined;
     return;
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
+    if (this._kem === undefined || this._kdf === undefined) {
+      const crypto = await loadSubtleCrypto();
+      this._kem = new KemContext(crypto, this.kem);
+      this._kdf = new KdfContext(crypto, { kem: this.kem, kdf: this.kdf, aead: this.aead });
+    }
     return await this._kem.generateKeyPair();
   }
 
   public async createSenderContext(params: SenderContextParams): Promise<SenderContextInterface> {
-    // const dh = await this._kem.encap(params.recipientPublicKey, params.nonEphemeralKeyPair);
+    const crypto = await loadSubtleCrypto();
+    if (this._kem === undefined || this._kdf === undefined) {
+      this._kem = new KemContext(crypto, this.kem);
+      this._kdf = new KdfContext(crypto, { kem: this.kem, kdf: this.kdf, aead: this.aead });
+    }
+
     const dh = await this._kem.encap(params);
 
     let mode: Mode;
@@ -43,15 +58,20 @@ export class CipherSuite {
       mode = params.senderKey !== undefined ? Mode.Auth : Mode.Base;
     }
 
-    const kdf = new KdfContext({ kem: this.kem, kdf: this.kdf, aead: this.aead });
+    const kdf = new KdfContext(crypto, { kem: this.kem, kdf: this.kdf, aead: this.aead });
     const aeadParams = await this._kdf.keySchedule(mode, dh.sharedSecret, params);
     if (aeadParams.key === undefined) {
-      return new SenderExporterContext(kdf, aeadParams.exporterSecret, dh.enc);
+      return new SenderExporterContext(crypto, kdf, aeadParams.exporterSecret, dh.enc);
     }
-    return new SenderContext(kdf, aeadParams, dh.enc);
+    return new SenderContext(crypto, kdf, aeadParams, dh.enc);
   }
 
   public async createRecipientContext(params: RecipientContextParams): Promise<RecipientContextInterface> {
+    const crypto = await loadSubtleCrypto();
+    if (this._kem === undefined || this._kdf === undefined) {
+      this._kem = new KemContext(crypto, this.kem);
+      this._kdf = new KdfContext(crypto, { kem: this.kem, kdf: this.kdf, aead: this.aead });
+    }
 
     const sharedSecret = await this._kem.decap(params);
 
@@ -62,11 +82,11 @@ export class CipherSuite {
       mode = params.senderPublicKey !== undefined ? Mode.Auth : Mode.Base;
     }
 
-    const kdf = new KdfContext({ kem: this.kem, kdf: this.kdf, aead: this.aead });
+    const kdf = new KdfContext(crypto, { kem: this.kem, kdf: this.kdf, aead: this.aead });
     const aeadParams = await this._kdf.keySchedule(mode, sharedSecret, params);
     if (aeadParams.key === undefined) {
-      return new RecipientExporterContext(kdf, aeadParams.exporterSecret);
+      return new RecipientExporterContext(crypto, kdf, aeadParams.exporterSecret);
     }
-    return new RecipientContext(kdf, aeadParams);
+    return new RecipientContext(crypto, kdf, aeadParams);
   }
 }

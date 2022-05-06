@@ -15,7 +15,7 @@ export class KdfContext extends KdfCommon {
   private _nT: number;
   private _algAead: string;
 
-  public constructor(params: CipherSuiteParams) {
+  public constructor(crypto: SubtleCrypto, params: CipherSuiteParams) {
     const suiteId = new Uint8Array(10);
     suiteId.set(consts.SUITE_ID_HEADER_HPKE, 0);
     suiteId.set(i2Osp(params.kem, 2), 4);
@@ -34,7 +34,7 @@ export class KdfContext extends KdfCommon {
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
         break;
     }
-    super(suiteId, algHash);
+    super(crypto, suiteId, algHash);
 
     switch (params.aead) {
       case Aead.Aes128Gcm:

@@ -2,15 +2,18 @@ import type { Encapsulator } from './interfaces/encapsulator';
 import type { EncryptionContextInterface } from './interfaces/encryptionContextInterface';
 import type { KdfContext } from './kdfContext';
 
+import { WebCrypto } from './webCrypto';
+
 import * as consts from './consts';
 import * as errors from './errors';
 
-export class ExporterContext implements EncryptionContextInterface {
+export class ExporterContext extends WebCrypto implements EncryptionContextInterface {
 
   protected readonly exporterSecret: ArrayBuffer;
   private _kdf: KdfContext;
 
-  public constructor(kdf: KdfContext, exporterSecret: ArrayBuffer) {
+  public constructor(crypto: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
+    super(crypto);
     this._kdf = kdf;
     this.exporterSecret = exporterSecret;
     return;
@@ -39,8 +42,8 @@ export class SenderExporterContext extends ExporterContext implements Encapsulat
 
   public readonly enc: ArrayBuffer;
 
-  public constructor(kdf: KdfContext, exporterSecret: ArrayBuffer, enc: ArrayBuffer) {
-    super(kdf, exporterSecret);
+  public constructor(crypto: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer, enc: ArrayBuffer) {
+    super(crypto, kdf, exporterSecret);
     this.enc = enc;
     return;
   }
