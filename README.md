@@ -31,7 +31,7 @@ This library works for both browser-based applications and node.js based applica
 | Base    | ✅      |  ✅     |
 | PSK     | ✅      |  ✅     |
 | Auth    | ✅      |  ✅     |
-| AuthPSK |         |         |
+| AuthPSK | ✅      |  ✅     |
 
 ### Key Encapsulation Machanisms (KEMs)
 
