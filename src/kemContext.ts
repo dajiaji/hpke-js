@@ -3,7 +3,7 @@ import type { RecipientContextParams } from './interfaces/recipientContextParams
 
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
-import { isBrowser, isCryptoKeyPair, i2Osp, concat, concat3 } from './utils';
+import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils';
 
 import * as consts from './consts';
 import * as errors from './errors';

@@ -70,7 +70,7 @@ npm install hpke-js
 
 ## Usage
 
-This section shows some typical usage examples. See [API Documentation](#) for details.
+This section shows some typical usage examples.
 
 ### Base mode
 
