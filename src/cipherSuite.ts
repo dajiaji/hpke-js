@@ -11,25 +11,18 @@ import { RecipientContext } from './recipientContext';
 import { SenderContext } from './senderContext';
 import { loadSubtleCrypto } from './webCrypto';
 
-import * as errors from './errors';
-
 export class CipherSuite {
   public readonly kem: Kem;
   public readonly kdf: Kdf;
   public readonly aead: Aead;
 
-  private _kem: KemContext | undefined;
-  private _kdf: KdfContext | undefined;
+  private _kem: KemContext | undefined = undefined;
+  private _kdf: KdfContext | undefined = undefined;
 
   public constructor(params: CipherSuiteParams) {
     this.kem = params.kem;
     this.kdf = params.kdf;
     this.aead = params.aead;
-
-    // this._kem = new KemContext(params.kem);
-    // this._kdf = new KdfContext(params);
-    this._kem = undefined;
-    this._kdf = undefined;
     return;
   }
 
