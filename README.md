@@ -65,7 +65,7 @@ This library works for both browser-based applications and node.js based applica
 Install with npm:
 
 ```
-npm install hpke
+npm install hpke-js
 ```
 
 ## Usage
@@ -74,164 +74,180 @@ This section shows some typical usage examples. See [API Documentation](#) for d
 
 ### Base mode
 
-On browser:
+On Node.js:
 
 ```js
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
-// The global name is "hpke".
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm
+  });
 
-// setup
-const suite = new hpke.CipherSuite({
-  kem: hpke.Kem.DhkemP256HkdfSha256,
-  kdf: hpke.Kdf.HkdfSha256,
-  aead: hpke.Aead.Aes128Gcm
-});
+  const rkp = await suite.generateKeyPair();
 
-const rkp = await suite.generateKeyPair();
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey
+  });
 
-const sender = await suite.createSenderContext({
-  recipientPublicKey: rkp.publicKey
-});
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+  });
 
-const recipient = await suite.createRecipientContext({
-  recipientKey: rkp,
-  enc: sender.enc,
-});
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-// encrypt
-const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-// decrypt
-const pt = await recipient.open(ct);
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decripted: my-secret-message
+}
 
-// new TextDecoder().decode(pt) === "my-secret-message"
+doHpke();
 ```
 
 ### PSK mode
 
-On browser:
+On Node.js:
 
 ```js
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
-// The global name is "hpke".
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm
+  });
 
-// setup
-const suite = new hpke.CipherSuite({
-  kem: hpke.Kem.DhkemP256HkdfSha256,
-  kdf: hpke.Kdf.HkdfSha256,
-  aead: hpke.Aead.Aes128Gcm
-});
+  const rkp = await suite.generateKeyPair();
 
-const rkp = await suite.generateKeyPair();
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+    psk: {
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
+      key: new TextEncoder().encode("our-pre-shared-key"),
+    }
+  });
 
-const sender = await suite.createSenderContext({
-  recipientPublicKey: rkp.publicKey,
-  psk: {
-    id: new TextEncoder().encode("our-pre-shared-key-id"),
-    key: new TextEncoder().encode("our-pre-shared-key"),
-  }
-});
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+    psk: {
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
+      key: new TextEncoder().encode("our-pre-shared-key"),
+    }
+  });
 
-const recipient = await suite.createRecipientContext({
-  recipientKey: rkp,
-  enc: sender.enc,
-  psk: {
-    id: new TextEncoder().encode("our-pre-shared-key-id"),
-    key: new TextEncoder().encode("our-pre-shared-key"),
-  }
-});
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-// encrypt
-const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-// decrypt
-const pt = await recipient.open(ct);
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decripted: my-secret-message
+}
 
-// new TextDecoder().decode(pt) === "my-secret-message"
+doHpke();
 ```
 
 ### Auth mode
 
-On browser:
+On Node.js:
 
 ```js
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
-// The global name is "hpke".
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm
+  });
 
-// setup
-const suite = new hpke.CipherSuite({
-  kem: hpke.Kem.DhkemP256HkdfSha256,
-  kdf: hpke.Kdf.HkdfSha256,
-  aead: hpke.Aead.Aes128Gcm
-});
+  const rkp = await suite.generateKeyPair();
+  const skp = await suite.generateKeyPair();
 
-const rkp = await suite.generateKeyPair();
-const skp = await suite.generateKeyPair();
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+    senderKey: skp
+  });
 
-const sender = await suite.createSenderContext({
-  recipientPublicKey: rkp.publicKey,
-  senderKey: skp
-});
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+    senderPublicKey: skp.publicKey
+  });
 
-const recipient = await suite.createRecipientContext({
-  recipientKey: rkp,
-  enc: sender.enc,
-  senderPublicKey: skp.publicKey
-});
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-// encrypt
-const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-// decrypt
-const pt = await recipient.open(ct);
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decripted: my-secret-message
+}
 
-// new TextDecoder().decode(pt) === "my-secret-message"
+doHpke();
 ```
 
 ### AuthPSK mode
 
-On browser:
+On Node.js:
 
 ```js
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
-// The global name is "hpke".
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm
+  });
 
-// setup
-const suite = new hpke.CipherSuite({
-  kem: hpke.Kem.DhkemP256HkdfSha256,
-  kdf: hpke.Kdf.HkdfSha256,
-  aead: hpke.Aead.Aes128Gcm
-});
+  const rkp = await suite.generateKeyPair();
+  const skp = await suite.generateKeyPair();
 
-const rkp = await suite.generateKeyPair();
-const skp = await suite.generateKeyPair();
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+    senderKey: skp,
+    psk: {
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
+      key: new TextEncoder().encode("our-pre-shared-key"),
+    }
+  });
 
-const sender = await suite.createSenderContext({
-  recipientPublicKey: rkp.publicKey,
-  senderKey: skp,
-  psk: {
-    id: new TextEncoder().encode("our-pre-shared-key-id"),
-    key: new TextEncoder().encode("our-pre-shared-key"),
-  }
-});
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+    senderPublicKey: skp.publicKey,
+    psk: {
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
+      key: new TextEncoder().encode("our-pre-shared-key"),
+    }
+  });
 
-const recipient = await suite.createRecipientContext({
-  recipientKey: rkp,
-  enc: sender.enc,
-  senderPublicKey: skp.publicKey,
-  psk: {
-    id: new TextEncoder().encode("our-pre-shared-key-id"),
-    key: new TextEncoder().encode("our-pre-shared-key"),
-  }
-});
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-// encrypt
-const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-// decrypt
-const pt = await recipient.open(ct);
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decripted: my-secret-message
+}
 
-// new TextDecoder().decode(pt) === "my-secret-message"
+doHpke();
 ```
 
 ## Contributing
