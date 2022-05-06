@@ -1,7 +1,14 @@
 <h1 align="center">hpke-js</h1>
 
-<div align="center">A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
-implementation for browser-based applications.</div>
+<div align="center">
+
+[![Stable Release](https://img.shields.io/npm/v/hpke-js.svg)](https://npm.im/hpke-js)
+
+</div>
+
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
+implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
+This library works for both browser-based applications and node.js based applications.
 
 ## Index
 
@@ -63,7 +70,7 @@ npm install hpke
 
 ## Usage
 
-This section shows some typical usage examples. See [API Documentation](#) for details. 
+This section shows some typical usage examples. See [API Documentation](#) for details.
 
 ### Base mode
 
