@@ -1,25 +1,23 @@
-import crypto from 'crypto';
 import fs from 'fs';
 
+import type { ConformanceTester } from './conformanceTester';
 import type { TestVector } from './testVector';
-import { testConformance } from './testVector';
+
+import { createConformanceTester } from './conformanceTester';
 
 describe('RFC9180 conformance', () => {
-  // test vectors
   let testVectors: TestVector[];
-  let testCount: number;
+  let tester: ConformanceTester;
 
   beforeAll(async () => {
-
-    Object.defineProperty(global.self, 'crypto', { value: crypto.webcrypto });
-
     testVectors = JSON.parse(fs.readFileSync('./test/vectors/test-vectors.json', 'utf8'));
-    testCount = 0;
+    tester = await createConformanceTester();
   });
 
   afterAll(() => {
-    console.log(`passed/total: ${testCount}/${testVectors.length}`);
-    
+    const count = tester.count();
+    console.log(`passed/total: ${count}/${testVectors.length}`);
+
   });
 
   describe('Base/DhkemP*/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
@@ -27,8 +25,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 0 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -39,8 +36,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 0 && v.kem_id < 0x0020 && v.aead_id == 0xFFFF) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -51,8 +47,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -63,8 +58,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id < 0x0020 && v.aead_id == 0xFFFF) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -75,8 +69,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 2 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -87,8 +80,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 2 && v.kem_id < 0x0020 && v.aead_id == 0xFFFF) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -99,8 +91,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });
@@ -111,8 +102,7 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id < 0x0020 && v.aead_id == 0xFFFF) {
-          await testConformance(v);
-          testCount++;
+          await tester.test(v);
         }
       }
     });

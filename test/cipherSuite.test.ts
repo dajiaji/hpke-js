@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { TextEncoder, TextDecoder } from 'util';
 
 import { Kem, Kdf, Aead } from '../src/identifiers';
@@ -7,7 +6,6 @@ import { CipherSuite } from '../src/cipherSuite';
 describe('CipherSuite', () => {
 
   beforeAll(async () => {
-    Object.defineProperty(global.self, 'crypto', { value: crypto.webcrypto });
     Object.defineProperty(global.self, 'TextEncoder', TextEncoder);
     Object.defineProperty(global.self, 'TextDecoder', TextDecoder);
   });
