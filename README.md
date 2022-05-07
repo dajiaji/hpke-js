@@ -10,7 +10,7 @@
 
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works for both browser-based applications and node.js based applications.
+This library works on both web browsers and Node.js (Currently Deno is not supported).
 
 ## Index
 
@@ -28,39 +28,39 @@ This library works for both browser-based applications and node.js based applica
 
 ### HPKE Modes
 
-| Modes   | Browser | Node.js |
-| ------- | ------- | ------- |
-| Base    | ✅      |  ✅     |
-| PSK     | ✅      |  ✅     |
-| Auth    | ✅      |  ✅     |
-| AuthPSK | ✅      |  ✅     |
+| Modes   | Browser | Node.js | Deno |
+| ------- | ------- | ------- | ---- |
+| Base    | ✅      |  ✅     |      |
+| PSK     | ✅      |  ✅     |      |
+| Auth    | ✅      |  ✅     |      |
+| AuthPSK | ✅      |  ✅     |      |
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js |
-| --------------------------- | ------- | ------- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |
-| DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |
-| DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |
-| DHKEM (X25519, HKDF-SHA256) |         |         |
-| DHKEM (X448, HKDF-SHA512)   |         |         |
+| KEMs                        | Browser | Node.js | Deno |
+| --------------------------- | ------- | ------- | ---- |
+| DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |      |
+| DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |      |
+| DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |      |
+| DHKEM (X25519, HKDF-SHA256) |         |         |      |
+| DHKEM (X448, HKDF-SHA512)   |         |         |      |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js |
-| ----------- | ------- | ------- |
-| HKDF-SHA256 | ✅      |  ✅     |
-| HKDF-SHA384 | ✅      |  ✅     |
-| HKDF-SHA512 | ✅      |  ✅     |
+| KDFs        | Browser | Node.js | Deno |
+| ----------- | ------- | ------- | ---- |
+| HKDF-SHA256 | ✅      |  ✅     |      |
+| HKDF-SHA384 | ✅      |  ✅     |      |
+| HKDF-SHA512 | ✅      |  ✅     |      |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser | Node.js |
-| ---------------- | ------- | ------- |
-| AES-128-GCM      | ✅      |  ✅     |
-| AES-256-GCM      | ✅      |  ✅     |
-| ChaCha20Poly1305 |         |         |
-| Export Only      | ✅      |  ✅     |
+| AEADs            | Browser | Node.js | Deno |
+| ---------------- | ------- | ------- | ---- |
+| AES-128-GCM      | ✅      |  ✅     |      |
+| AES-256-GCM      | ✅      |  ✅     |      |
+| ChaCha20Poly1305 |         |         |      |
+| Export Only      | ✅      |  ✅     |      |
 
 ## Installation
 
