@@ -284,4 +284,38 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('seal and open (single-shot apis)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      // encrypt
+      const { ct, enc } = await suite.seal(
+        {
+          recipientPublicKey: rkp.publicKey,
+        },
+        new TextEncoder().encode('my-secret-message'),
+      );
+
+      // decrypt
+      const pt = await suite.open(
+        {
+          recipientKey: rkp,
+          enc: enc,
+        },
+        ct,
+      );
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
 });

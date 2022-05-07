@@ -1,6 +1,7 @@
 export * from './errors';
 
 export type { CipherSuiteParams } from './interfaces/cipherSuiteParams';
+export type { CipherSuiteSealResponse } from './interfaces/responses';
 export type { RecipientContextParams } from './interfaces/recipientContextParams';
 export type { SenderContextParams } from './interfaces/senderContextParams';
 export type { PreSharedKey } from './interfaces/preSharedKey';

@@ -20,6 +20,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 - [Installation](#installation)
 - [Usage](#usage)
   - [Base mode](#base-mode)
+  - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
   - [PSK mode](#psk-mode)
   - [Auth mode](#auth-mode)
   - [AuthPSK mode](#authpsk-mode)
@@ -107,6 +108,37 @@ async function doHpke() {
 
   // decrypt
   const pt = await recipient.open(ct);
+
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decripted: my-secret-message
+}
+
+doHpke();
+```
+
+### Base mode with Single-Shot APIs
+
+On Node.js:
+
+```js
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm
+  });
+
+  const rkp = await suite.generateKeyPair();
+  const pt = new TextEncoder().encode('my-secret-message'),
+
+  // encrypt
+  const { ct, enc } = await suite.seal({ recipientPublicKey: rkp.publicKey }, pt);
+
+  // decrypt
+  const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
 
   console.log("decrypted: ", new TextDecoder().decode(pt));
   // decripted: my-secret-message

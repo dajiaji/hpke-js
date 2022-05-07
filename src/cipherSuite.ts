@@ -1,10 +1,12 @@
 import type { CipherSuiteParams } from './interfaces/cipherSuiteParams';
+import type { CipherSuiteSealResponse } from './interfaces/responses';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextInterface, SenderContextInterface } from './interfaces/encryptionContextInterface';
 
-import { Aead, Kdf, Kem, Mode } from './identifiers';
+import { EMPTY } from './consts';
 import { RecipientExporterContext, SenderExporterContext } from './exporterContext';
+import { Aead, Kdf, Kem, Mode } from './identifiers';
 import { KdfContext } from './kdfContext';
 import { KemContext } from './kemContext';
 import { RecipientContext } from './recipientContext';
@@ -71,6 +73,19 @@ export class CipherSuite {
       return new RecipientExporterContext(api, kdf, res.exporterSecret);
     }
     return new RecipientContext(api, kdf, res);
+  }
+
+  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<CipherSuiteSealResponse> {
+    const ctx = await this.createSenderContext(params);
+    return {
+      ct: await ctx.seal(pt, aad),
+      enc: ctx.enc,
+    };
+  }
+
+  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
+    const ctx = await this.createRecipientContext(params);
+    return await ctx.open(ct, aad);
   }
 
   private async setup(): Promise<SubtleCrypto> {
