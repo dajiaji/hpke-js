@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 0.3.0
+
+Released 2022-05-08
+
 - [(#11) Add support for single-shot apis.](https://github.com/dajiaji/hpke-js/pull/11)
 
 ## Version 0.2.4
