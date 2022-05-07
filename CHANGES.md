@@ -2,7 +2,12 @@
 
 ## Unreleased
 
+## Version 0.2.4
+
+Released 2022-05-07
+
 - [(#9) Allow to use privateKey as senderKey and recipientKey parameter.](https://github.com/dajiaji/hpke-js/pull/9)
+- Fix bug on [#7](https://github.com/dajiaji/hpke-js/pull/7).
 
 ## Version 0.2.3
 
