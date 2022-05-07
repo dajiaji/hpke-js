@@ -1,16 +1,18 @@
 <h1 align="center">hpke-js</h1>
 
 <div align="center">
+
 [![Stable Release](https://img.shields.io/npm/v/hpke-js.svg)](https://npm.im/hpke-js)
 ![Github CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/dajiaji/hpke-js/branch/main/graph/badge.svg?token=7I7JGKDDJ2)](https://codecov.io/gh/dajiaji/hpke-js)
+
 </div>
 
-<p align="center">
+<div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works on both web browsers and Node.js (**currently, Deno is not supported**).
-</p>
+This library works on both web browsers and Node.js (<b>currently, Deno is not supported</b>).
+</div>
 
 ## Index
 
