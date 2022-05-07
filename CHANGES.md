@@ -2,11 +2,13 @@
 
 ## Unreleased
 
+- [(#9) Allow to use privateKey as senderKey and recipientKey parameter.](https://github.com/dajiaji/hpke-js/pull/9)
+
 ## Version 0.2.3
 
 Released 2022-05-07
 
-- [(#7) Add \*.{ts, d.ts, d.ts.map} to npm package](https://github.com/dajiaji/hpke-js/pull/7)
+- [(#7) Add \*.{ts, d.ts, d.ts.map} to npm package.](https://github.com/dajiaji/hpke-js/pull/7)
 
 ## Version 0.2.2
 

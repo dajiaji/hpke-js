@@ -89,7 +89,7 @@ export class KemContext extends KdfCommon {
       if (params.senderKey === undefined) {
         kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
       } else {
-        const pks = isCryptoKeyPair(params.senderKey) ? params.senderKey.publicKey : params.senderKey; // TODO: priv2pub
+        const pks = isCryptoKeyPair(params.senderKey) ? params.senderKey.publicKey : await this.derivePublicKey(params.senderKey);
         const pksm = await this._crypto.exportKey('raw', pks);
         kemContext = concat3(new Uint8Array(enc), new Uint8Array(pkrm), new Uint8Array(pksm));
       }
@@ -106,7 +106,7 @@ export class KemContext extends KdfCommon {
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
     const pke = await this._crypto.importKey('raw', params.enc, this._algKeyGen, true, consts.KEM_USAGES);
     const skr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.privateKey : params.recipientKey;
-    const pkr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.publicKey : params.recipientKey; // TODO: priv2pub
+    const pkr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.publicKey : await this.derivePublicKey(params.recipientKey);
     const pkrm = await this._crypto.exportKey('raw', pkr);
 
     try {
@@ -133,6 +133,12 @@ export class KemContext extends KdfCommon {
     } catch (e: unknown) {
       throw new errors.DecapError(e);
     }
+  }
+
+  private async derivePublicKey(priv: CryptoKey): Promise<CryptoKey> {
+    const jwk = await this._crypto.exportKey('jwk', priv);
+    delete jwk['d'];
+    return await this._crypto.importKey('jwk', jwk, this._algKeyGen, true, ['deriveBits']);
   }
 
   private async dh(sk: CryptoKey, pk: CryptoKey): Promise<Uint8Array> {
