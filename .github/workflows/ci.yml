@@ -25,3 +25,10 @@ jobs:
       - run: npm run build
       - run: npm pack --dry-run
       - run: npm test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        if: matrix.node-version == '16.x'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info
+          flags: unittests
