@@ -216,4 +216,72 @@ describe('CipherSuite', () => {
       expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
     });
   });
+
+  describe('createRecipientContext with a private key as recipientKey', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
+  describe('createSenderContext with a privatekey as senderKey', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+      const skp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+        senderKey: skp.privateKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+        senderPublicKey: skp.publicKey,
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
 });
