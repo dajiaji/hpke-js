@@ -32,7 +32,7 @@
     "build-types": "tsc -p tsconfig.build.json",
     "clean": "git clean -fdX dist lib *.tsbuildinfo",
     "prepack": "npm run build",
-    "test": "tsc && jest",
+    "test": "tsc && jest --coverage",
     "typedoc": "typedoc",
     "lint": "eslint --max-warnings=0 --cache .",
     "prepare": "husky install"
@@ -50,8 +50,7 @@
     "lint-staged": "^12.4.0",
     "ts-jest": "^27.1.4",
     "typedoc": "^0.22.15",
-    "typescript": "^4.6.3",
-    "yn": "^5.0.0"
+    "typescript": "^4.6.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --cache --fix"
