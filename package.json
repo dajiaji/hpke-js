@@ -18,6 +18,7 @@
     "./package.json": "./package.json"
   },
   "files": [
+    "src",
     "dist"
   ],
   "keywords": [
@@ -30,7 +31,7 @@
   "scripts": {
     "build": "node scripts/build.js && npm run build-types",
     "build-types": "tsc -p tsconfig.build.json",
-    "clean": "git clean -fdX dist lib *.tsbuildinfo",
+    "clean": "git clean -fdX dist *.tsbuildinfo",
     "prepack": "npm run build",
     "test": "tsc && jest --coverage",
     "typedoc": "typedoc",
