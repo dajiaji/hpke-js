@@ -1,4 +1,5 @@
 import { WebCrypto } from './webCrypto';
+import { concat } from './utils';
 
 import * as consts from './consts';
 
@@ -49,8 +50,7 @@ export class KdfCommon extends WebCrypto {
     const key = await this._crypto.importKey('raw', prk, this.algHash, false, ['sign']);
 
     const okm = new ArrayBuffer(len);
-
-    let p = new Uint8Array(okm);
+    const p = new Uint8Array(okm);
     let prev = consts.EMPTY;
     const mid = new Uint8Array(info);
     const tail = new Uint8Array(1);
@@ -60,18 +60,19 @@ export class KdfCommon extends WebCrypto {
     }
 
     const tmp = new Uint8Array(this._nH + mid.length + 1);
-    for (let i = 1; p.length > 0; i++) {
+    for (let i = 1, cur = 0; cur < p.length; i++) {
       tail[0] = i;
       tmp.set(prev, 0);
       tmp.set(mid, prev.length);
       tmp.set(tail, prev.length + mid.length);
       prev = new Uint8Array(await this._crypto.sign('HMAC', key, tmp.slice(0, prev.length + mid.length + 1)));
-      if (p.length >= prev.length) {
-        p.set(prev, 0);
+      if (p.length - cur >= prev.length) {
+        p.set(prev, cur);
+        cur += prev.length;
       } else {
-        p.set(prev.slice(0, prev.length - p.length), 0);
+        p.set(prev.slice(0, p.length - cur), cur);
+        cur += p.length - cur;
       }
-      p = p.slice(this._nH);
     }
     return okm;
   }
