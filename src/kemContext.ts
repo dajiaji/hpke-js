@@ -1,6 +1,7 @@
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 
+import { Bignum } from './bignum';
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
 import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils';
@@ -13,7 +14,12 @@ export class KemContext extends KdfCommon {
   private _algKeyGen: EcKeyGenParams;
   private _nSecret: number;
   private _nPk: number;
+  private _nSk: number;
   private _nDh: number;
+  // EC-specific attributes.
+  private _order: Uint8Array;
+  private _sk: Bignum;
+  private _bitmask: number;
 
   public constructor(crypto: SubtleCrypto, kem: Kem) {
     const suiteId = new Uint8Array(5);
@@ -39,21 +45,31 @@ export class KemContext extends KdfCommon {
         this._algKeyGen = { name: 'ECDH', namedCurve: 'P-256' };
         this._nSecret = 32;
         this._nPk = 65;
+        this._nSk = 32;
         this._nDh = 32;
+        this._order = consts.ORDER_P_256;
+        this._bitmask = 0xFF;
         break;
       case Kem.DhkemP384HkdfSha384:
         this._algKeyGen = { name: 'ECDH', namedCurve: 'P-384' };
         this._nSecret = 48;
         this._nPk = 97;
+        this._nSk = 48;
         this._nDh = 48;
+        this._order = consts.ORDER_P_384;
+        this._bitmask = 0xFF;
         break;
       case Kem.DhkemP521HkdfSha512:
         this._algKeyGen = { name: 'ECDH', namedCurve: 'P-521' };
         this._nSecret = 64;
         this._nPk = 133;
+        this._nSk = 66;
         this._nDh = 66;
+        this._order = consts.ORDER_P_521;
+        this._bitmask = 0x01;
         break;
     }
+    this._sk = new Bignum(this._nSk);
     return;
   }
 
@@ -65,8 +81,18 @@ export class KemContext extends KdfCommon {
     }
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    throw new errors.NotSupportedError('deriveKeyPair not supported');
+  public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
+    const dkpPrk = await this.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
+    this._sk.reset();
+    for (let counter = 0; this._sk.isZero() || !this._sk.lowerThan(this._order); counter++) {
+      if (counter > 255) {
+        throw new errors.DeriveKeyPairError('faild to derive a key pair.');
+      }
+      const bytes = new Uint8Array(await this.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk));
+      bytes[0] = bytes[0] & this._bitmask;
+      this._sk.set(bytes);
+    }
+    return this._sk.val();
   }
 
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {

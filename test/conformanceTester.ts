@@ -23,7 +23,7 @@ export class ConformanceTester extends WebCrypto {
     // console.log(v.mode, "/", v.kem_id, "/", v.kdf_id, "/", v.aead_id);
 
     const info = hexStringToBytes(v.info);
-    // const ikmE = hexStringToBytes(v.ikmE);
+    const ikmE = hexStringToBytes(v.ikmE);
     const pkEm = hexStringToBytes(v.pkEm);
     const skEm = hexStringToBytes(v.skEm);
     let psk: PreSharedKey | undefined = undefined;
@@ -32,7 +32,7 @@ export class ConformanceTester extends WebCrypto {
       psk.key = hexStringToBytes(v.psk);
       psk.id = hexStringToBytes(v.psk_id);
     }
-    // const ikmR = hexStringToBytes(v.ikmR);
+    const ikmR = hexStringToBytes(v.ikmR);
     const pkRm = hexStringToBytes(v.pkRm);
     const skRm = hexStringToBytes(v.skRm);
     let skp: CryptoKeyPair | undefined = undefined;
@@ -49,6 +49,10 @@ export class ConformanceTester extends WebCrypto {
     const ekp = await this.bytesToCryptoKeyPair(skEm, pkEm, kemToKeyGenAlgorithm(v.kem_id));
 
     const suite = new CipherSuite({ kem: v.kem_id, kdf: v.kdf_id, aead: v.aead_id });
+
+    // deriveKeyPair
+    const derived = await suite.deriveKey(ikmR.buffer);
+    expect(new Uint8Array(derived)).toEqual(skRm);
 
     const sender = await suite.createSenderContext({
       info: info,
