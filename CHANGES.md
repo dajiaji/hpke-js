@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 0.3.1
+
+Released 2022-05-08
+
 - [(#14) Add support for deriveKey.](https://github.com/dajiaji/hpke-js/pull/14)
 - [(#14) Fix bug on extract.](https://github.com/dajiaji/hpke-js/pull/14)
 
