@@ -1,5 +1,4 @@
 import { WebCrypto } from './webCrypto';
-import { concat } from './utils';
 
 import * as consts from './consts';
 
