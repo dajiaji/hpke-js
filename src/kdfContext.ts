@@ -100,6 +100,10 @@ export class KdfContext extends KdfCommon {
 
     if (this._algAead === '') {
       return {
+        alg: this._algAead,
+        nK: this._nK,
+        nN: this._nN,
+        nT: this._nT,
         exporterSecret: exporterSecret,
       };
     }
@@ -111,10 +115,14 @@ export class KdfContext extends KdfCommon {
     const baseNonce = await this.extractAndExpand(sharedSecret, ikm, baseNonceInfo, this._nN);
 
     return {
+      alg: this._algAead,
+      nK: this._nK,
+      nN: this._nN,
+      nT: this._nT,
+      exporterSecret: exporterSecret,
       key: await this._crypto.importKey('raw', key, { name: this._algAead }, true, consts.AEAD_USAGES),
       baseNonce: new Uint8Array(baseNonce),
       seq: 0,
-      exporterSecret: exporterSecret,
     };
   }
 }
