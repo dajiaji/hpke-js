@@ -1,13 +1,17 @@
 import { TextEncoder, TextDecoder } from 'util';
 
+import { isBrowser } from '../src/utils';
 import { Kem, Kdf, Aead } from '../src/identifiers';
 import { CipherSuite } from '../src/cipherSuite';
 
 describe('CipherSuite', () => {
 
-  beforeAll(async () => {
-    Object.defineProperty(global.self, 'TextEncoder', TextEncoder);
-    Object.defineProperty(global.self, 'TextDecoder', TextDecoder);
+  // for jsdom setting.
+  beforeAll(() => {
+    if (isBrowser()) {
+      Object.defineProperty(global.self, 'TextEncoder', TextEncoder);
+      Object.defineProperty(global.self, 'TextDecoder', TextDecoder);
+    }
   });
 
   // RFC9180 A.3.

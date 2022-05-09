@@ -2,7 +2,7 @@ export default {
   preset: 'ts-jest',
   clearMocks: true,
   testMatch: ['**/test/**/*.test.ts'],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node',
   coverageReporters: ['lcov', 'text'],
   globals: {
     'ts-jest': {
