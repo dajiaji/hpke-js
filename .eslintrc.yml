@@ -58,6 +58,8 @@ overrides:
       "@typescript-eslint/require-await": "off"
       "@typescript-eslint/no-unsafe-argument": "off"
       "@typescript-eslint/no-unsafe-assignment": "off"
+      "@typescript-eslint/no-unused-vars": "off"
+
   - files: src/**/*
     env:
       node: false

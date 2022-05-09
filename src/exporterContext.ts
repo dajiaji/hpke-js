@@ -19,12 +19,16 @@ export class ExporterContext extends WebCrypto implements EncryptionContextInter
     return;
   }
 
-  public async seal(data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
-    throw new errors.SealError('Not available on export-only mode');
+  public async seal(_data: ArrayBuffer, _aad: ArrayBuffer): Promise<ArrayBuffer> {
+    throw new errors.NotSupportedError('Not available on export-only mode');
   }
 
-  public async open(data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
-    throw new errors.OpenError('Not available on export-only mode');
+  public async open(_data: ArrayBuffer, _aad: ArrayBuffer): Promise<ArrayBuffer> {
+    throw new errors.NotSupportedError('Not available on export-only mode');
+  }
+
+  public async setupBidirectional(_keySeed: ArrayBuffer, _nonceSeed: ArrayBuffer): Promise<void> {
+    throw new errors.NotSupportedError('Not available on export-only mode');
   }
 
   public async export(info: ArrayBuffer, len: number): Promise<ArrayBuffer> {

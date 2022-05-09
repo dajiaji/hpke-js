@@ -18,6 +18,13 @@ export interface EncryptionContextInterface extends Exporter {
    * data using a symmetric key and a nonce.
    */
   open(data: ArrayBuffer, aad?: ArrayBuffer): Promise<ArrayBuffer>;
+
+  /**
+   * Sets up bi-directional encryption to allow a recipient to send
+   * encrypted messages to a sender.
+   */
+  setupBidirectional(keySeed: ArrayBuffer, nonceSeed: ArrayBuffer): Promise<void>;
+
 }
 
 /**

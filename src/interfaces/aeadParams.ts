@@ -3,6 +3,21 @@
  */
 export interface AeadParams {
 
+  /** The algorithm identifier */
+  alg: string;
+
+  /** The length in bytes of a key for the algorithm */
+  nK: number;
+
+  /** The length in bytes of a nonce for the algorithm */
+  nN: number;
+
+  /** The length in bytes of an authentication tag for the algorithm */
+  nT: number;
+
+  /** A secret used for the secret export interface */
+  exporterSecret: ArrayBuffer;
+
   /** A secret key */
   key?: CryptoKey;
 
@@ -11,7 +26,4 @@ export interface AeadParams {
 
   /** A sequence number */
   seq?: number;
-
-  /** A secret used for the secret export interface */
-  exporterSecret: ArrayBuffer;
 }
