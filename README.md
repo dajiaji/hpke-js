@@ -21,7 +21,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 - [Usage](#usage)
   - [Base mode](#base-mode)
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
-  - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-environment)
+  - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-encryption)
   - [PSK mode](#psk-mode)
   - [Auth mode](#auth-mode)
   - [AuthPSK mode](#authpsk-mode)
@@ -76,7 +76,7 @@ npm install hpke-js
 
 In the browser environment, load as follows:
 
-```
+```html
 <!-- use the latest stable version -->
 <script type="text/javascript" src="https://unpkg.com/hpke-js/dist/browser/hpke.min.js"></script>
 
