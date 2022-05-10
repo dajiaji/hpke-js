@@ -129,7 +129,7 @@ doHpke();
 
 Browser environment:
 
-```
+```html
 <html>
   <head></head>
   <body>
