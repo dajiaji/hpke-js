@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## Version 0.4.0
+
+Released 2022-05-10
+
+- [(#20) Add samples to README.](https://github.com/dajiaji/hpke-js/pull/20)
+- [(#19) Fix bug on browser environment.](https://github.com/dajiaji/hpke-js/pull/19)
+- [(#18) Change the default test environment from jsdom to node.](https://github.com/dajiaji/hpke-js/pull/18)
+- [(#16) Add support for bidirectional environment.](https://github.com/dajiaji/hpke-js/pull/16)
+
 ## Version 0.3.1
 
 Released 2022-05-08
