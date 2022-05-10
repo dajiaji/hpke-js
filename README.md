@@ -21,6 +21,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 - [Usage](#usage)
   - [Base mode](#base-mode)
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
+  - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-environment)
   - [PSK mode](#psk-mode)
   - [Auth mode](#auth-mode)
   - [AuthPSK mode](#authpsk-mode)
@@ -67,10 +68,20 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 
 ## Installation
 
-Install with npm:
+In the Node.js environment, install with npm:
 
 ```
 npm install hpke-js
+```
+
+In the browser environment, load as follows:
+
+```
+<!-- use the latest stable version -->
+<script type="text/javascript" src="https://unpkg.com/hpke-js/dist/browser/hpke.min.js"></script>
+
+<!-- use a specific version -->
+<script type="text/javascript" src="https://unpkg.com/hpke-js@0.4.0/dist/browser/hpke.min.js"></script>
 ```
 
 ## Usage
@@ -79,7 +90,7 @@ This section shows some typical usage examples.
 
 ### Base mode
 
-On Node.js:
+Node.js environment:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -116,9 +127,54 @@ async function doHpke() {
 doHpke();
 ```
 
+Browser environment:
+
+```
+<html>
+  <head></head>
+  <body>
+    <script type="text/javascript" src="https://unpkg.com/hpke-js/dist/browser/hpke.min.js"></script>
+    <script type="text/javascript">
+
+      async function doHpke() {
+
+        // the global name is 'hkpe'
+        const suite = new hpke.CipherSuite({
+          kem: hpke.Kem.DhkemP256HkdfSha256,
+          kdf: hpke.Kdf.HkdfSha256,
+          aead: hpke.Aead.Aes128Gcm
+        });
+      
+        const rkp = await suite.generateKeyPair();
+      
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey
+        });
+      
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp,
+          enc: sender.enc,
+        });
+      
+        // encrypt
+        const ct = await sender.seal(new TextEncoder().encode('hello world!'));
+      
+        // decrypt
+        const pt = await recipient.open(ct);
+
+        // hello world!
+        alert(new TextDecoder().decode(pt));
+      }
+      
+    </script>
+    <button type="button" onclick="doHpke()">do HPKE</button>
+  </body>
+</html>
+```
+
 ### Base mode with Single-Shot APIs
 
-On Node.js:
+Node.js environment:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -147,9 +203,61 @@ async function doHpke() {
 doHpke();
 ```
 
+### Base mode with bidirectional encryption
+
+Node.js environment:
+
+```js
+  const te = new TextEncoder();
+  const td = new TextDecoder();
+
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm,
+  });
+  const rkp = await suite.generateKeyPair();
+
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+  });
+
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+  });
+
+  // setup bidirectional encryption
+  await sender.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+  await recipient.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+
+  // encrypt
+  const ct = await sender.seal(te.encode('my-secret-message-s'));
+
+  // decrypt
+  const pt = await recipient.open(ct);
+
+  // assert
+  console.log("recipient decrypted: ", td.decode(pt));
+
+  // decripted: my-secret-message-s
+  // encrypt reversely
+  const rct = await recipient.seal(te.encode('my-secret-message-r'));
+
+  // decrypt reversely
+  const rpt = await sender.open(rct);
+
+  console.log("sender decrypted: ", td.decode(rpt));
+  // decripted: my-secret-message-r
+}
+
+doHpke();
+```
+
 ### PSK mode
 
-On Node.js:
+Node.js environment:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -196,7 +304,7 @@ doHpke();
 
 ### Auth mode
 
-On Node.js:
+Node.js environment:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -238,7 +346,7 @@ doHpke();
 
 ### AuthPSK mode
 
-On Node.js:
+Node.js environment:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
