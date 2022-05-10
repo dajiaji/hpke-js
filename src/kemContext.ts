@@ -130,7 +130,7 @@ export class KemContext extends KdfCommon {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    const pke = await this._crypto.importKey('raw', params.enc, this._algKeyGen, true, consts.KEM_USAGES);
+    const pke = await this._crypto.importKey('raw', params.enc, this._algKeyGen, true, []);
     const skr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.privateKey : params.recipientKey;
     const pkr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.publicKey : await this.derivePublicKey(params.recipientKey);
     const pkrm = await this._crypto.exportKey('raw', pkr);
