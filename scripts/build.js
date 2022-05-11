@@ -26,17 +26,32 @@ try {
   buildSync({
     ...opts,
     platform: 'node',
-    outfile: 'dist/umd/hpke.js',
+    outfile: 'dist/cjs/hpke.js',
     external,
   });
-  // browser (self contained)
+  // browser
+  buildSync({
+    ...opts,
+    platform: 'browser',
+    outfile: 'dist/hpke.js',
+    globalName: 'hpke',
+  });
+  // browser-min
+  buildSync({
+    ...opts,
+    platform: 'browser',
+    outfile: 'dist/hpke.min.js',
+    globalName: 'hpke',
+    minify: true,
+  });
+  // browser (for backward compat)
   buildSync({
     ...opts,
     platform: 'browser',
     outfile: 'dist/browser/hpke.js',
     globalName: 'hpke',
   });
-  // browser-min (self contained)
+  // browser-min (for backward compat)
   buildSync({
     ...opts,
     platform: 'browser',
