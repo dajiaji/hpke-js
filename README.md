@@ -32,12 +32,9 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 
 ### HPKE Modes
 
-| Modes   | Browser | Node.js | Deno |
-| ------- | ------- | ------- | ---- |
-| Base    | ✅      |  ✅     |      |
-| PSK     | ✅      |  ✅     |      |
-| Auth    | ✅      |  ✅     |      |
-| AuthPSK | ✅      |  ✅     |      |
+| Base | PSK | Auth | AuthPSK |
+| ---- | --- | ---- | ------- |
+| ✅   | ✅  | ✅   | ✅      |
 
 ### Key Encapsulation Machanisms (KEMs)
 
@@ -68,20 +65,30 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 
 ## Installation
 
-In the Node.js environment, install with npm:
+Using npm:
 
 ```
 npm install hpke-js
 ```
 
-In the browser environment, load as follows:
+Using unpkg CDN:
 
 ```html
 <!-- use the latest stable version -->
-<script type="text/javascript" src="https://unpkg.com/hpke-js/dist/browser/hpke.min.js"></script>
+<script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script type="text/javascript" src="https://unpkg.com/hpke-js@0.4.0/dist/browser/hpke.min.js"></script>
+<script src="https://unpkg.com/hpke-js@0.4.1/dist/hpke.min.js"></script>
+```
+
+Using jsDelivr CDN:
+
+```html
+<!-- use the latest stable version -->
+<script src="https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js"></script>
+
+<!-- use a specific version -->
+<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.4.1/dist/hpke.min.js"></script>
 ```
 
 ## Usage

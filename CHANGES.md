@@ -4,6 +4,12 @@
 
 ## Version 0.4.0
 
+Released 2022-05-12
+
+- [(#22) Refine dist structure.](https://github.com/dajiaji/hpke-js/pull/22)
+
+## Version 0.4.0
+
 Released 2022-05-10
 
 - [(#20) Add samples to README.](https://github.com/dajiaji/hpke-js/pull/20)
