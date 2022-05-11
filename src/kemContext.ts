@@ -21,7 +21,7 @@ export class KemContext extends KdfCommon {
   private _sk: Bignum;
   private _bitmask: number;
 
-  public constructor(crypto: SubtleCrypto, kem: Kem) {
+  public constructor(api: SubtleCrypto, kem: Kem) {
     const suiteId = new Uint8Array(5);
     suiteId.set(consts.SUITE_ID_HEADER_KEM, 0);
     suiteId.set(i2Osp(kem, 2), 3);
@@ -38,7 +38,7 @@ export class KemContext extends KdfCommon {
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
         break;
     }
-    super(crypto, suiteId, algHash);
+    super(api, suiteId, algHash);
 
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
@@ -75,7 +75,7 @@ export class KemContext extends KdfCommon {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      return await this._crypto.generateKey(this._algKeyGen, true, consts.KEM_USAGES);
+      return await this._api.generateKey(this._algKeyGen, true, consts.KEM_USAGES);
     } catch (e: unknown) {
       throw new errors.DeriveKeyPairError(e);
     }
@@ -97,8 +97,8 @@ export class KemContext extends KdfCommon {
 
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     const ke = params.nonEphemeralKeyPair === undefined ? await this.generateKeyPair() : params.nonEphemeralKeyPair;
-    const enc = await this._crypto.exportKey('raw', ke.publicKey);
-    const pkrm = await this._crypto.exportKey('raw', params.recipientPublicKey);
+    const enc = await this._api.exportKey('raw', ke.publicKey);
+    const pkrm = await this._api.exportKey('raw', params.recipientPublicKey);
 
     try {
       let dh: Uint8Array;
@@ -116,7 +116,7 @@ export class KemContext extends KdfCommon {
         kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
       } else {
         const pks = isCryptoKeyPair(params.senderKey) ? params.senderKey.publicKey : await this.derivePublicKey(params.senderKey);
-        const pksm = await this._crypto.exportKey('raw', pks);
+        const pksm = await this._api.exportKey('raw', pks);
         kemContext = concat3(new Uint8Array(enc), new Uint8Array(pkrm), new Uint8Array(pksm));
       }
       const sharedSecret = await this.generateSharedSecret(dh, kemContext);
@@ -130,10 +130,10 @@ export class KemContext extends KdfCommon {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    const pke = await this._crypto.importKey('raw', params.enc, this._algKeyGen, true, []);
+    const pke = await this._api.importKey('raw', params.enc, this._algKeyGen, true, []);
     const skr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.privateKey : params.recipientKey;
     const pkr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.publicKey : await this.derivePublicKey(params.recipientKey);
-    const pkrm = await this._crypto.exportKey('raw', pkr);
+    const pkrm = await this._api.exportKey('raw', pkr);
 
     try {
       let dh: Uint8Array;
@@ -149,7 +149,7 @@ export class KemContext extends KdfCommon {
       if (params.senderPublicKey === undefined) {
         kemContext = concat(new Uint8Array(params.enc), new Uint8Array(pkrm));
       } else {
-        const pksm = await this._crypto.exportKey('raw', params.senderPublicKey);
+        const pksm = await this._api.exportKey('raw', params.senderPublicKey);
         kemContext = new Uint8Array(params.enc.byteLength + pkrm.byteLength + pksm.byteLength);
         kemContext.set(new Uint8Array(params.enc), 0);
         kemContext.set(new Uint8Array(pkrm), params.enc.byteLength);
@@ -162,13 +162,13 @@ export class KemContext extends KdfCommon {
   }
 
   private async derivePublicKey(priv: CryptoKey): Promise<CryptoKey> {
-    const jwk = await this._crypto.exportKey('jwk', priv);
+    const jwk = await this._api.exportKey('jwk', priv);
     delete jwk['d'];
-    return await this._crypto.importKey('jwk', jwk, this._algKeyGen, true, ['deriveBits']);
+    return await this._api.importKey('jwk', jwk, this._algKeyGen, true, ['deriveBits']);
   }
 
   private async dh(sk: CryptoKey, pk: CryptoKey): Promise<Uint8Array> {
-    const bits = await this._crypto.deriveBits(
+    const bits = await this._api.deriveBits(
       {
         name: 'ECDH',
         public: pk,

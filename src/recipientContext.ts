@@ -16,7 +16,7 @@ export class RecipientContext extends EncryptionContext {
         iv: this.computeNonce(this._r),
         additionalData: aad,
       };
-      ct = await this._crypto.encrypt(alg, this._r.key, data);
+      ct = await this._api.encrypt(alg, this._r.key, data);
     } catch (e: unknown) {
       throw new errors.SealError(e);
     }
@@ -32,7 +32,7 @@ export class RecipientContext extends EncryptionContext {
         iv: this.computeNonce(this._f),
         additionalData: aad,
       };
-      pt = await this._crypto.decrypt(alg, this._f.key, data);
+      pt = await this._api.decrypt(alg, this._f.key, data);
     } catch (e: unknown) {
       throw new errors.OpenError(e);
     }

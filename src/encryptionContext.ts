@@ -23,8 +23,8 @@ export class EncryptionContext extends ExporterContext {
   /// Reverse key information.
   protected _r: KeyInfo;
 
-  public constructor(crypto: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
-    super(crypto, kdf, params.exporterSecret);
+  public constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
+    super(api, kdf, params.exporterSecret);
 
     if (params.key === undefined || params.baseNonce === undefined || params.seq === undefined) {
       throw new errors.ValidationError('Required parameters are missing');
@@ -64,7 +64,7 @@ export class EncryptionContext extends ExporterContext {
     try {
       this._r.baseNonce = new Uint8Array(await this.export(nonceSeed, this._nN));
       const key = await this.export(keySeed, this._nK);
-      this._r.key = await this._crypto.importKey('raw', key, { name: this._alg }, true, consts.AEAD_USAGES);
+      this._r.key = await this._api.importKey('raw', key, { name: this._alg }, true, consts.AEAD_USAGES);
       this._r.seq = 0;
     } catch (e: unknown) {
       this._r.baseNonce = consts.EMPTY;
