@@ -32,12 +32,9 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 
 ### HPKE Modes
 
-| Modes   | Browser | Node.js | Deno |
-| ------- | ------- | ------- | ---- |
-| Base    | ✅      |  ✅     |      |
-| PSK     | ✅      |  ✅     |      |
-| Auth    | ✅      |  ✅     |      |
-| AuthPSK | ✅      |  ✅     |      |
+| Base | PSK | Auth | AuthPSK |
+| ---- | --- | ---- | ------- |
+| ✅   | ✅  | ✅   | ✅      |
 
 ### Key Encapsulation Machanisms (KEMs)
 
