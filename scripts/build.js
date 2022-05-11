@@ -6,7 +6,7 @@ const { join } = require('path');
 const { dependencies, peerDependencies } = require('../package.json');
 
 const opts = {
-  entryPoints: ['src/index.ts'],
+  entryPoints: ['src/mod.ts'],
   absWorkingDir: join(__dirname, '..'),
   bundle: true,
   sourcemap: true,
