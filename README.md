@@ -140,7 +140,7 @@ Browser environment:
 <html>
   <head></head>
   <body>
-    <script type="text/javascript" src="https://unpkg.com/hpke-js/dist/browser/hpke.min.js"></script>
+    <script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
     <script type="text/javascript">
 
       async function doHpke() {
