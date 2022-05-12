@@ -1,8 +1,11 @@
+import type { AeadKey } from './interfaces/aeadKey';
 import type { AeadParams } from './interfaces/aeadParams';
 import type { KeyInfo } from './interfaces/keyInfo';
 import type { KdfContext } from './kdfContext';
 
+import { AesGcmKey } from './aeads/AesGcmKey';
 import { ExporterContext } from './exporterContext';
+import { Aead } from './identifiers';
 import { i2Osp, xor } from './utils';
 
 import * as consts from './consts';
@@ -10,8 +13,8 @@ import * as errors from './errors';
 
 export class EncryptionContext extends ExporterContext {
 
-  /// AEAD algorithm identifier.
-  protected _alg: string;
+  /// AEAD id.
+  protected _aead: Aead;
   /// The length in bytes of a key for the algorithm.
   protected _nK: number;
   /// The length in bytes of a nonce for the algorithm.
@@ -29,17 +32,20 @@ export class EncryptionContext extends ExporterContext {
     if (params.key === undefined || params.baseNonce === undefined || params.seq === undefined) {
       throw new errors.ValidationError('Required parameters are missing');
     }
-    this._alg = params.alg;
+    this._aead = params.aead;
     this._nK = params.nK;
     this._nN = params.nN;
     this._nT = params.nT;
+
+    const key = createAeadKey(this._aead, params.key, this._api);
+
     this._f = {
-      key: params.key,
+      key: key,
       baseNonce: params.baseNonce,
       seq: params.seq,
     };
     this._r = {
-      key: params.key,
+      key: key,
       baseNonce: consts.EMPTY,
       seq: 0,
     };
@@ -64,11 +70,23 @@ export class EncryptionContext extends ExporterContext {
     try {
       this._r.baseNonce = new Uint8Array(await this.export(nonceSeed, this._nN));
       const key = await this.export(keySeed, this._nK);
-      this._r.key = await this._api.importKey('raw', key, { name: this._alg }, true, consts.AEAD_USAGES);
+      this._r.key = await createAeadKey(this._aead, key, this._api);
       this._r.seq = 0;
     } catch (e: unknown) {
       this._r.baseNonce = consts.EMPTY;
       throw e;
     }
+  }
+}
+
+function createAeadKey(aead: Aead, key: ArrayBuffer, api: SubtleCrypto): AeadKey {
+  let ret: AeadKey;
+  switch (aead) {
+    case Aead.Aes128Gcm:
+      return new AesGcmKey(key, api);
+    case Aead.Aes256Gcm:
+      return new AesGcmKey(key, api);
+    default:
+      throw new Error('invalid or unsupported AEAD id');
   }
 }
