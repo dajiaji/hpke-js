@@ -1,7 +1,8 @@
+import type { KemPrimitives } from './interfaces/kemPrimitives';
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 
-import { Bignum } from './bignum';
+import { Ec } from './kem_primitives/ec';
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
 import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils';
@@ -11,15 +12,8 @@ import * as errors from './errors';
 
 export class KemContext extends KdfCommon {
 
-  private _algKeyGen: EcKeyGenParams;
+  private _prim: KemPrimitives;
   private _nSecret: number;
-  private _nPk: number;
-  private _nSk: number;
-  private _nDh: number;
-  // EC-specific attributes.
-  private _order: Uint8Array;
-  private _sk: Bignum;
-  private _bitmask: number;
 
   public constructor(api: SubtleCrypto, kem: Kem) {
     const suiteId = new Uint8Array(5);
@@ -42,72 +36,42 @@ export class KemContext extends KdfCommon {
 
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
-        this._algKeyGen = { name: 'ECDH', namedCurve: 'P-256' };
+        this._prim = new Ec(kem, this, this._api);
         this._nSecret = 32;
-        this._nPk = 65;
-        this._nSk = 32;
-        this._nDh = 32;
-        this._order = consts.ORDER_P_256;
-        this._bitmask = 0xFF;
         break;
       case Kem.DhkemP384HkdfSha384:
-        this._algKeyGen = { name: 'ECDH', namedCurve: 'P-384' };
+        this._prim = new Ec(kem, this, this._api);
         this._nSecret = 48;
-        this._nPk = 97;
-        this._nSk = 48;
-        this._nDh = 48;
-        this._order = consts.ORDER_P_384;
-        this._bitmask = 0xFF;
         break;
       case Kem.DhkemP521HkdfSha512:
-        this._algKeyGen = { name: 'ECDH', namedCurve: 'P-521' };
+        this._prim = new Ec(kem, this, this._api);
         this._nSecret = 64;
-        this._nPk = 133;
-        this._nSk = 66;
-        this._nDh = 66;
-        this._order = consts.ORDER_P_521;
-        this._bitmask = 0x01;
         break;
     }
-    this._sk = new Bignum(this._nSk);
     return;
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    try {
-      return await this._api.generateKey(this._algKeyGen, true, consts.KEM_USAGES);
-    } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
-    }
+    return await this._prim.generateKeyPair();
   }
 
   public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
-    const dkpPrk = await this.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
-    this._sk.reset();
-    for (let counter = 0; this._sk.isZero() || !this._sk.lowerThan(this._order); counter++) {
-      if (counter > 255) {
-        throw new errors.DeriveKeyPairError('faild to derive a key pair.');
-      }
-      const bytes = new Uint8Array(await this.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk));
-      bytes[0] = bytes[0] & this._bitmask;
-      this._sk.set(bytes);
-    }
-    return this._sk.val();
+    return await this._prim.deriveKey(ikm);
   }
 
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     const ke = params.nonEphemeralKeyPair === undefined ? await this.generateKeyPair() : params.nonEphemeralKeyPair;
-    const enc = await this._api.exportKey('raw', ke.publicKey);
-    const pkrm = await this._api.exportKey('raw', params.recipientPublicKey);
+    const enc = await this._prim.serializePublicKey(ke.publicKey);
+    const pkrm = await this._prim.serializePublicKey(params.recipientPublicKey);
 
     try {
       let dh: Uint8Array;
       if (params.senderKey === undefined) {
-        dh = await this.dh(ke.privateKey, params.recipientPublicKey);
+        dh = new Uint8Array(await this._prim.dh(ke.privateKey, params.recipientPublicKey));
       } else {
         const sks = isCryptoKeyPair(params.senderKey) ? params.senderKey.privateKey : params.senderKey;
-        const dh1 = await this.dh(ke.privateKey, params.recipientPublicKey);
-        const dh2 = await this.dh(sks, params.recipientPublicKey);
+        const dh1 = new Uint8Array(await this._prim.dh(ke.privateKey, params.recipientPublicKey));
+        const dh2 = new Uint8Array(await this._prim.dh(sks, params.recipientPublicKey));
         dh = concat(dh1, dh2);
       }
 
@@ -115,8 +79,9 @@ export class KemContext extends KdfCommon {
       if (params.senderKey === undefined) {
         kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
       } else {
-        const pks = isCryptoKeyPair(params.senderKey) ? params.senderKey.publicKey : await this.derivePublicKey(params.senderKey);
-        const pksm = await this._api.exportKey('raw', pks);
+        const pks = isCryptoKeyPair(params.senderKey)
+          ? params.senderKey.publicKey : await this._prim.derivePublicKey(params.senderKey);
+        const pksm = await this._prim.serializePublicKey(pks);
         kemContext = concat3(new Uint8Array(enc), new Uint8Array(pkrm), new Uint8Array(pksm));
       }
       const sharedSecret = await this.generateSharedSecret(dh, kemContext);
@@ -130,18 +95,20 @@ export class KemContext extends KdfCommon {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    const pke = await this._api.importKey('raw', params.enc, this._algKeyGen, true, []);
-    const skr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.privateKey : params.recipientKey;
-    const pkr = isCryptoKeyPair(params.recipientKey) ? params.recipientKey.publicKey : await this.derivePublicKey(params.recipientKey);
-    const pkrm = await this._api.exportKey('raw', pkr);
+    const pke = await this._prim.deserializePublicKey(params.enc);
+    const skr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.privateKey : params.recipientKey;
+    const pkr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.publicKey : await this._prim.derivePublicKey(params.recipientKey);
+    const pkrm = await this._prim.serializePublicKey(pkr);
 
     try {
       let dh: Uint8Array;
       if (params.senderPublicKey === undefined) {
-        dh = await this.dh(skr, pke);
+        dh = new Uint8Array(await this._prim.dh(skr, pke));
       } else {
-        const dh1 = await this.dh(skr, pke);
-        const dh2 = await this.dh(skr, params.senderPublicKey);
+        const dh1 = new Uint8Array(await this._prim.dh(skr, pke));
+        const dh2 = new Uint8Array(await this._prim.dh(skr, params.senderPublicKey));
         dh = concat(dh1, dh2);
       }
 
@@ -149,7 +116,7 @@ export class KemContext extends KdfCommon {
       if (params.senderPublicKey === undefined) {
         kemContext = concat(new Uint8Array(params.enc), new Uint8Array(pkrm));
       } else {
-        const pksm = await this._api.exportKey('raw', params.senderPublicKey);
+        const pksm = await this._prim.serializePublicKey(params.senderPublicKey);
         kemContext = new Uint8Array(params.enc.byteLength + pkrm.byteLength + pksm.byteLength);
         kemContext.set(new Uint8Array(params.enc), 0);
         kemContext.set(new Uint8Array(pkrm), params.enc.byteLength);
@@ -159,24 +126,6 @@ export class KemContext extends KdfCommon {
     } catch (e: unknown) {
       throw new errors.DecapError(e);
     }
-  }
-
-  private async derivePublicKey(priv: CryptoKey): Promise<CryptoKey> {
-    const jwk = await this._api.exportKey('jwk', priv);
-    delete jwk['d'];
-    return await this._api.importKey('jwk', jwk, this._algKeyGen, true, ['deriveBits']);
-  }
-
-  private async dh(sk: CryptoKey, pk: CryptoKey): Promise<Uint8Array> {
-    const bits = await this._api.deriveBits(
-      {
-        name: 'ECDH',
-        public: pk,
-      },
-      sk,
-      this._nDh * 8,
-    );
-    return new Uint8Array(bits);
   }
 
   private async generateSharedSecret(dh: Uint8Array, kemContext: Uint8Array): Promise<ArrayBuffer> {
