@@ -3,8 +3,8 @@ import type { KdfCommon } from '../kdfCommon';
 
 import { Kem } from '../identifiers';
 
-import { Bignum } from '../bignum';
-import { i2Osp } from '../utils';
+import { Bignum } from '../utils/bignum';
+import { i2Osp } from '../utils/misc';
 
 import * as consts from '../consts';
 import * as errors from '../errors';

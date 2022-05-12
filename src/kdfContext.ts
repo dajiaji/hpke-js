@@ -4,7 +4,7 @@ import type { KeyScheduleParams } from './interfaces/keyScheduleParams';
 
 import { Aead, Kdf, Mode } from './identifiers';
 import { KdfCommon } from './kdfCommon';
-import { i2Osp } from './utils';
+import { i2Osp } from './utils/misc';
 
 import * as consts from './consts';
 

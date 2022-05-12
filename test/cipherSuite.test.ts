@@ -1,6 +1,6 @@
 import { TextEncoder, TextDecoder } from 'util';
 
-import { isBrowser } from '../src/utils';
+import { isBrowser } from '../src/utils/misc';
 import { Kem, Kdf, Aead } from '../src/identifiers';
 import { CipherSuite } from '../src/cipherSuite';
 
