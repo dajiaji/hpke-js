@@ -1,4 +1,4 @@
-import type { AeadKey } from "../interfaces/aeadKey";
+import type { AeadKey } from '../interfaces/aeadKey';
 
 import * as consts from '../consts';
 
@@ -21,7 +21,8 @@ export class AesGcmKey implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    return await this._api.encrypt(alg, this._key, data);
+    const ct: ArrayBuffer = await this._api.encrypt(alg, this._key, data);
+    return ct;
   }
 
   public async decrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
@@ -33,7 +34,8 @@ export class AesGcmKey implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    return await this._api.decrypt(alg, this._key, data);
+    const pt: ArrayBuffer = await this._api.decrypt(alg, this._key, data);
+    return pt;
   }
 
   private async importKey(key: ArrayBuffer): Promise<CryptoKey> {

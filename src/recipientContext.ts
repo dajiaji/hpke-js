@@ -7,7 +7,7 @@ export class RecipientContext extends EncryptionContext {
 
   public async seal(data: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
     if (this._r.baseNonce.length === 0) {
-      throw new errors.SealError("Bidirectional encryption is not setup");
+      throw new errors.SealError('Bidirectional encryption is not setup');
     }
     let ct: ArrayBuffer;
     try {

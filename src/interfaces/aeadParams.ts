@@ -1,4 +1,4 @@
-import type { Aead } from "../identifiers"
+import type { Aead } from '../identifiers';
 
 /**
  * The AEAD parameters for building a encryption context.
