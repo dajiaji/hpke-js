@@ -33,9 +33,9 @@ export class Bignum {
     return true;
   }
 
-  public lowerThan(v: Uint8Array): boolean {
+  public lessThan(v: Uint8Array): boolean {
     if (v.length !== this._num.length) {
-      throw new Error('Bignum.lowerThan: invalid argument');
+      throw new Error('Bignum.lessThan: invalid argument');
     }
     for (let i = 0; i < this._num.length; i++) {
       if (this._num[i] < v[i]) {
