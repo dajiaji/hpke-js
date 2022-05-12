@@ -1,5 +1,7 @@
+import type { AeadKey } from './aeadKey';
+
 export interface KeyInfo {
-  key: CryptoKey;
+  key: AeadKey;
   baseNonce: Uint8Array;
   seq: number;
 }

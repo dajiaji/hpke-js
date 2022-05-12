@@ -8,11 +8,11 @@ export class KdfCommon extends WebCrypto {
   protected readonly algHash: HmacKeyGenParams;
   protected readonly _nH: number;
 
-  public constructor(crypto: SubtleCrypto, suiteId: Uint8Array, algHash: HmacKeyGenParams) {
+  public constructor(api: SubtleCrypto, suiteId: Uint8Array, algHash: HmacKeyGenParams) {
     if (algHash.length === undefined) {
       throw new Error('Unknown hash size');
     }
-    super(crypto);
+    super(api);
     this.suiteId = suiteId;
     this.algHash = algHash;
     this._nH = algHash.length / 8;
@@ -41,12 +41,12 @@ export class KdfCommon extends WebCrypto {
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this._nH);
     }
-    const key = await this._crypto.importKey('raw', salt, this.algHash, false, ['sign']);
-    return await this._crypto.sign('HMAC', key, ikm);
+    const key = await this._api.importKey('raw', salt, this.algHash, false, ['sign']);
+    return await this._api.sign('HMAC', key, ikm);
   }
 
   protected async expand(prk: ArrayBuffer, info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
-    const key = await this._crypto.importKey('raw', prk, this.algHash, false, ['sign']);
+    const key = await this._api.importKey('raw', prk, this.algHash, false, ['sign']);
 
     const okm = new ArrayBuffer(len);
     const p = new Uint8Array(okm);
@@ -64,7 +64,7 @@ export class KdfCommon extends WebCrypto {
       tmp.set(prev, 0);
       tmp.set(mid, prev.length);
       tmp.set(tail, prev.length + mid.length);
-      prev = new Uint8Array(await this._crypto.sign('HMAC', key, tmp.slice(0, prev.length + mid.length + 1)));
+      prev = new Uint8Array(await this._api.sign('HMAC', key, tmp.slice(0, prev.length + mid.length + 1)));
       if (p.length - cur >= prev.length) {
         p.set(prev, cur);
         cur += prev.length;
@@ -77,8 +77,8 @@ export class KdfCommon extends WebCrypto {
   }
 
   protected async extractAndExpand(salt: ArrayBuffer, ikm: ArrayBuffer, info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
-    const baseKey = await this._crypto.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
-    return await this._crypto.deriveBits(
+    const baseKey = await this._api.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+    return await this._api.deriveBits(
       {
         name: 'HKDF',
         hash: this.algHash.hash,

@@ -101,15 +101,15 @@ export class ConformanceTester extends WebCrypto {
   }
 
   private async bytesToCryptoKeyPair(skm: Uint8Array, pkm: Uint8Array, alg: EcKeyGenParams): Promise<CryptoKeyPair> {
-    const pk = await this._crypto.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
-    const jwk = await this._crypto.exportKey('jwk', pk);
+    const pk = await this._api.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
+    const jwk = await this._api.exportKey('jwk', pk);
     jwk['d'] = bytesToBase64Url(skm);
-    const sk = await this._crypto.importKey('jwk', jwk, alg, true, ['deriveKey', 'deriveBits']);
+    const sk = await this._api.importKey('jwk', jwk, alg, true, ['deriveKey', 'deriveBits']);
     return { privateKey: sk, publicKey: pk };
   }
 }
 
 export async function createConformanceTester(): Promise<ConformanceTester> {
-  const crypto = await loadSubtleCrypto();
-  return new ConformanceTester(crypto);
+  const api = await loadSubtleCrypto();
+  return new ConformanceTester(api);
 }

@@ -1,10 +1,12 @@
+import type { Aead } from "../identifiers"
+
 /**
  * The AEAD parameters for building a encryption context.
  */
 export interface AeadParams {
 
-  /** The algorithm identifier */
-  alg: string;
+  /** The Aead indentifier */
+  aead: Aead;
 
   /** The length in bytes of a key for the algorithm */
   nK: number;
@@ -19,7 +21,7 @@ export interface AeadParams {
   exporterSecret: ArrayBuffer;
 
   /** A secret key */
-  key?: CryptoKey;
+  key?: ArrayBuffer;
 
   /** A base nonce */
   baseNonce?: Uint8Array;

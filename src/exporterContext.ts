@@ -12,8 +12,8 @@ export class ExporterContext extends WebCrypto implements EncryptionContextInter
   protected readonly exporterSecret: ArrayBuffer;
   private _kdf: KdfContext;
 
-  public constructor(crypto: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
-    super(crypto);
+  public constructor(api: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
+    super(api);
     this._kdf = kdf;
     this.exporterSecret = exporterSecret;
     return;
@@ -46,8 +46,8 @@ export class SenderExporterContext extends ExporterContext implements Encapsulat
 
   public readonly enc: ArrayBuffer;
 
-  public constructor(crypto: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer, enc: ArrayBuffer) {
-    super(crypto, kdf, exporterSecret);
+  public constructor(api: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer, enc: ArrayBuffer) {
+    super(api, kdf, exporterSecret);
     this.enc = enc;
     return;
   }

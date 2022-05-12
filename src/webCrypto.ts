@@ -3,9 +3,9 @@ import { isBrowser } from './utils';
 import * as errors from './errors';
 
 export class WebCrypto {
-  protected _crypto: SubtleCrypto;
-  public constructor(crypto: SubtleCrypto) {
-    this._crypto = crypto;
+  protected _api: SubtleCrypto;
+  public constructor(api: SubtleCrypto) {
+    this._api = api;
   }
 }
 

@@ -10,12 +10,12 @@ import * as consts from './consts';
 
 export class KdfContext extends KdfCommon {
 
+  private _aead: Aead;
   private _nK: number;
   private _nN: number;
   private _nT: number;
-  private _algAead: string;
 
-  public constructor(crypto: SubtleCrypto, params: CipherSuiteParams) {
+  public constructor(api: SubtleCrypto, params: CipherSuiteParams) {
     const suiteId = new Uint8Array(10);
     suiteId.set(consts.SUITE_ID_HEADER_HPKE, 0);
     suiteId.set(i2Osp(params.kem, 2), 4);
@@ -34,26 +34,24 @@ export class KdfContext extends KdfCommon {
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
         break;
     }
-    super(crypto, suiteId, algHash);
+    super(api, suiteId, algHash);
 
-    switch (params.aead) {
+    this._aead = params.aead;
+    switch (this._aead) {
       case Aead.Aes128Gcm:
         this._nK = 16;
         this._nN = 12;
         this._nT = 16;
-        this._algAead = 'AES-GCM';
         break;
       case Aead.Aes256Gcm:
         this._nK = 32;
         this._nN = 12;
         this._nT = 16;
-        this._algAead = 'AES-GCM';
         break;
       case Aead.ExportOnly:
         this._nK = 0;
         this._nN = 0;
         this._nT = 0;
-        this._algAead = '';
         break;
     }
     return;
@@ -98,9 +96,9 @@ export class KdfContext extends KdfCommon {
     const exporterSecretInfo = this.buildLabeledInfo(consts.LABEL_EXP, keyScheduleContext, this._nH);
     const exporterSecret = await this.extractAndExpand(sharedSecret, ikm, exporterSecretInfo, this._nH);
 
-    if (this._algAead === '') {
+    if (this._aead === Aead.ExportOnly) {
       return {
-        alg: this._algAead,
+        aead: this._aead,
         nK: this._nK,
         nN: this._nN,
         nT: this._nT,
@@ -115,12 +113,12 @@ export class KdfContext extends KdfCommon {
     const baseNonce = await this.extractAndExpand(sharedSecret, ikm, baseNonceInfo, this._nN);
 
     return {
-      alg: this._algAead,
+      aead: this._aead,
       nK: this._nK,
       nN: this._nN,
       nT: this._nT,
       exporterSecret: exporterSecret,
-      key: await this._crypto.importKey('raw', key, { name: this._algAead }, true, consts.AEAD_USAGES),
+      key: key,
       baseNonce: new Uint8Array(baseNonce),
       seq: 0,
     };

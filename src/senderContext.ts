@@ -11,8 +11,8 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
 
   public readonly enc: ArrayBuffer;
 
-  public constructor(crypto: SubtleCrypto, kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
-    super(crypto, kdf, params);
+  public constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
+    super(api, kdf, params);
     this.enc = enc;
     return;
   }
@@ -20,12 +20,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
   public async seal(data: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
     let ct: ArrayBuffer;
     try {
-      const alg = {
-        name: this._alg,
-        iv: this.computeNonce(this._f),
-        additionalData: aad,
-      };
-      ct = await this._crypto.encrypt(alg, this._f.key, data);
+      ct = await this._f.key.encrypt(this.computeNonce(this._f), data, aad);
     } catch (e: unknown) {
       throw new errors.SealError(e);
     }
@@ -39,12 +34,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
     }
     let pt: ArrayBuffer;
     try {
-      const alg = {
-        name: this._alg,
-        iv: this.computeNonce(this._r),
-        additionalData: aad,
-      };
-      pt = await this._crypto.decrypt(alg, this._r.key, data);
+      pt = await this._r.key.decrypt(this.computeNonce(this._r), data, aad);
     } catch (e: unknown) {
       throw new errors.OpenError(e);
     }
