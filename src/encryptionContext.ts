@@ -70,7 +70,7 @@ export class EncryptionContext extends ExporterContext {
     try {
       this._r.baseNonce = new Uint8Array(await this.export(nonceSeed, this._nN));
       const key = await this.export(keySeed, this._nK);
-      this._r.key = await createAeadKey(this._aead, key, this._api);
+      this._r.key = createAeadKey(this._aead, key, this._api);
       this._r.seq = 0;
     } catch (e: unknown) {
       this._r.baseNonce = consts.EMPTY;
