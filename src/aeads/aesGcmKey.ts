@@ -4,17 +4,18 @@ import * as consts from '../consts';
 
 export class AesGcmKey implements AeadKey {
 
-  private _key: CryptoKey | ArrayBuffer;
+  private _rawKey: ArrayBuffer;
+  private _key: CryptoKey | undefined = undefined;
   private _api: SubtleCrypto;
 
   public constructor(key: ArrayBuffer, api: SubtleCrypto) {
-    this._key = key;
+    this._rawKey = key;
     this._api = api;
   }
 
   public async encrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
-    if (this._key instanceof ArrayBuffer) {
-      this._key = await this.importKey(this._key);
+    if (this._key === undefined) {
+      this._key = await this.importKey(this._rawKey);
     }
     const alg = {
       name: 'AES-GCM',
@@ -26,8 +27,8 @@ export class AesGcmKey implements AeadKey {
   }
 
   public async decrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
-    if (this._key instanceof ArrayBuffer) {
-      this._key = await this.importKey(this._key);
+    if (this._key === undefined) {
+      this._key = await this.importKey(this._rawKey);
     }
     const alg = {
       name: 'AES-GCM',
