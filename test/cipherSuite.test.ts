@@ -4,6 +4,8 @@ import { isBrowser } from '../src/utils/misc';
 import { Kem, Kdf, Aead } from '../src/identifiers';
 import { CipherSuite } from '../src/cipherSuite';
 
+import * as errors from '../src/errors';
+
 describe('CipherSuite', () => {
 
   // for jsdom setting.
@@ -100,6 +102,75 @@ describe('CipherSuite', () => {
 
       // assert
       expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+      await expect(recipient.seal(pt)).rejects.toThrow(errors.SealError);
+      await expect(sender.open(ct)).rejects.toThrow(errors.OpenError);
+    });
+  });
+
+  describe('A README example of Base mode (Kem.DhkemP384HkdfSha384/Kdf.HkdfSha384)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
+  describe('A README example of Base mode (ExportOnly)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      const te = new TextEncoder();
+
+      // export
+      const pskS = sender.export(te.encode('jugemujugemu'), 32);
+      const pskR = recipient.export(te.encode('jugemujugemu'), 32);
+      expect(pskR).toEqual(pskS);
+
+      // other functions are disabled.
+      await expect(sender.seal(te.encode('my-secret-message'))).rejects.toThrow(errors.NotSupportedError);
+      await expect(sender.open(te.encode('xxxxxxxxxxxxxxxxx'))).rejects.toThrow(errors.NotSupportedError);
+      await expect(sender.setupBidirectional(te.encode('a'), te.encode('b'))).rejects.toThrow(errors.NotSupportedError);
     });
   });
 
