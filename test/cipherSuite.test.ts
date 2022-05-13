@@ -102,6 +102,8 @@ describe('CipherSuite', () => {
 
       // assert
       expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+      await expect(recipient.seal(pt)).rejects.toThrow(errors.SealError);
+      await expect(sender.open(ct)).rejects.toThrow(errors.OpenError);
     });
   });
 
@@ -166,9 +168,9 @@ describe('CipherSuite', () => {
       expect(pskR).toEqual(pskS);
 
       // other functions are disabled.
-      expect(async () => { await sender.seal(te.encode('my-secret-message')); }).rejects.toThrow(errors.NotSupportedError);
-      expect(async () => { await sender.open(te.encode('xxxxxxxxxxxxxxxxx')); }).rejects.toThrow(errors.NotSupportedError);
-      expect(async () => { await sender.setupBidirectional(te.encode('a'), te.encode('b')); }).rejects.toThrow(errors.NotSupportedError);
+      await expect(sender.seal(te.encode('my-secret-message'))).rejects.toThrow(errors.NotSupportedError);
+      await expect(sender.open(te.encode('xxxxxxxxxxxxxxxxx'))).rejects.toThrow(errors.NotSupportedError);
+      await expect(sender.setupBidirectional(te.encode('a'), te.encode('b'))).rejects.toThrow(errors.NotSupportedError);
     });
   });
 

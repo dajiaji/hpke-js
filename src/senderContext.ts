@@ -30,7 +30,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
 
   public async open(data: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
     if (this._r.baseNonce.length === 0) {
-      throw new errors.SealError('Bidirectional encryption is not setup');
+      throw new errors.OpenError('Bidirectional encryption is not setup');
     }
     let pt: ArrayBuffer;
     try {

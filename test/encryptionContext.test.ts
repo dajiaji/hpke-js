@@ -16,7 +16,7 @@ describe('CipherSuite', () => {
     }
   });
 
-  describe('open by invalid recipient', () => {
+  describe('open by another recipient', () => {
     it('should throw OpenError', async () => {
 
       // setup
@@ -56,10 +56,10 @@ describe('CipherSuite', () => {
       await recipient2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
 
       const ct1 = await sender1.seal(new TextEncoder().encode('my-secret-message'));
-      expect(async () => { await recipient2.open(ct1); }).rejects.toThrow(errors.OpenError);
+      await expect(recipient2.open(ct1)).rejects.toThrow(errors.OpenError);
 
       const ct2 = await recipient1.seal(new TextEncoder().encode('my-secret-message'));
-      expect(async () => { await sender2.open(ct2); }).rejects.toThrow(errors.OpenError);
+      await expect(sender2.open(ct2)).rejects.toThrow(errors.OpenError);
     });
   });
 
@@ -80,7 +80,28 @@ describe('CipherSuite', () => {
       });
 
       const te = new TextEncoder();
-      expect(async () => { await sender.export(te.encode('info'), -1); }).rejects.toThrow(errors.ExportError);
+      await expect(sender.export(te.encode('info'), -1)).rejects.toThrow(errors.ExportError);
+    });
+  });
+
+  describe('export with invalid argument', () => {
+    it('should throw ExportError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const te = new TextEncoder();
+      await expect(sender.export(te.encode('info'), -1)).rejects.toThrow(errors.ExportError);
     });
   });
 
