@@ -3,8 +3,8 @@ import type { KdfCommon } from '../kdfCommon';
 
 import { Kem } from '../identifiers';
 
-import { Bignum } from '../bignum';
-import { i2Osp } from '../utils';
+import { Bignum } from '../utils/bignum';
+import { i2Osp } from '../utils/misc';
 
 import * as consts from '../consts';
 import * as errors from '../errors';
@@ -91,7 +91,7 @@ export class Ec implements KemPrimitives {
   public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
     const dkpPrk = await this._hkdf.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
     this._sk.reset();
-    for (let counter = 0; this._sk.isZero() || !this._sk.lowerThan(this._order); counter++) {
+    for (let counter = 0; this._sk.isZero() || !this._sk.lessThan(this._order); counter++) {
       if (counter > 255) {
         throw new errors.DeriveKeyPairError('faild to derive a key pair.');
       }

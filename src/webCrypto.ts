@@ -1,4 +1,4 @@
-import { isBrowser } from './utils';
+import { isBrowser } from './utils/misc';
 
 import * as errors from './errors';
 

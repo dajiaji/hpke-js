@@ -6,7 +6,7 @@ import type { KdfContext } from './kdfContext';
 import { AesGcmKey } from './aeads/AesGcmKey';
 import { ExporterContext } from './exporterContext';
 import { Aead } from './identifiers';
-import { i2Osp, xor } from './utils';
+import { i2Osp, xor } from './utils/misc';
 
 import * as consts from './consts';
 import * as errors from './errors';
