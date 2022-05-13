@@ -57,20 +57,20 @@ export class KdfContext extends KdfCommon {
     return;
   }
 
-  private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
-    const gotPsk = (params.psk !== undefined);
-    const gotPskId = (params.psk !== undefined && params.psk.id.byteLength > 0);
-    if (gotPsk !== gotPskId) {
-      throw new Error('Inconsistent PSK inputs');
-    }
-    if (gotPsk && (mode === Mode.Base || mode === Mode.Auth)) {
-      throw new Error('PSK input provided when not needed');
-    }
-    if (!gotPsk && (mode === Mode.Psk || mode === Mode.AuthPsk)) {
-      throw new Error('Missing required PSK input');
-    }
-    return;
-  }
+  // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
+  //   const gotPsk = (params.psk !== undefined);
+  //   const gotPskId = (params.psk !== undefined && params.psk.id.byteLength > 0);
+  //   if (gotPsk !== gotPskId) {
+  //     throw new Error('Inconsistent PSK inputs');
+  //   }
+  //   if (gotPsk && (mode === Mode.Base || mode === Mode.Auth)) {
+  //     throw new Error('PSK input provided when not needed');
+  //   }
+  //   if (!gotPsk && (mode === Mode.Psk || mode === Mode.AuthPsk)) {
+  //     throw new Error('Missing required PSK input');
+  //   }
+  //   return;
+  // }
 
   public async keySchedule(mode: Mode, sharedSecret: ArrayBuffer, params: KeyScheduleParams): Promise<AeadParams> {
 
