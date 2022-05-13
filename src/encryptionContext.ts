@@ -3,7 +3,7 @@ import type { AeadParams } from './interfaces/aeadParams';
 import type { KeyInfo } from './interfaces/keyInfo';
 import type { KdfContext } from './kdfContext';
 
-import { AesGcmKey } from './aeads/AesGcmKey';
+import { AesGcmKey } from './aeads/aesGcmKey';
 import { ExporterContext } from './exporterContext';
 import { Aead } from './identifiers';
 import { i2Osp, xor } from './utils/misc';
@@ -21,9 +21,9 @@ export class EncryptionContext extends ExporterContext {
   protected _nN: number;
   /// The length in bytes of an authentication tag for the algorithm.
   protected _nT: number;
-  /// Forward key information.
+  /// Forward (sender to recipient) encryption key information.
   protected _f: KeyInfo;
-  /// Reverse key information.
+  /// Reverse (recipient to sender) encryption key information.
   protected _r: KeyInfo;
 
   public constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
