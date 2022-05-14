@@ -26,11 +26,11 @@ export class EncryptionContext extends ExporterContext {
   /// Reverse (recipient to sender) encryption key information.
   protected _r: KeyInfo;
 
-  public constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
+  constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
     super(api, kdf, params.exporterSecret);
 
     if (params.key === undefined || params.baseNonce === undefined || params.seq === undefined) {
-      throw new errors.ValidationError('Required parameters are missing');
+      throw new Error('Required parameters are missing');
     }
     this._aead = params.aead;
     this._nK = params.nK;
@@ -59,7 +59,7 @@ export class EncryptionContext extends ExporterContext {
 
   protected incrementSeq(k: KeyInfo) {
     // if (this.seq >= (1 << (8 * this.baseNonce.byteLength)) - 1) {
-    if (k.seq >= Number.MAX_SAFE_INTEGER) {
+    if (k.seq > Number.MAX_SAFE_INTEGER) {
       throw new errors.MessageLimitReachedError('Message limit reached');
     }
     k.seq += 1;
@@ -80,13 +80,12 @@ export class EncryptionContext extends ExporterContext {
 }
 
 function createAeadKey(aead: Aead, key: ArrayBuffer, api: SubtleCrypto): AeadKey {
-  let ret: AeadKey;
   switch (aead) {
     case Aead.Aes128Gcm:
       return new AesGcmKey(key, api);
     case Aead.Aes256Gcm:
       return new AesGcmKey(key, api);
     default:
-      throw new Error('invalid or unsupported AEAD id');
+      throw new Error('Invalid or unsupported AEAD id');
   }
 }
