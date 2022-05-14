@@ -2,7 +2,7 @@ import type { KemPrimitives } from './interfaces/kemPrimitives';
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 
-import { Ec } from './kem_primitives/ec';
+import { Ec } from './kemPrimitives/ec';
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
 import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils/misc';
