@@ -15,7 +15,7 @@ export class KemContext extends KdfCommon {
   private _prim: KemPrimitives;
   private _nSecret: number;
 
-  public constructor(api: SubtleCrypto, kem: Kem) {
+  constructor(api: SubtleCrypto, kem: Kem) {
     const suiteId = new Uint8Array(5);
     suiteId.set(consts.SUITE_ID_HEADER_KEM, 0);
     suiteId.set(i2Osp(kem, 2), 3);
@@ -56,15 +56,20 @@ export class KemContext extends KdfCommon {
   }
 
   public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
-    return await this._prim.deriveKey(ikm);
+    try {
+      return await this._prim.deriveKey(ikm);
+    } catch (e: unknown) {
+      throw new errors.DeriveKeyPairError(e);
+    }
   }
 
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
-    const ke = params.nonEphemeralKeyPair === undefined ? await this.generateKeyPair() : params.nonEphemeralKeyPair;
-    const enc = await this._prim.serializePublicKey(ke.publicKey);
-    const pkrm = await this._prim.serializePublicKey(params.recipientPublicKey);
-
     try {
+      const ke = params.nonEphemeralKeyPair === undefined
+        ? await this.generateKeyPair() : params.nonEphemeralKeyPair;
+      const enc = await this._prim.serializePublicKey(ke.publicKey);
+      const pkrm = await this._prim.serializePublicKey(params.recipientPublicKey);
+
       let dh: Uint8Array;
       if (params.senderKey === undefined) {
         dh = new Uint8Array(await this._prim.dh(ke.privateKey, params.recipientPublicKey));
@@ -95,14 +100,20 @@ export class KemContext extends KdfCommon {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    const pke = await this._prim.deserializePublicKey(params.enc);
-    const skr = isCryptoKeyPair(params.recipientKey)
-      ? params.recipientKey.privateKey : params.recipientKey;
-    const pkr = isCryptoKeyPair(params.recipientKey)
-      ? params.recipientKey.publicKey : await this._prim.derivePublicKey(params.recipientKey);
-    const pkrm = await this._prim.serializePublicKey(pkr);
+    let pke: CryptoKey;
+    try {
+      pke = await this._prim.deserializePublicKey(params.enc);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
 
     try {
+      const skr = isCryptoKeyPair(params.recipientKey)
+        ? params.recipientKey.privateKey : params.recipientKey;
+      const pkr = isCryptoKeyPair(params.recipientKey)
+        ? params.recipientKey.publicKey : await this._prim.derivePublicKey(params.recipientKey);
+      const pkrm = await this._prim.serializePublicKey(pkr);
+
       let dh: Uint8Array;
       if (params.senderPublicKey === undefined) {
         dh = new Uint8Array(await this._prim.dh(skr, pke));
