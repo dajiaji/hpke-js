@@ -55,6 +55,14 @@ export class KemContext extends KdfCommon {
     return await this._prim.generateKeyPair();
   }
 
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    try {
+      return await this._prim.deriveKeyPair(ikm);
+    } catch (e: unknown) {
+      throw new errors.DeriveKeyPairError(e);
+    }
+  }
+
   public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
     try {
       return await this._prim.deriveKey(ikm);

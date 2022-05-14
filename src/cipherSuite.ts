@@ -35,6 +35,11 @@ export class CipherSuite {
     return await (this._kem as KemContext).generateKeyPair();
   }
 
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    await this.setup();
+    return await (this._kem as KemContext).deriveKeyPair(ikm);
+  }
+
   public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
     await this.setup();
     return await (this._kem as KemContext).deriveKey(ikm);

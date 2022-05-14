@@ -51,10 +51,12 @@ export class ConformanceTester extends WebCrypto {
     const suite = new CipherSuite({ kem: v.kem_id, kdf: v.kdf_id, aead: v.aead_id });
 
     // deriveKeyPair
-    const derivedR = await suite.deriveKey(ikmR.buffer);
-    expect(new Uint8Array(derivedR)).toEqual(skRm);
-    const derivedE = await suite.deriveKey(ikmE.buffer);
-    expect(new Uint8Array(derivedE)).toEqual(skEm);
+    const derivedR = await suite.deriveKeyPair(ikmR.buffer);
+    const derivedPkRm = await this._api.exportKey('raw', derivedR.publicKey);
+    expect(new Uint8Array(derivedPkRm)).toEqual(pkRm);
+    const derivedE = await suite.deriveKeyPair(ikmE.buffer);
+    const derivedPkEm = await this._api.exportKey('raw', derivedE.publicKey);
+    expect(new Uint8Array(derivedPkEm)).toEqual(pkEm);
 
     const sender = await suite.createSenderContext({
       info: info,

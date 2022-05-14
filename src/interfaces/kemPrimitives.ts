@@ -8,7 +8,8 @@ export interface KemPrimitives {
 
   generateKeyPair(): Promise<CryptoKeyPair>;
 
-  // TODO update to deriveKeyPair(ikm: ArrayBuffer) Promise<CryptoKeyPair>;
+  deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
+
   deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer>;
 
   dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer>;
