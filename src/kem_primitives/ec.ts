@@ -7,7 +7,6 @@ import { Bignum } from '../utils/bignum';
 import { i2Osp } from '../utils/misc';
 
 import * as consts from '../consts';
-import * as errors from '../errors';
 
 export class Ec implements KemPrimitives {
 
@@ -24,7 +23,7 @@ export class Ec implements KemPrimitives {
   private _sk: Bignum;
   private _bitmask: number;
 
-  public constructor(kem: Kem, hkdf: KdfCommon, api: SubtleCrypto) {
+  constructor(kem: Kem, hkdf: KdfCommon, api: SubtleCrypto) {
     this._kem = kem;
     this._hkdf = hkdf;
     this._api = api;
@@ -61,20 +60,16 @@ export class Ec implements KemPrimitives {
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
     const ret = await this._api.exportKey('raw', key);
     if (ret.byteLength !== this._nPk) {
-      throw new errors.SerializeError('invalid public key length');
+      throw new Error('invalid public key for the ciphersuite');
     }
     return ret;
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
     if (key.byteLength !== this._nPk) {
-      throw new errors.DeserializeError('invalid public key length');
+      throw new Error('invalid public key for the ciphersuite');
     }
-    try {
-      return await this._api.importKey('raw', key, this._alg, true, []);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._api.importKey('raw', key, this._alg, true, []);
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
@@ -93,9 +88,11 @@ export class Ec implements KemPrimitives {
     this._sk.reset();
     for (let counter = 0; this._sk.isZero() || !this._sk.lessThan(this._order); counter++) {
       if (counter > 255) {
-        throw new errors.DeriveKeyPairError('faild to derive a key pair.');
+        throw new Error('faild to derive a key pair.');
       }
-      const bytes = new Uint8Array(await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk));
+      const bytes = new Uint8Array(
+        await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk),
+      );
       bytes[0] = bytes[0] & this._bitmask;
       this._sk.set(bytes);
     }
