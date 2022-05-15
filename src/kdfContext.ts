@@ -7,6 +7,7 @@ import { KdfCommon } from './kdfCommon';
 import { i2Osp } from './utils/misc';
 
 import * as consts from './consts';
+import * as errors from './errors';
 
 export class KdfContext extends KdfCommon {
 
@@ -15,7 +16,7 @@ export class KdfContext extends KdfCommon {
   private _nN: number;
   private _nT: number;
 
-  public constructor(api: SubtleCrypto, params: CipherSuiteParams) {
+  constructor(api: SubtleCrypto, params: CipherSuiteParams) {
     const suiteId = new Uint8Array(10);
     suiteId.set(consts.SUITE_ID_HEADER_HPKE, 0);
     suiteId.set(i2Osp(params.kem, 2), 4);
@@ -30,7 +31,8 @@ export class KdfContext extends KdfCommon {
       case Kdf.HkdfSha384:
         algHash = { name: 'HMAC', hash: 'SHA-384', length: 384 };
         break;
-      case Kdf.HkdfSha512:
+      default:
+        // case Kdf.HkdfSha512:
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
         break;
     }
@@ -48,7 +50,8 @@ export class KdfContext extends KdfCommon {
         this._nN = 12;
         this._nT = 16;
         break;
-      case Aead.ExportOnly:
+      default:
+        // case Aead.ExportOnly:
         this._nK = 0;
         this._nN = 0;
         this._nT = 0;

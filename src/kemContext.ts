@@ -2,7 +2,7 @@ import type { KemPrimitives } from './interfaces/kemPrimitives';
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 
-import { Ec } from './kem_primitives/ec';
+import { Ec } from './kemPrimitives/ec';
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
 import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils/misc';
@@ -28,7 +28,8 @@ export class KemContext extends KdfCommon {
       case Kem.DhkemP384HkdfSha384:
         algHash = { name: 'HMAC', hash: 'SHA-384', length: 384 };
         break;
-      case Kem.DhkemP521HkdfSha512:
+      default:
+        // case Kem.DhkemP521HkdfSha512:
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
         break;
     }
@@ -43,7 +44,8 @@ export class KemContext extends KdfCommon {
         this._prim = new Ec(kem, this, this._api);
         this._nSecret = 48;
         break;
-      case Kem.DhkemP521HkdfSha512:
+      default:
+        // case Kem.DhkemP521HkdfSha512:
         this._prim = new Ec(kem, this, this._api);
         this._nSecret = 64;
         break;
@@ -55,9 +57,9 @@ export class KemContext extends KdfCommon {
     return await this._prim.generateKeyPair();
   }
 
-  public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     try {
-      return await this._prim.deriveKey(ikm);
+      return await this._prim.deriveKeyPair(ikm);
     } catch (e: unknown) {
       throw new errors.DeriveKeyPairError(e);
     }

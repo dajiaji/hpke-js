@@ -73,6 +73,39 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('constructor with invalid KEM id', () => {
+    it('should throw InvalidParamError', () => {
+      expect(() => {
+        new CipherSuite({ kem: -1, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+      }).toThrow(errors.InvalidParamError);
+      expect(() => {
+        new CipherSuite({ kem: -1, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+      }).toThrow('InvalidParamError: Invalid KEM id');
+    });
+  });
+
+  describe('constructor with invalid KDF id', () => {
+    it('should throw InvalidParamError', () => {
+      expect(() => {
+        new CipherSuite({ kem: Kem.DhkemP256HkdfSha256, kdf: -1, aead: Aead.Aes128Gcm });
+      }).toThrow(errors.InvalidParamError);
+      expect(() => {
+        new CipherSuite({ kem: Kem.DhkemP256HkdfSha256, kdf: -1, aead: Aead.Aes128Gcm });
+      }).toThrow('InvalidParamError: Invalid KDF id');
+    });
+  });
+
+  describe('constructor with invalid AEAD id', () => {
+    it('should throw InvalidParamError', () => {
+      expect(() => {
+        new CipherSuite({ kem: Kem.DhkemP256HkdfSha256, kdf: Kdf.HkdfSha256, aead: -1 });
+      }).toThrow(errors.InvalidParamError);
+      expect(() => {
+        new CipherSuite({ kem: Kem.DhkemP256HkdfSha256, kdf: Kdf.HkdfSha256, aead: -1 });
+      }).toThrow('InvalidParamError: Invalid AEAD id');
+    });
+  });
+
   describe('A README example of Base mode', () => {
     it('should work normally', async () => {
 

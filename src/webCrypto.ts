@@ -4,7 +4,7 @@ import * as errors from './errors';
 
 export class WebCrypto {
   protected _api: SubtleCrypto;
-  public constructor(api: SubtleCrypto) {
+  constructor(api: SubtleCrypto) {
     this._api = api;
   }
 }

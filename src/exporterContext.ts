@@ -12,7 +12,7 @@ export class ExporterContext extends WebCrypto implements EncryptionContextInter
   protected readonly exporterSecret: ArrayBuffer;
   private _kdf: KdfContext;
 
-  public constructor(api: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
+  constructor(api: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
     super(api);
     this._kdf = kdf;
     this.exporterSecret = exporterSecret;

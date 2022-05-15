@@ -13,6 +13,8 @@ import { RecipientContext } from './recipientContext';
 import { SenderContext } from './senderContext';
 import { loadSubtleCrypto } from './webCrypto';
 
+import * as errors from './errors';
+
 export class CipherSuite {
   public readonly kem: Kem;
   public readonly kdf: Kdf;
@@ -22,9 +24,35 @@ export class CipherSuite {
   private _kem: KemContext | undefined = undefined;
   private _kdf: KdfContext | undefined = undefined;
 
-  public constructor(params: CipherSuiteParams) {
+  constructor(params: CipherSuiteParams) {
+    switch (params.kem) {
+      case Kem.DhkemP256HkdfSha256:
+      case Kem.DhkemP384HkdfSha384:
+      case Kem.DhkemP521HkdfSha512:
+        break;
+      default:
+        throw new errors.InvalidParamError('Invalid KEM id');
+    }
     this.kem = params.kem;
+
+    switch (params.kdf) {
+      case Kdf.HkdfSha256:
+      case Kdf.HkdfSha384:
+      case Kdf.HkdfSha512:
+        break;
+      default:
+        throw new errors.InvalidParamError('Invalid KDF id');
+    }
     this.kdf = params.kdf;
+
+    switch (params.aead) {
+      case Aead.Aes128Gcm:
+      case Aead.Aes256Gcm:
+      case Aead.ExportOnly:
+        break;
+      default:
+        throw new errors.InvalidParamError('Invalid AEAD id');
+    }
     this.aead = params.aead;
     this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
     return;
@@ -35,9 +63,9 @@ export class CipherSuite {
     return await (this._kem as KemContext).generateKeyPair();
   }
 
-  public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     await this.setup();
-    return await (this._kem as KemContext).deriveKey(ikm);
+    return await (this._kem as KemContext).deriveKeyPair(ikm);
   }
 
   public async createSenderContext(params: SenderContextParams): Promise<SenderContextInterface> {
