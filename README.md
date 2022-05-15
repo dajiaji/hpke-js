@@ -78,7 +78,7 @@ Using unpkg CDN:
 <script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://unpkg.com/hpke-js@0.4.1/dist/hpke.min.js"></script>
+<script src="https://unpkg.com/hpke-js@0.5.0/dist/hpke.min.js"></script>
 ```
 
 Using jsDelivr CDN:
@@ -88,7 +88,7 @@ Using jsDelivr CDN:
 <script src="https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.4.1/dist/hpke.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.5.0/dist/hpke.min.js"></script>
 ```
 
 ## Usage

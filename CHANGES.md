@@ -2,7 +2,20 @@
 
 ## Unreleased
 
-## Version 0.4.0
+## Version 0.5.0
+
+Released 2022-05-15
+
+- [(#30) Add support for deriveKeyPair.](https://github.com/dajiaji/hpke-js/pull/30)
+- [(#30) [Breaking Change] Remove deriveKey.](https://github.com/dajiaji/hpke-js/pull/30)
+- [(#29) Fix upper limit check for sequence number of encryption.](https://github.com/dajiaji/hpke-js/pull/29)
+- [(#28) Improve test coverage.](https://github.com/dajiaji/hpke-js/pull/28)
+- [(#25) Add SerializeError.](https://github.com/dajiaji/hpke-js/pull/25)
+- [(#25) Enable lint test on github action.](https://github.com/dajiaji/hpke-js/pull/25)
+- [(#25) Introduce KemPrimitives to make it easy to add KEM algorithms.](https://github.com/dajiaji/hpke-js/pull/25)
+- [(#24) Introduce AeadKey interface to make it easy to add new AEAD algorithms.](https://github.com/dajiaji/hpke-js/pull/24)
+
+## Version 0.4.1
 
 Released 2022-05-12
 
