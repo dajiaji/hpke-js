@@ -8,7 +8,7 @@ export class KdfCommon extends WebCrypto {
   protected readonly algHash: HmacKeyGenParams;
   protected readonly _nH: number;
 
-  public constructor(api: SubtleCrypto, suiteId: Uint8Array, algHash: HmacKeyGenParams) {
+  constructor(api: SubtleCrypto, suiteId: Uint8Array, algHash: HmacKeyGenParams) {
     if (algHash.length === undefined) {
       throw new Error('Unknown hash size');
     }

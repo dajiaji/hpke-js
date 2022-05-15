@@ -11,7 +11,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
 
   public readonly enc: ArrayBuffer;
 
-  public constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
+  constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams, enc: ArrayBuffer) {
     super(api, kdf, params);
     this.enc = enc;
     return;
