@@ -10,7 +10,5 @@ export interface KemPrimitives {
 
   deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
 
-  deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer>;
-
   dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer>;
 }

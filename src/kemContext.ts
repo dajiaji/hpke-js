@@ -63,14 +63,6 @@ export class KemContext extends KdfCommon {
     }
   }
 
-  public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
-    try {
-      return await this._prim.deriveKey(ikm);
-    } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
-    }
-  }
-
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     try {
       const ke = params.nonEphemeralKeyPair === undefined

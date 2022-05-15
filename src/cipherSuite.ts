@@ -22,7 +22,7 @@ export class CipherSuite {
   private _kem: KemContext | undefined = undefined;
   private _kdf: KdfContext | undefined = undefined;
 
-  public constructor(params: CipherSuiteParams) {
+  constructor(params: CipherSuiteParams) {
     this.kem = params.kem;
     this.kdf = params.kdf;
     this.aead = params.aead;
@@ -38,11 +38,6 @@ export class CipherSuite {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     await this.setup();
     return await (this._kem as KemContext).deriveKeyPair(ikm);
-  }
-
-  public async deriveKey(ikm: ArrayBuffer): Promise<ArrayBuffer> {
-    await this.setup();
-    return await (this._kem as KemContext).deriveKey(ikm);
   }
 
   public async createSenderContext(params: SenderContextParams): Promise<SenderContextInterface> {
