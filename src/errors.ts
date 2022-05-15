@@ -25,6 +25,7 @@ class HpkeError extends Error {
   }
 }
 
+export class InvalidParamError extends HpkeError {}
 export class ValidationError extends HpkeError {}
 export class SerializeError extends HpkeError {}
 export class DeserializeError extends HpkeError {}
