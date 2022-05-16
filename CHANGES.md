@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.5.1
+
+Released 2022-05-16
+
+- [(#32) Release typedoc API document.](https://github.com/dajiaji/hpke-js/pull/32)
+
 ## Version 0.5.0
 
 Released 2022-05-15
