@@ -25,6 +25,7 @@ jobs:
       - run: npm run build
       - run: npm run lint
       - run: npm pack --dry-run
+      - run: npm run typedoc
       - run: npm test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
