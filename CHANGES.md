@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.7.0
+
+Released 2022-05-21
+
+- [(#40) Add support for DHKEM(X25519, HKDF-SHA256).](https://github.com/dajiaji/hpke-js/pull/40)
+
 ## Version 0.6.0
 
 Released 2022-05-21
