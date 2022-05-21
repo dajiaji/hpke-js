@@ -28,7 +28,6 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
 
 export class Ec implements KemPrimitives {
 
-  private _kem: Kem;
   private _hkdf: KdfCommon;
   private _api: SubtleCrypto;
   private _alg: EcKeyGenParams;
@@ -43,10 +42,9 @@ export class Ec implements KemPrimitives {
   private _pkcs8AlgId: Uint8Array;
 
   constructor(kem: Kem, hkdf: KdfCommon, api: SubtleCrypto) {
-    this._kem = kem;
     this._hkdf = hkdf;
     this._api = api;
-    switch (this._kem) {
+    switch (kem) {
       case Kem.DhkemP256HkdfSha256:
         this._alg = { name: 'ECDH', namedCurve: 'P-256' };
         this._nPk = 65;
