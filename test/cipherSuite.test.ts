@@ -16,6 +16,44 @@ describe('CipherSuite', () => {
     }
   });
 
+  // RFC9180 A.1.
+  describe('constructor with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm', () => {
+    it('should have ciphersuites', () => {
+      const suite: CipherSuite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      // assert
+      expect(suite.kem).toEqual(Kem.DhkemX25519HkdfSha256);
+      expect(suite.kem).toEqual(0x0020);
+      expect(suite.kdf).toEqual(Kdf.HkdfSha256);
+      expect(suite.kdf).toEqual(0x0001);
+      expect(suite.aead).toEqual(Aead.Aes128Gcm);
+      expect(suite.aead).toEqual(0x0001);
+    });
+  });
+
+  // RFC9180 A.2.
+  describe('constructor with DhkemX25519HkdfSha256/HkdfSha256/ChaCha20Poly1305', () => {
+    it('should have ciphersuites', () => {
+      const suite: CipherSuite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Chacha20Poly1305,
+      });
+
+      // assert
+      expect(suite.kem).toEqual(Kem.DhkemX25519HkdfSha256);
+      expect(suite.kem).toEqual(0x0020);
+      expect(suite.kdf).toEqual(Kdf.HkdfSha256);
+      expect(suite.kdf).toEqual(0x0001);
+      expect(suite.aead).toEqual(Aead.Chacha20Poly1305);
+      expect(suite.aead).toEqual(0x0003);
+    });
+  });
+
   // RFC9180 A.3.
   describe('constructor with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm', () => {
     it('should have ciphersuites', () => {
@@ -54,6 +92,25 @@ describe('CipherSuite', () => {
     });
   });
 
+  // RFC9180 A.5.
+  describe('constructor with DhkemP256HkdfSha256/HkdfSha256/ChaCha20Poly1305', () => {
+    it('should have ciphersuites', () => {
+      const suite: CipherSuite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Chacha20Poly1305,
+      });
+
+      // assert
+      expect(suite.kem).toEqual(Kem.DhkemP256HkdfSha256);
+      expect(suite.kem).toEqual(0x0010);
+      expect(suite.kdf).toEqual(Kdf.HkdfSha256);
+      expect(suite.kdf).toEqual(0x0001);
+      expect(suite.aead).toEqual(Aead.Chacha20Poly1305);
+      expect(suite.aead).toEqual(0x0003);
+    });
+  });
+
   // RFC9180 A.6.
   describe('constructor with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm', () => {
     it('should have ciphersuites', () => {
@@ -70,6 +127,25 @@ describe('CipherSuite', () => {
       expect(suite.kdf).toEqual(0x0003);
       expect(suite.aead).toEqual(Aead.Aes256Gcm);
       expect(suite.aead).toEqual(0x0002);
+    });
+  });
+
+  // RFC9180 A.7.
+  describe('constructor with DhkemP256HkdfSha256/HkdfSha256/ExportOnly', () => {
+    it('should have ciphersuites', () => {
+      const suite: CipherSuite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+
+      // assert
+      expect(suite.kem).toEqual(Kem.DhkemP256HkdfSha256);
+      expect(suite.kem).toEqual(0x0010);
+      expect(suite.kdf).toEqual(Kdf.HkdfSha256);
+      expect(suite.kdf).toEqual(0x0001);
+      expect(suite.aead).toEqual(Aead.ExportOnly);
+      expect(suite.aead).toEqual(0xFFFF);
     });
   });
 
@@ -146,6 +222,38 @@ describe('CipherSuite', () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
+  describe('A README example of Base mode (Kem.DhkemX25519HkdfSha256/Kdf.HkdfSha384)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha384,
         aead: Aead.Aes128Gcm,
       });

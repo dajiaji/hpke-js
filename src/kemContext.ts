@@ -3,6 +3,7 @@ import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 
 import { Ec } from './kemPrimitives/ec';
+import { X25519 } from './kemPrimitives/x25519';
 import { Kem } from './identifiers';
 import { KdfCommon } from './kdfCommon';
 import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils/misc';
@@ -28,9 +29,12 @@ export class KemContext extends KdfCommon {
       case Kem.DhkemP384HkdfSha384:
         algHash = { name: 'HMAC', hash: 'SHA-384', length: 384 };
         break;
-      default:
-        // case Kem.DhkemP521HkdfSha512:
+      case Kem.DhkemP521HkdfSha512:
         algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
+        break;
+      default:
+        // case Kem.DhkemX25519HkdfSha256:
+        algHash = { name: 'HMAC', hash: 'SHA-256', length: 256 };
         break;
     }
     super(api, suiteId, algHash);
@@ -44,10 +48,14 @@ export class KemContext extends KdfCommon {
         this._prim = new Ec(kem, this, this._api);
         this._nSecret = 48;
         break;
-      default:
-        // case Kem.DhkemP521HkdfSha512:
+      case Kem.DhkemP521HkdfSha512:
         this._prim = new Ec(kem, this, this._api);
         this._nSecret = 64;
+        break;
+      default:
+        // case Kem.DhkemX25519HkdfSha256:
+        this._prim = new X25519(this);
+        this._nSecret = 32;
         break;
     }
     return;

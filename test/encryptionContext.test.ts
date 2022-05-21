@@ -220,6 +220,41 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('createRecipientContext with invalid enc (X25519)', () => {
+    it('should throw DeserializeError', async () => {
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const suiteX = new CipherSuite({
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+      const rkpX = await suiteX.generateKeyPair();
+
+      const senderX = await suiteX.createSenderContext({
+        recipientPublicKey: rkpX.publicKey,
+      });
+
+      // assert
+      await expect(suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: senderX.enc,
+      })).rejects.toThrow(errors.DeserializeError);
+
+      await expect(suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: senderX.enc,
+      })).rejects.toThrow('invalid public key for the ciphersuite');
+    });
+  });
+
   describe('createRecipientContext with invalid recipientKey', () => {
     it('should throw DecapError', async () => {
 
