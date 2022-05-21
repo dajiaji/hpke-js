@@ -44,21 +44,6 @@ try {
     globalName: 'hpke',
     minify: true,
   });
-  // browser (for backward compat)
-  buildSync({
-    ...opts,
-    platform: 'browser',
-    outfile: 'dist/browser/hpke.js',
-    globalName: 'hpke',
-  });
-  // browser-min (for backward compat)
-  buildSync({
-    ...opts,
-    platform: 'browser',
-    outfile: 'dist/browser/hpke.min.js',
-    globalName: 'hpke',
-    minify: true,
-  });
 } catch (err) {
   // esbuild handles error reporting
   process.exitCode = 1;
