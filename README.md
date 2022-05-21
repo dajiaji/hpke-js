@@ -69,7 +69,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 | ---------------- | ------- | ------- | ---- |
 | AES-128-GCM      | ✅      |  ✅     |      |
 | AES-256-GCM      | ✅      |  ✅     |      |
-| ChaCha20Poly1305 |         |         |      |
+| ChaCha20Poly1305 | ✅      |  ✅     |      |
 | Export Only      | ✅      |  ✅     |      |
 
 ## Installation
