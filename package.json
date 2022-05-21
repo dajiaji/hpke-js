@@ -60,5 +60,8 @@
   "author": "Ajitomi Daisuke",
   "bugs": {
     "url": "https://github.com/dajiaji/hpke-js/issues"
+  },
+  "dependencies": {
+    "@stablelib/chacha20poly1305": "^1.0.1"
   }
 }

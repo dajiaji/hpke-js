@@ -19,13 +19,60 @@ describe('CipherSuite', () => {
     }
   });
 
-  describe('open by another recipient', () => {
+  describe('open by another recipient (AES-128-GCM)', () => {
     it('should throw OpenError', async () => {
 
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.Aes128Gcm,
+      });
+
+      const rkp1 = await suite.generateKeyPair();
+      const rkp2 = await suite.generateKeyPair();
+
+      const sender1 = await suite.createSenderContext({
+        recipientPublicKey: rkp1.publicKey,
+      });
+
+      const recipient1 = await suite.createRecipientContext({
+        recipientKey: rkp1,
+        enc: sender1.enc,
+      });
+
+      const te = new TextEncoder();
+
+      await sender1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await recipient1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+
+      const sender2 = await suite.createSenderContext({
+        recipientPublicKey: rkp2.publicKey,
+      });
+
+      const recipient2 = await suite.createRecipientContext({
+        recipientKey: rkp2,
+        enc: sender2.enc,
+      });
+
+      await sender2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await recipient2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+
+      const ct1 = await sender1.seal(new TextEncoder().encode('my-secret-message'));
+      const ct2 = await recipient1.seal(new TextEncoder().encode('my-secret-message'));
+
+      // assert
+      await expect(recipient2.open(ct1)).rejects.toThrow(errors.OpenError);
+      await expect(sender2.open(ct2)).rejects.toThrow(errors.OpenError);
+    });
+  });
+
+  describe('open by another recipient (ChaCha20/Poly1305)', () => {
+    it('should throw OpenError', async () => {
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Chacha20Poly1305,
       });
 
       const rkp1 = await suite.generateKeyPair();

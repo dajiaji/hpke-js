@@ -65,6 +65,7 @@ export class CipherSuite {
     switch (params.aead) {
       case Aead.Aes128Gcm:
       case Aead.Aes256Gcm:
+      case Aead.Chacha20Poly1305:
       case Aead.ExportOnly:
         break;
       default:
