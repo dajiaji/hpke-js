@@ -4,6 +4,7 @@ import type { KeyInfo } from './interfaces/keyInfo';
 import type { KdfContext } from './kdfContext';
 
 import { AesGcmKey } from './aeadKeys/aesGcmKey';
+import { Chacha20Poly1305Key } from './aeadKeys/chacha20Poly1305Key';
 import { ExporterContext } from './exporterContext';
 import { Aead } from './identifiers';
 import { i2Osp, xor } from './utils/misc';
@@ -85,6 +86,8 @@ function createAeadKey(aead: Aead, key: ArrayBuffer, api: SubtleCrypto): AeadKey
       return new AesGcmKey(key, api);
     case Aead.Aes256Gcm:
       return new AesGcmKey(key, api);
+    case Aead.Chacha20Poly1305:
+      return new Chacha20Poly1305Key(key);
     default:
       throw new Error('Invalid or unsupported AEAD id');
   }

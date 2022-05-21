@@ -50,6 +50,11 @@ export class KdfContext extends KdfCommon {
         this._nN = 12;
         this._nT = 16;
         break;
+      case Aead.Chacha20Poly1305:
+        this._nK = 32;
+        this._nN = 12;
+        this._nT = 16;
+        break;
       default:
         // case Aead.ExportOnly:
         this._nK = 0;

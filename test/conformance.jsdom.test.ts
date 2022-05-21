@@ -35,6 +35,17 @@ describe('RFC9180 conformance (on jsdom)', () => {
     });
   });
 
+  describe('Base/DhkemP*/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id < 0x0020 && v.aead_id == 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
   describe('Base/DhkemP*/HkdfSha*/ExportOnly in test-vectors.json', () => {
     it('should match demonstrated values', async () => {
 
@@ -51,6 +62,17 @@ describe('RFC9180 conformance (on jsdom)', () => {
 
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('PSK/DhkemP*/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 1 && v.kem_id < 0x0020 && v.aead_id == 0x0003) {
           await tester.test(v);
         }
       }
@@ -79,6 +101,17 @@ describe('RFC9180 conformance (on jsdom)', () => {
     });
   });
 
+  describe('Auth/DhkemP*/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 2 && v.kem_id < 0x0020 && v.aead_id == 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
   describe('Auth/DhkemP*/HkdfSha*/ExportOnly in test-vectors.json', () => {
     it('should match demonstrated values', async () => {
 
@@ -95,6 +128,17 @@ describe('RFC9180 conformance (on jsdom)', () => {
 
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('AuthPSK/DhkemP*/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 3 && v.kem_id < 0x0020 && v.aead_id == 0x0003) {
           await tester.test(v);
         }
       }

@@ -44,8 +44,8 @@ export enum Aead {
   Aes128Gcm = 0x0001,
   /** AES-256-GCM. */
   Aes256Gcm = 0x0002,
-  // /** ChaCha20Poly1305. */
-  // ChaCha20Poly1305 = 0x0003,
+  /** ChaCha20Poly1305. */
+  Chacha20Poly1305 = 0x0003,
   /**
    * Export-only mode for applications that only use the export() function
    * to get secrets for AEAD.
