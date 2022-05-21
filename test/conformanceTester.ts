@@ -115,7 +115,7 @@ export class ConformanceTester extends WebCrypto {
     return {
       privateKey: new XCryptoKey(skm, 'private'),
       publicKey: new XCryptoKey(pkm, 'public'),
-    }
+    };
   }
 
   private async cryptoKeyToBytes(ck: CryptoKey, alg: KeyAlgorithm): Promise<Uint8Array> {
