@@ -2,6 +2,7 @@ import type { PreSharedKey } from '../src/interfaces/preSharedKey';
 import type { TestVector } from './testVector';
 
 import { CipherSuite } from '../src/cipherSuite';
+import { XCryptoKey } from '../src/kemPrimitives/x25519';
 import { WebCrypto } from '../src/webCrypto';
 import { loadSubtleCrypto } from '../src/webCrypto';
 import {
@@ -52,11 +53,11 @@ export class ConformanceTester extends WebCrypto {
 
     // deriveKeyPair
     const derivedR = await suite.deriveKeyPair(ikmR.buffer);
-    const derivedPkRm = await this._api.exportKey('raw', derivedR.publicKey);
-    expect(new Uint8Array(derivedPkRm)).toEqual(pkRm);
+    const derivedPkRm = await this.cryptoKeyToBytes(derivedR.publicKey, kemToKeyGenAlgorithm(v.kem_id));
+    expect(derivedPkRm).toEqual(pkRm);
     const derivedE = await suite.deriveKeyPair(ikmE.buffer);
-    const derivedPkEm = await this._api.exportKey('raw', derivedE.publicKey);
-    expect(new Uint8Array(derivedPkEm)).toEqual(pkEm);
+    const derivedPkEm = await this.cryptoKeyToBytes(derivedE.publicKey, kemToKeyGenAlgorithm(v.kem_id));
+    expect(derivedPkEm).toEqual(pkEm);
 
     const sender = await suite.createSenderContext({
       info: info,
@@ -102,12 +103,27 @@ export class ConformanceTester extends WebCrypto {
     this._count++;
   }
 
-  private async bytesToCryptoKeyPair(skm: Uint8Array, pkm: Uint8Array, alg: EcKeyGenParams): Promise<CryptoKeyPair> {
-    const pk = await this._api.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
-    const jwk = await this._api.exportKey('jwk', pk);
-    jwk['d'] = bytesToBase64Url(skm);
-    const sk = await this._api.importKey('jwk', jwk, alg, true, ['deriveKey', 'deriveBits']);
-    return { privateKey: sk, publicKey: pk };
+  private async bytesToCryptoKeyPair(skm: Uint8Array, pkm: Uint8Array, alg: KeyAlgorithm): Promise<CryptoKeyPair> {
+    if (alg.name === 'ECDH') {
+      const pk = await this._api.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
+      const jwk = await this._api.exportKey('jwk', pk);
+      jwk['d'] = bytesToBase64Url(skm);
+      const sk = await this._api.importKey('jwk', jwk, alg, true, ['deriveKey', 'deriveBits']);
+      return { privateKey: sk, publicKey: pk };
+    }
+    // X25519
+    return {
+      privateKey: new XCryptoKey(skm, 'private'),
+      publicKey: new XCryptoKey(pkm, 'public'),
+    }
+  }
+
+  private async cryptoKeyToBytes(ck: CryptoKey, alg: KeyAlgorithm): Promise<Uint8Array> {
+    if (alg.name === 'ECDH') {
+      return new Uint8Array(await this._api.exportKey('raw', ck));
+    }
+    // X25519
+    return (ck as XCryptoKey).key;
   }
 }
 

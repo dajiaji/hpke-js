@@ -52,7 +52,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 | DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |      |
 | DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |      |
 | DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |      |
-| DHKEM (X25519, HKDF-SHA256) |         |         |      |
+| DHKEM (X25519, HKDF-SHA256) | ✅      |  ✅     |      |
 | DHKEM (X448, HKDF-SHA512)   |         |         |      |
 
 ### Key Derivation Functions (KDFs)
