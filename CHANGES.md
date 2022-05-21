@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.6.0
+
+Released 2022-05-21
+
+- [(#38) Add support for ChaCha20/Poly1305.](https://github.com/dajiaji/hpke-js/pull/38)
+- [(#37) [Breaking Change] Remove redundant output from dist.](https://github.com/dajiaji/hpke-js/pull/37)
+
 ## Version 0.5.1
 
 Released 2022-05-16

@@ -1,6 +1,6 @@
 {
   "name": "hpke-js",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "A Hybrid Public Key Encryption (HPKE) library",
   "repository": {
     "type": "git",
