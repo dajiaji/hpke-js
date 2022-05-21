@@ -3,7 +3,7 @@ import type { AeadParams } from './interfaces/aeadParams';
 import type { KeyInfo } from './interfaces/keyInfo';
 import type { KdfContext } from './kdfContext';
 
-import { AesGcmKey } from './aeads/aesGcmKey';
+import { AesGcmKey } from './aeadKeys/aesGcmKey';
 import { ExporterContext } from './exporterContext';
 import { Aead } from './identifiers';
 import { i2Osp, xor } from './utils/misc';
