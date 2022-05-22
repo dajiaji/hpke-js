@@ -26,6 +26,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 </a>
 <ul>
 <li><a href="#supported-features">Supported Features</a></li>
+<li><a href="#warnings-and-restrictions">Warnings and Restrictions</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a><ul>
 <li><a href="#base-mode">Base mode</a></li>
@@ -179,6 +180,18 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 </tr>
 </tbody></table>
 
+<a href="#warnings-and-restrictions" id="warnings-and-restrictions" style="color: inherit; text-decoration: none;">
+  <h2>Warnings and Restrictions</h2>
+</a>
+<ul>
+<li>Although this library has been passed the following test vectors, it has not been formally audited.<ul>
+<li><a href="https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json">RFC9180 official test vectors on github.com/cfrg/draft-irtf-cfrg-hpke</a></li>
+<li><a href="https://github.com/google/wycheproof">Test vectors for ECDH(P-256, P-384 and P-521) and X25519 key validation provided on Project Wycheproof</a></li>
+</ul>
+</li>
+<li>Input length restrictions defined in RFC9180 Section 7.2.1 and the upper limit of the AEAD sequence number are further rounded to JavaScripts&#39;s Number.MAX_SAFE_INTEGER(<code>2^53 - 1</code>).</li>
+</ul>
+
 <a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
   <h2>Installation</h2>
 </a>
@@ -186,10 +199,10 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 <pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">install</span><span class="hl-1"> </span><span class="hl-0">hpke</span><span class="hl-1">-</span><span class="hl-0">js</span>
 </code></pre>
 <p>Using unpkg CDN:</p>
-<pre><code class="language-html"><span class="hl-2">&lt;!-- use the latest stable version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://unpkg.com/hpke-js/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span><br/><br/><span class="hl-2">&lt;!-- use a specific version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://unpkg.com/hpke-js@0.7.0/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
+<pre><code class="language-html"><span class="hl-2">&lt;!-- use the latest stable version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://unpkg.com/hpke-js/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span><br/><br/><span class="hl-2">&lt;!-- use a specific version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://unpkg.com/hpke-js@0.7.1/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
 </code></pre>
 <p>Using jsDelivr CDN:</p>
-<pre><code class="language-html"><span class="hl-2">&lt;!-- use the latest stable version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span><br/><br/><span class="hl-2">&lt;!-- use a specific version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://cdn.jsdelivr.net/npm/hpke-js@0.7.0/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
+<pre><code class="language-html"><span class="hl-2">&lt;!-- use the latest stable version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span><br/><br/><span class="hl-2">&lt;!-- use a specific version --&gt;</span><br/><span class="hl-3">&lt;</span><span class="hl-4">script</span><span class="hl-5"> </span><span class="hl-6">src</span><span class="hl-5">=</span><span class="hl-7">&quot;https://cdn.jsdelivr.net/npm/hpke-js@0.7.1/dist/hpke.min.js&quot;</span><span class="hl-3">&gt;&lt;/</span><span class="hl-4">script</span><span class="hl-3">&gt;</span>
 </code></pre>
 
 <a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
