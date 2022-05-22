@@ -99,7 +99,7 @@ export class X25519 implements KemPrimitives {
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(sharedKey(sk.key, pk.key));
+        resolve(sharedKey(sk.key, pk.key, true));
       } catch (e: unknown) {
         reject(e);
       }
