@@ -25,6 +25,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 ## Index
 
 - [Supported Features](#supported-features)
+- [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Base mode](#base-mode)
@@ -72,6 +73,13 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 | ChaCha20Poly1305 | ✅      |  ✅     |      |
 | Export Only      | ✅      |  ✅     |      |
 
+## Warnings and Restrictions
+
+- Although this library has been passed the following test vectors, it has not been formally audited.
+    - [RFC9180 official test vectors on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
+    - [Test vectors for ECDH(P-256, P-384 and P-521) and X25519 key validation provided on Project Wycheproof](https://github.com/google/wycheproof)
+- Input length restrictions defined in RFC9180 Section 7.2.1 and the upper limit of the AEAD sequence number are further rounded to JavaScripts's Number.MAX\_SAFE\_INTEGER(`2^53 - 1`).
+
 ## Installation
 
 Using npm:
@@ -87,7 +95,7 @@ Using unpkg CDN:
 <script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://unpkg.com/hpke-js@0.7.0/dist/hpke.min.js"></script>
+<script src="https://unpkg.com/hpke-js@0.7.1/dist/hpke.min.js"></script>
 ```
 
 Using jsDelivr CDN:
@@ -97,7 +105,7 @@ Using jsDelivr CDN:
 <script src="https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.7.0/dist/hpke.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.7.1/dist/hpke.min.js"></script>
 ```
 
 ## Usage
