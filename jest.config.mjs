@@ -2,6 +2,8 @@ export default {
   preset: 'ts-jest',
   clearMocks: true,
   testMatch: ['**/test/**/*.test.ts'],
+  collectCoverage: true,
+  collectCoverageFrom: ['src/**/{!(mod),}.ts'],
   testEnvironment: 'node',
   coverageReporters: ['lcov', 'text'],
   globals: {
