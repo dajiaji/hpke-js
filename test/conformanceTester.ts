@@ -2,6 +2,7 @@ import type { PreSharedKey } from '../src/interfaces/preSharedKey';
 import type { TestVector } from './testVector';
 
 import { CipherSuite } from '../src/cipherSuite';
+import { Kem, Kdf, Aead } from '../src/identifiers';
 import { XCryptoKey } from '../src/kemPrimitives/x25519';
 import { WebCrypto } from '../src/webCrypto';
 import { loadSubtleCrypto } from '../src/webCrypto';
@@ -10,6 +11,8 @@ import {
   bytesToBase64Url,
   kemToKeyGenAlgorithm,
 } from './utils';
+
+import * as errors from '../src/errors';
 
 export class ConformanceTester extends WebCrypto {
 
@@ -100,6 +103,91 @@ export class ConformanceTester extends WebCrypto {
       exported = await recipient.export(ec, ve.L);
       expect(new Uint8Array(exported)).toEqual(ev);
     }
+    this._count++;
+  }
+
+  public async testValidEcPublicKey(crv: string, pk: string) {
+
+    let kemId: Kem;
+    let nPk: number;
+    switch (crv) {
+      case 'P-256':
+        kemId = Kem.DhkemP256HkdfSha256;
+        nPk = 65;
+        break;
+      case 'P-384':
+        kemId = Kem.DhkemP384HkdfSha384;
+        nPk = 97;
+        break;
+      case 'P-521':
+        kemId = Kem.DhkemP521HkdfSha512;
+        nPk = 133;
+        break;
+      default:
+        throw new Error('Invalid crv');
+    }
+
+    const suite = new CipherSuite({ kem: kemId, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+    const alg = kemToKeyGenAlgorithm(kemId);
+
+    const cpk = await this._api.importKey('raw', pkb, alg, true, ['deriveKey', 'deriveBits']);
+    const sender = await suite.createSenderContext({
+      recipientPublicKey: cpk,
+    });
+    await expect(sender.open(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.OpenError);
+
+    if (pkb.length < nPk) {
+      // Compressed public key not supported.
+      return;
+    }
+    const recipient = await suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    });
+
+    // assert
+    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    this._count++;
+  }
+
+  public async testInvalidEcPublicKey(crv: string, pk: string) {
+
+    let kemId: Kem;
+    switch (crv) {
+      case 'P-256':
+        kemId = Kem.DhkemP256HkdfSha256;
+        break;
+      case 'P-384':
+        kemId = Kem.DhkemP384HkdfSha384;
+        break;
+      case 'P-521':
+        kemId = Kem.DhkemP521HkdfSha512;
+        break;
+      default:
+        throw new Error('Invalid crv');
+    }
+
+    const suite = new CipherSuite({ kem: kemId, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+    const alg = kemToKeyGenAlgorithm(kemId);
+
+    // assert
+    await expect(
+      this._api.importKey('raw', pkb, alg, true, ['deriveKey', 'deriveBits']),
+    ).rejects.toThrow('Unable to import EC key');
+    await expect(suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    })).rejects.toThrow(errors.DeserializeError);
+    await expect(suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    })).rejects.toThrow('invalid public key for the ciphersuite');
     this._count++;
   }
 

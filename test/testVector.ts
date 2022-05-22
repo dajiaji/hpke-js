@@ -39,3 +39,20 @@ export interface TestVector {
   encryptions: Array<TestVectorEncryption>;
   exports: Array<TestVectorExport>;
 }
+
+// The minimum interface to load test vectors on https://github.com/google/wycheproof
+interface WycheproofTestCase {
+  public: string;
+  result: string;
+}
+
+// The minimum interface to load test vectors on https://github.com/google/wycheproof
+interface WycheproofTestGroup {
+  tests: Array<WycheproofTestCase>;
+}
+
+// The minimum interface to load test vectors on https://github.com/google/wycheproof
+export interface WycheproofTestVector {
+  numberOfTests: number;
+  testGroups: Array<WycheproofTestGroup>;
+}
