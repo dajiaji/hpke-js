@@ -5,7 +5,7 @@ import type { WycheproofTestVector } from './testVector';
 
 import { createConformanceTester } from './conformanceTester';
 
-describe('EC public key validation', () => {
+describe('EC key validation', () => {
 
   let totalCount: number;
   let tester: ConformanceTester;
