@@ -21,13 +21,9 @@ export class Chacha20Poly1305Key implements AeadKey {
   }
 
   private _encrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-      try {
-        const ret = this._key.seal(new Uint8Array(iv), new Uint8Array(data), new Uint8Array(aad));
-        resolve(ret.buffer);
-      } catch (e: unknown) {
-        reject(e);
-      }
+    return new Promise((resolve) => {
+      const ret = this._key.seal(new Uint8Array(iv), new Uint8Array(data), new Uint8Array(aad));
+      resolve(ret.buffer);
     });
   }
 
