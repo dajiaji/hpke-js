@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.7.1
+
+Released 2022-05-22
+
+- [(#42) Reject all-zero shared secret derived with X25519.](https://github.com/dajiaji/hpke-js/pull/42)
+- [(#42) Add tests for key validation.](https://github.com/dajiaji/hpke-js/pull/42)
+
 ## Version 0.7.0
 
 Released 2022-05-21
