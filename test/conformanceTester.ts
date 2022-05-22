@@ -191,6 +191,38 @@ export class ConformanceTester extends WebCrypto {
     this._count++;
   }
 
+  public async testValidX25519PublicKey(pk: string) {
+
+    const suite = new CipherSuite({ kem: Kem.DhkemX25519HkdfSha256, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+
+    const recipient = await suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    });
+
+    // assert
+    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    this._count++;
+  }
+
+  public async testInvalidX25519PublicKey(pk: string) {
+
+    const suite = new CipherSuite({ kem: Kem.DhkemX25519HkdfSha256, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+
+    // assert
+    await expect(suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    })).rejects.toThrow(errors.DecapError);
+    this._count++;
+  }
+
   private async bytesToCryptoKeyPair(skm: Uint8Array, pkm: Uint8Array, alg: KeyAlgorithm): Promise<CryptoKeyPair> {
     if (alg.name === 'ECDH') {
       const pk = await this._api.importKey('raw', pkm, alg, true, ['deriveKey', 'deriveBits']);
