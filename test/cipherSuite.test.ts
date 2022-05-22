@@ -610,4 +610,107 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('deriveKeyPair with too long ikm', () => {
+    it('should throw InvalidParamError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      await expect(suite.deriveKeyPair(
+        (new Uint8Array(129)).buffer,
+      )).rejects.toThrow(errors.InvalidParamError);
+
+      await expect(suite.deriveKeyPair(
+        (new Uint8Array(129)).buffer,
+      )).rejects.toThrow('Too long ikm');
+    });
+  });
+
+  describe('createSenderContext with too long info', () => {
+    it('should throw InvalidParamError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      await expect(suite.createSenderContext({
+        info: (new Uint8Array(129)).buffer,
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow(errors.InvalidParamError);
+
+      await expect(suite.createSenderContext({
+        info: (new Uint8Array(129)).buffer,
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow('Too long info');
+    });
+  });
+
+  describe('createSenderContext with too long psk.key', () => {
+    it('should throw InvalidParamError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: (new Uint8Array(129)).buffer,
+          id: new Uint8Array([1, 2, 3, 4]),
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow(errors.InvalidParamError);
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: (new Uint8Array(129)).buffer,
+          id: new Uint8Array([1, 2, 3, 4]),
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow('Too long psk.key');
+    });
+  });
+
+  describe('createSenderContext with too long psk.id', () => {
+    it('should throw InvalidParamError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: new Uint8Array([1, 2, 3, 4]),
+          id: (new Uint8Array(129)).buffer,
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow(errors.InvalidParamError);
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: new Uint8Array([1, 2, 3, 4]),
+          id: (new Uint8Array(129)).buffer,
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow('Too long psk.id');
+    });
+  });
 });
