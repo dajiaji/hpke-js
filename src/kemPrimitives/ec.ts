@@ -89,7 +89,11 @@ export class Ec implements KemPrimitives {
     if (key.byteLength !== this._nPk) {
       throw new Error('invalid public key for the ciphersuite');
     }
-    return await this._api.importKey('raw', key, this._alg, true, []);
+    try {
+      return await this._api.importKey('raw', key, this._alg, true, []);
+    } catch (e: unknown) {
+      throw new Error('invalid public key for the ciphersuite');
+    }
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
