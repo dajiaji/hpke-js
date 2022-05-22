@@ -1,10 +1,11 @@
 import type { CipherSuiteParams } from './interfaces/cipherSuiteParams';
+import type { KeyScheduleParams } from './interfaces/keyScheduleParams';
 import type { CipherSuiteSealResponse } from './interfaces/responses';
 import type { RecipientContextParams } from './interfaces/recipientContextParams';
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextInterface, SenderContextInterface } from './interfaces/encryptionContextInterface';
 
-import { EMPTY } from './consts';
+import { EMPTY, INPUT_LENGTH_LIMIT } from './consts';
 import { RecipientExporterContext, SenderExporterContext } from './exporterContext';
 import { Aead, Kdf, Kem, Mode } from './identifiers';
 import { KdfContext } from './kdfContext';
@@ -13,6 +14,7 @@ import { RecipientContext } from './recipientContext';
 import { SenderContext } from './senderContext';
 import { loadSubtleCrypto } from './webCrypto';
 
+import * as consts from './consts';
 import * as errors from './errors';
 
 /**
@@ -91,11 +93,14 @@ export class CipherSuite {
    * Derives a key pair for the cipher suite in the manner
    * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
    *
-   * @param ikm A byte string of input keying material.
+   * @param ikm A byte string of input keying material. The maximum length is 128 bytes.
    * @returns A key pair derived.
    * @throws {@link DeriveKeyPairError}
    */
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    if (ikm.byteLength > consts.INPUT_LENGTH_LIMIT) {
+      throw new errors.InvalidParamError('Too long ikm');
+    }
     await this.setup();
     return await (this._kem as KemContext).deriveKeyPair(ikm);
   }
@@ -108,6 +113,8 @@ export class CipherSuite {
    * @throws {@link EncapError}, {@link ValidationError}
    */
   public async createSenderContext(params: SenderContextParams): Promise<SenderContextInterface> {
+    this.validateInputLength(params);
+
     const api = await this.setup();
 
     const dh = await (this._kem as KemContext).encap(params);
@@ -135,6 +142,8 @@ export class CipherSuite {
    * @throws {@link DecapError}, {@link DeserializeError}, {@link ValidationError}
    */
   public async createRecipientContext(params: RecipientContextParams): Promise<RecipientContextInterface> {
+    this.validateInputLength(params);
+
     const api = await this.setup();
 
     const sharedSecret = await (this._kem as KemContext).decap(params);
@@ -192,5 +201,20 @@ export class CipherSuite {
       this._kdf = new KdfContext(api, this._ctx);
     }
     return api;
+  }
+
+  private validateInputLength(params: KeyScheduleParams) {
+    if (params.info !== undefined && params.info.byteLength > consts.INPUT_LENGTH_LIMIT) {
+      throw new errors.InvalidParamError('Too long info');
+    }
+    if (params.psk !== undefined) {
+      if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
+        throw new errors.InvalidParamError('Too long psk.key');
+      }
+      if (params.psk.id.byteLength > consts.INPUT_LENGTH_LIMIT) {
+        throw new errors.InvalidParamError('Too long psk.id');
+      }
+    }
+    return;
   }
 }

@@ -31,9 +31,12 @@ export class ExporterContext extends WebCrypto implements EncryptionContextInter
     throw new errors.NotSupportedError('Not available on export-only mode');
   }
 
-  public async export(info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
+  public async export(exporterContext: ArrayBuffer, len: number): Promise<ArrayBuffer> {
+    if (exporterContext.byteLength > consts.INPUT_LENGTH_LIMIT) {
+      throw new errors.InvalidParamError('Too long exporter context');
+    }
     try {
-      return await this._kdf.labeledExpand(this.exporterSecret, consts.LABEL_SEC, new Uint8Array(info), len);
+      return await this._kdf.labeledExpand(this.exporterSecret, consts.LABEL_SEC, new Uint8Array(exporterContext), len);
     } catch (e: unknown) {
       throw new errors.ExportError(e);
     }
