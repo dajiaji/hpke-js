@@ -4,7 +4,7 @@ export default {
   testMatch: ['**/test/**/*.test.ts'],
   collectCoverage: true,
   collectCoverageFrom: ['src/**/{!(mod),}.ts'],
-  testTimeout: 30000,
+  testTimeout: 60000,
   testEnvironment: 'node',
   coverageReporters: ['lcov', 'text'],
   globals: {
