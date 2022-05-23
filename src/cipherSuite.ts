@@ -106,6 +106,23 @@ export class CipherSuite {
   }
 
   /**
+   * Imports a public or private key and converts to a CryptoKey
+   * which can be used on {@link createSenderContext} or {@link createRecipientContext}.
+   * Basically, this is a thin wrapper function of
+   * [SubtleCrypto.importKey](https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey).
+   *
+   * @param format For now, `'raw'` is only supported.
+   * @param key A byte string of a raw key.
+   * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
+   * @returns A public CryptoKey.
+   * @throws {@link DeserializeError}
+   */
+  public async importKey(format: 'raw', key: ArrayBuffer, isPublic = true): Promise<CryptoKey> {
+    await this.setup();
+    return await (this._kem as KemContext).importKey(format, key, isPublic);
+  }
+
+  /**
    * Creates an encryption context for a sender.
    *
    * @param params A set of parameters for the sender encryption context.

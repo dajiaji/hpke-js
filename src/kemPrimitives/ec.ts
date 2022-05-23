@@ -80,19 +80,44 @@ export class Ec implements KemPrimitives {
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
     const ret = await this._api.exportKey('raw', key);
     if (ret.byteLength !== this._nPk) {
-      throw new Error('invalid public key for the ciphersuite');
+      throw new Error('Invalid public key for the ciphersuite');
     }
     return ret;
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
     if (key.byteLength !== this._nPk) {
-      throw new Error('invalid public key for the ciphersuite');
+      throw new Error('Invalid public key for the ciphersuite');
     }
     try {
       return await this._api.importKey('raw', key, this._alg, true, []);
-    } catch (e: unknown) {
-      throw new Error('invalid public key for the ciphersuite');
+    } catch (_e: unknown) {
+      throw new Error('Invalid public key for the ciphersuite');
+    }
+  }
+
+  public async importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+    if (format !== 'raw') {
+      throw new Error('Unsupported format');
+    }
+    if (isPublic && key.byteLength !== this._nPk) {
+      throw new Error('Invalid key for the ciphersuite');
+    }
+    if (!isPublic && key.byteLength !== this._nSk) {
+      throw new Error('Invalid key for the ciphersuite');
+    }
+    try {
+      if (isPublic) {
+        return await this._api.importKey(format, key, this._alg, true, ['deriveBits']);
+      }
+      const k = new Uint8Array(key);
+      const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
+      pkcs8Key.set(this._pkcs8AlgId, 0);
+      pkcs8Key.set(k, this._pkcs8AlgId.length);
+      return await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, ['deriveBits']);
+
+    } catch (_e: unknown) {
+      throw new Error('Invalid key for the ciphersuite');
     }
   }
 
@@ -111,7 +136,7 @@ export class Ec implements KemPrimitives {
     this._sk.reset();
     for (let counter = 0; this._sk.isZero() || !this._sk.lessThan(this._order); counter++) {
       if (counter > 255) {
-        throw new Error('faild to derive a key pair.');
+        throw new Error('faild to derive a key pair');
       }
       const bytes = new Uint8Array(
         await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk),

@@ -73,6 +73,14 @@ export class KemContext extends KdfCommon {
     }
   }
 
+  public async importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+    try {
+      return await this._prim.importKey(format, key, isPublic);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
+  }
+
   public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     try {
       const ke = params.nonEphemeralKeyPair === undefined

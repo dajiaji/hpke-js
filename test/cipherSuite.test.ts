@@ -6,6 +6,8 @@ import { CipherSuite } from '../src/cipherSuite';
 
 import * as errors from '../src/errors';
 
+import { hexStringToBytes } from './utils';
+
 describe('CipherSuite', () => {
 
   // for jsdom setting.
@@ -711,6 +713,78 @@ describe('CipherSuite', () => {
         },
         recipientPublicKey: rkp.publicKey,
       })).rejects.toThrow('Too long psk.id');
+    });
+  });
+
+  describe('importKey with invalid EC(P-256) public key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k)).rejects.toThrow(errors.DeserializeError);
+    });
+  });
+
+  describe('importKey with invalid EC(P-256) private key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k, false)).rejects.toThrow(errors.DeserializeError);
+    });
+  });
+
+  describe('importKey with invalid x25519 public key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k)).rejects.toThrow(errors.DeserializeError);
+    });
+  });
+
+  describe('importKey with invalid x25519 private key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k, false)).rejects.toThrow(errors.DeserializeError);
     });
   });
 });

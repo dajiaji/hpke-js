@@ -204,7 +204,7 @@ describe('CipherSuite', () => {
 
       await expect(suite.createSenderContext({
         recipientPublicKey: rkpX.publicKey,
-      })).rejects.toThrow('invalid public key for the ciphersuite');
+      })).rejects.toThrow('Invalid public key for the ciphersuite');
     });
   });
 
@@ -239,7 +239,7 @@ describe('CipherSuite', () => {
       await expect(suite.createRecipientContext({
         recipientKey: rkp,
         enc: senderX.enc,
-      })).rejects.toThrow('invalid public key for the ciphersuite');
+      })).rejects.toThrow('Invalid public key for the ciphersuite');
     });
   });
 
@@ -274,7 +274,7 @@ describe('CipherSuite', () => {
       await expect(suite.createRecipientContext({
         recipientKey: rkp,
         enc: senderX.enc,
-      })).rejects.toThrow('invalid public key for the ciphersuite');
+      })).rejects.toThrow('Invalid public key for the ciphersuite');
     });
   });
 
@@ -310,7 +310,7 @@ describe('CipherSuite', () => {
       await expect(suite.createRecipientContext({
         recipientKey: rkpX,
         enc: sender.enc,
-      })).rejects.toThrow('invalid public key for the ciphersuite');
+      })).rejects.toThrow('Invalid public key for the ciphersuite');
     });
   });
 

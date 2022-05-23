@@ -42,6 +42,13 @@ export class X25519 implements KemPrimitives {
     return await this._deserializePublicKey(key);
   }
 
+  public async importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+    if (format !== 'raw') {
+      throw new Error('Unsupported format');
+    }
+    return await this._importKey(key, isPublic);
+  }
+
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
     return await this._derivePublicKey(key as XCryptoKey);
   }
@@ -73,10 +80,22 @@ export class X25519 implements KemPrimitives {
   private _deserializePublicKey(k: ArrayBuffer): Promise<CryptoKey> {
     return new Promise((resolve, reject) => {
       if (k.byteLength !== this._nPk) {
-        reject(new Error('invalid public key for the ciphersuite'));
+        reject(new Error('Invalid public key for the ciphersuite'));
       } else {
         resolve(new XCryptoKey(new Uint8Array(k), 'public'));
       }
+    });
+  }
+
+  private _importKey(key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+    return new Promise((resolve, reject) => {
+      if (isPublic && key.byteLength !== this._nPk) {
+        reject(new Error('Invalid public key for the ciphersuite'));
+      }
+      if (!isPublic && key.byteLength !== this._nSk) {
+        reject(new Error('Invalid private key for the ciphersuite'));
+      }
+      resolve(new XCryptoKey(new Uint8Array(key), isPublic ? 'public' : 'private'));
     });
   }
 
