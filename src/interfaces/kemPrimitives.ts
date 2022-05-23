@@ -4,6 +4,8 @@ export interface KemPrimitives {
 
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
+  importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey>;
+
   derivePublicKey(key: CryptoKey): Promise<CryptoKey>;
 
   generateKeyPair(): Promise<CryptoKeyPair>;
