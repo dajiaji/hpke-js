@@ -157,6 +157,29 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('export with too long exporter_context', () => {
+    it('should throw InvalidParamError', async () => {
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const te = new TextEncoder();
+
+      // assert
+      await expect(sender.export(new Uint8Array(129), 32)).rejects.toThrow(errors.InvalidParamError);
+      await expect(sender.export(new Uint8Array(129), 32)).rejects.toThrow('Too long exporter context');
+    });
+  });
+
   describe('createSenderContext with invalid recipientPublicKey', () => {
     it('should throw ExportError', async () => {
 

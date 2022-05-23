@@ -3,6 +3,9 @@ export const KEM_USAGES: KeyUsage[] = ['deriveKey', 'deriveBits'];
 // The key usages for AEAD.
 export const AEAD_USAGES: KeyUsage[] = ['encrypt', 'decrypt'];
 
+// The input length limit (psk, psk_id, info, exporter_context, ikm).
+export const INPUT_LENGTH_LIMIT = 128;
+
 // b""
 export const EMPTY = new Uint8Array(0);
 // b"HPKE-v1"
