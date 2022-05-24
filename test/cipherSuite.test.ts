@@ -333,7 +333,7 @@ describe('CipherSuite', () => {
         recipientPublicKey: rkp.publicKey,
         psk: {
           id: new TextEncoder().encode('our-pre-shared-key-id'),
-          key: new TextEncoder().encode('our-pre-shared-key'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
         },
       });
 
@@ -342,7 +342,7 @@ describe('CipherSuite', () => {
         enc: sender.enc,
         psk: {
           id: new TextEncoder().encode('our-pre-shared-key-id'),
-          key: new TextEncoder().encode('our-pre-shared-key'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
         },
       });
 
@@ -410,7 +410,7 @@ describe('CipherSuite', () => {
         senderKey: skp,
         psk: {
           id: new TextEncoder().encode('our-pre-shared-key-id'),
-          key: new TextEncoder().encode('our-pre-shared-key'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
         },
       });
 
@@ -420,7 +420,7 @@ describe('CipherSuite', () => {
         senderPublicKey: skp.publicKey,
         psk: {
           id: new TextEncoder().encode('our-pre-shared-key-id'),
-          key: new TextEncoder().encode('our-pre-shared-key'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
         },
       });
 
@@ -686,6 +686,36 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('createSenderContext with short psk.key', () => {
+    it('should throw InvalidParamError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: (new Uint8Array(31)).buffer,
+          id: new Uint8Array([1, 2, 3, 4]),
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow(errors.InvalidParamError);
+
+      await expect(suite.createSenderContext({
+        psk: {
+          key: (new Uint8Array(31)).buffer,
+          id: new Uint8Array([1, 2, 3, 4]),
+        },
+        recipientPublicKey: rkp.publicKey,
+      })).rejects.toThrow('PSK must have at least 32 bytes');
+    });
+  });
+
   describe('createSenderContext with too long psk.id', () => {
     it('should throw InvalidParamError', async () => {
 
@@ -700,7 +730,7 @@ describe('CipherSuite', () => {
 
       await expect(suite.createSenderContext({
         psk: {
-          key: new Uint8Array([1, 2, 3, 4]),
+          key: new Uint8Array(32),
           id: (new Uint8Array(129)).buffer,
         },
         recipientPublicKey: rkp.publicKey,
@@ -708,7 +738,7 @@ describe('CipherSuite', () => {
 
       await expect(suite.createSenderContext({
         psk: {
-          key: new Uint8Array([1, 2, 3, 4]),
+          key: new Uint8Array(32),
           id: (new Uint8Array(129)).buffer,
         },
         recipientPublicKey: rkp.publicKey,

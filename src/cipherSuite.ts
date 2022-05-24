@@ -224,6 +224,9 @@ export class CipherSuite {
       throw new errors.InvalidParamError('Too long info');
     }
     if (params.psk !== undefined) {
+      if (params.psk.key.byteLength < consts.MINIMUM_PSK_LENGTH) {
+        throw new errors.InvalidParamError(`PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`);
+      }
       if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
         throw new errors.InvalidParamError('Too long psk.key');
       }
