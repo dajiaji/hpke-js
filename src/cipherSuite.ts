@@ -22,6 +22,7 @@ import * as errors from './errors';
  *
  * - Generates a key pair for the cipher suite.
  * - Derives a key pair for the cipher suite.
+ * - Imports and converts a key to a CryptoKey.
  * - Creates an encryption context both for senders and recipients.
  * - Encrypts a message as a single-shot API.
  * - Decrypts an encrypted message as as single-shot API.
@@ -113,7 +114,7 @@ export class CipherSuite {
    * @param format For now, `'raw'` is only supported.
    * @param key A byte string of a raw key.
    * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
-   * @returns A public CryptoKey.
+   * @returns A public or private CryptoKey.
    * @throws {@link DeserializeError}
    */
   public async importKey(format: 'raw', key: ArrayBuffer, isPublic = true): Promise<CryptoKey> {

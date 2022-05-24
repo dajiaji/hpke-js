@@ -2,8 +2,6 @@ import type { KeyScheduleParams } from './keyScheduleParams';
 
 /**
  * The parameters used to setup the {@link SenderContext}
- *
- * @public
  */
 export interface SenderContextParams extends KeyScheduleParams {
 

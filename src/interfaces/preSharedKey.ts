@@ -1,7 +1,5 @@
 /**
  * The pre-shared key interface.
- *
- * @public
  */
 export interface PreSharedKey {
 
