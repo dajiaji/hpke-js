@@ -2,8 +2,6 @@ import type { Kem, Kdf, Aead } from '../identifiers';
 
 /**
  * The parameters used to configure the {@link CipherSuite}.
- *
- * @public
  */
 export interface CipherSuiteParams {
 

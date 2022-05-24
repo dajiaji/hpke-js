@@ -5,7 +5,6 @@ import type { RecipientContextParams } from './interfaces/recipientContextParams
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextInterface, SenderContextInterface } from './interfaces/encryptionContextInterface';
 
-import { EMPTY, INPUT_LENGTH_LIMIT } from './consts';
 import { RecipientExporterContext, SenderExporterContext } from './exporterContext';
 import { Aead, Kdf, Kem, Mode } from './identifiers';
 import { KdfContext } from './kdfContext';
@@ -23,6 +22,7 @@ import * as errors from './errors';
  *
  * - Generates a key pair for the cipher suite.
  * - Derives a key pair for the cipher suite.
+ * - Imports and converts a key to a CryptoKey.
  * - Creates an encryption context both for senders and recipients.
  * - Encrypts a message as a single-shot API.
  * - Decrypts an encrypted message as as single-shot API.
@@ -114,7 +114,7 @@ export class CipherSuite {
    * @param format For now, `'raw'` is only supported.
    * @param key A byte string of a raw key.
    * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
-   * @returns A public CryptoKey.
+   * @returns A public or private CryptoKey.
    * @throws {@link DeserializeError}
    */
   public async importKey(format: 'raw', key: ArrayBuffer, isPublic = true): Promise<CryptoKey> {
@@ -189,7 +189,7 @@ export class CipherSuite {
    * @returns A cipher text and an encapsulated key as bytes.
    * @throws {@link EncapError}, {@link MessageLimitReachedError}, {@link SealError}, {@link ValidationError}
    */
-  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<CipherSuiteSealResponse> {
+  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<CipherSuiteSealResponse> {
     const ctx = await this.createSenderContext(params);
     return {
       ct: await ctx.seal(pt, aad),
@@ -206,7 +206,7 @@ export class CipherSuite {
    * @returns A decrypted plain text as bytes.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link OpenError}, {@link ValidationError}
    */
-  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
+  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
   }
@@ -225,6 +225,9 @@ export class CipherSuite {
       throw new errors.InvalidParamError('Too long info');
     }
     if (params.psk !== undefined) {
+      if (params.psk.key.byteLength < consts.MINIMUM_PSK_LENGTH) {
+        throw new errors.InvalidParamError(`PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`);
+      }
       if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
         throw new errors.InvalidParamError('Too long psk.key');
       }

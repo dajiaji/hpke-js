@@ -78,7 +78,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 - Although this library has been passed the following test vectors, it has not been formally audited.
     - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
     - [Test vectors for ECDH(P-256, P-384 and P-521) and X25519 key validation provided on Project Wycheproof](https://github.com/google/wycheproof)
-- The upper limit of the AEAD sequence number is further rounded to JavaScripts's Number.MAX\_SAFE\_INTEGER(`2^53 - 1`).
+- The upper limit of the AEAD sequence number is further rounded to JavaScript Number.MAX\_SAFE\_INTEGER (`2^53 - 1`).
 
 ## Installation
 
@@ -162,7 +162,7 @@ On browser:
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
 
@@ -185,12 +185,12 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+  console.log('decrypted: ', new TextDecoder().decode(pt));
   // decripted: my-secret-message
 }
 
@@ -202,7 +202,7 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
 
@@ -222,7 +222,7 @@ async function doHpke() {
   // decrypt
   const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+  console.log('decrypted: ', new TextDecoder().decode(pt));
   // decripted: my-secret-message
 }
 
@@ -234,7 +234,7 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -268,7 +268,7 @@ async function doHpke() {
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("recipient decrypted: ", td.decode(pt));
+  console.log('recipient decrypted: ', td.decode(pt));
   // decripted: my-secret-message-s
 
   // encrypt reversely
@@ -277,7 +277,7 @@ async function doHpke() {
   // decrypt reversely
   const rpt = await sender.open(rct);
 
-  console.log("sender decrypted: ", td.decode(rpt));
+  console.log('sender decrypted: ', td.decode(rpt));
   // decripted: my-secret-message-r
 }
 
@@ -322,7 +322,7 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
   // setup
@@ -337,8 +337,9 @@ async function doHpke() {
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
     psk: {
-      id: new TextEncoder().encode("our-pre-shared-key-id"),
-      key: new TextEncoder().encode("our-pre-shared-key"),
+      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      // a PSK MUST have at least 32 bytes.
+      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
     }
   });
 
@@ -346,18 +347,19 @@ async function doHpke() {
     recipientKey: rkp,
     enc: sender.enc,
     psk: {
-      id: new TextEncoder().encode("our-pre-shared-key-id"),
-      key: new TextEncoder().encode("our-pre-shared-key"),
+      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      // a PSK MUST have at least 32 bytes.
+      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
     }
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+  console.log('decrypted: ', new TextDecoder().decode(pt));
   // decripted: my-secret-message
 }
 
@@ -369,7 +371,7 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
   // setup
@@ -394,12 +396,12 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+  console.log('decrypted: ', new TextDecoder().decode(pt));
   // decripted: my-secret-message
 }
 
@@ -411,7 +413,7 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
   // setup
@@ -428,8 +430,9 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
     senderKey: skp,
     psk: {
-      id: new TextEncoder().encode("our-pre-shared-key-id"),
-      key: new TextEncoder().encode("our-pre-shared-key"),
+      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      // a PSK MUST have at least 32 bytes.
+      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
     }
   });
 
@@ -438,18 +441,19 @@ async function doHpke() {
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
     psk: {
-      id: new TextEncoder().encode("our-pre-shared-key-id"),
-      key: new TextEncoder().encode("our-pre-shared-key"),
+      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      // a PSK MUST have at least 32 bytes.
+      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
     }
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+  console.log('decrypted: ', new TextDecoder().decode(pt));
   // decripted: my-secret-message
 }
 

@@ -14,17 +14,17 @@ import * as errors from './errors';
 
 export class EncryptionContext extends ExporterContext {
 
-  /// AEAD id.
+  // AEAD id.
   protected _aead: Aead;
-  /// The length in bytes of a key for the algorithm.
+  // The length in bytes of a key for the algorithm.
   protected _nK: number;
-  /// The length in bytes of a nonce for the algorithm.
+  // The length in bytes of a nonce for the algorithm.
   protected _nN: number;
-  /// The length in bytes of an authentication tag for the algorithm.
+  // The length in bytes of an authentication tag for the algorithm.
   protected _nT: number;
-  /// Forward (sender to recipient) encryption key information.
+  // Forward (sender to recipient) encryption key information.
   protected _f: KeyInfo;
-  /// Reverse (recipient to sender) encryption key information.
+  // Reverse (recipient to sender) encryption key information.
   protected _r: KeyInfo;
 
   constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
