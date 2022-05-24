@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## Version 0.8.0
+
+Released 2022-05-24
+
+- [(#47) Refine typedoc description.](https://github.com/dajiaji/hpke-js/pull/47)
+- [(#47) [Breaking Change] Add minimum length check for PSK.](https://github.com/dajiaji/hpke-js/pull/47)
+- [(#46) Add importKey to CipherSuite.](https://github.com/dajiaji/hpke-js/pull/46)
+- [(#45) [Breaking Change] Add input length validation.](https://github.com/dajiaji/hpke-js/pull/45)
+
 ## Version 0.7.1
 
 Released 2022-05-22
