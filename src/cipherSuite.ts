@@ -5,7 +5,6 @@ import type { RecipientContextParams } from './interfaces/recipientContextParams
 import type { SenderContextParams } from './interfaces/senderContextParams';
 import type { RecipientContextInterface, SenderContextInterface } from './interfaces/encryptionContextInterface';
 
-import { EMPTY, INPUT_LENGTH_LIMIT } from './consts';
 import { RecipientExporterContext, SenderExporterContext } from './exporterContext';
 import { Aead, Kdf, Kem, Mode } from './identifiers';
 import { KdfContext } from './kdfContext';
@@ -189,7 +188,7 @@ export class CipherSuite {
    * @returns A cipher text and an encapsulated key as bytes.
    * @throws {@link EncapError}, {@link MessageLimitReachedError}, {@link SealError}, {@link ValidationError}
    */
-  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<CipherSuiteSealResponse> {
+  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<CipherSuiteSealResponse> {
     const ctx = await this.createSenderContext(params);
     return {
       ct: await ctx.seal(pt, aad),
@@ -206,7 +205,7 @@ export class CipherSuite {
    * @returns A decrypted plain text as bytes.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link OpenError}, {@link ValidationError}
    */
-  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
+  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
   }
