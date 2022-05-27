@@ -5,22 +5,11 @@ import type { KdfCommon } from '../kdfCommon';
 
 import { Kem } from '../identifiers';
 import { i2Osp } from '../utils/misc';
+import { XCryptoKey } from '../xCryptoKey';
 
 import * as consts from '../consts';
 
-export class XCryptoKey implements CryptoKey {
-
-  public readonly key: Uint8Array;
-  public readonly type: 'public' | 'private';
-  public readonly extractable: boolean = true;
-  public readonly algorithm: KeyAlgorithm = { name: 'X25519' };
-  public readonly usages: KeyUsage[] = consts.KEM_USAGES;
-
-  constructor(key: Uint8Array, type: 'public' | 'private') {
-    this.key = key;
-    this.type = type;
-  }
-}
+const ALG_NAME = 'X25519';
 
 export class X25519 implements KemPrimitives {
 
@@ -60,7 +49,7 @@ export class X25519 implements KemPrimitives {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     const dkpPrk = await this._hkdf.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
     const rawSk = await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_SK, consts.EMPTY, this._nSk);
-    const sk = new XCryptoKey(new Uint8Array(rawSk), 'private');
+    const sk = new XCryptoKey(ALG_NAME, new Uint8Array(rawSk), 'private');
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),
@@ -82,7 +71,7 @@ export class X25519 implements KemPrimitives {
       if (k.byteLength !== this._nPk) {
         reject(new Error('Invalid public key for the ciphersuite'));
       } else {
-        resolve(new XCryptoKey(new Uint8Array(k), 'public'));
+        resolve(new XCryptoKey(ALG_NAME, new Uint8Array(k), 'public'));
       }
     });
   }
@@ -95,13 +84,13 @@ export class X25519 implements KemPrimitives {
       if (!isPublic && key.byteLength !== this._nSk) {
         reject(new Error('Invalid private key for the ciphersuite'));
       }
-      resolve(new XCryptoKey(new Uint8Array(key), isPublic ? 'public' : 'private'));
+      resolve(new XCryptoKey(ALG_NAME, new Uint8Array(key), isPublic ? 'public' : 'private'));
     });
   }
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      resolve(new XCryptoKey(scalarMultBase(k.key), 'public'));
+      resolve(new XCryptoKey(ALG_NAME, scalarMultBase(k.key), 'public'));
     });
   }
 
@@ -109,8 +98,8 @@ export class X25519 implements KemPrimitives {
     return new Promise((resolve) => {
       const kp = generateKeyPair();
       resolve({
-        publicKey: new XCryptoKey(kp.publicKey, 'public'),
-        privateKey: new XCryptoKey(kp.secretKey, 'private'),
+        publicKey: new XCryptoKey(ALG_NAME, kp.publicKey, 'public'),
+        privateKey: new XCryptoKey(ALG_NAME, kp.secretKey, 'private'),
       });
     });
   }

@@ -1,4 +1,4 @@
-import type { XCryptoKey } from '../src/kemPrimitives/x25519';
+import type { XCryptoKey } from '../src/xCryptoKey';
 import type { PreSharedKey } from '../src/interfaces/preSharedKey';
 import type { TestVector } from './testVector';
 
