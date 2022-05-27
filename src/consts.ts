@@ -14,9 +14,9 @@ export const EMPTY = new Uint8Array(0);
 // b"HPKE-v1"
 export const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
 // b"HPKE"
-export const SUITE_ID_HEADER_HPKE = new Uint8Array([72, 80, 75, 69]);
+export const SUITE_ID_HEADER_HPKE = new Uint8Array([72, 80, 75, 69, 0, 0, 0, 0, 0, 0]);
 // b"KEM"
-export const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77]);
+export const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
 // b"dkp_prk"
 export const LABEL_DKP_PRK = new Uint8Array([100, 107, 112, 95, 112, 114, 107]);
 // b"eae_prk"

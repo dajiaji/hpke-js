@@ -136,7 +136,7 @@ export class Ec implements KemPrimitives {
     this._sk.reset();
     for (let counter = 0; this._sk.isZero() || !this._sk.lessThan(this._order); counter++) {
       if (counter > 255) {
-        throw new Error('faild to derive a key pair');
+        throw new Error('Faild to derive a key pair');
       }
       const bytes = new Uint8Array(
         await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk),
