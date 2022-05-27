@@ -17,8 +17,7 @@ export class KdfContext extends KdfCommon {
   private _nT: number;
 
   constructor(api: SubtleCrypto, params: CipherSuiteParams) {
-    const suiteId = new Uint8Array(10);
-    suiteId.set(consts.SUITE_ID_HEADER_HPKE, 0);
+    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
     suiteId.set(i2Osp(params.kem, 2), 4);
     suiteId.set(i2Osp(params.kdf, 2), 6);
     suiteId.set(i2Osp(params.aead, 2), 8);

@@ -17,8 +17,7 @@ export class KemContext extends KdfCommon {
   private _nSecret: number;
 
   constructor(api: SubtleCrypto, kem: Kem) {
-    const suiteId = new Uint8Array(5);
-    suiteId.set(consts.SUITE_ID_HEADER_KEM, 0);
+    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(kem, 2), 3);
 
     let algHash: HmacKeyGenParams;
