@@ -228,6 +228,45 @@ export class ConformanceTester extends WebCrypto {
     this._count++;
   }
 
+  public async testValidX448PublicKey(pk: string) {
+
+    const suite = new CipherSuite({ kem: Kem.DhkemX448HkdfSha512, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+
+    const recipient = await suite.createRecipientContext({
+      recipientKey: rkp,
+      enc: pkb,
+    });
+
+    // assert
+    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    this._count++;
+  }
+
+  public async testInvalidX448PublicKey(pk: string) {
+
+    const suite = new CipherSuite({ kem: Kem.DhkemX448HkdfSha512, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const rkp = await suite.generateKeyPair();
+
+    const pkb = hexStringToBytes(pk);
+
+    // assert
+    if (pkb.length !== 56) {
+      await expect(suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: pkb,
+      })).rejects.toThrow(errors.DeserializeError);
+    } else {
+      await expect(suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: pkb,
+      })).rejects.toThrow(errors.DecapError);
+    }
+    this._count++;
+  }
+
   private async cryptoKeyToBytes(ck: CryptoKey, alg: KeyAlgorithm): Promise<Uint8Array> {
     if (alg.name === 'ECDH') {
       return new Uint8Array(await this._api.exportKey('raw', ck));

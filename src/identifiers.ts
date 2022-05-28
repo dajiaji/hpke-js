@@ -20,8 +20,8 @@ export enum Kem {
   DhkemP521HkdfSha512 = 0x0012,
   /** DHKEM (X25519, HKDF-SHA256) */
   DhkemX25519HkdfSha256 = 0x0020,
-  // /** DHKEM (X448, HKDF-SHA512) */
-  // DhkemX448HkdfSha512 = 0x0021,
+  /** DHKEM (X448, HKDF-SHA512) */
+  DhkemX448HkdfSha512 = 0x0021,
 }
 
 /**

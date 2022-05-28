@@ -435,6 +435,92 @@ describe('CipherSuite', () => {
     });
   });
 
+  describe('A README example of AuthPSK mode (X25519)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+      const skp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+        senderKey: skp,
+        psk: {
+          id: new TextEncoder().encode('our-pre-shared-key-id'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
+        },
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+        senderPublicKey: skp.publicKey,
+        psk: {
+          id: new TextEncoder().encode('our-pre-shared-key-id'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
+        },
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
+  describe('A README example of AuthPSK mode (X448)', () => {
+    it('should work normally', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+      const skp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+        senderKey: skp,
+        psk: {
+          id: new TextEncoder().encode('our-pre-shared-key-id'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
+        },
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+        senderPublicKey: skp.publicKey,
+        psk: {
+          id: new TextEncoder().encode('our-pre-shared-key-id'),
+          key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
+        },
+      });
+
+      // encrypt
+      const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      expect(new TextDecoder().decode(pt)).toEqual('my-secret-message');
+    });
+  });
+
   describe('createRecipientContext with a private key as recipientKey', () => {
     it('should work normally', async () => {
 
@@ -806,6 +892,42 @@ describe('CipherSuite', () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k, false)).rejects.toThrow(errors.DeserializeError);
+    });
+  });
+
+  describe('importKey with invalid x448 public key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const kStr = 'aabbccddeeff';
+      const k = hexStringToBytes(kStr);
+
+      // assert
+      await expect(suite.importKey('raw', k)).rejects.toThrow(errors.DeserializeError);
+    });
+  });
+
+  describe('importKey with invalid x448 private key', () => {
+    it('should throw DeserializeError', async () => {
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX448HkdfSha512,
         kdf: Kdf.HkdfSha256,
         aead: Aead.Aes128Gcm,
       });
