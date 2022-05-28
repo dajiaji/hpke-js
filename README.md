@@ -191,7 +191,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decripted: my-secret-message
+  // decrypted: my-secret-message
 }
 
 doHpke();
@@ -223,7 +223,7 @@ async function doHpke() {
   const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decripted: my-secret-message
+  // decrypted: my-secret-message
 }
 
 doHpke();
@@ -269,7 +269,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   console.log('recipient decrypted: ', td.decode(pt));
-  // decripted: my-secret-message-s
+  // decrypted: my-secret-message-s
 
   // encrypt reversely
   const rct = await recipient.seal(te.encode('my-secret-message-r'));
@@ -278,7 +278,7 @@ async function doHpke() {
   const rpt = await sender.open(rct);
 
   console.log('sender decrypted: ', td.decode(rpt));
-  // decripted: my-secret-message-r
+  // decrypted: my-secret-message-r
 }
 
 doHpke();
@@ -360,7 +360,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decripted: my-secret-message
+  // decrypted: my-secret-message
 }
 
 doHpke();
@@ -402,7 +402,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decripted: my-secret-message
+  // decrypted: my-secret-message
 }
 
 doHpke();
@@ -454,7 +454,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decripted: my-secret-message
+  // decrypted: my-secret-message
 }
 
 doHpke();
