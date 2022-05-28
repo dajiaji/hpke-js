@@ -9,17 +9,28 @@ export class WebCrypto {
   }
 }
 
+export async function loadCrypto(): Promise<Crypto> {
+  if (isBrowser()) {
+    if (window.crypto !== undefined) {
+      return window.crypto;
+    }
+    // jsdom
+  }
+
+  try {
+    const { webcrypto } = await import('node:crypto');
+    return (webcrypto as unknown as Crypto);
+  } catch (e: unknown) {
+    throw new errors.NotSupportedError('Web Cryptograph API not supported');
+  }
+}
+
 export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
   if (isBrowser()) {
-    if (window.crypto === undefined) {
-      try {
-        const crypto = await import('crypto');
-        Object.defineProperty(global.self, 'crypto', { value: crypto.webcrypto });
-      } catch (e: unknown) {
-        throw new errors.NotSupportedError('Web Cryptograph API not supported');
-      }
+    if (window.crypto !== undefined) {
+      return window.crypto.subtle;
     }
-    return window.crypto.subtle;
+    // jsdom
   }
 
   try {
