@@ -86,6 +86,39 @@ describe('RFC9180 conformance', () => {
     });
   });
 
+  describe('Base/DhkemX448/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id === 0x0021 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('Base/DhkemX448/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id === 0x0021 && v.aead_id === 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('Base/DhkemX448/HkdfSha*/ExportOnly in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id === 0x0021 && v.aead_id === 0xFFFF) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
   describe('PSK/DhkemP*/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
     it('should match demonstrated values', async () => {
 
@@ -146,6 +179,39 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('PSK/DhkemX448/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 1 && v.kem_id === 0x0021 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('PSK/DhkemX448/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 1 && v.kem_id === 0x0021 && v.aead_id === 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('PSK/DhkemX448/HkdfSha*/ExportOnly in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 1 && v.kem_id === 0x0021 && v.aead_id === 0xFFFF) {
           await tester.test(v);
         }
       }
@@ -218,6 +284,39 @@ describe('RFC9180 conformance', () => {
     });
   });
 
+  describe('Auth/DhkemX448/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 2 && v.kem_id === 0x0021 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('Auth/DhkemX448/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 2 && v.kem_id === 0x0021 && v.aead_id === 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('Auth/DhkemX448/HkdfSha*/ExportOnly in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 2 && v.kem_id === 0x0021 && v.aead_id === 0xFFFF) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
   describe('AuthPSK/DhkemP*/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
     it('should match demonstrated values', async () => {
 
@@ -278,6 +377,39 @@ describe('RFC9180 conformance', () => {
 
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('AuthPSK/DhkemX448/HkdfSha*/Aes*Gcm in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 3 && v.kem_id === 0x0021 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('AuthPSK/DhkemX448/HkdfSha*/ChaCha20Poly1305 in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 3 && v.kem_id === 0x0021 && v.aead_id === 0x0003) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe('AuthPSK/DhkemX448/HkdfSha*/ExportOnly in test-vectors.json', () => {
+    it('should match demonstrated values', async () => {
+
+      for (const v of testVectors) {
+        if (v.mode === 3 && v.kem_id === 0x0021 && v.aead_id === 0xFFFF) {
           await tester.test(v);
         }
       }

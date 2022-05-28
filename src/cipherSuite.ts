@@ -49,6 +49,7 @@ export class CipherSuite {
       case Kem.DhkemP384HkdfSha384:
       case Kem.DhkemP521HkdfSha512:
       case Kem.DhkemX25519HkdfSha256:
+      case Kem.DhkemX448HkdfSha512:
         break;
       default:
         throw new errors.InvalidParamError('Invalid KEM id');

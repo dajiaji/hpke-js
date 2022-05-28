@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { TextEncoder, TextDecoder } from 'util';
 
 import { isBrowser } from '../src/utils/misc';
