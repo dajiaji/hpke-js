@@ -11,7 +11,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works on both web browsers and Node.js (<b>currently, Deno is not supported</b>).
+This library works both on web browsers and Node.js. <b>Currently, Deno is not supported.</b>
 </div>
 
 <p></p>
@@ -77,7 +77,7 @@ This library works on both web browsers and Node.js (<b>currently, Deno is not s
 
 - Although this library has been passed the following test vectors, it has not been formally audited.
     - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
-    - [Test vectors for ECDH(P-256, P-384 and P-521) and X25519 key validation provided on Project Wycheproof](https://github.com/google/wycheproof)
+    - [ECDH/X25519/X449 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
 - The upper limit of the AEAD sequence number is further rounded to JavaScript Number.MAX\_SAFE\_INTEGER (`2^53 - 1`).
 
 ## Installation
