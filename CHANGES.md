@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.9.0
+
+Released 2022-05-28
+
+- [(#50) Add support for DHKEM(X448, HKDF-SHA512).](https://github.com/dajiaji/hpke-js/pull/50)
+- [(#49) Optimize suite\_id generation.](https://github.com/dajiaji/hpke-js/pull/49)
+
 ## Version 0.8.0
 
 Released 2022-05-24
