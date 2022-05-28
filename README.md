@@ -25,6 +25,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 ## Index
 
 - [Supported Features](#supported-features)
+- [Supported Environments](#supported-environments)
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -72,6 +73,12 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 | AES-256-GCM      | ✅      |  ✅     |      |      |
 | ChaCha20Poly1305 | ✅      |  ✅     |      | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
 | Export Only      | ✅      |  ✅     |      |      |
+
+## Supported Environments
+
+- __Web Browser__: [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/) supported browsers
+    - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
+- __Node.js__: 16.x, 17.x, 18.x
 
 ## Warnings and Restrictions
 
