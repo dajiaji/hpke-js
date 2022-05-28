@@ -48,30 +48,30 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js | Deno |
-| --------------------------- | ------- | ------- | ---- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |      |
-| DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |      |
-| DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |      |
-| DHKEM (X25519, HKDF-SHA256) | ✅      |  ✅     |      |
-| DHKEM (X448, HKDF-SHA512)   | ✅      |  ✅     |      |
+| KEMs                        | Browser | Node.js | Deno |      |
+| --------------------------- | ------- | ------- | ---- | ---- |
+| DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |      |      |
+| DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |      |      |
+| DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |      |      |
+| DHKEM (X25519, HKDF-SHA256) | ✅      |  ✅     |      | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
+| DHKEM (X448, HKDF-SHA512)   | ✅      |  ✅     |      | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js | Deno |
-| ----------- | ------- | ------- | ---- |
-| HKDF-SHA256 | ✅      |  ✅     |      |
-| HKDF-SHA384 | ✅      |  ✅     |      |
-| HKDF-SHA512 | ✅      |  ✅     |      |
+| KDFs        | Browser | Node.js | Deno |      |
+| ----------- | ------- | ------- | ---- | ---- |
+| HKDF-SHA256 | ✅      |  ✅     |      |      |
+| HKDF-SHA384 | ✅      |  ✅     |      |      |
+| HKDF-SHA512 | ✅      |  ✅     |      |      |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser | Node.js | Deno |
-| ---------------- | ------- | ------- | ---- |
-| AES-128-GCM      | ✅      |  ✅     |      |
-| AES-256-GCM      | ✅      |  ✅     |      |
-| ChaCha20Poly1305 | ✅      |  ✅     |      |
-| Export Only      | ✅      |  ✅     |      |
+| AEADs            | Browser | Node.js | Deno |      |
+| ---------------- | ------- | ------- | ---- | ---- |
+| AES-128-GCM      | ✅      |  ✅     |      |      |
+| AES-256-GCM      | ✅      |  ✅     |      |      |
+| ChaCha20Poly1305 | ✅      |  ✅     |      | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅      |  ✅     |      |      |
 
 ## Warnings and Restrictions
 
@@ -467,3 +467,4 @@ We welcome all kind of contributions, filing issues, suggesting new features or 
 ## References
 
 - [RFC9180: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/html/rfc9180)
+- [W3C/WICG: Secure Curves in the Web Cryptography API](https://wicg.github.io/webcrypto-secure-curves/)
