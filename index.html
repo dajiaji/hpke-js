@@ -76,6 +76,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <th>Browser</th>
 <th>Node.js</th>
 <th>Deno</th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
@@ -83,11 +84,13 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>DHKEM (P-384, HKDF-SHA384)</td>
 <td>✅</td>
 <td>✅</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -95,18 +98,21 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>DHKEM (X25519, HKDF-SHA256)</td>
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td><a href="https://www.stablelib.com/modules/_x25519_x25519_.html">@stablelib/x25519</a> is used until <a href="https://wicg.github.io/webcrypto-secure-curves/">WICG: Secure Curves</a> is published and implemented.</td>
 </tr>
 <tr>
 <td>DHKEM (X448, HKDF-SHA512)</td>
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td><a href="https://github.com/Iskander508/X448-js">x449-js</a> is used until <a href="https://wicg.github.io/webcrypto-secure-curves/">WICG: Secure Curves</a> is published and implemented.</td>
 </tr>
 </tbody></table>
 
@@ -120,6 +126,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <th>Browser</th>
 <th>Node.js</th>
 <th>Deno</th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
@@ -127,17 +134,20 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>HKDF-SHA384</td>
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>HKDF-SHA512</td>
 <td>✅</td>
 <td>✅</td>
+<td></td>
 <td></td>
 </tr>
 </tbody></table>
@@ -152,6 +162,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <th>Browser</th>
 <th>Node.js</th>
 <th>Deno</th>
+<th></th>
 </tr>
 </thead>
 <tbody><tr>
@@ -159,11 +170,13 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
 <td>AES-256-GCM</td>
 <td>✅</td>
 <td>✅</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -171,11 +184,13 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 <td>✅</td>
 <td>✅</td>
 <td></td>
+<td><a href="https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html">@stablelib/chacha20poly1305</a> is used.</td>
 </tr>
 <tr>
 <td>Export Only</td>
 <td>✅</td>
 <td>✅</td>
+<td></td>
 <td></td>
 </tr>
 </tbody></table>
@@ -272,5 +287,6 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 </a>
 <ul>
 <li><a href="https://datatracker.ietf.org/doc/html/rfc9180">RFC9180: Hybrid Public Key Encryption</a></li>
+<li><a href="https://wicg.github.io/webcrypto-secure-curves/">W3C/WICG: Secure Curves in the Web Cryptography API</a></li>
 </ul>
 </div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-enum"><a href="enums/Aead.html" class="tsd-kind-icon">Aead</a></li><li class="tsd-kind-enum"><a href="enums/Kdf.html" class="tsd-kind-icon">Kdf</a></li><li class="tsd-kind-enum"><a href="enums/Kem.html" class="tsd-kind-icon">Kem</a></li><li class="tsd-kind-class"><a href="classes/CipherSuite.html" class="tsd-kind-icon">Cipher<wbr/>Suite</a></li><li class="tsd-kind-class"><a href="classes/DecapError.html" class="tsd-kind-icon">Decap<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/DeriveKeyPairError.html" class="tsd-kind-icon">Derive<wbr/>Key<wbr/>Pair<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/DeserializeError.html" class="tsd-kind-icon">Deserialize<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/EncapError.html" class="tsd-kind-icon">Encap<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/ExportError.html" class="tsd-kind-icon">Export<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/InvalidParamError.html" class="tsd-kind-icon">Invalid<wbr/>Param<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/MessageLimitReachedError.html" class="tsd-kind-icon">Message<wbr/>Limit<wbr/>Reached<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/NotSupportedError.html" class="tsd-kind-icon">Not<wbr/>Supported<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/OpenError.html" class="tsd-kind-icon">Open<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/SealError.html" class="tsd-kind-icon">Seal<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/SerializeError.html" class="tsd-kind-icon">Serialize<wbr/>Error</a></li><li class="tsd-kind-class"><a href="classes/ValidationError.html" class="tsd-kind-icon">Validation<wbr/>Error</a></li><li class="tsd-kind-interface"><a href="interfaces/CipherSuiteParams.html" class="tsd-kind-icon">Cipher<wbr/>Suite<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/CipherSuiteSealResponse.html" class="tsd-kind-icon">Cipher<wbr/>Suite<wbr/>Seal<wbr/>Response</a></li><li class="tsd-kind-interface"><a href="interfaces/EncryptionContextInterface.html" class="tsd-kind-icon">Encryption<wbr/>Context<wbr/>Interface</a></li><li class="tsd-kind-interface"><a href="interfaces/PreSharedKey.html" class="tsd-kind-icon">Pre<wbr/>Shared<wbr/>Key</a></li><li class="tsd-kind-interface"><a href="interfaces/RecipientContextParams.html" class="tsd-kind-icon">Recipient<wbr/>Context<wbr/>Params</a></li><li class="tsd-kind-interface"><a href="interfaces/SenderContextInterface.html" class="tsd-kind-icon">Sender<wbr/>Context<wbr/>Interface</a></li><li class="tsd-kind-interface"><a href="interfaces/SenderContextParams.html" class="tsd-kind-icon">Sender<wbr/>Context<wbr/>Params</a></li><li class="tsd-kind-type-alias"><a href="modules.html#RecipientContextInterface" class="tsd-kind-icon">Recipient<wbr/>Context<wbr/>Interface</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
