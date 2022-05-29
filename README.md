@@ -85,7 +85,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 - Although this library has been passed the following test vectors, it has not been formally audited.
     - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
     - [ECDH/X25519/X449 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
-- The upper limit of the AEAD sequence number is further rounded to JavaScript Number.MAX\_SAFE\_INTEGER (`2^53 - 1`).
+- The upper limit of the AEAD sequence number is further rounded to JavaScript's MAX\_SAFE\_INTEGER (`2^53-1`).
 
 ## Installation
 
