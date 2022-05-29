@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Version 0.9.1
+
+Released 2022-05-29
+
+- [(#53) Remove 'deriveKey' from key usages.](https://github.com/dajiaji/hpke-js/pull/53)
+- [(#53) Flush internal buffer for secrets.](https://github.com/dajiaji/hpke-js/pull/53)
+- [(#52) Add supported environments to README.](https://github.com/dajiaji/hpke-js/pull/52)
+
 ## Version 0.9.0
 
 Released 2022-05-28
