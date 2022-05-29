@@ -95,6 +95,12 @@ Using npm:
 npm install hpke-js
 ```
 
+Using yarn:
+
+```
+yarn add hpke-js
+```
+
 Using unpkg CDN:
 
 ```html
