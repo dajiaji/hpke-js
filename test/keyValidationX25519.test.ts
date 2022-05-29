@@ -1,12 +1,16 @@
-import fs from 'fs';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  it,
+} from "https://deno.land/std@0.142.0/testing/bdd.ts";
 
-import type { ConformanceTester } from './conformanceTester';
-import type { WycheproofTestVector } from './testVector';
+import type { ConformanceTester } from "./conformanceTester.ts";
+import type { WycheproofTestVector } from "./testVector.ts";
 
-import { createConformanceTester } from './conformanceTester';
+import { createConformanceTester } from "./conformanceTester.ts";
 
-describe('X25519 key validation', () => {
-
+describe("X25519 key validation", () => {
   let totalCount: number;
   let tester: ConformanceTester;
 
@@ -18,20 +22,19 @@ describe('X25519 key validation', () => {
   afterAll(() => {
     const count = tester.count();
     console.log(`passed/total: ${count}/${totalCount}`);
-
   });
 
-  describe('X25519', () => {
-    it('should validate properly', async () => {
+  describe("X25519", () => {
+    it("should validate properly", async () => {
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
-        fs.readFileSync('./test/vectors/x25519_test.json', 'utf8'),
+        await Deno.readTextFile("./test/vectors/x25519_test.json"),
       );
 
       totalCount += tv.testGroups[0].tests.length;
 
       for (const v of tv.testGroups[0].tests) {
-        if (v.flags.find(k => k === 'ZeroSharedSecret')) {
+        if (v.flags.find((k) => k === "ZeroSharedSecret")) {
           await tester.testInvalidX25519PublicKey(v.public);
         } else {
           await tester.testValidX25519PublicKey(v.public);

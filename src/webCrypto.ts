@@ -1,6 +1,6 @@
-import { isBrowser } from './utils/misc';
+import { isBrowser } from "./utils/misc.ts";
 
-import * as errors from './errors';
+import * as errors from "./errors.ts";
 
 export class WebCrypto {
   protected _api: SubtleCrypto;
@@ -11,32 +11,32 @@ export class WebCrypto {
 
 export async function loadCrypto(): Promise<Crypto> {
   if (isBrowser()) {
-    if (window.crypto !== undefined) {
-      return window.crypto;
+    if (globalThis.crypto !== undefined) {
+      return globalThis.crypto;
     }
     // jsdom
   }
 
   try {
-    const { webcrypto } = await import('node:crypto');
+    const { webcrypto } = await import("crypto"); // node:crypto
     return (webcrypto as unknown as Crypto);
-  } catch (e: unknown) {
-    throw new errors.NotSupportedError('Web Cryptograph API not supported');
+  } catch (_e: unknown) {
+    throw new errors.NotSupportedError("Web Cryptograph API not supported");
   }
 }
 
 export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
   if (isBrowser()) {
-    if (window.crypto !== undefined) {
-      return window.crypto.subtle;
+    if (globalThis.crypto !== undefined) {
+      return globalThis.crypto.subtle;
     }
     // jsdom
   }
 
   try {
-    const { webcrypto } = await import('node:crypto');
+    const { webcrypto } = await import("crypto"); // node:crypto
     return (webcrypto as unknown as Crypto).subtle;
-  } catch (e: unknown) {
-    throw new errors.NotSupportedError('Web Cryptograph API not supported');
+  } catch (_e: unknown) {
+    throw new errors.NotSupportedError("Web Cryptograph API not supported");
   }
 }

@@ -45,47 +45,50 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 
 | Base | PSK | Auth | AuthPSK |
 | ---- | --- | ---- | ------- |
-| ✅   | ✅  | ✅   | ✅      |
+| ✅    | ✅   | ✅    | ✅       |
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js | Deno |      |
-| --------------------------- | ------- | ------- | ---- | ---- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅      |  ✅     |      |      |
-| DHKEM (P-384, HKDF-SHA384)  | ✅      |  ✅     |      |      |
-| DHKEM (P-521, HKDF-SHA512)  | ✅      |  ✅     |      |      |
-| DHKEM (X25519, HKDF-SHA256) | ✅      |  ✅     |      | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
-| DHKEM (X448, HKDF-SHA512)   | ✅      |  ✅     |      | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
+| KEMs                        | Browser | Node.js | Deno |                                                                                                                                                                                                |
+| --------------------------- | ------- | ------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅       |      |                                                                                                                                                                                                |
+| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |                                                                                                                                                                                                |
+| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |                                                                                                                                                                                                |
+| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       |      | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
+| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       |      | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js | Deno |      |
-| ----------- | ------- | ------- | ---- | ---- |
-| HKDF-SHA256 | ✅      |  ✅     |      |      |
-| HKDF-SHA384 | ✅      |  ✅     |      |      |
-| HKDF-SHA512 | ✅      |  ✅     |      |      |
+| KDFs        | Browser | Node.js | Deno |   |
+| ----------- | ------- | ------- | ---- | - |
+| HKDF-SHA256 | ✅       | ✅       |      |   |
+| HKDF-SHA384 | ✅       | ✅       |      |   |
+| HKDF-SHA512 | ✅       | ✅       |      |   |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser | Node.js | Deno |      |
-| ---------------- | ------- | ------- | ---- | ---- |
-| AES-128-GCM      | ✅      |  ✅     |      |      |
-| AES-256-GCM      | ✅      |  ✅     |      |      |
-| ChaCha20Poly1305 | ✅      |  ✅     |      | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
-| Export Only      | ✅      |  ✅     |      |      |
+| AEADs            | Browser | Node.js | Deno |                                                                                                                    |
+| ---------------- | ------- | ------- | ---- | ------------------------------------------------------------------------------------------------------------------ |
+| AES-128-GCM      | ✅       | ✅       |      |                                                                                                                    |
+| AES-256-GCM      | ✅       | ✅       |      |                                                                                                                    |
+| ChaCha20Poly1305 | ✅       | ✅       |      | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅       | ✅       |      |                                                                                                                    |
 
 ## Supported Environments
 
-- __Web Browser__: [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/) supported browsers
-    - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
-- __Node.js__: 16.x, 17.x, 18.x
+- **Web Browser**: [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/)
+  supported browsers
+  - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
+- **Node.js**: 16.x, 17.x, 18.x
 
 ## Warnings and Restrictions
 
-- Although this library has been passed the following test vectors, it has not been formally audited.
-    - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
-    - [ECDH/X25519/X449 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
-- The upper limit of the AEAD sequence number is further rounded to JavaScript's MAX\_SAFE\_INTEGER (`2^53-1`).
+- Although this library has been passed the following test vectors, it has not
+  been formally audited.
+  - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
+  - [ECDH/X25519/X449 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
+- The upper limit of the AEAD sequence number is further rounded to JavaScript's
+  MAX\_SAFE\_INTEGER (`2^53-1`).
 
 ## Installation
 
@@ -175,21 +178,20 @@ On browser:
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
-
   // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
 
   const sender = await suite.createSenderContext({
-    recipientPublicKey: rkp.publicKey
+    recipientPublicKey: rkp.publicKey,
   });
 
   const recipient = await suite.createRecipientContext({
@@ -198,12 +200,12 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log('decrypted: ', new TextDecoder().decode(pt));
+  console.log("decrypted: ", new TextDecoder().decode(pt));
   // decrypted: my-secret-message
 }
 
@@ -247,13 +249,12 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
 const te = new TextEncoder();
 const td = new TextDecoder();
 
 async function doHpke() {
-
   // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
@@ -272,25 +273,31 @@ async function doHpke() {
   });
 
   // setup bidirectional encryption
-  await sender.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
-  await recipient.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+  await sender.setupBidirectional(
+    te.encode("seed-for-key"),
+    te.encode("seed-for-nonce"),
+  );
+  await recipient.setupBidirectional(
+    te.encode("seed-for-key"),
+    te.encode("seed-for-nonce"),
+  );
 
   // encrypt
-  const ct = await sender.seal(te.encode('my-secret-message-s'));
+  const ct = await sender.seal(te.encode("my-secret-message-s"));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log('recipient decrypted: ', td.decode(pt));
+  console.log("recipient decrypted: ", td.decode(pt));
   // decrypted: my-secret-message-s
 
   // encrypt reversely
-  const rct = await recipient.seal(te.encode('my-secret-message-r'));
+  const rct = await recipient.seal(te.encode("my-secret-message-r"));
 
   // decrypt reversely
   const rpt = await sender.open(rct);
 
-  console.log('sender decrypted: ', td.decode(rpt));
+  console.log("sender decrypted: ", td.decode(rpt));
   // decrypted: my-secret-message-r
 }
 
@@ -335,14 +342,14 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -350,29 +357,29 @@ async function doHpke() {
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
     psk: {
-      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
       // a PSK MUST have at least 32 bytes.
-      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
-    }
+      key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+    },
   });
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp,
     enc: sender.enc,
     psk: {
-      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
       // a PSK MUST have at least 32 bytes.
-      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
-    }
+      key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+    },
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log('decrypted: ', new TextDecoder().decode(pt));
+  console.log("decrypted: ", new TextDecoder().decode(pt));
   // decrypted: my-secret-message
 }
 
@@ -384,14 +391,14 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -399,22 +406,22 @@ async function doHpke() {
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
-    senderKey: skp
+    senderKey: skp,
   });
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp,
     enc: sender.enc,
-    senderPublicKey: skp.publicKey
+    senderPublicKey: skp.publicKey,
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log('decrypted: ', new TextDecoder().decode(pt));
+  console.log("decrypted: ", new TextDecoder().decode(pt));
   // decrypted: my-secret-message
 }
 
@@ -426,14 +433,14 @@ doHpke();
 On Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -443,10 +450,10 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
     senderKey: skp,
     psk: {
-      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
       // a PSK MUST have at least 32 bytes.
-      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
-    }
+      key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+    },
   });
 
   const recipient = await suite.createRecipientContext({
@@ -454,19 +461,19 @@ async function doHpke() {
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
     psk: {
-      id: new TextEncoder().encode('our-pre-shared-key-id'),
+      id: new TextEncoder().encode("our-pre-shared-key-id"),
       // a PSK MUST have at least 32 bytes.
-      key: new TextEncoder().encode('jugemujugemugokounosurikirekaija'),
-    }
+      key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+    },
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode('my-secret-message'));
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log('decrypted: ', new TextDecoder().decode(pt));
+  console.log("decrypted: ", new TextDecoder().decode(pt));
   // decrypted: my-secret-message
 }
 
@@ -475,7 +482,8 @@ doHpke();
 
 ## Contributing
 
-We welcome all kind of contributions, filing issues, suggesting new features or sending PRs.
+We welcome all kind of contributions, filing issues, suggesting new features or
+sending PRs.
 
 ## References
 

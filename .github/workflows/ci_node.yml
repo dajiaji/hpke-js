@@ -21,16 +21,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - run: npm run lint
-      - run: npm pack --dry-run
-      - run: npm run typedoc
-      - run: npm test
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        if: matrix.node-version == '16.x'
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          flags: unittests
+          deno-version: v1.x
+      - name: Run dnt
+        run: deno run -A dnt.ts 0.10.0

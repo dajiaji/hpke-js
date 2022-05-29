@@ -1,4 +1,4 @@
-import type { AeadKey } from './aeadKey';
+import type { AeadKey } from "./aeadKey.ts";
 
 export interface KeyInfo {
   key: AeadKey;

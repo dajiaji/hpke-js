@@ -1,19 +1,22 @@
-import type { XCryptoKey } from '../src/xCryptoKey';
-import type { PreSharedKey } from '../src/interfaces/preSharedKey';
-import type { TestVector } from './testVector';
+import {
+  assertEquals,
+  assertRejects,
+} from "https://deno.land/std@0.142.0/testing/asserts.ts";
 
-import { CipherSuite } from '../src/cipherSuite';
-import { Kem, Kdf, Aead } from '../src/identifiers';
-import { WebCrypto } from '../src/webCrypto';
-import { loadSubtleCrypto } from '../src/webCrypto';
+import type { XCryptoKey } from "../src/xCryptoKey.ts";
+import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";
+import type { TestVector } from "./testVector.ts";
 
-import * as consts from '../src/consts';
-import * as errors from '../src/errors';
+import { CipherSuite } from "../src/cipherSuite.ts";
+import { Aead, Kdf, Kem } from "../src/identifiers.ts";
+import { WebCrypto } from "../src/webCrypto.ts";
+import { loadSubtleCrypto } from "../src/webCrypto.ts";
 
-import { hexStringToBytes, kemToKeyGenAlgorithm } from './utils';
+import * as errors from "../src/errors.ts";
+
+import { hexStringToBytes, kemToKeyGenAlgorithm } from "./utils.ts";
 
 export class ConformanceTester extends WebCrypto {
-
   private _count = 0;
 
   public count(): number {
@@ -21,8 +24,11 @@ export class ConformanceTester extends WebCrypto {
   }
 
   public async test(v: TestVector) {
-
-    const suite = new CipherSuite({ kem: v.kem_id, kdf: v.kdf_id, aead: v.aead_id });
+    const suite = new CipherSuite({
+      kem: v.kem_id,
+      kdf: v.kdf_id,
+      aead: v.aead_id,
+    });
 
     // importKey
     const pkEm = hexStringToBytes(v.pkEm);
@@ -35,29 +41,35 @@ export class ConformanceTester extends WebCrypto {
       const skSm = hexStringToBytes(v.skSm);
       const pkSm = hexStringToBytes(v.pkSm);
       skp = {
-        privateKey: await suite.importKey('raw', skSm, false),
-        publicKey: await suite.importKey('raw', pkSm, true),
+        privateKey: await suite.importKey("raw", skSm, false),
+        publicKey: await suite.importKey("raw", pkSm, true),
       };
       pks = skp.publicKey;
     }
     const rkp = {
-      privateKey: await suite.importKey('raw', skRm, false),
-      publicKey: await suite.importKey('raw', pkRm, true),
+      privateKey: await suite.importKey("raw", skRm, false),
+      publicKey: await suite.importKey("raw", pkRm, true),
     };
     const ekp = {
-      privateKey: await suite.importKey('raw', skEm, false),
-      publicKey: await suite.importKey('raw', pkEm), // true can be omitted
+      privateKey: await suite.importKey("raw", skEm, false),
+      publicKey: await suite.importKey("raw", pkEm), // true can be omitted
     };
 
     // deriveKeyPair
     const ikmE = hexStringToBytes(v.ikmE);
     const ikmR = hexStringToBytes(v.ikmR);
     const derivedR = await suite.deriveKeyPair(ikmR.buffer);
-    const derivedPkRm = await this.cryptoKeyToBytes(derivedR.publicKey, kemToKeyGenAlgorithm(v.kem_id));
-    expect(derivedPkRm).toEqual(pkRm);
+    const derivedPkRm = await this.cryptoKeyToBytes(
+      derivedR.publicKey,
+      kemToKeyGenAlgorithm(v.kem_id),
+    );
+    assertEquals(derivedPkRm, pkRm);
     const derivedE = await suite.deriveKeyPair(ikmE.buffer);
-    const derivedPkEm = await this.cryptoKeyToBytes(derivedE.publicKey, kemToKeyGenAlgorithm(v.kem_id));
-    expect(derivedPkEm).toEqual(pkEm);
+    const derivedPkEm = await this.cryptoKeyToBytes(
+      derivedE.publicKey,
+      kemToKeyGenAlgorithm(v.kem_id),
+    );
+    assertEquals(derivedPkEm, pkEm);
 
     // create EncryptionContext
     const info = hexStringToBytes(v.info);
@@ -76,7 +88,7 @@ export class ConformanceTester extends WebCrypto {
       senderKey: skp,
       nonEphemeralKeyPair: ekp, // FOR DEBUGGING/TESTING PURPOSES ONLY.
     });
-    expect(new Uint8Array(sender.enc)).toEqual(enc);
+    assertEquals(new Uint8Array(sender.enc), enc);
 
     const recipient = await suite.createRecipientContext({
       info: info,
@@ -95,56 +107,65 @@ export class ConformanceTester extends WebCrypto {
 
         const sealed = await sender.seal(pt, aad);
         const opened = await recipient.open(sealed, aad);
-        expect(new Uint8Array(sealed)).toEqual(ct);
-        expect(new Uint8Array(opened)).toEqual(pt);
+        assertEquals(new Uint8Array(sealed), ct);
+        assertEquals(new Uint8Array(opened), pt);
       }
     }
 
     // export
     for (const ve of v.exports) {
-      const ec = ve.exporter_context.length === 0 ? new ArrayBuffer(0) : hexStringToBytes(ve.exporter_context);
+      const ec = ve.exporter_context.length === 0
+        ? new ArrayBuffer(0)
+        : hexStringToBytes(ve.exporter_context);
       const ev = hexStringToBytes(ve.exported_value);
 
       let exported = await sender.export(ec, ve.L);
-      expect(new Uint8Array(exported)).toEqual(ev);
+      assertEquals(new Uint8Array(exported), ev);
       exported = await recipient.export(ec, ve.L);
-      expect(new Uint8Array(exported)).toEqual(ev);
+      assertEquals(new Uint8Array(exported), ev);
     }
     this._count++;
   }
 
   public async testValidEcPublicKey(crv: string, pk: string) {
-
     let kemId: Kem;
     let nPk: number;
     switch (crv) {
-      case 'P-256':
+      case "P-256":
         kemId = Kem.DhkemP256HkdfSha256;
         nPk = 65;
         break;
-      case 'P-384':
+      case "P-384":
         kemId = Kem.DhkemP384HkdfSha384;
         nPk = 97;
         break;
-      case 'P-521':
+      case "P-521":
         kemId = Kem.DhkemP521HkdfSha512;
         nPk = 133;
         break;
       default:
-        throw new Error('Invalid crv');
+        throw new Error("Invalid crv");
     }
 
-    const suite = new CipherSuite({ kem: kemId, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: kemId,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
     const alg = kemToKeyGenAlgorithm(kemId);
 
-    const cpk = await this._api.importKey('raw', pkb, alg, true, consts.KEM_USAGES);
+    // const cpk = await this._api.importKey('raw', pkb, alg, true, consts.KEM_USAGES);
+    const cpk = await this._api.importKey("raw", pkb, alg, true, []);
     const sender = await suite.createSenderContext({
       recipientPublicKey: cpk,
     });
-    await expect(sender.open(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.OpenError);
+    await assertRejects(
+      () => sender.open(new Uint8Array([1, 2, 3, 4])),
+      errors.OpenError,
+    );
 
     if (pkb.length < nPk) {
       // Compressed public key not supported.
@@ -156,50 +177,66 @@ export class ConformanceTester extends WebCrypto {
     });
 
     // assert
-    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    await assertRejects(
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      errors.SealError,
+    );
     this._count++;
   }
 
   public async testInvalidEcPublicKey(crv: string, pk: string) {
-
     let kemId: Kem;
     switch (crv) {
-      case 'P-256':
+      case "P-256":
         kemId = Kem.DhkemP256HkdfSha256;
         break;
-      case 'P-384':
+      case "P-384":
         kemId = Kem.DhkemP384HkdfSha384;
         break;
-      case 'P-521':
+      case "P-521":
         kemId = Kem.DhkemP521HkdfSha512;
         break;
       default:
-        throw new Error('Invalid crv');
+        throw new Error("Invalid crv");
     }
 
-    const suite = new CipherSuite({ kem: kemId, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: kemId,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
-    const alg = kemToKeyGenAlgorithm(kemId);
 
     // assert
-    await expect(suite.importKey('raw', pkb)).rejects.toThrow(errors.DeserializeError);
-    await expect(suite.importKey('raw', pkb)).rejects.toThrow('Invalid key for the ciphersuite');
-    await expect(suite.createRecipientContext({
-      recipientKey: rkp,
-      enc: pkb,
-    })).rejects.toThrow(errors.DeserializeError);
-    await expect(suite.createRecipientContext({
-      recipientKey: rkp,
-      enc: pkb,
-    })).rejects.toThrow('Invalid public key for the ciphersuite');
+    await assertRejects(
+      () => suite.importKey("raw", pkb),
+      errors.DeserializeError,
+    );
+    await assertRejects(
+      () => suite.importKey("raw", pkb),
+      "Invalid key for the ciphersuite",
+    );
+    await assertRejects(() =>
+      suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: pkb,
+      }), errors.DeserializeError);
+    await assertRejects(() =>
+      suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: pkb,
+      }), "Invalid public key for the ciphersuite");
     this._count++;
   }
 
   public async testValidX25519PublicKey(pk: string) {
-
-    const suite = new CipherSuite({ kem: Kem.DhkemX25519HkdfSha256, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: Kem.DhkemX25519HkdfSha256,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
@@ -210,28 +247,38 @@ export class ConformanceTester extends WebCrypto {
     });
 
     // assert
-    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    await assertRejects(
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      errors.SealError,
+    );
     this._count++;
   }
 
   public async testInvalidX25519PublicKey(pk: string) {
-
-    const suite = new CipherSuite({ kem: Kem.DhkemX25519HkdfSha256, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: Kem.DhkemX25519HkdfSha256,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
     // assert
-    await expect(suite.createRecipientContext({
-      recipientKey: rkp,
-      enc: pkb,
-    })).rejects.toThrow(errors.DecapError);
+    await assertRejects(() =>
+      suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: pkb,
+      }), errors.DecapError);
     this._count++;
   }
 
   public async testValidX448PublicKey(pk: string) {
-
-    const suite = new CipherSuite({ kem: Kem.DhkemX448HkdfSha512, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: Kem.DhkemX448HkdfSha512,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
@@ -242,35 +289,46 @@ export class ConformanceTester extends WebCrypto {
     });
 
     // assert
-    await expect(recipient.seal(new Uint8Array([1, 2, 3, 4]))).rejects.toThrow(errors.SealError);
+    await assertRejects(
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      errors.SealError,
+    );
     this._count++;
   }
 
   public async testInvalidX448PublicKey(pk: string) {
-
-    const suite = new CipherSuite({ kem: Kem.DhkemX448HkdfSha512, kdf: Kdf.HkdfSha256, aead: Aead.Aes128Gcm });
+    const suite = new CipherSuite({
+      kem: Kem.DhkemX448HkdfSha512,
+      kdf: Kdf.HkdfSha256,
+      aead: Aead.Aes128Gcm,
+    });
     const rkp = await suite.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
     // assert
     if (pkb.length !== 56) {
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: pkb,
-      })).rejects.toThrow(errors.DeserializeError);
+      await assertRejects(() =>
+        suite.createRecipientContext({
+          recipientKey: rkp,
+          enc: pkb,
+        }), errors.DeserializeError);
     } else {
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: pkb,
-      })).rejects.toThrow(errors.DecapError);
+      await assertRejects(() =>
+        suite.createRecipientContext({
+          recipientKey: rkp,
+          enc: pkb,
+        }), errors.DecapError);
     }
     this._count++;
   }
 
-  private async cryptoKeyToBytes(ck: CryptoKey, alg: KeyAlgorithm): Promise<Uint8Array> {
-    if (alg.name === 'ECDH') {
-      return new Uint8Array(await this._api.exportKey('raw', ck));
+  private async cryptoKeyToBytes(
+    ck: CryptoKey,
+    alg: KeyAlgorithm,
+  ): Promise<Uint8Array> {
+    if (alg.name === "ECDH") {
+      return new Uint8Array(await this._api.exportKey("raw", ck));
     }
     // X25519
     return (ck as XCryptoKey).key;

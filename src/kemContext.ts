@@ -1,19 +1,18 @@
-import type { KemPrimitives } from './interfaces/kemPrimitives';
-import type { SenderContextParams } from './interfaces/senderContextParams';
-import type { RecipientContextParams } from './interfaces/recipientContextParams';
+import type { KemPrimitives } from "./interfaces/kemPrimitives.ts";
+import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
+import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
 
-import { Ec } from './kemPrimitives/ec';
-import { X25519 } from './kemPrimitives/x25519';
-import { X448 } from './kemPrimitives/x448';
-import { Kem } from './identifiers';
-import { KdfCommon } from './kdfCommon';
-import { isCryptoKeyPair, i2Osp, concat, concat3 } from './utils/misc';
+import { Ec } from "./kemPrimitives/ec.ts";
+import { X25519 } from "./kemPrimitives/x25519.ts";
+import { X448 } from "./kemPrimitives/x448.ts";
+import { Kem } from "./identifiers.ts";
+import { KdfCommon } from "./kdfCommon.ts";
+import { concat, concat3, i2Osp, isCryptoKeyPair } from "./utils/misc.ts";
 
-import * as consts from './consts';
-import * as errors from './errors';
+import * as consts from "./consts.ts";
+import * as errors from "./errors.ts";
 
 export class KemContext extends KdfCommon {
-
   private _prim: KemPrimitives;
   private _nSecret: number;
 
@@ -24,20 +23,20 @@ export class KemContext extends KdfCommon {
     let algHash: HmacKeyGenParams;
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
-        algHash = { name: 'HMAC', hash: 'SHA-256', length: 256 };
+        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
         break;
       case Kem.DhkemP384HkdfSha384:
-        algHash = { name: 'HMAC', hash: 'SHA-384', length: 384 };
+        algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
         break;
       case Kem.DhkemP521HkdfSha512:
-        algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
+        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
         break;
       case Kem.DhkemX25519HkdfSha256:
-        algHash = { name: 'HMAC', hash: 'SHA-256', length: 256 };
+        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
         break;
       default:
         // case Kem.DhkemX448HkdfSha512:
-        algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
+        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
         break;
     }
     super(api, suiteId, algHash);
@@ -80,7 +79,11 @@ export class KemContext extends KdfCommon {
     }
   }
 
-  public async importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+  public async importKey(
+    format: "raw",
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
     try {
       return await this._prim.importKey(format, key, isPublic);
     } catch (e: unknown) {
@@ -88,20 +91,33 @@ export class KemContext extends KdfCommon {
     }
   }
 
-  public async encap(params: SenderContextParams): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+  public async encap(
+    params: SenderContextParams,
+  ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     try {
       const ke = params.nonEphemeralKeyPair === undefined
-        ? await this.generateKeyPair() : params.nonEphemeralKeyPair;
+        ? await this.generateKeyPair()
+        : params.nonEphemeralKeyPair;
       const enc = await this._prim.serializePublicKey(ke.publicKey);
-      const pkrm = await this._prim.serializePublicKey(params.recipientPublicKey);
+      const pkrm = await this._prim.serializePublicKey(
+        params.recipientPublicKey,
+      );
 
       let dh: Uint8Array;
       if (params.senderKey === undefined) {
-        dh = new Uint8Array(await this._prim.dh(ke.privateKey, params.recipientPublicKey));
+        dh = new Uint8Array(
+          await this._prim.dh(ke.privateKey, params.recipientPublicKey),
+        );
       } else {
-        const sks = isCryptoKeyPair(params.senderKey) ? params.senderKey.privateKey : params.senderKey;
-        const dh1 = new Uint8Array(await this._prim.dh(ke.privateKey, params.recipientPublicKey));
-        const dh2 = new Uint8Array(await this._prim.dh(sks, params.recipientPublicKey));
+        const sks = isCryptoKeyPair(params.senderKey)
+          ? params.senderKey.privateKey
+          : params.senderKey;
+        const dh1 = new Uint8Array(
+          await this._prim.dh(ke.privateKey, params.recipientPublicKey),
+        );
+        const dh2 = new Uint8Array(
+          await this._prim.dh(sks, params.recipientPublicKey),
+        );
         dh = concat(dh1, dh2);
       }
 
@@ -110,9 +126,14 @@ export class KemContext extends KdfCommon {
         kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
       } else {
         const pks = isCryptoKeyPair(params.senderKey)
-          ? params.senderKey.publicKey : await this._prim.derivePublicKey(params.senderKey);
+          ? params.senderKey.publicKey
+          : await this._prim.derivePublicKey(params.senderKey);
         const pksm = await this._prim.serializePublicKey(pks);
-        kemContext = concat3(new Uint8Array(enc), new Uint8Array(pkrm), new Uint8Array(pksm));
+        kemContext = concat3(
+          new Uint8Array(enc),
+          new Uint8Array(pkrm),
+          new Uint8Array(pksm),
+        );
       }
       const sharedSecret = await this.generateSharedSecret(dh, kemContext);
       return {
@@ -134,9 +155,11 @@ export class KemContext extends KdfCommon {
 
     try {
       const skr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.privateKey : params.recipientKey;
+        ? params.recipientKey.privateKey
+        : params.recipientKey;
       const pkr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.publicKey : await this._prim.derivePublicKey(params.recipientKey);
+        ? params.recipientKey.publicKey
+        : await this._prim.derivePublicKey(params.recipientKey);
       const pkrm = await this._prim.serializePublicKey(pkr);
 
       let dh: Uint8Array;
@@ -144,7 +167,9 @@ export class KemContext extends KdfCommon {
         dh = new Uint8Array(await this._prim.dh(skr, pke));
       } else {
         const dh1 = new Uint8Array(await this._prim.dh(skr, pke));
-        const dh2 = new Uint8Array(await this._prim.dh(skr, params.senderPublicKey));
+        const dh2 = new Uint8Array(
+          await this._prim.dh(skr, params.senderPublicKey),
+        );
         dh = concat(dh1, dh2);
       }
 
@@ -152,11 +177,18 @@ export class KemContext extends KdfCommon {
       if (params.senderPublicKey === undefined) {
         kemContext = concat(new Uint8Array(params.enc), new Uint8Array(pkrm));
       } else {
-        const pksm = await this._prim.serializePublicKey(params.senderPublicKey);
-        kemContext = new Uint8Array(params.enc.byteLength + pkrm.byteLength + pksm.byteLength);
+        const pksm = await this._prim.serializePublicKey(
+          params.senderPublicKey,
+        );
+        kemContext = new Uint8Array(
+          params.enc.byteLength + pkrm.byteLength + pksm.byteLength,
+        );
         kemContext.set(new Uint8Array(params.enc), 0);
         kemContext.set(new Uint8Array(pkrm), params.enc.byteLength);
-        kemContext.set(new Uint8Array(pksm), params.enc.byteLength + pkrm.byteLength);
+        kemContext.set(
+          new Uint8Array(pksm),
+          params.enc.byteLength + pkrm.byteLength,
+        );
       }
       return await this.generateSharedSecret(dh, kemContext);
     } catch (e: unknown) {
@@ -164,9 +196,21 @@ export class KemContext extends KdfCommon {
     }
   }
 
-  private async generateSharedSecret(dh: Uint8Array, kemContext: Uint8Array): Promise<ArrayBuffer> {
+  private async generateSharedSecret(
+    dh: Uint8Array,
+    kemContext: Uint8Array,
+  ): Promise<ArrayBuffer> {
     const labeledIkm = this.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
-    const labeledInfo = this.buildLabeledInfo(consts.LABEL_SHARED_SECRET, kemContext, this._nSecret);
-    return await this.extractAndExpand(consts.EMPTY, labeledIkm, labeledInfo, this._nSecret);
+    const labeledInfo = this.buildLabeledInfo(
+      consts.LABEL_SHARED_SECRET,
+      kemContext,
+      this._nSecret,
+    );
+    return await this.extractAndExpand(
+      consts.EMPTY,
+      labeledIkm,
+      labeledInfo,
+      this._nSecret,
+    );
   }
 }

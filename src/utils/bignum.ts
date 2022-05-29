@@ -2,7 +2,6 @@
  * The minimum inplementation of bignum to derive an EC key pair.
  */
 export class Bignum {
-
   private _num: Uint8Array;
 
   public constructor(size: number) {
@@ -19,7 +18,7 @@ export class Bignum {
 
   public set(src: Uint8Array) {
     if (src.length !== this._num.length) {
-      throw new Error('Bignum.set: invalid argument');
+      throw new Error("Bignum.set: invalid argument");
     }
     this._num.set(src);
   }
@@ -35,7 +34,7 @@ export class Bignum {
 
   public lessThan(v: Uint8Array): boolean {
     if (v.length !== this._num.length) {
-      throw new Error('Bignum.lessThan: invalid argument');
+      throw new Error("Bignum.lessThan: invalid argument");
     }
     for (let i = 0; i < this._num.length; i++) {
       if (this._num[i] < v[i]) {

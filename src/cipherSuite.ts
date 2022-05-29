@@ -1,20 +1,26 @@
-import type { CipherSuiteParams } from './interfaces/cipherSuiteParams';
-import type { KeyScheduleParams } from './interfaces/keyScheduleParams';
-import type { CipherSuiteSealResponse } from './interfaces/responses';
-import type { RecipientContextParams } from './interfaces/recipientContextParams';
-import type { SenderContextParams } from './interfaces/senderContextParams';
-import type { RecipientContextInterface, SenderContextInterface } from './interfaces/encryptionContextInterface';
+import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
+import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
+import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
+import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
+import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
+import type {
+  RecipientContextInterface,
+  SenderContextInterface,
+} from "./interfaces/encryptionContextInterface.ts";
 
-import { RecipientExporterContext, SenderExporterContext } from './exporterContext';
-import { Aead, Kdf, Kem, Mode } from './identifiers';
-import { KdfContext } from './kdfContext';
-import { KemContext } from './kemContext';
-import { RecipientContext } from './recipientContext';
-import { SenderContext } from './senderContext';
-import { loadSubtleCrypto } from './webCrypto';
+import {
+  RecipientExporterContext,
+  SenderExporterContext,
+} from "./exporterContext.ts";
+import { Aead, Kdf, Kem, Mode } from "./identifiers.ts";
+import { KdfContext } from "./kdfContext.ts";
+import { KemContext } from "./kemContext.ts";
+import { RecipientContext } from "./recipientContext.ts";
+import { SenderContext } from "./senderContext.ts";
+import { loadSubtleCrypto } from "./webCrypto.ts";
 
-import * as consts from './consts';
-import * as errors from './errors';
+import * as consts from "./consts.ts";
+import * as errors from "./errors.ts";
 
 /**
  * The class of Hybrid Public Key Encryption (HPKE) cipher suite
@@ -52,7 +58,7 @@ export class CipherSuite {
       case Kem.DhkemX448HkdfSha512:
         break;
       default:
-        throw new errors.InvalidParamError('Invalid KEM id');
+        throw new errors.InvalidParamError("Invalid KEM id");
     }
     this.kem = params.kem;
 
@@ -62,7 +68,7 @@ export class CipherSuite {
       case Kdf.HkdfSha512:
         break;
       default:
-        throw new errors.InvalidParamError('Invalid KDF id');
+        throw new errors.InvalidParamError("Invalid KDF id");
     }
     this.kdf = params.kdf;
 
@@ -73,7 +79,7 @@ export class CipherSuite {
       case Aead.ExportOnly:
         break;
       default:
-        throw new errors.InvalidParamError('Invalid AEAD id');
+        throw new errors.InvalidParamError("Invalid AEAD id");
     }
     this.aead = params.aead;
     this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
@@ -100,7 +106,7 @@ export class CipherSuite {
    */
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     if (ikm.byteLength > consts.INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError('Too long ikm');
+      throw new errors.InvalidParamError("Too long ikm");
     }
     await this.setup();
     return await (this._kem as KemContext).deriveKeyPair(ikm);
@@ -118,7 +124,11 @@ export class CipherSuite {
    * @returns A public or private CryptoKey.
    * @throws {@link DeserializeError}
    */
-  public async importKey(format: 'raw', key: ArrayBuffer, isPublic = true): Promise<CryptoKey> {
+  public async importKey(
+    format: "raw",
+    key: ArrayBuffer,
+    isPublic = true,
+  ): Promise<CryptoKey> {
     await this.setup();
     return await (this._kem as KemContext).importKey(format, key, isPublic);
   }
@@ -130,7 +140,9 @@ export class CipherSuite {
    * @returns A sender encryption context.
    * @throws {@link EncapError}, {@link ValidationError}
    */
-  public async createSenderContext(params: SenderContextParams): Promise<SenderContextInterface> {
+  public async createSenderContext(
+    params: SenderContextParams,
+  ): Promise<SenderContextInterface> {
     this.validateInputLength(params);
 
     const api = await this.setup();
@@ -145,7 +157,11 @@ export class CipherSuite {
     }
 
     const kdf = new KdfContext(api, this._ctx);
-    const res = await (this._kdf as KdfContext).keySchedule(mode, dh.sharedSecret, params);
+    const res = await (this._kdf as KdfContext).keySchedule(
+      mode,
+      dh.sharedSecret,
+      params,
+    );
     if (res.key === undefined) {
       return new SenderExporterContext(api, kdf, res.exporterSecret, dh.enc);
     }
@@ -159,7 +175,9 @@ export class CipherSuite {
    * @returns A recipient encryption context.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link ValidationError}
    */
-  public async createRecipientContext(params: RecipientContextParams): Promise<RecipientContextInterface> {
+  public async createRecipientContext(
+    params: RecipientContextParams,
+  ): Promise<RecipientContextInterface> {
     this.validateInputLength(params);
 
     const api = await this.setup();
@@ -174,7 +192,11 @@ export class CipherSuite {
     }
 
     const kdf = new KdfContext(api, this._ctx);
-    const res = await (this._kdf as KdfContext).keySchedule(mode, sharedSecret, params);
+    const res = await (this._kdf as KdfContext).keySchedule(
+      mode,
+      sharedSecret,
+      params,
+    );
     if (res.key === undefined) {
       return new RecipientExporterContext(api, kdf, res.exporterSecret);
     }
@@ -190,7 +212,11 @@ export class CipherSuite {
    * @returns A cipher text and an encapsulated key as bytes.
    * @throws {@link EncapError}, {@link MessageLimitReachedError}, {@link SealError}, {@link ValidationError}
    */
-  public async seal(params: SenderContextParams, pt: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<CipherSuiteSealResponse> {
+  public async seal(
+    params: SenderContextParams,
+    pt: ArrayBuffer,
+    aad: ArrayBuffer = consts.EMPTY,
+  ): Promise<CipherSuiteSealResponse> {
     const ctx = await this.createSenderContext(params);
     return {
       ct: await ctx.seal(pt, aad),
@@ -207,7 +233,11 @@ export class CipherSuite {
    * @returns A decrypted plain text as bytes.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link OpenError}, {@link ValidationError}
    */
-  public async open(params: RecipientContextParams, ct: ArrayBuffer, aad: ArrayBuffer = consts.EMPTY): Promise<ArrayBuffer> {
+  public async open(
+    params: RecipientContextParams,
+    ct: ArrayBuffer,
+    aad: ArrayBuffer = consts.EMPTY,
+  ): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
   }
@@ -222,18 +252,23 @@ export class CipherSuite {
   }
 
   private validateInputLength(params: KeyScheduleParams) {
-    if (params.info !== undefined && params.info.byteLength > consts.INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError('Too long info');
+    if (
+      params.info !== undefined &&
+      params.info.byteLength > consts.INPUT_LENGTH_LIMIT
+    ) {
+      throw new errors.InvalidParamError("Too long info");
     }
     if (params.psk !== undefined) {
       if (params.psk.key.byteLength < consts.MINIMUM_PSK_LENGTH) {
-        throw new errors.InvalidParamError(`PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`);
+        throw new errors.InvalidParamError(
+          `PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`,
+        );
       }
       if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError('Too long psk.key');
+        throw new errors.InvalidParamError("Too long psk.key");
       }
       if (params.psk.id.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError('Too long psk.id');
+        throw new errors.InvalidParamError("Too long psk.id");
       }
     }
     return;

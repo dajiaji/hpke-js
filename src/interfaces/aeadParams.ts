@@ -1,10 +1,9 @@
-import type { Aead } from '../identifiers';
+import type { Aead } from "../identifiers.ts";
 
 /**
  * The AEAD parameters for building a encryption context.
  */
 export interface AeadParams {
-
   /** The Aead indentifier */
   aead: Aead;
 

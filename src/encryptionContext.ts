@@ -1,19 +1,18 @@
-import type { AeadKey } from './interfaces/aeadKey';
-import type { AeadParams } from './interfaces/aeadParams';
-import type { KeyInfo } from './interfaces/keyInfo';
-import type { KdfContext } from './kdfContext';
+import type { AeadKey } from "./interfaces/aeadKey.ts";
+import type { AeadParams } from "./interfaces/aeadParams.ts";
+import type { KeyInfo } from "./interfaces/keyInfo.ts";
+import type { KdfContext } from "./kdfContext.ts";
 
-import { AesGcmKey } from './aeadKeys/aesGcmKey';
-import { Chacha20Poly1305Key } from './aeadKeys/chacha20Poly1305Key';
-import { ExporterContext } from './exporterContext';
-import { Aead } from './identifiers';
-import { i2Osp, xor } from './utils/misc';
+import { AesGcmKey } from "./aeadKeys/aesGcmKey.ts";
+import { Chacha20Poly1305Key } from "./aeadKeys/chacha20Poly1305Key.ts";
+import { ExporterContext } from "./exporterContext.ts";
+import { Aead } from "./identifiers.ts";
+import { i2Osp, xor } from "./utils/misc.ts";
 
-import * as consts from './consts';
-import * as errors from './errors';
+import * as consts from "./consts.ts";
+import * as errors from "./errors.ts";
 
 export class EncryptionContext extends ExporterContext {
-
   // AEAD id.
   protected _aead: Aead;
   // The length in bytes of a key for the algorithm.
@@ -30,8 +29,11 @@ export class EncryptionContext extends ExporterContext {
   constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
     super(api, kdf, params.exporterSecret);
 
-    if (params.key === undefined || params.baseNonce === undefined || params.seq === undefined) {
-      throw new Error('Required parameters are missing');
+    if (
+      params.key === undefined || params.baseNonce === undefined ||
+      params.seq === undefined
+    ) {
+      throw new Error("Required parameters are missing");
     }
     this._aead = params.aead;
     this._nK = params.nK;
@@ -61,15 +63,20 @@ export class EncryptionContext extends ExporterContext {
   protected incrementSeq(k: KeyInfo) {
     // if (this.seq >= (1 << (8 * this.baseNonce.byteLength)) - 1) {
     if (k.seq > Number.MAX_SAFE_INTEGER) {
-      throw new errors.MessageLimitReachedError('Message limit reached');
+      throw new errors.MessageLimitReachedError("Message limit reached");
     }
     k.seq += 1;
     return;
   }
 
-  public async setupBidirectional(keySeed: ArrayBuffer, nonceSeed: ArrayBuffer): Promise<void> {
+  public async setupBidirectional(
+    keySeed: ArrayBuffer,
+    nonceSeed: ArrayBuffer,
+  ): Promise<void> {
     try {
-      this._r.baseNonce = new Uint8Array(await this.export(nonceSeed, this._nN));
+      this._r.baseNonce = new Uint8Array(
+        await this.export(nonceSeed, this._nN),
+      );
       const key = await this.export(keySeed, this._nK);
       this._r.key = createAeadKey(this._aead, key, this._api);
       this._r.seq = 0;
@@ -80,7 +87,11 @@ export class EncryptionContext extends ExporterContext {
   }
 }
 
-function createAeadKey(aead: Aead, key: ArrayBuffer, api: SubtleCrypto): AeadKey {
+function createAeadKey(
+  aead: Aead,
+  key: ArrayBuffer,
+  api: SubtleCrypto,
+): AeadKey {
   switch (aead) {
     case Aead.Aes128Gcm:
       return new AesGcmKey(key, api);
@@ -89,6 +100,6 @@ function createAeadKey(aead: Aead, key: ArrayBuffer, api: SubtleCrypto): AeadKey
     case Aead.Chacha20Poly1305:
       return new Chacha20Poly1305Key(key);
     default:
-      throw new Error('Invalid or unsupported AEAD id');
+      throw new Error("Invalid or unsupported AEAD id");
   }
 }

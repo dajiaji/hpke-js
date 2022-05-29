@@ -4,13 +4,13 @@ async function doHpke() {
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
 
   const sender = await suite.createSenderContext({
-    recipientPublicKey: rkp.publicKey
+    recipientPublicKey: rkp.publicKey,
   });
 
   const recipient = await suite.createRecipientContext({

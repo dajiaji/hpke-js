@@ -1,27 +1,33 @@
+declare const Deno: undefined;
+
 /**
  * Checks whether the execution env is browser or not.
  */
-export const isBrowser = () =>
-  typeof window !== 'undefined' && typeof window.document !== 'undefined';
+export const isBrowser = () => typeof window !== "undefined";
+
+/**
+ * Checks whether the execution env is Deno or not.
+ */
+export const isDeno = () => typeof Deno !== "undefined";
 
 /**
  * Checks whetehr the type of input is CryptoKeyPair or not.
  */
 export const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
-  typeof x === 'object' &&
+  typeof x === "object" &&
   x !== null &&
-  typeof (x as CryptoKeyPair).privateKey === 'object' &&
-  typeof (x as CryptoKeyPair).publicKey === 'object';
+  typeof (x as CryptoKeyPair).privateKey === "object" &&
+  typeof (x as CryptoKeyPair).publicKey === "object";
 
 /**
  * Converts integer to octet string. I2OSP implementation.
  */
 export function i2Osp(n: number, w: number): Uint8Array {
   if (w <= 0) {
-    throw new Error('i2Osp: too small size');
+    throw new Error("i2Osp: too small size");
   }
   if (n >= 256 ** w) {
-    throw new Error('i2Osp: too large integer');
+    throw new Error("i2Osp: too large integer");
   }
   const ret = new Uint8Array(w);
   for (let i = 0; i < w && n; i++) {
@@ -36,7 +42,7 @@ export function i2Osp(n: number, w: number): Uint8Array {
  */
 export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
   if (a.byteLength !== b.byteLength) {
-    throw new Error('xor: different length inputs');
+    throw new Error("xor: different length inputs");
   }
   const buf = new Uint8Array(a.byteLength);
   for (let i = 0; i < a.byteLength; i++) {
@@ -58,7 +64,11 @@ export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
 /**
  * Concatenates three Uint8Arrays.
  */
-export function concat3(a: Uint8Array, b: Uint8Array, c: Uint8Array): Uint8Array {
+export function concat3(
+  a: Uint8Array,
+  b: Uint8Array,
+  c: Uint8Array,
+): Uint8Array {
   const ret = new Uint8Array(a.length + b.length + c.length);
   ret.set(a, 0);
   ret.set(b, a.length);

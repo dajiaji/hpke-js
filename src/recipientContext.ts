@@ -1,13 +1,15 @@
-import { EMPTY } from './consts';
-import { EncryptionContext } from './encryptionContext';
+import { EMPTY } from "./consts.ts";
+import { EncryptionContext } from "./encryptionContext.ts";
 
-import * as errors from './errors';
+import * as errors from "./errors.ts";
 
 export class RecipientContext extends EncryptionContext {
-
-  public async seal(data: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
+  public async seal(
+    data: ArrayBuffer,
+    aad: ArrayBuffer = EMPTY,
+  ): Promise<ArrayBuffer> {
     if (this._r.baseNonce.length === 0) {
-      throw new errors.SealError('Bidirectional encryption is not setup');
+      throw new errors.SealError("Bidirectional encryption is not setup");
     }
     let ct: ArrayBuffer;
     try {
@@ -19,7 +21,10 @@ export class RecipientContext extends EncryptionContext {
     return ct;
   }
 
-  public async open(data: ArrayBuffer, aad: ArrayBuffer = EMPTY): Promise<ArrayBuffer> {
+  public async open(
+    data: ArrayBuffer,
+    aad: ArrayBuffer = EMPTY,
+  ): Promise<ArrayBuffer> {
     let pt: ArrayBuffer;
     try {
       pt = await this._f.key.decrypt(this.computeNonce(this._f), data, aad);
