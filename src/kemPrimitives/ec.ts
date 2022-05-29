@@ -37,7 +37,6 @@ export class Ec implements KemPrimitives {
 
   // EC specific arguments for deriving key pair.
   private _order: Uint8Array;
-  private _sk: Bignum;
   private _bitmask: number;
   private _pkcs8AlgId: Uint8Array;
 
@@ -74,7 +73,6 @@ export class Ec implements KemPrimitives {
         this._pkcs8AlgId = PKCS8_ALG_ID_P_521;
         break;
     }
-    this._sk = new Bignum(this._nSk);
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
@@ -133,8 +131,8 @@ export class Ec implements KemPrimitives {
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     const dkpPrk = await this._hkdf.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
-    this._sk.reset();
-    for (let counter = 0; this._sk.isZero() || !this._sk.lessThan(this._order); counter++) {
+    const bn = new Bignum(this._nSk);
+    for (let counter = 0; bn.isZero() || !bn.lessThan(this._order); counter++) {
       if (counter > 255) {
         throw new Error('Faild to derive a key pair');
       }
@@ -142,12 +140,13 @@ export class Ec implements KemPrimitives {
         await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_CANDIDATE, i2Osp(counter, 1), this._nSk),
       );
       bytes[0] = bytes[0] & this._bitmask;
-      this._sk.set(bytes);
+      bn.set(bytes);
     }
-    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + this._sk.val().length);
+    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + bn.val().length);
     pkcs8Key.set(this._pkcs8AlgId, 0);
-    pkcs8Key.set(this._sk.val(), this._pkcs8AlgId.length);
+    pkcs8Key.set(bn.val(), this._pkcs8AlgId.length);
     const sk = await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, consts.KEM_USAGES);
+    bn.reset();
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),
