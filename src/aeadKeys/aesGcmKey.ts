@@ -16,6 +16,7 @@ export class AesGcmKey implements AeadKey {
   public async encrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
+      (new Uint8Array(this._rawKey)).fill(0);
     }
     const alg = {
       name: 'AES-GCM',
@@ -29,6 +30,7 @@ export class AesGcmKey implements AeadKey {
   public async decrypt(iv: ArrayBuffer, data: ArrayBuffer, aad: ArrayBuffer): Promise<ArrayBuffer> {
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
+      (new Uint8Array(this._rawKey)).fill(0);
     }
     const alg = {
       name: 'AES-GCM',

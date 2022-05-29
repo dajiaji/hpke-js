@@ -77,7 +77,7 @@ export class KdfCommon extends WebCrypto {
   }
 
   protected async extractAndExpand(salt: ArrayBuffer, ikm: ArrayBuffer, info: ArrayBuffer, len: number): Promise<ArrayBuffer> {
-    const baseKey = await this._api.importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+    const baseKey = await this._api.importKey('raw', ikm, 'HKDF', false, consts.KEM_USAGES);
     return await this._api.deriveBits(
       {
         name: 'HKDF',
