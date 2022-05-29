@@ -108,13 +108,13 @@ export class Ec implements KemPrimitives {
     }
     try {
       if (isPublic) {
-        return await this._api.importKey(format, key, this._alg, true, ['deriveBits']);
+        return await this._api.importKey(format, key, this._alg, true, consts.KEM_USAGES);
       }
       const k = new Uint8Array(key);
       const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
       pkcs8Key.set(this._pkcs8AlgId, 0);
       pkcs8Key.set(k, this._pkcs8AlgId.length);
-      return await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, ['deriveBits']);
+      return await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, consts.KEM_USAGES);
 
     } catch (_e: unknown) {
       throw new Error('Invalid key for the ciphersuite');
@@ -124,7 +124,7 @@ export class Ec implements KemPrimitives {
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
     const jwk = await this._api.exportKey('jwk', key);
     delete jwk['d'];
-    return await this._api.importKey('jwk', jwk, this._alg, true, ['deriveBits']);
+    return await this._api.importKey('jwk', jwk, this._alg, true, consts.KEM_USAGES);
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
@@ -147,7 +147,7 @@ export class Ec implements KemPrimitives {
     const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + this._sk.val().length);
     pkcs8Key.set(this._pkcs8AlgId, 0);
     pkcs8Key.set(this._sk.val(), this._pkcs8AlgId.length);
-    const sk = await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, ['deriveBits']);
+    const sk = await this._api.importKey('pkcs8', pkcs8Key, this._alg, true, consts.KEM_USAGES);
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),

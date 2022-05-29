@@ -1,5 +1,5 @@
 // The key usages for KEM.
-export const KEM_USAGES: KeyUsage[] = ['deriveKey', 'deriveBits'];
+export const KEM_USAGES: KeyUsage[] = ['deriveBits'];
 // The key usages for AEAD.
 export const AEAD_USAGES: KeyUsage[] = ['encrypt', 'decrypt'];
 

@@ -7,6 +7,7 @@ import { Kem, Kdf, Aead } from '../src/identifiers';
 import { WebCrypto } from '../src/webCrypto';
 import { loadSubtleCrypto } from '../src/webCrypto';
 
+import * as consts from '../src/consts';
 import * as errors from '../src/errors';
 
 import { hexStringToBytes, kemToKeyGenAlgorithm } from './utils';
@@ -139,7 +140,7 @@ export class ConformanceTester extends WebCrypto {
     const pkb = hexStringToBytes(pk);
     const alg = kemToKeyGenAlgorithm(kemId);
 
-    const cpk = await this._api.importKey('raw', pkb, alg, true, ['deriveKey', 'deriveBits']);
+    const cpk = await this._api.importKey('raw', pkb, alg, true, consts.KEM_USAGES);
     const sender = await suite.createSenderContext({
       recipientPublicKey: cpk,
     });
