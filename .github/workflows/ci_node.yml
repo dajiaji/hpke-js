@@ -26,4 +26,4 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        run: deno run -A dnt.ts 0.10.1
+        run: deno run -A dnt.ts 0.10.2
