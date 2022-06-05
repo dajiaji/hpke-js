@@ -11,7 +11,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works both on web browsers and Node.js. <b>Currently, Deno is not supported.</b>
+This library works both on web browsers, Node.js and Deno.
 </div>
 
 <p></p>
@@ -54,25 +54,25 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
 | DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅       |      |                                                                                                                                                                                                |
 | DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |                                                                                                                                                                                                |
 | DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |                                                                                                                                                                                                |
-| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       |      | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
-| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       |      | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
+| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
+| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
 
 ### Key Derivation Functions (KDFs)
 
 | KDFs        | Browser | Node.js | Deno |   |
 | ----------- | ------- | ------- | ---- | - |
-| HKDF-SHA256 | ✅       | ✅       |      |   |
-| HKDF-SHA384 | ✅       | ✅       |      |   |
-| HKDF-SHA512 | ✅       | ✅       |      |   |
+| HKDF-SHA256 | ✅       | ✅       | ✅    |   |
+| HKDF-SHA384 | ✅       | ✅       | ✅    |   |
+| HKDF-SHA512 | ✅       | ✅       | ✅    |   |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
 | AEADs            | Browser | Node.js | Deno |                                                                                                                    |
 | ---------------- | ------- | ------- | ---- | ------------------------------------------------------------------------------------------------------------------ |
-| AES-128-GCM      | ✅       | ✅       |      |                                                                                                                    |
-| AES-256-GCM      | ✅       | ✅       |      |                                                                                                                    |
-| ChaCha20Poly1305 | ✅       | ✅       |      | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
-| Export Only      | ✅       | ✅       |      |                                                                                                                    |
+| AES-128-GCM      | ✅       | ✅       | ✅    |                                                                                                                    |
+| AES-256-GCM      | ✅       | ✅       | ✅    |                                                                                                                    |
+| ChaCha20Poly1305 | ✅       | ✅       | ✅    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅       | ✅       | ✅    |                                                                                                                    |
 
 ## Supported Environments
 
@@ -80,6 +80,7 @@ This library works both on web browsers and Node.js. <b>Currently, Deno is not s
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x
+- **Deno**: 1.x
 
 ## Warnings and Restrictions
 
@@ -111,7 +112,7 @@ Using unpkg CDN:
 <script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://unpkg.com/hpke-js@0.9.1/dist/hpke.min.js"></script>
+<script src="https://unpkg.com/hpke-js@0.10.0/dist/hpke.min.js"></script>
 ```
 
 Using jsDelivr CDN:
@@ -121,7 +122,7 @@ Using jsDelivr CDN:
 <script src="https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js"></script>
 
 <!-- use a specific version -->
-<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.9.1/dist/hpke.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.10.0/dist/hpke.min.js"></script>
 ```
 
 ## Usage
