@@ -30,7 +30,7 @@ This library works both on web browsers, Node.js and Deno.
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Base mode](#base-mode)
+  - [Base mode](#base-mode) - for browsers, Node.js and Deno.
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
   - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-encryption)
   - [Base mode with export-only AEAD](#base-mode-with-export-only-aead)
@@ -150,21 +150,22 @@ This section shows some typical usage examples.
 
 ### Base mode
 
-On browser:
+Browsers:
 
 ```html
 <html>
   <head></head>
   <body>
     <script type="module">
-      import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
+      // import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
 
-      async function doHpke() {
+      globalThis.doHpke = async () => {
 
-        const suite = new hpke.CipherSuite({
-          kem: hpke.Kem.DhkemP256HkdfSha256,
-          kdf: hpke.Kdf.HkdfSha256,
-          aead: hpke.Aead.Aes128Gcm
+        const suite = new CipherSuite({
+          kem: Kem.DhkemP256HkdfSha256,
+          kdf: Kdf.HkdfSha256,
+          aead: Aead.Aes128Gcm
         });
  
         const rkp = await suite.generateKeyPair();
@@ -194,7 +195,7 @@ On browser:
 </html>
 ```
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -231,7 +232,7 @@ async function doHpke() {
 doHpke();
 ```
 
-On Deno:
+Deno:
 
 ```js
 import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.0/mod.ts";
@@ -239,7 +240,7 @@ import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.0/mo
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
+    kem: Kem.DhkemX25519HkdfSha256,
     kdf: Kdf.HkdfSha256,
     aead: Aead.Aes128Gcm,
   });
@@ -270,7 +271,7 @@ doHpke();
 
 ### Base mode with Single-Shot APIs
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
@@ -302,7 +303,7 @@ doHpke();
 
 ### Base mode with bidirectional encryption
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -362,7 +363,7 @@ doHpke();
 
 ### Base mode with export-only AEAD
 
-On Node.js:
+Node.js:
 
 ```js
   const suite = new CipherSuite({
@@ -395,7 +396,7 @@ doHpke();
 
 ### PSK mode
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -444,7 +445,7 @@ doHpke();
 
 ### Auth mode
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
@@ -486,7 +487,7 @@ doHpke();
 
 ### AuthPSK mode
 
-On Node.js:
+Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
