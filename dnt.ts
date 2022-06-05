@@ -101,12 +101,6 @@ await build({
       "odoh",
       "mls",
     ],
-    scripts: {
-      'typedoc': 'typedoc',
-    },
-    devDependencies: {
-      'typedoc': '^0.22.15',
-    },
     engines: {
       "node": ">=16.0.0",
     },
@@ -120,6 +114,5 @@ await build({
 // post build steps
 Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");
-Deno.copyFileSync("typedoc.json", "npm/typedoc.json");
 await emptyDir("./npm/esm/test");
 await emptyDir("./npm/script/test");
