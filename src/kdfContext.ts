@@ -1,16 +1,14 @@
-import type { AeadParams } from './interfaces/aeadParams';
-import type { CipherSuiteParams } from './interfaces/cipherSuiteParams';
-import type { KeyScheduleParams } from './interfaces/keyScheduleParams';
+import type { AeadParams } from "./interfaces/aeadParams.ts";
+import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
+import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
 
-import { Aead, Kdf, Mode } from './identifiers';
-import { KdfCommon } from './kdfCommon';
-import { i2Osp } from './utils/misc';
+import { Aead, Kdf, Mode } from "./identifiers.ts";
+import { KdfCommon } from "./kdfCommon.ts";
+import { i2Osp } from "./utils/misc.ts";
 
-import * as consts from './consts';
-import * as errors from './errors';
+import * as consts from "./consts.ts";
 
 export class KdfContext extends KdfCommon {
-
   private _aead: Aead;
   private _nK: number;
   private _nN: number;
@@ -25,14 +23,14 @@ export class KdfContext extends KdfCommon {
     let algHash: HmacKeyGenParams;
     switch (params.kdf) {
       case Kdf.HkdfSha256:
-        algHash = { name: 'HMAC', hash: 'SHA-256', length: 256 };
+        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
         break;
       case Kdf.HkdfSha384:
-        algHash = { name: 'HMAC', hash: 'SHA-384', length: 384 };
+        algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
         break;
       default:
         // case Kdf.HkdfSha512:
-        algHash = { name: 'HMAC', hash: 'SHA-512', length: 512 };
+        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
         break;
     }
     super(api, suiteId, algHash);
@@ -79,29 +77,57 @@ export class KdfContext extends KdfCommon {
   //   return;
   // }
 
-  public async keySchedule(mode: Mode, sharedSecret: ArrayBuffer, params: KeyScheduleParams): Promise<AeadParams> {
-
+  public async keySchedule(
+    mode: Mode,
+    sharedSecret: ArrayBuffer,
+    params: KeyScheduleParams,
+  ): Promise<AeadParams> {
     // Currently, there is no point in executing this function
     // because this hpke library does not allow users to explicitly specify the mode.
     //
     // this.verifyPskInputs(mode, params);
 
-    const pskId = params.psk === undefined ? consts.EMPTY : new Uint8Array(params.psk.id);
-    const pskIdHash = await this.labeledExtract(consts.EMPTY, consts.LABEL_PSK_ID_HASH, pskId);
+    const pskId = params.psk === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.psk.id);
+    const pskIdHash = await this.labeledExtract(
+      consts.EMPTY,
+      consts.LABEL_PSK_ID_HASH,
+      pskId,
+    );
 
-    const info = params.info === undefined ? consts.EMPTY : new Uint8Array(params.info);
-    const infoHash = await this.labeledExtract(consts.EMPTY, consts.LABEL_INFO_HASH, info);
+    const info = params.info === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.info);
+    const infoHash = await this.labeledExtract(
+      consts.EMPTY,
+      consts.LABEL_INFO_HASH,
+      info,
+    );
 
-    const keyScheduleContext = new Uint8Array(1 + pskIdHash.byteLength + infoHash.byteLength);
+    const keyScheduleContext = new Uint8Array(
+      1 + pskIdHash.byteLength + infoHash.byteLength,
+    );
     keyScheduleContext.set(new Uint8Array([mode]), 0);
     keyScheduleContext.set(new Uint8Array(pskIdHash), 1);
     keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
 
-    const psk = params.psk === undefined ? consts.EMPTY : new Uint8Array(params.psk.key);
+    const psk = params.psk === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.psk.key);
     const ikm = this.buildLabeledIkm(consts.LABEL_SECRET, psk);
 
-    const exporterSecretInfo = this.buildLabeledInfo(consts.LABEL_EXP, keyScheduleContext, this._nH);
-    const exporterSecret = await this.extractAndExpand(sharedSecret, ikm, exporterSecretInfo, this._nH);
+    const exporterSecretInfo = this.buildLabeledInfo(
+      consts.LABEL_EXP,
+      keyScheduleContext,
+      this._nH,
+    );
+    const exporterSecret = await this.extractAndExpand(
+      sharedSecret,
+      ikm,
+      exporterSecretInfo,
+      this._nH,
+    );
 
     if (this._aead === Aead.ExportOnly) {
       return {
@@ -113,11 +139,29 @@ export class KdfContext extends KdfCommon {
       };
     }
 
-    const keyInfo = this.buildLabeledInfo(consts.LABEL_KEY, keyScheduleContext, this._nK);
-    const key = await this.extractAndExpand(sharedSecret, ikm, keyInfo, this._nK);
+    const keyInfo = this.buildLabeledInfo(
+      consts.LABEL_KEY,
+      keyScheduleContext,
+      this._nK,
+    );
+    const key = await this.extractAndExpand(
+      sharedSecret,
+      ikm,
+      keyInfo,
+      this._nK,
+    );
 
-    const baseNonceInfo = this.buildLabeledInfo(consts.LABEL_BASE_NONCE, keyScheduleContext, this._nN);
-    const baseNonce = await this.extractAndExpand(sharedSecret, ikm, baseNonceInfo, this._nN);
+    const baseNonceInfo = this.buildLabeledInfo(
+      consts.LABEL_BASE_NONCE,
+      keyScheduleContext,
+      this._nN,
+    );
+    const baseNonce = await this.extractAndExpand(
+      sharedSecret,
+      ikm,
+      baseNonceInfo,
+      this._nN,
+    );
 
     return {
       aead: this._aead,

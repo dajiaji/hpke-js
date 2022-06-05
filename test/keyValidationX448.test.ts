@@ -1,12 +1,16 @@
-import fs from 'fs';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  it,
+} from "https://deno.land/std@0.142.0/testing/bdd.ts";
 
-import type { ConformanceTester } from './conformanceTester';
-import type { WycheproofTestVector } from './testVector';
+import type { ConformanceTester } from "./conformanceTester.ts";
+import type { WycheproofTestVector } from "./testVector.ts";
 
-import { createConformanceTester } from './conformanceTester';
+import { createConformanceTester } from "./conformanceTester.ts";
 
-describe('X448 key validation', () => {
-
+describe("X448 key validation", () => {
   let totalCount: number;
   let tester: ConformanceTester;
 
@@ -18,22 +22,21 @@ describe('X448 key validation', () => {
   afterAll(() => {
     const count = tester.count();
     console.log(`passed/total: ${count}/${totalCount}`);
-
   });
 
-  describe('X448', () => {
-    it('should validate properly', async () => {
+  describe("X448", () => {
+    it("should validate properly", async () => {
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
-        fs.readFileSync('./test/vectors/x448_test.json', 'utf8'),
+        await Deno.readTextFile("./test/vectors/x448_test.json"),
       );
 
       totalCount += tv.testGroups[0].tests.length;
 
       for (const v of tv.testGroups[0].tests) {
-        if (v.flags.find(k => k === 'ZeroSharedSecret')) {
+        if (v.flags.find((k) => k === "ZeroSharedSecret")) {
           await tester.testInvalidX448PublicKey(v.public);
-        } else if (v.flags.find(k => k === 'NonCanonicalPublic')) {
+        } else if (v.flags.find((k) => k === "NonCanonicalPublic")) {
           continue;
         } else {
           await tester.testValidX448PublicKey(v.public);

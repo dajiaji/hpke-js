@@ -1,29 +1,23 @@
-import { TextEncoder, TextDecoder } from 'util';
+import {
+  assertRejects,
+  assertThrows,
+} from "https://deno.land/std@0.142.0/testing/asserts.ts";
 
-import { CipherSuite } from '../src/cipherSuite';
-import { EncryptionContext } from '../src/encryptionContext';
-import { Kem, Kdf, Aead } from '../src/identifiers';
-import { KdfContext } from '../src/kdfContext';
-import { isBrowser } from '../src/utils/misc';
-import { loadSubtleCrypto } from '../src/webCrypto';
+import { describe, it } from "https://deno.land/std@0.142.0/testing/bdd.ts";
 
-import * as errors from '../src/errors';
+import { CipherSuite } from "../src/cipherSuite.ts";
+import { EncryptionContext } from "../src/encryptionContext.ts";
+import { Aead, Kdf, Kem } from "../src/identifiers.ts";
+import { KdfContext } from "../src/kdfContext.ts";
+import { isDeno } from "../src/utils/misc.ts";
+import { loadSubtleCrypto } from "../src/webCrypto.ts";
+import * as errors from "../src/errors.ts";
 
-describe('CipherSuite', () => {
-
-  // for jsdom setting.
-  beforeAll(() => {
-    if (isBrowser()) {
-      Object.defineProperty(global.self, 'TextEncoder', TextEncoder);
-      Object.defineProperty(global.self, 'TextDecoder', TextDecoder);
-    }
-  });
-
-  describe('open by another recipient (AES-128-GCM)', () => {
-    it('should throw OpenError', async () => {
-
+describe("CipherSuite", () => {
+  describe("open by another recipient (AES-128-GCM)", () => {
+    it("should throw OpenError", async () => {
       const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.Aes128Gcm,
       });
@@ -42,8 +36,14 @@ describe('CipherSuite', () => {
 
       const te = new TextEncoder();
 
-      await sender1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
-      await recipient1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await sender1.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
+      await recipient1.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
 
       const sender2 = await suite.createSenderContext({
         recipientPublicKey: rkp2.publicKey,
@@ -54,23 +54,32 @@ describe('CipherSuite', () => {
         enc: sender2.enc,
       });
 
-      await sender2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
-      await recipient2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await sender2.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
+      await recipient2.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
 
-      const ct1 = await sender1.seal(new TextEncoder().encode('my-secret-message'));
-      const ct2 = await recipient1.seal(new TextEncoder().encode('my-secret-message'));
+      const ct1 = await sender1.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+      const ct2 = await recipient1.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
 
       // assert
-      await expect(recipient2.open(ct1)).rejects.toThrow(errors.OpenError);
-      await expect(sender2.open(ct2)).rejects.toThrow(errors.OpenError);
+      await assertRejects(() => recipient2.open(ct1), errors.OpenError);
+      await assertRejects(() => sender2.open(ct2), errors.OpenError);
     });
   });
 
-  describe('open by another recipient (ChaCha20/Poly1305)', () => {
-    it('should throw OpenError', async () => {
-
+  describe("open by another recipient (ChaCha20/Poly1305)", () => {
+    it("should throw OpenError", async () => {
       const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.Chacha20Poly1305,
       });
@@ -89,8 +98,14 @@ describe('CipherSuite', () => {
 
       const te = new TextEncoder();
 
-      await sender1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
-      await recipient1.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await sender1.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
+      await recipient1.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
 
       const sender2 = await suite.createSenderContext({
         recipientPublicKey: rkp2.publicKey,
@@ -101,23 +116,32 @@ describe('CipherSuite', () => {
         enc: sender2.enc,
       });
 
-      await sender2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
-      await recipient2.setupBidirectional(te.encode('seed-for-key'), te.encode('seed-for-nonce'));
+      await sender2.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
+      await recipient2.setupBidirectional(
+        te.encode("seed-for-key"),
+        te.encode("seed-for-nonce"),
+      );
 
-      const ct1 = await sender1.seal(new TextEncoder().encode('my-secret-message'));
-      const ct2 = await recipient1.seal(new TextEncoder().encode('my-secret-message'));
+      const ct1 = await sender1.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+      const ct2 = await recipient1.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
 
       // assert
-      await expect(recipient2.open(ct1)).rejects.toThrow(errors.OpenError);
-      await expect(sender2.open(ct2)).rejects.toThrow(errors.OpenError);
+      await assertRejects(() => recipient2.open(ct1), errors.OpenError);
+      await assertRejects(() => sender2.open(ct2), errors.OpenError);
     });
   });
 
-  describe('export with invalid argument', () => {
-    it('should throw ExportError', async () => {
-
+  describe("export with invalid argument", () => {
+    it("should throw ExportError", async () => {
       const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.ExportOnly,
       });
@@ -131,15 +155,17 @@ describe('CipherSuite', () => {
       const te = new TextEncoder();
 
       // assert
-      await expect(sender.export(te.encode('info'), -1)).rejects.toThrow(errors.ExportError);
+      await assertRejects(
+        () => sender.export(te.encode("info"), -1),
+        errors.ExportError,
+      );
     });
   });
 
-  describe('export with invalid argument', () => {
-    it('should throw ExportError', async () => {
-
+  describe("export with invalid argument", () => {
+    it("should throw ExportError", async () => {
       const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.ExportOnly,
       });
@@ -153,15 +179,17 @@ describe('CipherSuite', () => {
       const te = new TextEncoder();
 
       // assert
-      await expect(sender.export(te.encode('info'), -1)).rejects.toThrow(errors.ExportError);
+      await assertRejects(
+        () => sender.export(te.encode("info"), -1),
+        errors.ExportError,
+      );
     });
   });
 
-  describe('export with too long exporter_context', () => {
-    it('should throw InvalidParamError', async () => {
-
+  describe("export with too long exporter_context", () => {
+    it("should throw InvalidParamError", async () => {
       const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
         aead: Aead.ExportOnly,
       });
@@ -172,16 +200,20 @@ describe('CipherSuite', () => {
         recipientPublicKey: rkp.publicKey,
       });
 
-      const te = new TextEncoder();
-
       // assert
-      await expect(sender.export(new Uint8Array(129), 32)).rejects.toThrow(errors.InvalidParamError);
-      await expect(sender.export(new Uint8Array(129), 32)).rejects.toThrow('Too long exporter context');
+      await assertRejects(
+        () => sender.export(new Uint8Array(129), 32),
+        errors.InvalidParamError,
+        "Too long exporter context",
+      );
     });
   });
 
-  describe('createSenderContext with invalid recipientPublicKey', () => {
-    it('should throw ExportError', async () => {
+  describe("createSenderContext with invalid recipientPublicKey", () => {
+    it("should throw ExportError", async () => {
+      if (isDeno()) {
+        return;
+      }
 
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -198,19 +230,19 @@ describe('CipherSuite', () => {
       const rkpX = await suiteX.generateKeyPair();
 
       // assert
-      await expect(suite.createSenderContext({
-        recipientPublicKey: rkpX.publicKey,
-      })).rejects.toThrow(errors.EncapError);
-
-      await expect(suite.createSenderContext({
-        recipientPublicKey: rkpX.publicKey,
-      })).rejects.toThrow('Invalid public key for the ciphersuite');
+      await assertRejects(
+        () =>
+          suite.createSenderContext({
+            recipientPublicKey: rkpX.publicKey,
+          }),
+        errors.EncapError,
+        "Invalid public key for the ciphersuite",
+      );
     });
   });
 
-  describe('createRecipientContext with invalid enc', () => {
-    it('should throw DeserializeError', async () => {
-
+  describe("createRecipientContext with invalid enc", () => {
+    it("should throw DeserializeError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
         kdf: Kdf.HkdfSha256,
@@ -218,7 +250,7 @@ describe('CipherSuite', () => {
       });
 
       const suiteX = new CipherSuite({
-        kem: Kem.DhkemP384HkdfSha384,
+        kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha384,
         aead: Aead.Aes128Gcm,
       });
@@ -231,20 +263,23 @@ describe('CipherSuite', () => {
       });
 
       // assert
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: senderX.enc,
-      })).rejects.toThrow(errors.DeserializeError);
-
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: senderX.enc,
-      })).rejects.toThrow('Invalid public key for the ciphersuite');
+      await assertRejects(
+        () =>
+          suite.createRecipientContext({
+            recipientKey: rkp,
+            enc: senderX.enc,
+          }),
+        errors.DeserializeError,
+        "Invalid public key for the ciphersuite",
+      );
     });
   });
 
-  describe('createRecipientContext with invalid enc (X25519)', () => {
-    it('should throw DeserializeError', async () => {
+  describe("createRecipientContext with invalid enc (X25519)", () => {
+    it("should throw DeserializeError", async () => {
+      if (isDeno()) {
+        return;
+      }
 
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -253,7 +288,7 @@ describe('CipherSuite', () => {
       });
 
       const suiteX = new CipherSuite({
-        kem: Kem.DhkemP384HkdfSha384,
+        kem: Kem.DhkemP256HkdfSha256,
         kdf: Kdf.HkdfSha384,
         aead: Aead.Aes128Gcm,
       });
@@ -266,20 +301,23 @@ describe('CipherSuite', () => {
       });
 
       // assert
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: senderX.enc,
-      })).rejects.toThrow(errors.DeserializeError);
-
-      await expect(suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: senderX.enc,
-      })).rejects.toThrow('Invalid public key for the ciphersuite');
+      await assertRejects(
+        () =>
+          suite.createRecipientContext({
+            recipientKey: rkp,
+            enc: senderX.enc,
+          }),
+        errors.DeserializeError,
+        "Invalid public key for the ciphersuite",
+      );
     });
   });
 
-  describe('createRecipientContext with invalid recipientKey', () => {
-    it('should throw DecapError', async () => {
+  describe("createRecipientContext with invalid recipientKey", () => {
+    it("should throw DecapError", async () => {
+      if (isDeno()) {
+        return;
+      }
 
       // setup
       const suite = new CipherSuite({
@@ -302,20 +340,20 @@ describe('CipherSuite', () => {
       });
 
       // assert
-      await expect(suite.createRecipientContext({
-        recipientKey: rkpX,
-        enc: sender.enc,
-      })).rejects.toThrow(errors.DecapError);
-
-      await expect(suite.createRecipientContext({
-        recipientKey: rkpX,
-        enc: sender.enc,
-      })).rejects.toThrow('Invalid public key for the ciphersuite');
+      await assertRejects(
+        () =>
+          suite.createRecipientContext({
+            recipientKey: rkpX,
+            enc: sender.enc,
+          }),
+        errors.DecapError,
+        "Invalid public key for the ciphersuite",
+      );
     });
   });
 
-  describe('constructor without key info', () => {
-    it('should throw Error', async () => {
+  describe("constructor without key info", () => {
+    it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
         kem: Kem.DhkemP256HkdfSha256,
@@ -327,18 +365,39 @@ describe('CipherSuite', () => {
         nK: 16,
         nN: 12,
         nT: 16,
-        exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]),
+        exporterSecret: new Uint8Array([
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+        ]),
       };
 
       // assert
-      expect(() => {
-        new EncryptionContext(api, kdf, params);
-      }).toThrow('Required parameters are missing');
+      assertThrows(
+        () => {
+          new EncryptionContext(api, kdf, params);
+        },
+        Error,
+        "Required parameters are missing",
+      );
     });
   });
 
-  describe('constructor with invalid aead id', () => {
-    it('should throw Error', async () => {
+  describe("constructor with invalid aead id", () => {
+    it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
         kem: Kem.DhkemP256HkdfSha256,
@@ -346,8 +405,9 @@ describe('CipherSuite', () => {
         aead: Aead.Aes128Gcm,
       });
 
-      const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
-      const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
+      const key =
+        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
+      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
       const seq = 0;
 
       const params = {
@@ -355,16 +415,22 @@ describe('CipherSuite', () => {
         nK: 16,
         nN: 12,
         nT: 16,
-        exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
+        exporterSecret:
+          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+            .buffer,
         key: key,
         baseNonce: baseNonce,
         seq: seq,
       };
 
       // assert
-      expect(() => {
-        new EncryptionContext(api, kdf, params);
-      }).toThrow('Invalid or unsupported AEAD id');
+      assertThrows(
+        () => {
+          new EncryptionContext(api, kdf, params);
+        },
+        Error,
+        "Invalid or unsupported AEAD id",
+      );
     });
   });
 
@@ -394,13 +460,12 @@ describe('CipherSuite', () => {
   //     const ec = new EncryptionContext(api, kdf, params);
   //     let ki = { key: createAeadKey(Aead.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
   //     ec.incrementSeq(ki);
-  //     expect(() => { ec.incrementSeq(ki); }).toThrow(errors.MessageLimitReachedError);
-  //     expect(() => { ec.incrementSeq(ki); }).toThrow('Message limit reached');
+  //     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
   //   });
   // });
 
-  describe('setupBidirectional with invalid _nK', () => {
-    it('should throw Error', async () => {
+  describe("setupBidirectional with invalid _nK", () => {
+    it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
         kem: Kem.DhkemP256HkdfSha256,
@@ -408,8 +473,9 @@ describe('CipherSuite', () => {
         aead: Aead.Aes128Gcm,
       });
 
-      const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
-      const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
+      const key =
+        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
+      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
       const seq = 0;
 
       const params = {
@@ -417,7 +483,9 @@ describe('CipherSuite', () => {
         nK: -1, // invalid
         nN: 12,
         nT: 16,
-        exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
+        exporterSecret:
+          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+            .buffer,
         key: key,
         baseNonce: baseNonce,
         seq: seq,
@@ -427,12 +495,15 @@ describe('CipherSuite', () => {
       const ec = new EncryptionContext(api, kdf, params);
 
       // assert
-      await expect(ec.setupBidirectional(te.encode('jyugemu'), te.encode('jyugemu'))).rejects.toThrow(errors.ExportError);
+      await assertRejects(
+        () => ec.setupBidirectional(te.encode("jyugemu"), te.encode("jyugemu")),
+        errors.ExportError,
+      );
     });
   });
 
-  describe('setupBidirectional with invalid _nN', () => {
-    it('should throw Error', async () => {
+  describe("setupBidirectional with invalid _nN", () => {
+    it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
         kem: Kem.DhkemP256HkdfSha256,
@@ -440,8 +511,9 @@ describe('CipherSuite', () => {
         aead: Aead.Aes128Gcm,
       });
 
-      const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
-      const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
+      const key =
+        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
+      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
       const seq = 0;
 
       const params = {
@@ -449,7 +521,9 @@ describe('CipherSuite', () => {
         nK: 16,
         nN: -1, // invalid
         nT: 16,
-        exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
+        exporterSecret:
+          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+            .buffer,
         key: key,
         baseNonce: baseNonce,
         seq: seq,
@@ -459,8 +533,10 @@ describe('CipherSuite', () => {
       const ec = new EncryptionContext(api, kdf, params);
 
       // assert
-      await expect(ec.setupBidirectional(te.encode('jyugemu'), te.encode('jyugemu'))).rejects.toThrow(errors.ExportError);
+      await assertRejects(
+        () => ec.setupBidirectional(te.encode("jyugemu"), te.encode("jyugemu")),
+        errors.ExportError,
+      );
     });
   });
-
 });

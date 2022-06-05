@@ -1,17 +1,16 @@
-import { getPublicKey, getSharedSecret } from 'x448-js';
+import { getPublicKey, getSharedSecret } from "../bundles/x448-js/index.ts";
 
-import type { KemPrimitives } from '../interfaces/kemPrimitives';
-import type { KdfCommon } from '../kdfCommon';
+import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
+import type { KdfCommon } from "../kdfCommon.ts";
 
-import { loadCrypto } from '../webCrypto';
-import { XCryptoKey } from '../xCryptoKey';
+import { loadCrypto } from "../webCrypto.ts";
+import { XCryptoKey } from "../xCryptoKey.ts";
 
-import * as consts from '../consts';
+import * as consts from "../consts.ts";
 
-const ALG_NAME = 'X448';
+const ALG_NAME = "X448";
 
 export class X448 implements KemPrimitives {
-
   private _hkdf: KdfCommon;
   private _nPk: number;
   private _nSk: number;
@@ -30,9 +29,13 @@ export class X448 implements KemPrimitives {
     return await this._deserializePublicKey(key);
   }
 
-  public async importKey(format: 'raw', key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
-    if (format !== 'raw') {
-      throw new Error('Unsupported format');
+  public async importKey(
+    format: "raw",
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    if (format !== "raw") {
+      throw new Error("Unsupported format");
     }
     return await this._importKey(key, isPublic);
   }
@@ -49,9 +52,18 @@ export class X448 implements KemPrimitives {
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    const dkpPrk = await this._hkdf.labeledExtract(consts.EMPTY, consts.LABEL_DKP_PRK, new Uint8Array(ikm));
-    const rawSk = await this._hkdf.labeledExpand(dkpPrk, consts.LABEL_SK, consts.EMPTY, this._nSk);
-    const sk = new XCryptoKey(ALG_NAME, new Uint8Array(rawSk), 'private');
+    const dkpPrk = await this._hkdf.labeledExtract(
+      consts.EMPTY,
+      consts.LABEL_DKP_PRK,
+      new Uint8Array(ikm),
+    );
+    const rawSk = await this._hkdf.labeledExpand(
+      dkpPrk,
+      consts.LABEL_SK,
+      consts.EMPTY,
+      this._nSk,
+    );
+    const sk = new XCryptoKey(ALG_NAME, new Uint8Array(rawSk), "private");
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),
@@ -71,9 +83,9 @@ export class X448 implements KemPrimitives {
   private _deserializePublicKey(k: ArrayBuffer): Promise<CryptoKey> {
     return new Promise((resolve, reject) => {
       if (k.byteLength !== this._nPk) {
-        reject(new Error('Invalid public key for the ciphersuite'));
+        reject(new Error("Invalid public key for the ciphersuite"));
       } else {
-        resolve(new XCryptoKey(ALG_NAME, new Uint8Array(k), 'public'));
+        resolve(new XCryptoKey(ALG_NAME, new Uint8Array(k), "public"));
       }
     });
   }
@@ -81,18 +93,30 @@ export class X448 implements KemPrimitives {
   private _importKey(key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
     return new Promise((resolve, reject) => {
       if (isPublic && key.byteLength !== this._nPk) {
-        reject(new Error('Invalid public key for the ciphersuite'));
+        reject(new Error("Invalid public key for the ciphersuite"));
       }
       if (!isPublic && key.byteLength !== this._nSk) {
-        reject(new Error('Invalid private key for the ciphersuite'));
+        reject(new Error("Invalid private key for the ciphersuite"));
       }
-      resolve(new XCryptoKey(ALG_NAME, new Uint8Array(key), isPublic ? 'public' : 'private'));
+      resolve(
+        new XCryptoKey(
+          ALG_NAME,
+          new Uint8Array(key),
+          isPublic ? "public" : "private",
+        ),
+      );
     });
   }
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      resolve(new XCryptoKey(ALG_NAME, Uint8Array.from(getPublicKey(k.key)), 'public'));
+      resolve(
+        new XCryptoKey(
+          ALG_NAME,
+          Uint8Array.from(getPublicKey(k.key)),
+          "public",
+        ),
+      );
     });
   }
 

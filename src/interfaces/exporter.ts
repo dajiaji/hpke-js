@@ -2,7 +2,6 @@
  * The exporter interface.
  */
 export interface Exporter {
-
   /**
    * Exports a secret using a variable-length pseudorandom function.
    *

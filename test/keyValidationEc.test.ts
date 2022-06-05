@@ -1,12 +1,17 @@
-import fs from 'fs';
+import {
+  afterAll,
+  beforeAll,
+  describe,
+  it,
+} from "https://deno.land/std@0.142.0/testing/bdd.ts";
 
-import type { ConformanceTester } from './conformanceTester';
-import type { WycheproofTestVector } from './testVector';
+import type { ConformanceTester } from "./conformanceTester.ts";
+import type { WycheproofTestVector } from "./testVector.ts";
 
-import { createConformanceTester } from './conformanceTester';
+import { createConformanceTester } from "./conformanceTester.ts";
+import { isDeno } from "../src/utils/misc.ts";
 
-describe('EC key validation', () => {
-
+describe("EC key validation", () => {
   let totalCount: number;
   let tester: ConformanceTester;
 
@@ -18,61 +23,78 @@ describe('EC key validation', () => {
   afterAll(() => {
     const count = tester.count();
     console.log(`passed/total: ${count}/${totalCount}`);
-
   });
 
-  describe('P-256', () => {
-    it('should validate properly', async () => {
+  describe("P-256", () => {
+    it("should validate properly", async () => {
+      if (isDeno()) {
+        return;
+      }
+
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
-        fs.readFileSync('./test/vectors/ecdh_secp256r1_ecpoint_test.json', 'utf8'),
+        await Deno.readTextFile(
+          "./test/vectors/ecdh_secp256r1_ecpoint_test.json",
+        ),
       );
 
       totalCount += tv.testGroups[0].tests.length;
 
       for (const v of tv.testGroups[0].tests) {
-        if (v.result === 'invalid') {
-          await tester.testInvalidEcPublicKey('P-256', v.public);
+        if (v.result === "invalid") {
+          await tester.testInvalidEcPublicKey("P-256", v.public);
         } else {
-          await tester.testValidEcPublicKey('P-256', v.public);
+          await tester.testValidEcPublicKey("P-256", v.public);
         }
       }
     });
   });
 
-  describe('P-384', () => {
-    it('should validate properly', async () => {
+  describe("P-384", () => {
+    it("should validate properly", async () => {
+      if (isDeno()) {
+        return;
+      }
+
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
-        fs.readFileSync('./test/vectors/ecdh_secp384r1_ecpoint_test.json', 'utf8'),
+        await Deno.readTextFile(
+          "./test/vectors/ecdh_secp384r1_ecpoint_test.json",
+        ),
       );
 
       totalCount += tv.testGroups[0].tests.length;
 
       for (const v of tv.testGroups[0].tests) {
-        if (v.result === 'invalid') {
-          await tester.testInvalidEcPublicKey('P-384', v.public);
+        if (v.result === "invalid") {
+          await tester.testInvalidEcPublicKey("P-384", v.public);
         } else {
-          await tester.testValidEcPublicKey('P-384', v.public);
+          await tester.testValidEcPublicKey("P-384", v.public);
         }
       }
     });
   });
 
-  describe('P-521', () => {
-    it('should validate properly', async () => {
+  describe("P-521", () => {
+    it("should validate properly", async () => {
+      if (isDeno()) {
+        return;
+      }
+
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
-        fs.readFileSync('./test/vectors/ecdh_secp521r1_ecpoint_test.json', 'utf8'),
+        await Deno.readTextFile(
+          "./test/vectors/ecdh_secp521r1_ecpoint_test.json",
+        ),
       );
 
       totalCount += tv.testGroups[0].tests.length;
 
       for (const v of tv.testGroups[0].tests) {
-        if (v.result === 'invalid') {
-          await tester.testInvalidEcPublicKey('P-521', v.public);
+        if (v.result === "invalid") {
+          await tester.testInvalidEcPublicKey("P-521", v.public);
         } else {
-          await tester.testValidEcPublicKey('P-521', v.public);
+          await tester.testValidEcPublicKey("P-521", v.public);
         }
       }
     });

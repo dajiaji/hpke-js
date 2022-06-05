@@ -1,341 +1,335 @@
-import * as errors from '../src/errors';
+import { assertEquals } from "https://deno.land/std@0.142.0/testing/asserts.ts";
 
-describe('ValidationError', () => {
+import { describe, it } from "https://deno.land/std@0.142.0/testing/bdd.ts";
 
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+import * as errors from "../src/errors.ts";
+
+describe("ValidationError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.ValidationError(undefined);
 
       // assert
-      expect(err.name).toEqual('ValidationError');
-      expect(err.message).toEqual('ValidationError');
+      assertEquals(err.name, "ValidationError");
+      assertEquals(err.message, "ValidationError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.ValidationError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.ValidationError("failed");
 
       // assert
-      expect(err.name).toEqual('ValidationError');
-      expect(err.message).toEqual('ValidationError: failed');
+      assertEquals(err.name, "ValidationError");
+      assertEquals(err.message, "ValidationError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.ValidationError(origin);
 
       // assert
-      expect(err.name).toEqual('ValidationError');
-      expect(err.message).toEqual('ValidationError: failed');
+      assertEquals(err.name, "ValidationError");
+      assertEquals(err.message, "ValidationError: failed");
     });
   });
 });
 
-describe('DeserializeError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("DeserializeError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.DeserializeError(undefined);
 
       // assert
-      expect(err.name).toEqual('DeserializeError');
-      expect(err.message).toEqual('DeserializeError');
+      assertEquals(err.name, "DeserializeError");
+      assertEquals(err.message, "DeserializeError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.DeserializeError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.DeserializeError("failed");
 
       // assert
-      expect(err.name).toEqual('DeserializeError');
-      expect(err.message).toEqual('DeserializeError: failed');
+      assertEquals(err.name, "DeserializeError");
+      assertEquals(err.message, "DeserializeError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.DeserializeError(origin);
 
       // assert
-      expect(err.name).toEqual('DeserializeError');
-      expect(err.message).toEqual('DeserializeError: failed');
+      assertEquals(err.name, "DeserializeError");
+      assertEquals(err.message, "DeserializeError: failed");
     });
   });
 });
 
-describe('EncapError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("EncapError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.EncapError(undefined);
 
       // assert
-      expect(err.name).toEqual('EncapError');
-      expect(err.message).toEqual('EncapError');
+      assertEquals(err.name, "EncapError");
+      assertEquals(err.message, "EncapError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.EncapError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.EncapError("failed");
 
       // assert
-      expect(err.name).toEqual('EncapError');
-      expect(err.message).toEqual('EncapError: failed');
+      assertEquals(err.name, "EncapError");
+      assertEquals(err.message, "EncapError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.EncapError(origin);
 
       // assert
-      expect(err.name).toEqual('EncapError');
-      expect(err.message).toEqual('EncapError: failed');
+      assertEquals(err.name, "EncapError");
+      assertEquals(err.message, "EncapError: failed");
     });
   });
 });
 
-describe('DecapError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("DecapError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.DecapError(undefined);
 
       // assert
-      expect(err.name).toEqual('DecapError');
-      expect(err.message).toEqual('DecapError');
+      assertEquals(err.name, "DecapError");
+      assertEquals(err.message, "DecapError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.DecapError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.DecapError("failed");
 
       // assert
-      expect(err.name).toEqual('DecapError');
-      expect(err.message).toEqual('DecapError: failed');
+      assertEquals(err.name, "DecapError");
+      assertEquals(err.message, "DecapError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.DecapError(origin);
 
       // assert
-      expect(err.name).toEqual('DecapError');
-      expect(err.message).toEqual('DecapError: failed');
+      assertEquals(err.name, "DecapError");
+      assertEquals(err.message, "DecapError: failed");
     });
   });
 });
 
-describe('ExportError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("ExportError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.ExportError(undefined);
 
       // assert
-      expect(err.name).toEqual('ExportError');
-      expect(err.message).toEqual('ExportError');
+      assertEquals(err.name, "ExportError");
+      assertEquals(err.message, "ExportError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.ExportError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.ExportError("failed");
 
       // assert
-      expect(err.name).toEqual('ExportError');
-      expect(err.message).toEqual('ExportError: failed');
+      assertEquals(err.name, "ExportError");
+      assertEquals(err.message, "ExportError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.ExportError(origin);
 
       // assert
-      expect(err.name).toEqual('ExportError');
-      expect(err.message).toEqual('ExportError: failed');
+      assertEquals(err.name, "ExportError");
+      assertEquals(err.message, "ExportError: failed");
     });
   });
 });
 
-describe('SealError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("SealError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.SealError(undefined);
 
       // assert
-      expect(err.name).toEqual('SealError');
-      expect(err.message).toEqual('SealError');
+      assertEquals(err.name, "SealError");
+      assertEquals(err.message, "SealError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.SealError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.SealError("failed");
 
       // assert
-      expect(err.name).toEqual('SealError');
-      expect(err.message).toEqual('SealError: failed');
+      assertEquals(err.name, "SealError");
+      assertEquals(err.message, "SealError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.SealError(origin);
 
       // assert
-      expect(err.name).toEqual('SealError');
-      expect(err.message).toEqual('SealError: failed');
+      assertEquals(err.name, "SealError");
+      assertEquals(err.message, "SealError: failed");
     });
   });
 });
 
-describe('OpenError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("OpenError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.OpenError(undefined);
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.OpenError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.OpenError("failed");
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError: failed');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.OpenError(origin);
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError: failed');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError: failed");
     });
   });
 });
 
-describe('MessageLimitReachedError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("MessageLimitReachedError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.MessageLimitReachedError(undefined);
 
       // assert
-      expect(err.name).toEqual('MessageLimitReachedError');
-      expect(err.message).toEqual('MessageLimitReachedError');
+      assertEquals(err.name, "MessageLimitReachedError");
+      assertEquals(err.message, "MessageLimitReachedError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.MessageLimitReachedError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.MessageLimitReachedError("failed");
 
       // assert
-      expect(err.name).toEqual('MessageLimitReachedError');
-      expect(err.message).toEqual('MessageLimitReachedError: failed');
+      assertEquals(err.name, "MessageLimitReachedError");
+      assertEquals(err.message, "MessageLimitReachedError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.OpenError(origin);
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError: failed');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError: failed");
     });
   });
 });
 
-describe('DeriveKeyPairError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("DeriveKeyPairError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.DeriveKeyPairError(undefined);
 
       // assert
-      expect(err.name).toEqual('DeriveKeyPairError');
-      expect(err.message).toEqual('DeriveKeyPairError');
+      assertEquals(err.name, "DeriveKeyPairError");
+      assertEquals(err.message, "DeriveKeyPairError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.DeriveKeyPairError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.DeriveKeyPairError("failed");
 
       // assert
-      expect(err.name).toEqual('DeriveKeyPairError');
-      expect(err.message).toEqual('DeriveKeyPairError: failed');
+      assertEquals(err.name, "DeriveKeyPairError");
+      assertEquals(err.message, "DeriveKeyPairError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.OpenError(origin);
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError: failed');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError: failed");
     });
   });
 });
 
-describe('NotSupportedError', () => {
-
-  describe('constructor with neigher string or Error', () => {
-    it('should have valid name and message', () => {
+describe("NotSupportedError", () => {
+  describe("constructor with neigher string or Error", () => {
+    it("should have valid name and message", () => {
       const err = new errors.NotSupportedError(undefined);
 
       // assert
-      expect(err.name).toEqual('NotSupportedError');
-      expect(err.message).toEqual('NotSupportedError');
+      assertEquals(err.name, "NotSupportedError");
+      assertEquals(err.message, "NotSupportedError");
     });
   });
 
-  describe('constructor with string', () => {
-    it('should have valid name and message', () => {
-      const err = new errors.NotSupportedError('failed');
+  describe("constructor with string", () => {
+    it("should have valid name and message", () => {
+      const err = new errors.NotSupportedError("failed");
 
       // assert
-      expect(err.name).toEqual('NotSupportedError');
-      expect(err.message).toEqual('NotSupportedError: failed');
+      assertEquals(err.name, "NotSupportedError");
+      assertEquals(err.message, "NotSupportedError: failed");
     });
   });
 
-  describe('constructor with another Error', () => {
-    it('should have valid name and message', () => {
-      const origin = new Error('failed');
+  describe("constructor with another Error", () => {
+    it("should have valid name and message", () => {
+      const origin = new Error("failed");
       const err = new errors.OpenError(origin);
 
       // assert
-      expect(err.name).toEqual('OpenError');
-      expect(err.message).toEqual('OpenError: failed');
+      assertEquals(err.name, "OpenError");
+      assertEquals(err.message, "OpenError: failed");
     });
   });
 });
