@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.10.2
+
+Released 2022-06-05
+
+- [(#58) Fix bug on publish.yml.](https://github.com/dajiaji/hpke-js/pull/58)
+
 ## Version 0.10.1
 
 Released 2022-06-05
