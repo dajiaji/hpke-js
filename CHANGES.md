@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.10.0
+
+Released 2022-06-05
+
+- [(#55) Add support for Deno.](https://github.com/dajiaji/hpke-js/pull/55)
+
 ## Version 0.9.1
 
 Released 2022-05-29
