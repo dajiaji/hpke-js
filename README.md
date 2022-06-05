@@ -93,6 +93,38 @@ This library works both on web browsers, Node.js and Deno.
 
 ## Installation
 
+Using unpkg CDN:
+
+```html
+<!-- use the latest stable version -->
+<script type="module">
+  import * as hpke from "https://unpkg.com/hpke-js/esm/mod.js";
+  // ...
+</script>
+
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://unpkg.com/hpke-js@0.10.2/esm/mod.js";
+  // ...
+</script>
+```
+
+Using jsDelivr CDN:
+
+```html
+<!-- use the latest stable version -->
+<script type="module">
+  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
+  // ...
+</script>
+
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.10.2/esm/mod.js";
+  // ...
+</script>
+```
+
 Using npm:
 
 ```
@@ -105,24 +137,10 @@ Using yarn:
 yarn add hpke-js
 ```
 
-Using unpkg CDN:
+Using deno.land:
 
-```html
-<!-- use the latest stable version -->
-<script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
-
-<!-- use a specific version -->
-<script src="https://unpkg.com/hpke-js@0.10.2/dist/hpke.min.js"></script>
 ```
-
-Using jsDelivr CDN:
-
-```html
-<!-- use the latest stable version -->
-<script src="https://cdn.jsdelivr.net/npm/hpke-js/dist/hpke.min.js"></script>
-
-<!-- use a specific version -->
-<script src="https://cdn.jsdelivr.net/npm/hpke-js@0.10.2/dist/hpke.min.js"></script>
+import * as hpke from "https://deno.land/x/hpke@v0.10.2/mod.ts";
 ```
 
 ## Usage
@@ -137,12 +155,11 @@ On browser:
 <html>
   <head></head>
   <body>
-    <script src="https://unpkg.com/hpke-js/dist/hpke.min.js"></script>
-    <script type="text/javascript">
+    <script type="module">
+      import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
 
       async function doHpke() {
 
-        // the global name is 'hkpe'
         const suite = new hpke.CipherSuite({
           kem: hpke.Kem.DhkemP256HkdfSha256,
           kdf: hpke.Kdf.HkdfSha256,
@@ -180,6 +197,43 @@ On Node.js:
 
 ```js
 const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+
+async function doHpke() {
+  // setup
+  const suite = new CipherSuite({
+    kem: Kem.DhkemP256HkdfSha256,
+    kdf: Kdf.HkdfSha256,
+    aead: Aead.Aes128Gcm,
+  });
+
+  const rkp = await suite.generateKeyPair();
+
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+  });
+
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp,
+    enc: sender.enc,
+  });
+
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+
+  // decrypt
+  const pt = await recipient.open(ct);
+
+  console.log("decrypted: ", new TextDecoder().decode(pt));
+  // decrypted: my-secret-message
+}
+
+doHpke();
+```
+
+On Deno:
+
+```js
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.10.2/mod.ts";
 
 async function doHpke() {
   // setup
