@@ -20,10 +20,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
       - name: Run dnt
-        run: deno run -A dnt.ts 0.10.2
+        run: deno run -A dnt.ts 0.11.0
