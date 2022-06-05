@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.11.0
+
+Released 2022-06-06
+
+- [(#61) Drop typedoc support.](https://github.com/dajiaji/hpke-js/pull/61)
+- [(#60) [Breaking Change] Drop hpke.min.js and hpke.js support.](https://github.com/dajiaji/hpke-js/pull/60)
+
 ## Version 0.10.2
 
 Released 2022-06-05

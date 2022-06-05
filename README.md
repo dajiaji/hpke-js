@@ -3,7 +3,8 @@
 <div align="center">
 
 [![Stable Release](https://img.shields.io/npm/v/hpke-js.svg)](https://npm.im/hpke-js)
-![Github CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
+![Node.js CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg)
+![Deno CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/dajiaji/hpke-js/branch/main/graph/badge.svg?token=7I7JGKDDJ2)](https://codecov.io/gh/dajiaji/hpke-js)
 
 </div>
@@ -18,7 +19,7 @@ This library works both on web browsers, Node.js and Deno.
 
 <div align="center">
 
-[API Documentation](https://dajiaji.github.io/hpke-js/)
+[API Documentation](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)
 
 </div>
 
@@ -104,7 +105,7 @@ Using unpkg CDN:
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.10.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -120,7 +121,7 @@ Using jsDelivr CDN:
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.10.2/esm/mod.js";
+  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.11.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -140,7 +141,7 @@ yarn add hpke-js
 Using deno.land:
 
 ```
-import * as hpke from "https://deno.land/x/hpke@v0.10.2/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.11.0/mod.ts";
 ```
 
 ## Usage
@@ -233,7 +234,7 @@ doHpke();
 On Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.10.2/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.0/mod.ts";
 
 async function doHpke() {
   // setup
