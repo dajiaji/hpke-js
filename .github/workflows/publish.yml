@@ -17,6 +17,7 @@ jobs:
         with:
           deno-version: v1.x
       - run: deno run -A dnt.ts 0.10.1
+      - run: deno bundle mod.ts ./npm/hpke.js
       - working-directory: ./npm
         run: npm publish
         env:
