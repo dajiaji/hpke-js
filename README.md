@@ -105,7 +105,7 @@ Using unpkg CDN:
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.11.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -121,7 +121,7 @@ Using jsDelivr CDN:
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.11.0/esm/mod.js";
+  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.11.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -141,7 +141,7 @@ yarn add hpke-js
 Using deno.land:
 
 ```
-import * as hpke from "https://deno.land/x/hpke@v0.11.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.11.1/mod.ts";
 ```
 
 ## Usage
@@ -235,7 +235,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.0/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.1/mod.ts";
 
 async function doHpke() {
   // setup

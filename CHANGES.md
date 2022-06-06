@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Version 0.11.1
+
+Released 2022-06-06
+
+- [(#63) Add coverage setting.](https://github.com/dajiaji/hpke-js/pull/63)
+- [Remove @link from jsdoc string.](https://github.com/dajiaji/hpke-js/commit/829602fda65c16e0d770e9d758beee23ac9bc7b6)
+- [Refine jsdoc string.](https://github.com/dajiaji/hpke-js/commit/86e5bb555b7502986c177ebb0fbdcbfea93edf1b)
+
 ## Version 0.11.0
 
 Released 2022-06-06
