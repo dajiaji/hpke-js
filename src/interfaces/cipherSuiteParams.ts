@@ -1,7 +1,7 @@
 import type { Aead, Kdf, Kem } from "../identifiers.ts";
 
 /**
- * The parameters used to configure the {@link CipherSuite}.
+ * The parameters used to configure the `CipherSuite`.
  */
 export interface CipherSuiteParams {
   /** The type of KEM (Key Encapsulation Mechanism). */

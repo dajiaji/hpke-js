@@ -1,7 +1,7 @@
 import type { KeyScheduleParams } from "./keyScheduleParams.ts";
 
 /**
- * The parameters used to setup the {@link SenderContext}.
+ * The parameters used to setup the `SenderContext`.
  */
 export interface SenderContextParams extends KeyScheduleParams {
   /** A recipient public key. */

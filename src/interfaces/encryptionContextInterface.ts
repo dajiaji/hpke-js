@@ -7,6 +7,8 @@ export interface EncryptionContextInterface extends Exporter {
   /**
    * Encrypts data.
    *
+   * If the error occurred, throws `SealError` | `MessageLimitReachedError`.
+   *
    * @param data A plain text as bytes to be encrypted.
    * @param aad Additional authenticated data as bytes fed by an application.
    * @returns A cipher text as bytes.
@@ -16,6 +18,8 @@ export interface EncryptionContextInterface extends Exporter {
 
   /**
    * Decrypts data.
+   *
+   * If the error occurred, throws `OpenError`.
    *
    * @param data An encrypted text as bytes to be decrypted.
    * @param aad Additional authenticated data as bytes fed by an application.
@@ -28,6 +32,8 @@ export interface EncryptionContextInterface extends Exporter {
    * Sets up bi-directional encryption to allow a recipient to send
    * encrypted messages to a sender. This function follows the manner
    * demonstrated in [RFC9180 Section 9.8](https://www.rfc-editor.org/rfc/rfc9180.html#section-9.8).
+   *
+   * If the error occurred, throws `ExportError`.
    *
    * @param keySeed A seed for generating a secret key as bytes.
    * @param nonceSeed A seed for generating a base nonce as bytes.

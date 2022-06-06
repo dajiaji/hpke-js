@@ -50,6 +50,9 @@ export class CipherSuite {
 
   /**
    * @param params A set of parameters for building a cipher suite.
+   *
+   * If the error occurred, throws `InvalidParamError`.
+   *
    * @throws {@link InvalidParamError}
    */
   constructor(params: CipherSuiteParams) {
@@ -103,6 +106,8 @@ export class CipherSuite {
    * Derives a key pair for the cipher suite in the manner
    * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
    *
+   * If the error occurred, throws `DeriveKeyPairError`.
+   *
    * @param ikm A byte string of input keying material. The maximum length is 128 bytes.
    * @returns A key pair derived.
    * @throws {@link DeriveKeyPairError}
@@ -117,9 +122,11 @@ export class CipherSuite {
 
   /**
    * Imports a public or private key and converts to a CryptoKey
-   * which can be used on {@link createSenderContext} or {@link createRecipientContext}.
+   * which can be used on `createSenderContext` or `createRecipientContext`.
    * Basically, this is a thin wrapper function of
    * [SubtleCrypto.importKey](https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey).
+   *
+   * If the error occurred, throws `DeserializeError`.
    *
    * @param format For now, `'raw'` is only supported.
    * @param key A byte string of a raw key.
@@ -138,6 +145,8 @@ export class CipherSuite {
 
   /**
    * Creates an encryption context for a sender.
+   *
+   * If the error occurred, throws `EncapError` | `ValidationError`.
    *
    * @param params A set of parameters for the sender encryption context.
    * @returns A sender encryption context.
@@ -174,6 +183,8 @@ export class CipherSuite {
   /**
    * Creates an encryption context for a recipient.
    *
+   * If the error occurred, throws `DecapError` | `DeserializeError` | `ValidationError`.
+   *
    * @param params A set of parameters for the recipient encryption context.
    * @returns A recipient encryption context.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link ValidationError}
@@ -209,6 +220,8 @@ export class CipherSuite {
   /**
    * Encrypts a message to a recipient.
    *
+   * If the error occurred, throws `EncapError` | `MessageLimitReachedError` | `SealError` | `ValidationError`.
+   *
    * @param params A set of parameters for building a sender encryption context.
    * @param pt A plain text as bytes to be encrypted.
    * @param aad Additional authenticated data as bytes fed by an application.
@@ -229,6 +242,8 @@ export class CipherSuite {
 
   /**
    * Decrypts a message from a sender.
+   *
+   * If the error occurred, throws `DecapError` | `DeserializeError` | `OpenError` | `ValidationError`.
    *
    * @param params A set of parameters for building a recipient encryption context.
    * @param ct An encrypted text as bytes to be decrypted.
