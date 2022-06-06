@@ -16,7 +16,7 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno run -A dnt.ts 0.11.0
+      - run: deno run -A dnt.ts 0.11.1
       - working-directory: ./npm
         run: npm publish
         env:
