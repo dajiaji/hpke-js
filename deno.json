@@ -1,7 +1,7 @@
 {
   "lint": {
     "files": {
-      "exclude": ["src/bundles", "node_modules"]
+      "exclude": ["src/bundles"]
     }
   }
 }

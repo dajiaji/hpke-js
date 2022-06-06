@@ -26,7 +26,7 @@ jobs:
       - name: Run test
         run: deno test test -A --coverage=coverage --jobs --allow-read
       - name: Create coverage report
-        run: deno coverage ./coverage --lcov > coverage.lcov
+        run: deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
