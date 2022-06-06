@@ -112,28 +112,28 @@ Using yarn:
 yarn add hpke-js
 ```
 
-Using unpkg CDN:
+Using esm.sh CDN:
 
 ```html
 <!-- use the latest stable version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js/esm/mod.js";
+  import * as hpke from "https://esm.sh/hpke-js";
   // ...
 </script>
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
+  import * as hpke from "https://esm.sh/hpke-js@0.11.1";
   // ...
 </script>
 ```
 
-Using jsDelivr CDN:
+Using unpkg CDN:
 
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.11.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -151,8 +151,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
+      // import * as hpke from "https://esm.sh/hpke-js@0.11.1";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.1";
 
       globalThis.doHpke = async () => {
 
