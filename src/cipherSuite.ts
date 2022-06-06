@@ -23,8 +23,11 @@ import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
 /**
- * The class of Hybrid Public Key Encryption (HPKE) cipher suite
- * which provides following functions:
+ * The class of Hybrid Public Key Encryption (HPKE) cipher suite.
+ * The calling of the constructor of this class is the starting
+ * point for HPKE operations for both senders and recipients.
+ *
+ * This class provides following functions:
  *
  * - Generates a key pair for the cipher suite.
  * - Derives a key pair for the cipher suite.
@@ -204,7 +207,7 @@ export class CipherSuite {
   }
 
   /**
-   * Encrypts a messege to a recipient.
+   * Encrypts a message to a recipient.
    *
    * @param params A set of parameters for building a sender encryption context.
    * @param pt A plain text as bytes to be encrypted.
@@ -225,7 +228,7 @@ export class CipherSuite {
   }
 
   /**
-   * Decrypts a messege from a sender.
+   * Decrypts a message from a sender.
    *
    * @param params A set of parameters for building a recipient encryption context.
    * @param ct An encrypted text as bytes to be decrypted.

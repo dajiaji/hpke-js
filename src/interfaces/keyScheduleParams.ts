@@ -1,7 +1,7 @@
 import type { PreSharedKey } from "./preSharedKey.ts";
 
 /**
- * The common parameters used to setup the {@link EncryptionContext}
+ * The common parameters used to setup the {@link EncryptionContext}.
  */
 export interface KeyScheduleParams {
   /** Application supplied information. The maximum length is 128 bytes. */
