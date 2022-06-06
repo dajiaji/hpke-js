@@ -9,6 +9,15 @@ import { Bignum } from "../src/utils/bignum.ts";
 
 describe("Bignum", () => {
   describe("set", () => {
+    it("should set properly", () => {
+      const v = new Uint8Array([1, 0, 0, 0]);
+      const num = new Bignum(4);
+      num.set(v);
+
+      // assert
+      assertEquals(num.val(), new Uint8Array([1, 0, 0, 0]));
+    });
+
     it("should throw error with different size of array", () => {
       const a = new Uint8Array([1, 0]);
       const b = new Uint8Array([1, 0, 0, 0]);
@@ -22,6 +31,38 @@ describe("Bignum", () => {
       assertThrows(() => num.set(b), Error, "Bignum.set: invalid argument");
       assertThrows(() => num.set(c), Error, "Bignum.set: invalid argument");
       assertThrows(() => num.set(d), Error, "Bignum.set: invalid argument");
+    });
+  });
+
+  describe("reset", () => {
+    it("should reset properly", () => {
+      const v = new Uint8Array([1, 0, 0, 0]);
+      const num = new Bignum(4);
+      num.set(v);
+      num.reset();
+
+      // assert
+      assertEquals(num.val(), new Uint8Array([0, 0, 0, 0]));
+    });
+  });
+
+  describe("isZero", () => {
+    it("should return true properly", () => {
+      const v = new Uint8Array([0, 0, 0, 0]);
+      const num = new Bignum(4);
+      num.set(v);
+
+      // assert
+      assertEquals(num.isZero(), true);
+    });
+
+    it("should return false properly", () => {
+      const v = new Uint8Array([1, 0, 0, 0]);
+      const num = new Bignum(4);
+      num.set(v);
+
+      // assert
+      assertEquals(num.isZero(), false);
     });
   });
 
