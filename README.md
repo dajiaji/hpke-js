@@ -12,7 +12,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works both on web browsers, Node.js and Deno.
+This library works both on Deno, Node.js and web browsers.
 </div>
 
 <p></p>
@@ -30,7 +30,7 @@ This library works both on web browsers, Node.js and Deno.
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Base mode](#base-mode) - for browsers, Node.js and Deno.
+  - [Base mode](#base-mode) - for Deno, Node.js and web browsers.
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
   - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-encryption)
   - [Base mode with export-only AEAD](#base-mode-with-export-only-aead)
@@ -94,36 +94,10 @@ This library works both on web browsers, Node.js and Deno.
 
 ## Installation
 
-Using unpkg CDN:
+Using deno.land:
 
-```html
-<!-- use the latest stable version -->
-<script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js/esm/mod.js";
-  // ...
-</script>
-
-<!-- use a specific version -->
-<script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
-  // ...
-</script>
 ```
-
-Using jsDelivr CDN:
-
-```html
-<!-- use the latest stable version -->
-<script type="module">
-  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
-  // ...
-</script>
-
-<!-- use a specific version -->
-<script type="module">
-  import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js@0.11.1/esm/mod.js";
-  // ...
-</script>
+import * as hpke from "https://deno.land/x/hpke@v0.11.1/mod.ts";
 ```
 
 Using npm:
@@ -138,10 +112,30 @@ Using yarn:
 yarn add hpke-js
 ```
 
-Using deno.land:
+Using esm.sh CDN:
 
+```html
+<!-- use the latest stable version -->
+<script type="module">
+  import * as hpke from "https://esm.sh/hpke-js";
+  // ...
+</script>
+
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://esm.sh/hpke-js@0.11.1";
+  // ...
+</script>
 ```
-import * as hpke from "https://deno.land/x/hpke@v0.11.1/mod.ts";
+
+Using unpkg CDN:
+
+```html
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
+  // ...
+</script>
 ```
 
 ## Usage
@@ -157,8 +151,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://cdn.jsdelivr.net/npm/hpke-js/esm/mod.js";
+      // import * as hpke from "https://esm.sh/hpke-js@0.11.1";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.1";
 
       globalThis.doHpke = async () => {
 

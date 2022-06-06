@@ -419,6 +419,49 @@ describe("CipherSuite", () => {
     });
   });
 
+  describe("A README example of Base mode (ExportOnly/X25519)", () => {
+    it("should work normally", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      const te = new TextEncoder();
+
+      // export
+      const pskS = sender.export(te.encode("jugemujugemu"), 32);
+      const pskR = recipient.export(te.encode("jugemujugemu"), 32);
+      assertEquals(pskR, pskS);
+
+      // other functions are disabled.
+      await assertRejects(
+        () => sender.seal(te.encode("my-secret-message")),
+        errors.NotSupportedError,
+      );
+      await assertRejects(
+        () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
+        errors.NotSupportedError,
+      );
+      await assertRejects(
+        () => sender.setupBidirectional(te.encode("a"), te.encode("b")),
+        errors.NotSupportedError,
+      );
+    });
+  });
+
   describe("A README example of PSK mode", () => {
     it("should work normally", async () => {
       if (isDeno()) {
