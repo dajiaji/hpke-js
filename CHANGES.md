@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.11.2
+
+Released 2022-06-07
+
+- [(#68) Add test.](https://github.com/dajiaji/hpke-js/pull/68)
+- [(#67) Refine deno.json.](https://github.com/dajiaji/hpke-js/pull/67)
+
 ## Version 0.11.1
 
 Released 2022-06-06

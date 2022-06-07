@@ -12,7 +12,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This library works both on Deno, Node.js and web browsers.
+This module works on Deno, Node.js and web browsers.
 </div>
 
 <p></p>
@@ -97,7 +97,7 @@ This library works both on Deno, Node.js and web browsers.
 Using deno.land:
 
 ```
-import * as hpke from "https://deno.land/x/hpke@v0.11.1/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.11.2/mod.ts";
 ```
 
 Using npm:
@@ -123,7 +123,7 @@ Using esm.sh CDN:
 
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.11.1";
+  import * as hpke from "https://esm.sh/hpke-js@0.11.2";
   // ...
 </script>
 ```
@@ -133,7 +133,7 @@ Using unpkg CDN:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.11.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.2/esm/mod.js";
   // ...
 </script>
 ```
@@ -151,8 +151,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.11.1";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.1";
+      // import * as hpke from "https://esm.sh/hpke-js@0.11.2";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.2";
 
       globalThis.doHpke = async () => {
 
@@ -229,7 +229,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.1/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.2/mod.ts";
 
 async function doHpke() {
   // setup
