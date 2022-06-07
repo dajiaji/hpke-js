@@ -1,4 +1,5 @@
 import {
+  assertEquals,
   assertRejects,
   assertThrows,
 } from "https://deno.land/std@0.142.0/testing/asserts.ts";
@@ -13,8 +14,102 @@ import { isDeno } from "../src/utils/misc.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import * as errors from "../src/errors.ts";
 
-describe("CipherSuite", () => {
-  describe("open by another recipient (AES-128-GCM)", () => {
+const DUMMY_BYTES_12 = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+const DUMMY_BYTES_16 = new Uint8Array(
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+);
+
+describe("constructor", () => {
+  describe("with valid parameters", () => {
+    it("should return a proper instance", async () => {
+      const api = await loadSubtleCrypto();
+      const kdf = new KdfContext(api, {
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
+      const seq = 0;
+
+      const params = {
+        aead: Aead.Aes128Gcm,
+        nK: 16,
+        nN: 12,
+        nT: 16,
+        exporterSecret: DUMMY_BYTES_16.buffer,
+        key: key,
+        baseNonce: baseNonce,
+        seq: seq,
+      };
+
+      // assert
+      assertEquals(typeof new EncryptionContext(api, kdf, params), "object");
+    });
+  });
+
+  describe("with invalid aead id", () => {
+    it("should throw Error", async () => {
+      const api = await loadSubtleCrypto();
+      const kdf = new KdfContext(api, {
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
+      const seq = 0;
+
+      const params = {
+        aead: Aead.ExportOnly, // invalid
+        nK: 16,
+        nN: 12,
+        nT: 16,
+        exporterSecret: DUMMY_BYTES_16.buffer,
+        key: key,
+        baseNonce: baseNonce,
+        seq: seq,
+      };
+
+      // assert
+      assertThrows(
+        () => {
+          new EncryptionContext(api, kdf, params);
+        },
+        Error,
+        "Invalid or unsupported AEAD id",
+      );
+    });
+  });
+});
+
+describe("open", () => {
+  describe("by sender without calling setupBidirectional", () => {
+    it("should throw OpenError", async () => {
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // assert
+      await assertRejects(() => sender.open(ct), errors.OpenError);
+    });
+  });
+
+  describe("by another recipient (AES-128-GCM)", () => {
     it("should throw OpenError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -76,7 +171,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("open by another recipient (ChaCha20/Poly1305)", () => {
+  describe("by another recipient (ChaCha20/Poly1305)", () => {
     it("should throw OpenError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -137,8 +232,10 @@ describe("CipherSuite", () => {
       await assertRejects(() => sender2.open(ct2), errors.OpenError);
     });
   });
+});
 
-  describe("export with invalid argument", () => {
+describe("export", () => {
+  describe("with invalid argument", () => {
     it("should throw ExportError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -162,7 +259,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("export with invalid argument", () => {
+  describe("with invalid argument", () => {
     it("should throw ExportError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -186,7 +283,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("export with too long exporter_context", () => {
+  describe("with too long exporter_context", () => {
     it("should throw InvalidParamError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
@@ -208,8 +305,10 @@ describe("CipherSuite", () => {
       );
     });
   });
+});
 
-  describe("createSenderContext with invalid recipientPublicKey", () => {
+describe("createSenderContext", () => {
+  describe("with invalid recipientPublicKey", () => {
     it("should throw ExportError", async () => {
       if (isDeno()) {
         return;
@@ -240,8 +339,10 @@ describe("CipherSuite", () => {
       );
     });
   });
+});
 
-  describe("createRecipientContext with invalid enc", () => {
+describe("createRecipientContext", () => {
+  describe("with invalid enc", () => {
     it("should throw DeserializeError", async () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -275,7 +376,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("createRecipientContext with invalid enc (X25519)", () => {
+  describe("with invalid enc (X25519)", () => {
     it("should throw DeserializeError", async () => {
       if (isDeno()) {
         return;
@@ -313,7 +414,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("createRecipientContext with invalid recipientKey", () => {
+  describe("with invalid recipientKey", () => {
     it("should throw DecapError", async () => {
       if (isDeno()) {
         return;
@@ -352,7 +453,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("constructor without key info", () => {
+  describe("without key info", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
@@ -395,8 +496,40 @@ describe("CipherSuite", () => {
       );
     });
   });
+});
 
-  describe("constructor with invalid aead id", () => {
+// describe('incrementSeq reaches upper limit', () => {
+//   it('should throw Error', async () => {
+//     const api = await loadSubtleCrypto();
+//     const kdf = new KdfContext(api, {
+//       kem: Kem.DhkemP256HkdfSha256,
+//       kdf: Kdf.HkdfSha256,
+//       aead: Aead.Aes128Gcm,
+//     });
+
+//     const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
+//     const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
+//     const seq = Number.MAX_SAFE_INTEGER;
+
+//     const params = {
+//       aead: Aead.Aes128Gcm,
+//       nK: 16,
+//       nN: 12,
+//       nT: 16,
+//       exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
+//       key: key,
+//       baseNonce: baseNonce,
+//       seq: seq,
+//     };
+//     const ec = new EncryptionContext(api, kdf, params);
+//     let ki = { key: createAeadKey(Aead.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
+//     ec.incrementSeq(ki);
+//     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
+//   });
+// });
+
+describe("setupBidirectional", () => {
+  describe("with invalid _nK", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
@@ -405,77 +538,8 @@ describe("CipherSuite", () => {
         aead: Aead.Aes128Gcm,
       });
 
-      const key =
-        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
-      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
-      const seq = 0;
-
-      const params = {
-        aead: Aead.ExportOnly, // invalid
-        nK: 16,
-        nN: 12,
-        nT: 16,
-        exporterSecret:
-          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-            .buffer,
-        key: key,
-        baseNonce: baseNonce,
-        seq: seq,
-      };
-
-      // assert
-      assertThrows(
-        () => {
-          new EncryptionContext(api, kdf, params);
-        },
-        Error,
-        "Invalid or unsupported AEAD id",
-      );
-    });
-  });
-
-  // describe('incrementSeq reaches upper limit', () => {
-  //   it('should throw Error', async () => {
-  //     const api = await loadSubtleCrypto();
-  //     const kdf = new KdfContext(api, {
-  //       kem: Kem.DhkemP256HkdfSha256,
-  //       kdf: Kdf.HkdfSha256,
-  //       aead: Aead.Aes128Gcm,
-  //     });
-
-  //     const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
-  //     const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
-  //     const seq = Number.MAX_SAFE_INTEGER;
-
-  //     const params = {
-  //       aead: Aead.Aes128Gcm,
-  //       nK: 16,
-  //       nN: 12,
-  //       nT: 16,
-  //       exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
-  //       key: key,
-  //       baseNonce: baseNonce,
-  //       seq: seq,
-  //     };
-  //     const ec = new EncryptionContext(api, kdf, params);
-  //     let ki = { key: createAeadKey(Aead.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
-  //     ec.incrementSeq(ki);
-  //     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
-  //   });
-  // });
-
-  describe("setupBidirectional with invalid _nK", () => {
-    it("should throw Error", async () => {
-      const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
-
-      const key =
-        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
-      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
       const seq = 0;
 
       const params = {
@@ -483,9 +547,7 @@ describe("CipherSuite", () => {
         nK: -1, // invalid
         nN: 12,
         nT: 16,
-        exporterSecret:
-          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-            .buffer,
+        exporterSecret: DUMMY_BYTES_16.buffer,
         key: key,
         baseNonce: baseNonce,
         seq: seq,
@@ -502,7 +564,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("setupBidirectional with invalid _nN", () => {
+  describe("with invalid _nN", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
       const kdf = new KdfContext(api, {
@@ -511,9 +573,8 @@ describe("CipherSuite", () => {
         aead: Aead.Aes128Gcm,
       });
 
-      const key =
-        new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]).buffer;
-      const baseNonce = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
       const seq = 0;
 
       const params = {
@@ -521,9 +582,7 @@ describe("CipherSuite", () => {
         nK: 16,
         nN: -1, // invalid
         nT: 16,
-        exporterSecret:
-          new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-            .buffer,
+        exporterSecret: DUMMY_BYTES_16.buffer,
         key: key,
         baseNonce: baseNonce,
         seq: seq,
