@@ -52,7 +52,6 @@ export class EncryptionContext extends ExporterContext {
       baseNonce: consts.EMPTY,
       seq: 0,
     };
-    return;
   }
 
   protected computeNonce(k: KeyInfo): ArrayBuffer {

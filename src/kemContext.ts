@@ -64,7 +64,6 @@ export class KemContext extends KdfCommon {
         this._nSecret = 64;
         break;
     }
-    return;
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {

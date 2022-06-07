@@ -89,7 +89,6 @@ export class CipherSuite {
     }
     this.aead = params.aead;
     this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
-    return;
   }
 
   /**
