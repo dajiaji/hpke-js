@@ -16,7 +16,6 @@ export class ExporterContext extends WebCrypto
     super(api);
     this._kdf = kdf;
     this.exporterSecret = exporterSecret;
-    return;
   }
 
   public async seal(

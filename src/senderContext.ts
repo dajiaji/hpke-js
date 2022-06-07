@@ -18,7 +18,6 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
   ) {
     super(api, kdf, params);
     this.enc = enc;
-    return;
   }
 
   public async seal(

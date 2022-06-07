@@ -59,7 +59,6 @@ export class KdfContext extends KdfCommon {
         this._nT = 0;
         break;
     }
-    return;
   }
 
   // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
