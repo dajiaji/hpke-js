@@ -15,20 +15,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Deno
-        uses: denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366
+      - uses: denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366
         with:
           deno-version: v1.x
-      - name: Verify formatting
-        run: deno fmt --check src test
-      - name: Run linter
-        run: deno lint src test
-      - name: Run test
-        run: deno test test -A --coverage=coverage --jobs --allow-read
-      - name: Create coverage report
-        run: deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+      - run: deno fmt --check
+      - run: deno lint
+      - run: deno task test
+      - run: deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
+      - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov

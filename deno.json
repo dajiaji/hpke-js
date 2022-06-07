@@ -1,7 +1,17 @@
 {
-  "lint": {
+  "fmt": {
     "files": {
+      "include": ["src", "test"],
       "exclude": ["src/bundles"]
     }
+  },
+  "lint": {
+    "files": {
+      "include": ["src", "test"],
+      "exclude": ["src/bundles"]
+    }
+  },
+  "tasks": {
+    "test": "deno test test -A --fail-fast --doc --coverage=coverage --jobs --allow-read"
   }
 }
