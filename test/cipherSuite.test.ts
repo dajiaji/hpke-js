@@ -795,6 +795,37 @@ describe("CipherSuite", () => {
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
+
+    it("should work normally (X25519)", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      // encrypt
+      const { ct, enc } = await suite.seal(
+        {
+          recipientPublicKey: rkp.publicKey,
+        },
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await suite.open(
+        {
+          recipientKey: rkp,
+          enc: enc,
+        },
+        ct,
+      );
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
   });
 
   describe("bidirectional seal and open", () => {
