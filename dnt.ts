@@ -74,7 +74,7 @@ await build({
   package: {
     name: "hpke-js",
     version: Deno.args[0],
-    description: "A Hybrid Public Key Encryption (HPKE) library",
+    description: "A Hybrid Public Key Encryption (HPKE) module for Deno, Node.js and web browsers",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
