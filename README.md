@@ -30,7 +30,7 @@ This module works on Deno, Node.js and web browsers.
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
   - [Deno](#deno)
-  - [Node.js](#node-js)
+  - [Node.js](#nodejs)
   - [Web Browser](#web-browser)
 - [Usage](#usage)
   - [Base mode](#base-mode) - for Deno, Node.js and web browsers.
