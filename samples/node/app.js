@@ -22,10 +22,14 @@ async function doHpke() {
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    const pt = await recipient.open(ct);
 
-  // new TextDecoder().decode(pt) === "my-secret-message"
-  console.log("decrypted: ", new TextDecoder().decode(pt));
+    // new TextDecoder().decode(pt) === "my-secret-message"
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+  } catch (e) {
+    console.log("failed to decrypt.");
+  }
 }
 
 doHpke();
