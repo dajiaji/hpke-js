@@ -1,10 +1,10 @@
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+import { Aead, CipherSuite, Kdf, Kem } from "https://deno.land/x/hpke/mod.ts";
 
 async function doHpke() {
-  const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
+  const suite: CipherSuite = new CipherSuite({
+    kem: Kem.DhkemX25519HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    aead: Aead.Chacha20Poly1305,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -27,7 +27,7 @@ async function doHpke() {
 
     // new TextDecoder().decode(pt) === "my-secret-message"
     console.log("decrypted: ", new TextDecoder().decode(pt));
-  } catch (e) {
+  } catch (_err: unknown) {
     console.log("failed to decrypt.");
   }
 }

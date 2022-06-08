@@ -1,0 +1,44 @@
+<html>
+  <head></head>
+  <body>
+    <script type="module">
+      // import * as hpke from "https://esm.sh/hpke-js";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js";
+
+      globalThis.doHpke = async () => {
+
+        const suite = new CipherSuite({
+          kem: Kem.DhkemP256HkdfSha256,
+          kdf: Kdf.HkdfSha256,
+          aead: Aead.Aes128Gcm
+        });
+ 
+        const rkp = await suite.generateKeyPair();
+      
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey
+        });
+      
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp,
+          enc: sender.enc,
+        });
+      
+        // encrypt
+        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
+      
+        try {
+          // decrypt
+          const pt = await recipient.open(ct);
+
+          // hello world!
+          alert(new TextDecoder().decode(pt));
+        } catch (err) {
+          alert("failed to decrypt.");
+        }
+      }
+      
+    </script>
+    <button type="button" onclick="doHpke()">do HPKE</button>
+  </body>
+</html>
