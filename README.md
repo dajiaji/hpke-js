@@ -29,6 +29,9 @@ This module works on Deno, Node.js and web browsers.
 - [Supported Environments](#supported-environments)
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
+  - [Deno](#deno)
+  - [Node.js](#node-js)
+  - [Web Browser](#web-browser)
 - [Usage](#usage)
   - [Base mode](#base-mode) - for Deno, Node.js and web browsers.
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
@@ -94,11 +97,19 @@ This module works on Deno, Node.js and web browsers.
 
 ## Installation
 
+### Deno
+
 Using deno.land:
 
 ```
+// use a specific version
 import * as hpke from "https://deno.land/x/hpke@v0.11.2/mod.ts";
+
+// use the latest stable version
+import * as hpke from "https://deno.land/x/hpke/mod.ts";
 ```
+
+### Node.js
 
 Using npm:
 
@@ -112,23 +123,27 @@ Using yarn:
 yarn add hpke-js
 ```
 
-Using esm.sh CDN:
+### Web Browser
+
+Followings are how to use with typical CDNs. Other CDNs can be used as well.
+
+Using esm.sh:
 
 ```html
-<!-- use the latest stable version -->
-<script type="module">
-  import * as hpke from "https://esm.sh/hpke-js";
-  // ...
-</script>
-
 <!-- use a specific version -->
 <script type="module">
   import * as hpke from "https://esm.sh/hpke-js@0.11.2";
   // ...
 </script>
+
+<!-- use the latest stable version -->
+<script type="module">
+  import * as hpke from "https://esm.sh/hpke-js";
+  // ...
+</script>
 ```
 
-Using unpkg CDN:
+Using unpkg:
 
 ```html
 <!-- use a specific version -->
@@ -174,13 +189,17 @@ Browsers:
         });
       
         // encrypt
-        const ct = await sender.seal(new TextEncoder().encode('hello world!'));
+        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
       
-        // decrypt
-        const pt = await recipient.open(ct);
+        try {
+          // decrypt
+          const pt = await recipient.open(ct);
 
-        // hello world!
-        alert(new TextDecoder().decode(pt));
+          // hello world!
+          alert(new TextDecoder().decode(pt));
+        } catch (err) {
+          alert("failed to decrypt.");
+        }
       }
       
     </script>
@@ -217,10 +236,14 @@ async function doHpke() {
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+    // decrypted: my-secret-message
+  } catch (err) {
+    console.log("failed to decrypt.");
+  }
 }
 
 doHpke();
@@ -253,11 +276,15 @@ async function doHpke() {
   // encrypt
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-  // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    // decrypt
+    const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+    // decrypted: my-secret-message
+  } catch (_err: unknown) {
+    console.log("failed to decrypt.");
+  }
 }
 
 doHpke();
@@ -286,10 +313,14 @@ async function doHpke() {
   const { ct, enc } = await suite.seal({ recipientPublicKey: rkp.publicKey }, pt);
 
   // decrypt
+  try {
   const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
   // decrypted: my-secret-message
+  } catch (err) {
+    console.log("failed to decrypt.");
+  }
 }
 
 doHpke();
@@ -337,19 +368,27 @@ async function doHpke() {
   const ct = await sender.seal(te.encode("my-secret-message-s"));
 
   // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    const pt = await recipient.open(ct);
 
-  console.log("recipient decrypted: ", td.decode(pt));
-  // decrypted: my-secret-message-s
+    console.log("recipient decrypted: ", td.decode(pt));
+    // decrypted: my-secret-message-s
+  } catch (err) {
+    console.log("failed to decrypt.");
+  }
 
   // encrypt reversely
   const rct = await recipient.seal(te.encode("my-secret-message-r"));
 
   // decrypt reversely
-  const rpt = await sender.open(rct);
+  try {
+    const rpt = await sender.open(rct);
 
-  console.log("sender decrypted: ", td.decode(rpt));
-  // decrypted: my-secret-message-r
+    console.log("sender decrypted: ", td.decode(rpt));
+    // decrypted: my-secret-message-r
+  } catch (err) {
+    console.log("failed to decrypt.");
+  }
 }
 
 doHpke();
@@ -428,10 +467,14 @@ async function doHpke() {
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+    // decrypted: my-secret-message
+  } catch (err) {
+    console.log("failed to decrypt:", err.message);
+  }
 }
 
 doHpke();
@@ -469,11 +512,15 @@ async function doHpke() {
   // encrypt
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
-  // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    // decrypt
+    const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+    // decrypted: my-secret-message
+  } catch (err) {
+    console.log("failed to decrypt:", err.message);
+  }
 }
 
 doHpke();
@@ -522,10 +569,14 @@ async function doHpke() {
   const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
 
   // decrypt
-  const pt = await recipient.open(ct);
+  try {
+    const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+    // decrypted: my-secret-message
+  } catch (err) {
+    console.log("failed to decrypt:", err.message);
+  }
 }
 
 doHpke();
