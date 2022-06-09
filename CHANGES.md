@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.11.3
+
+Released 2022-06-09
+
+- [(#72) Add test for browsers.](https://github.com/dajiaji/hpke-js/pull/72)
+- [(#71) Refine samples](https://github.com/dajiaji/hpke-js/pull/71)
+
 ## Version 0.11.2
 
 Released 2022-06-07
