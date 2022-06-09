@@ -27,3 +27,11 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov
           flags: unittests
+      - run: deno run -A dnt.ts 0.11.3
+      - run: mkdir test/browser/src
+      - run: cp npm/esm/*.js test/browser/src/
+      - run: cp -rf npm/esm/src test/browser/src/
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./test/browser
