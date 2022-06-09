@@ -4,23 +4,23 @@
     <script type="module">
       import { Kem, Kdf, Aead, CipherSuite } from './src/mod.js';
       const kems = [
-        hpke.Kem.DhkemP256HkdfSha256,
-        hpke.Kem.DhkemP384HkdfSha384,
-        hpke.Kem.DhkemP521HkdfSha512,
-        hpke.Kem.DhkemX25519HkdfSha256,
-        hpke.Kem.DhkemX448HkdfSha512,
+        Kem.DhkemP256HkdfSha256,
+        Kem.DhkemP384HkdfSha384,
+        Kem.DhkemP521HkdfSha512,
+        Kem.DhkemX25519HkdfSha256,
+        Kem.DhkemX448HkdfSha512,
       ];
 
       const kdfs = [
-        hpke.Kdf.HkdfSha256,
-        hpke.Kdf.HkdfSha384,
-        hpke.Kdf.HkdfSha512,
+        Kdf.HkdfSha256,
+        Kdf.HkdfSha384,
+        Kdf.HkdfSha512,
       ];
 
       const aeads = [
-        hpke.Aead.Aes128Gcm,
-        hpke.Aead.Aes256Gcm,
-        hpke.Aead.Chacha20Poly1305,
+        Aead.Aes128Gcm,
+        Aead.Aes256Gcm,
+        Aead.Chacha20Poly1305,
       ];
 
       globalThis.run = async () => {
@@ -30,7 +30,7 @@
           for (const kdf of kdfs) {
             for (const aead of aeads) {
               try {
-                const suite = new hpke.CipherSuite({ kem: kem, kdf: kdf, aead: aead });
+                const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
       
                 const rkp = await suite.generateKeyPair();
       
