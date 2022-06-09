@@ -59,7 +59,7 @@ This module works on Deno, Node.js and web browsers.
 | DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |                                                                                                                                                                                                |
 | DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |                                                                                                                                                                                                |
 | DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
-| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | [x449-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
+| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | [x448-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
 
 ### Key Derivation Functions (KDFs)
 
@@ -91,7 +91,7 @@ This module works on Deno, Node.js and web browsers.
 - Although this library has been passed the following test vectors, it has not
   been formally audited.
   - [RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke](https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json)
-  - [ECDH/X25519/X449 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
+  - [ECDH/X25519/X448 test vectors provided on Project Wycheproof](https://github.com/google/wycheproof)
 - The upper limit of the AEAD sequence number is further rounded to JavaScript's
   MAX\_SAFE\_INTEGER (`2^53-1`).
 
@@ -101,7 +101,7 @@ This module works on Deno, Node.js and web browsers.
 
 Using deno.land:
 
-```
+```js
 // use a specific version
 import * as hpke from "https://deno.land/x/hpke@v0.11.2/mod.ts";
 
@@ -113,13 +113,13 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 
 Using npm:
 
-```
+```sh
 npm install hpke-js
 ```
 
 Using yarn:
 
-```
+```sh
 yarn add hpke-js
 ```
 
