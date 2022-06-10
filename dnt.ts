@@ -1,62 +1,6 @@
 import { build, emptyDir } from "https://deno.land/x/dnt@0.25.1/mod.ts";
 
 await emptyDir("./npm");
-await emptyDir("./npm/esm");
-await emptyDir("./npm/esm/test");
-await emptyDir("./npm/esm/test/vectors");
-await emptyDir("./npm/script");
-await emptyDir("./npm/script/test");
-await emptyDir("./npm/script/test/vectors");
-
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp256r1_ecpoint_test.json",
-  "npm/esm/test/vectors/ecdh_secp256r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp384r1_ecpoint_test.json",
-  "npm/esm/test/vectors/ecdh_secp384r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp521r1_ecpoint_test.json",
-  "npm/esm/test/vectors/ecdh_secp521r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/x25519_test.json",
-  "npm/esm/test/vectors/x25519_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/x448_test.json",
-  "npm/esm/test/vectors/x448_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/test-vectors.json",
-  "npm/esm/test/vectors/test-vectors.json",
-);
-
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp256r1_ecpoint_test.json",
-  "npm/script/test/vectors/ecdh_secp256r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp384r1_ecpoint_test.json",
-  "npm/script/test/vectors/ecdh_secp384r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/ecdh_secp521r1_ecpoint_test.json",
-  "npm/script/test/vectors/ecdh_secp521r1_ecpoint_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/x25519_test.json",
-  "npm/script/test/vectors/x25519_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/x448_test.json",
-  "npm/script/test/vectors/x448_test.json",
-);
-Deno.copyFileSync(
-  "test/vectors/test-vectors.json",
-  "npm/script/test/vectors/test-vectors.json",
-);
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -114,5 +58,3 @@ await build({
 // post build steps
 Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");
-await emptyDir("./npm/esm/test");
-await emptyDir("./npm/script/test");
