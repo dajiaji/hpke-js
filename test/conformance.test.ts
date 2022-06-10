@@ -10,6 +10,7 @@ import type { TestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
 import { isDeno } from "../src/utils/misc.ts";
+import { testVectorPath } from "./utils.ts";
 
 describe("RFC9180 conformance", () => {
   let testVectors: TestVector[];
@@ -17,7 +18,7 @@ describe("RFC9180 conformance", () => {
 
   beforeAll(async () => {
     testVectors = JSON.parse(
-      await Deno.readTextFile("./test/vectors/test-vectors.json"),
+      await Deno.readTextFile(testVectorPath() + "/test-vectors.json"),
     );
     tester = await createConformanceTester();
   });

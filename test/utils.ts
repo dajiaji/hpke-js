@@ -1,4 +1,12 @@
 import { Kem } from "../src/identifiers.ts";
+import { isDeno } from "../src/utils/misc.ts";
+
+export function testVectorPath(): string {
+  if (isDeno()) {
+    return "./test/vectors";
+  }
+  return "../../test/vectors";
+}
 
 export function hexStringToBytes(v: string): Uint8Array {
   if (v.length === 0) {
