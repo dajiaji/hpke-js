@@ -107,7 +107,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.11.3";
+  import * as hpke from "https://esm.sh/hpke-js@0.11.4";
   // ...
 </script>
 
@@ -123,7 +123,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.11.3/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.11.4/esm/mod.js";
   // ...
 </script>
 ```
@@ -148,7 +148,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@v0.11.3/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.11.4/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -167,8 +167,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.11.3";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.3";
+      // import * as hpke from "https://esm.sh/hpke-js@0.11.4";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.11.4";
 
       globalThis.doHpke = async () => {
 
@@ -253,7 +253,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.3/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.11.4/mod.ts";
 
 async function doHpke() {
   // setup
