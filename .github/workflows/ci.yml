@@ -12,7 +12,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - uses: denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366
@@ -27,11 +26,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov
           flags: unittests
-      - run: deno run -A dnt.ts 0.11.3
-      - run: mkdir test/browser/src
-      - run: cp npm/esm/*.js test/browser/src/
-      - run: cp -rf npm/esm/src test/browser/src/
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./test/browser
