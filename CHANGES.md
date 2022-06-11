@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Version 0.11.4
+
+Released 2022-06-11
+
+- [(#76) Add playwright test.](https://github.com/dajiaji/hpke-js/pull/76)
+- [(#75) Refine dnt.ts.](https://github.com/dajiaji/hpke-js/pull/75)
+- [(#74) Add Github pages for test.](https://github.com/dajiaji/hpke-js/pull/74)
+
 ## Version 0.11.3
 
 Released 2022-06-09
