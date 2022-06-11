@@ -13,7 +13,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This module works on Deno, Node.js and web browsers.
+This module works on web browsers, Node.js and Deno.
 </div>
 
 <p></p>
@@ -30,11 +30,11 @@ This module works on Deno, Node.js and web browsers.
 - [Supported Environments](#supported-environments)
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
-  - [Deno](#deno)
-  - [Node.js](#nodejs)
   - [Web Browser](#web-browser)
+  - [Node.js](#nodejs)
+  - [Deno](#deno)
 - [Usage](#usage)
-  - [Base mode](#base-mode) - for Deno, Node.js and web browsers.
+  - [Base mode](#base-mode) - for web browsers, Node.js and Deno.
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
   - [Base mode with bidirectional encryption](#base-mode-with-bidirectional-encryption)
   - [Base mode with export-only AEAD](#base-mode-with-export-only-aead)
@@ -98,32 +98,6 @@ This module works on Deno, Node.js and web browsers.
 
 ## Installation
 
-### Deno
-
-Using deno.land:
-
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@v0.11.3/mod.ts";
-
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/mod.ts";
-```
-
-### Node.js
-
-Using npm:
-
-```sh
-npm install hpke-js
-```
-
-Using yarn:
-
-```sh
-yarn add hpke-js
-```
-
 ### Web Browser
 
 Followings are how to use with typical CDNs. Other CDNs can be used as well.
@@ -152,6 +126,32 @@ Using unpkg:
   import * as hpke from "https://unpkg.com/hpke-js@0.11.3/esm/mod.js";
   // ...
 </script>
+```
+
+### Node.js
+
+Using npm:
+
+```sh
+npm install hpke-js
+```
+
+Using yarn:
+
+```sh
+yarn add hpke-js
+```
+
+### Deno
+
+Using deno.land:
+
+```js
+// use a specific version
+import * as hpke from "https://deno.land/x/hpke@v0.11.3/mod.ts";
+
+// use the latest stable version
+import * as hpke from "https://deno.land/x/hpke/mod.ts";
 ```
 
 ## Usage
