@@ -193,10 +193,10 @@ export class Ec implements KemPrimitives {
       throw new Error("Unsupported format");
     }
     if (isPublic && key.byteLength !== this._nPk) {
-      throw new Error("Invalid key for the ciphersuite");
+      throw new Error(`Invalid key for the ciphersuite(1) ${key.byteLength}/${this._nPk}`);
     }
     if (!isPublic && key.byteLength !== this._nSk) {
-      throw new Error("Invalid key for the ciphersuite");
+      throw new Error(`Invalid key for the ciphersuite(2) ${key.byteLength}/${this._nSk}`);
     }
     try {
       if (isPublic) {
@@ -215,6 +215,7 @@ export class Ec implements KemPrimitives {
         consts.KEM_USAGES,
       );
     } catch (_e: unknown) {
+      console.log(_e);
       throw new Error("Invalid key for the ciphersuite");
     }
   }

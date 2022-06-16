@@ -10,7 +10,6 @@ import { CipherSuite } from "../src/cipherSuite.ts";
 import { EncryptionContext } from "../src/encryptionContext.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { KdfContext } from "../src/kdfContext.ts";
-import { isDeno } from "../src/utils/misc.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import * as errors from "../src/errors.ts";
 
@@ -310,10 +309,6 @@ describe("export", () => {
 describe("createSenderContext", () => {
   describe("with invalid recipientPublicKey", () => {
     it("should throw ExportError", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
         kdf: Kdf.HkdfSha256,
@@ -378,10 +373,6 @@ describe("createRecipientContext", () => {
 
   describe("with invalid enc (X25519)", () => {
     it("should throw DeserializeError", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha256,
@@ -416,10 +407,6 @@ describe("createRecipientContext", () => {
 
   describe("with invalid recipientKey", () => {
     it("should throw DecapError", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,

@@ -195,10 +195,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of Base mode", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -374,10 +370,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of Base mode (ExportOnly)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -464,10 +456,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of PSK mode", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -509,10 +497,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of Auth mode", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -549,10 +533,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of AuthPSK mode", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -685,10 +665,6 @@ describe("CipherSuite", () => {
 
   describe("createRecipientContext with a private key as recipientKey", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -722,10 +698,6 @@ describe("CipherSuite", () => {
 
   describe("createSenderContext with a privatekey as senderKey", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -762,10 +734,6 @@ describe("CipherSuite", () => {
 
   describe("seal and open (single-shot apis)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -830,10 +798,6 @@ describe("CipherSuite", () => {
 
   describe("bidirectional seal and open", () => {
     it("should work normally (DhkemP256HkdfSha256)", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       const te = new TextEncoder();
 
       // setup
@@ -977,10 +941,6 @@ describe("CipherSuite", () => {
 
   describe("seal empty byte string", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
