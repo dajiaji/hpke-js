@@ -221,10 +221,10 @@ export class Ec {
             throw new Error("Unsupported format");
         }
         if (isPublic && key.byteLength !== this._nPk) {
-            throw new Error("Invalid key for the ciphersuite");
+            throw new Error(`Invalid key for the ciphersuite(1) ${key.byteLength}/${this._nPk}`);
         }
         if (!isPublic && key.byteLength !== this._nSk) {
-            throw new Error("Invalid key for the ciphersuite");
+            throw new Error(`Invalid key for the ciphersuite(2) ${key.byteLength}/${this._nSk}`);
         }
         try {
             if (isPublic) {
@@ -238,6 +238,7 @@ export class Ec {
             return await this._api.importKey("pkcs8", pkcs8Key, this._alg, true, consts.KEM_USAGES);
         }
         catch (_e) {
+            console.log(_e);
             throw new Error("Invalid key for the ciphersuite");
         }
     }

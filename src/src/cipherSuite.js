@@ -135,6 +135,8 @@ export class CipherSuite {
      *
      * If the error occurred, throws `DeserializeError`.
      *
+     * NOTE: Currently, EC keys (P-256, P-384 and P-521) are supported on Deno environment.
+     *
      * @param format For now, `'raw'` is only supported.
      * @param key A byte string of a raw key.
      * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
