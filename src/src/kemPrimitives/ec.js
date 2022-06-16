@@ -221,10 +221,10 @@ export class Ec {
             throw new Error("Unsupported format");
         }
         if (isPublic && key.byteLength !== this._nPk) {
-            throw new Error(`Invalid key for the ciphersuite(1) ${key.byteLength}/${this._nPk}`);
+            throw new Error("Invalid public key for the ciphersuite");
         }
         if (!isPublic && key.byteLength !== this._nSk) {
-            throw new Error(`Invalid key for the ciphersuite(2) ${key.byteLength}/${this._nSk}`);
+            throw new Error("Invalid private key for the ciphersuite");
         }
         try {
             if (isPublic) {
