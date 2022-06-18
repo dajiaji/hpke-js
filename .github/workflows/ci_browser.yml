@@ -17,7 +17,7 @@ jobs:
       - uses: denoland/setup-deno@004814556e37c54a2f6e31384c9e18e983317366
         with:
           deno-version: v1.x
-      - run: deno run -A dnt.ts 0.11.4
+      - run: deno task dnt
       - run: mkdir test/browser/src
       - run: cp npm/esm/*.js test/browser/src/
       - run: cp -rf npm/esm/src test/browser/src/
