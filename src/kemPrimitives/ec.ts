@@ -215,7 +215,6 @@ export class Ec implements KemPrimitives {
         consts.KEM_USAGES,
       );
     } catch (_e: unknown) {
-      console.log(_e);
       throw new Error("Invalid key for the ciphersuite");
     }
   }
