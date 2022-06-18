@@ -238,7 +238,6 @@ export class Ec {
             return await this._api.importKey("pkcs8", pkcs8Key, this._alg, true, consts.KEM_USAGES);
         }
         catch (_e) {
-            console.log(_e);
             throw new Error("Invalid key for the ciphersuite");
         }
     }
