@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.11.5
+
+Released 2022-06-18
+
+- [(#76) Add DHKEM(P-256, HKDF-SHA256) to Deno supported KEMs.](https://github.com/dajiaji/hpke-js/pull/78)
+
 ## Version 0.11.4
 
 Released 2022-06-11
