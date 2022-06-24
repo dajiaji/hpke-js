@@ -8,7 +8,7 @@ await build({
   typeCheck: true,
   test: true,
   declaration: true,
-  scriptModule: "umd",
+  scriptModule: "cjs",
   compilerOptions: {
     lib: ["es2021", "dom"],
   },
