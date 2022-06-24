@@ -18,7 +18,6 @@ jobs:
         with:
           deno-version: v1.x
       - run: deno fmt --check
-      - run: deno lint
       - run: deno task test
       - run: deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
       - uses: codecov/codecov-action@v2
