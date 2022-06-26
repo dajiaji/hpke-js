@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## Version 0.12.0
+
+Released 2022-06-26
+
+- [(#84) BREAKING: Use git tags for versioning.](https://github.com/dajiaji/hpke-js/pull/84)
+- [(#83) Ship to nest.land.](https://github.com/dajiaji/hpke-js/pull/83)
+- [(#82) Add fmt and lint to deno tasks.](https://github.com/dajiaji/hpke-js/pull/82)
+
 ## Version 0.11.5
 
 Released 2022-06-18
@@ -43,7 +51,7 @@ Released 2022-06-06
 Released 2022-06-06
 
 - [(#61) Drop typedoc support.](https://github.com/dajiaji/hpke-js/pull/61)
-- [(#60) [Breaking Change] Drop hpke.min.js and hpke.js support.](https://github.com/dajiaji/hpke-js/pull/60)
+- [(#60) BREAKING: Drop hpke.min.js and hpke.js support.](https://github.com/dajiaji/hpke-js/pull/60)
 
 ## Version 0.10.2
 
@@ -83,9 +91,9 @@ Released 2022-05-28
 Released 2022-05-24
 
 - [(#47) Refine typedoc description.](https://github.com/dajiaji/hpke-js/pull/47)
-- [(#47) [Breaking Change] Add minimum length check for PSK.](https://github.com/dajiaji/hpke-js/pull/47)
+- [(#47) BREAKING: Add minimum length check for PSK.](https://github.com/dajiaji/hpke-js/pull/47)
 - [(#46) Add importKey to CipherSuite.](https://github.com/dajiaji/hpke-js/pull/46)
-- [(#45) [Breaking Change] Add input length validation.](https://github.com/dajiaji/hpke-js/pull/45)
+- [(#45) BREAKING: Add input length validation.](https://github.com/dajiaji/hpke-js/pull/45)
 
 ## Version 0.7.1
 
@@ -105,7 +113,7 @@ Released 2022-05-21
 Released 2022-05-21
 
 - [(#38) Add support for ChaCha20/Poly1305.](https://github.com/dajiaji/hpke-js/pull/38)
-- [(#37) [Breaking Change] Remove redundant output from dist.](https://github.com/dajiaji/hpke-js/pull/37)
+- [(#37) BREAKING: Remove redundant output from dist.](https://github.com/dajiaji/hpke-js/pull/37)
 
 ## Version 0.5.1
 
@@ -118,7 +126,7 @@ Released 2022-05-16
 Released 2022-05-15
 
 - [(#30) Add support for deriveKeyPair.](https://github.com/dajiaji/hpke-js/pull/30)
-- [(#30) [Breaking Change] Remove deriveKey.](https://github.com/dajiaji/hpke-js/pull/30)
+- [(#30) BREAKING: Remove deriveKey.](https://github.com/dajiaji/hpke-js/pull/30)
 - [(#29) Fix upper limit check for sequence number of encryption.](https://github.com/dajiaji/hpke-js/pull/29)
 - [(#28) Improve test coverage.](https://github.com/dajiaji/hpke-js/pull/28)
 - [(#25) Add SerializeError.](https://github.com/dajiaji/hpke-js/pull/25)
