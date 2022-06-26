@@ -13,6 +13,6 @@
   },
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --jobs --allow-read",
-    "dnt": "deno run -A dnt.ts 0.11.5"
+    "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))"
   }
 }
