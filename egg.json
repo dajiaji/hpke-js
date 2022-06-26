@@ -4,7 +4,6 @@
   "entry": "./mod.ts",
   "description": "A Hybrid Public Key Encryption (HPKE) module for web browsers, Node.js and Deno.",
   "homepage": "https://github.com/dajiaji/hpke-js",
-  "version": "0.11.5",
   "files": [
     "./src/**/*.ts",
     "./src/**/*.js",
