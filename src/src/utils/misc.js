@@ -4,6 +4,10 @@ import * as dntShim from "../../_dnt.shims.js";
  */
 export const isBrowser = () => typeof dntShim.dntGlobalThis !== "undefined";
 /**
+ * Checks whether the execution env is Cloudflare Workers or not.
+ */
+export const isCloudflareWorkers = () => typeof caches !== "undefined";
+/**
  * Checks whether the execution env is Deno or not.
  */
 export const isDeno = () => typeof Deno !== "undefined";
