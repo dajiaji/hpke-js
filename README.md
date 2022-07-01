@@ -34,6 +34,7 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
   - [Web Browser](#web-browser)
   - [Node.js](#nodejs)
   - [Deno](#deno)
+  - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
   - [Base mode](#base-mode) - for web browsers, Node.js and Deno.
   - [Base mode with Single-Shot APIs](#base-mode-with-single-shot-apis)
@@ -154,6 +155,22 @@ import * as hpke from "https://deno.land/x/hpke@0.13.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
+```
+
+### Cloudflare Workers
+
+Downloads a single js file from esm.sh:
+
+```sh
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.13.0/es2022/hpke-js.js
+# if you want to use a minified version:
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.13.0/es2022/hpke.min.js
+```
+
+Emits a single js file by using `deno bundle`:
+
+```sh
+deno bundle https://deno.land/x/hpke@0.13.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
