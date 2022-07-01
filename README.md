@@ -194,8 +194,8 @@ Browsers:
         // encrypt
         const ct = await sender.seal(new TextEncoder().encode("hello world!"));
       
+        // decrypt
         try {
-          // decrypt
           const pt = await recipient.open(ct);
 
           // hello world!
@@ -402,6 +402,10 @@ doHpke();
 Node.js:
 
 ```js
+const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+
+async function doHpke() {
+  // setup
   const suite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
