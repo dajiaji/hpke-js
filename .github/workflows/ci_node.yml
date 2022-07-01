@@ -23,5 +23,6 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt
-        run: deno task dnt
+      - run: |
+          deno task dnt
+          deno task minify > ./npm/hpke.min.js
