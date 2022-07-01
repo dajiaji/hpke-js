@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Stable Release](https://img.shields.io/npm/v/hpke-js.svg)](https://npm.im/hpke-js)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/hpke/mod.ts)
 ![Browser CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_browser.yml/badge.svg)
 ![Node.js CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg)
 ![Deno CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/hpke/mod.ts)
+![Cloudflare Workers CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_cfw.yml/badge.svg)
 [![codecov](https://codecov.io/gh/dajiaji/hpke-js/branch/main/graph/badge.svg?token=7I7JGKDDJ2)](https://codecov.io/gh/dajiaji/hpke-js)
 
 </div>
@@ -55,30 +55,30 @@ This module works on web browsers, Node.js and Deno.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js | Deno |                                                                                                                                                                                                |
-| --------------------------- | ------- | ------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅       | ✅ v1.23.0-   |                                                                                                                                                                                                |
-| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |                                                                                                                                                                                                |
-| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |                                                                                                                                                                                                |
-| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers. |
-| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | [x448-js](https://github.com/Iskander508/X448-js) is used <br>until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented <br>on browsers.                           |
+| KEMs                        | Browser | Node.js | Deno | Cloudflare<br>Workers |                                                                                                                                                                                               |
+| --------------------------- | ------- | ------- | ---- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅       | ✅ v1.23.0-   |      |                                                                                                                                                                                                |
+| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |      |                                                                                                                                                                                                |
+| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |      |                                                                                                                                                                                                |
+| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       | ✅   | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
+| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | ✅   | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js | Deno |   |
-| ----------- | ------- | ------- | ---- | - |
-| HKDF-SHA256 | ✅       | ✅       | ✅    |   |
-| HKDF-SHA384 | ✅       | ✅       | ✅    |   |
-| HKDF-SHA512 | ✅       | ✅       | ✅    |   |
+| KDFs        | Browser | Node.js | Deno | Cloudflare<br>Workers |   |
+| ----------- | ------- | ------- | ---- | ---- | - |
+| HKDF-SHA256 | ✅       | ✅       | ✅    | ✅    |   |
+| HKDF-SHA384 | ✅       | ✅       | ✅    | ✅    |   |
+| HKDF-SHA512 | ✅       | ✅       | ✅    | ✅    |   |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser | Node.js | Deno |                                                                                                                    |
-| ---------------- | ------- | ------- | ---- | ------------------------------------------------------------------------------------------------------------------ |
-| AES-128-GCM      | ✅       | ✅       | ✅    |                                                                                                                    |
-| AES-256-GCM      | ✅       | ✅       | ✅    |                                                                                                                    |
-| ChaCha20Poly1305 | ✅       | ✅       | ✅    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
-| Export Only      | ✅       | ✅       | ✅    |                                                                                                                    |
+| AEADs            | Browser | Node.js | Deno | Cloudflare<br>Workers |                                                                                                                    |
+| ---------------- | ------- | ------- | ---- | ---- | ------------------------------------------------------------------------------------------------------------------ |
+| AES-128-GCM      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
+| AES-256-GCM      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
+| ChaCha20Poly1305 | ✅       | ✅       | ✅    | ✅    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
 
 ## Supported Environments
 
@@ -87,6 +87,7 @@ This module works on web browsers, Node.js and Deno.
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x
 - **Deno**: 1.x
+- **Cloudflare Workers**
 
 ## Warnings and Restrictions
 
@@ -108,7 +109,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.12.1";
+  import * as hpke from "https://esm.sh/hpke-js@0.13.0";
   // ...
 </script>
 
@@ -124,7 +125,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.12.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.13.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -149,7 +150,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.12.1/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@0.13.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -168,8 +169,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.12.1";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.12.1";
+      // import * as hpke from "https://esm.sh/hpke-js@0.13.0";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.13.0";
 
       globalThis.doHpke = async () => {
 
@@ -254,7 +255,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.12.1/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.13.0/mod.ts";
 
 async function doHpke() {
   // setup
