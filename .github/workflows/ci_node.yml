@@ -16,13 +16,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: |
+      - name: Run dnt & minify
+        run: |
+          npm install -g esbuild
           deno task dnt
           deno task minify > ./npm/hpke.min.js

@@ -17,14 +17,14 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno task dnt
-      - run: mkdir test/browser/src
-      - run: cp npm/esm/*.js test/browser/src/
-      - run: cp -rf npm/esm/src test/browser/src/
+      - run: |
+          deno task dnt
+          cp npm/esm/*.js test/pages/src/
+          cp -rf npm/esm/src test/pages/src/
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./test/browser
+          publish_dir: ./test/pages
 
   playwright-test:
     needs: pages
