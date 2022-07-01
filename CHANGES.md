@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.13.0
+
+Released 2022-07-01
+
+- [(#88) Add support for Cloudflare Workers.](https://github.com/dajiaji/hpke-js/pull/88)
+
 ## Version 0.12.1
 
 Released 2022-07-01
