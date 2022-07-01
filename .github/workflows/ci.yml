@@ -17,9 +17,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno fmt --check
-      - run: deno task test
-      - run: deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
+      - name: Run deno test
+        run: |
+          deno fmt --check
+          deno task test
+          deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
