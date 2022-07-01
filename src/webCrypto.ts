@@ -1,4 +1,4 @@
-import { isBrowser } from "./utils/misc.ts";
+import { isBrowser, isCloudflareWorkers } from "./utils/misc.ts";
 
 import * as errors from "./errors.ts";
 
@@ -10,7 +10,7 @@ export class WebCrypto {
 }
 
 export async function loadCrypto(): Promise<Crypto> {
-  if (isBrowser()) {
+  if (isBrowser() || isCloudflareWorkers()) {
     if (globalThis.crypto !== undefined) {
       return globalThis.crypto;
     }
@@ -26,7 +26,7 @@ export async function loadCrypto(): Promise<Crypto> {
 }
 
 export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
-  if (isBrowser()) {
+  if (isBrowser() || isCloudflareWorkers()) {
     if (globalThis.crypto !== undefined) {
       return globalThis.crypto.subtle;
     }
