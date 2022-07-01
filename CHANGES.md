@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.12.1
+
+Released 2022-07-01
+
+- [(#86) Ship hpke.min.js.](https://github.com/dajiaji/hpke-js/pull/86)
+
 ## Version 0.12.0
 
 Released 2022-06-26
