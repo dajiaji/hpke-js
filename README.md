@@ -14,14 +14,14 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This module works on web browsers, Node.js and Deno.
+This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 </div>
 
 <p></p>
 
 <div align="center">
 
-[API Documentation](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)
+[Documentation](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)
 
 </div>
 
@@ -57,28 +57,28 @@ This module works on web browsers, Node.js and Deno.
 
 | KEMs                        | Browser | Node.js | Deno | Cloudflare<br>Workers |                                                                                                                                                                                               |
 | --------------------------- | ------- | ------- | ---- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅       | ✅ v1.23.0-   |      |                                                                                                                                                                                                |
-| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅       |      |      |                                                                                                                                                                                                |
-| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅       |      |      |                                                                                                                                                                                                |
-| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅       | ✅   | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
-| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅       | ✅   | ✅   | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
+| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅<br>v16.x- | ✅<br>v1.23.x-   |      |                                                                                                                                                                                                |
+| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅<br>v16.x- |      |      |                                                                                                                                                                                                |
+| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅<br>v16.x- |      |      |                                                                                                                                                                                                |
+| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅   | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
+| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅   | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
 
 ### Key Derivation Functions (KDFs)
 
 | KDFs        | Browser | Node.js | Deno | Cloudflare<br>Workers |   |
 | ----------- | ------- | ------- | ---- | ---- | - |
-| HKDF-SHA256 | ✅       | ✅       | ✅    | ✅    |   |
-| HKDF-SHA384 | ✅       | ✅       | ✅    | ✅    |   |
-| HKDF-SHA512 | ✅       | ✅       | ✅    | ✅    |   |
+| HKDF-SHA256 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |   |
+| HKDF-SHA384 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |   |
+| HKDF-SHA512 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |   |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
 | AEADs            | Browser | Node.js | Deno | Cloudflare<br>Workers |                                                                                                                    |
 | ---------------- | ------- | ------- | ---- | ---- | ------------------------------------------------------------------------------------------------------------------ |
-| AES-128-GCM      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
-| AES-256-GCM      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
-| ChaCha20Poly1305 | ✅       | ✅       | ✅    | ✅    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
-| Export Only      | ✅       | ✅       | ✅    | ✅    |                                                                                                                    |
+| AES-128-GCM      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |                                                                                                                    |
+| AES-256-GCM      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |                                                                                                                    |
+| ChaCha20Poly1305 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅    |                                                                                                                    |
 
 ## Supported Environments
 
@@ -86,7 +86,7 @@ This module works on web browsers, Node.js and Deno.
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x
-- **Deno**: 1.x
+- **Deno**: 1.x (1.15-)
 - **Cloudflare Workers**
 
 ## Warnings and Restrictions
