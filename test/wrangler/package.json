@@ -1,0 +1,12 @@
+{
+  "name": "wrangler",
+  "version": "0.1.0",
+  "devDependencies": {
+    "wrangler": "2.0.15"
+  },
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev --local=true",
+    "deploy": "wrangler publish"
+  }
+}
