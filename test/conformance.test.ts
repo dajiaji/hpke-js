@@ -1,9 +1,4 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  it,
-} from "https://deno.land/std@0.142.0/testing/bdd.ts";
+import { afterAll, beforeAll, describe, it } from "testing/bdd.ts";
 
 import type { ConformanceTester } from "./conformanceTester.ts";
 import type { TestVector } from "./testVector.ts";

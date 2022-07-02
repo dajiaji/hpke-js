@@ -1,5 +1,5 @@
-import { assertEquals } from "https://deno.land/std@0.142.0/testing/asserts.ts";
-import { describe, it } from "https://deno.land/std@0.142.0/testing/bdd.ts";
+import { assertEquals } from "testing/asserts.ts";
+import { describe, it } from "testing/bdd.ts";
 
 describe("Cloudflare Workers", () => {
   describe("GET /test?kem=0x0020", () => {

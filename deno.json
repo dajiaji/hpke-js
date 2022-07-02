@@ -7,6 +7,7 @@
         "deno.json",
         "dnt.ts",
         "egg.json",
+        "import-map.json",
         "samples/",
         "src/",
         "test/"
@@ -32,6 +33,7 @@
       ]
     }
   },
+  "importMap": "./import-map.json",
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --jobs --allow-read",
     "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",

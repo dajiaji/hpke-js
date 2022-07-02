@@ -1,7 +1,4 @@
-import {
-  assertEquals,
-  assertRejects,
-} from "https://deno.land/std@0.142.0/testing/asserts.ts";
+import { assertEquals, assertRejects } from "testing/asserts.ts";
 
 import type { XCryptoKey } from "../src/xCryptoKey.ts";
 import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";

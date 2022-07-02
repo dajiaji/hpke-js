@@ -1,6 +1,6 @@
-import { assertEquals } from "https://deno.land/std@0.142.0/testing/asserts.ts";
+import { assertEquals } from "testing/asserts.ts";
 
-import { describe, it } from "https://deno.land/std@0.142.0/testing/bdd.ts";
+import { describe, it } from "testing/bdd.ts";
 
 import * as errors from "../src/errors.ts";
 
