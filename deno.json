@@ -36,6 +36,7 @@
   "importMap": "./import-map.json",
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --jobs --allow-read",
+    "cov": "deno coverage ./coverage --lcov --exclude='test' --exclude='bundles'",
     "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
     "minify": "deno bundle ./mod.ts | esbuild --minify"
   }
