@@ -1,14 +1,35 @@
 {
   "fmt": {
     "files": {
-      "include": ["src", "test"],
-      "exclude": ["src/bundles"]
+      "include": [
+        "README.md",
+        "CHANGES.md",
+        "deno.json",
+        "dnt.ts",
+        "egg.json",
+        "samples/",
+        "src/",
+        "test/"
+      ],
+      "exclude": [
+        "samples/node/node_modules",
+        "samples/ts-node/node_modules",
+        "src/bundles",
+        "test/playwright/node_modules",
+        "test/wrangler"
+      ]
     }
   },
   "lint": {
     "files": {
-      "include": ["src", "test"],
-      "exclude": ["src/bundles"]
+      "include": ["samples/", "src/", "test/"],
+      "exclude": [
+        "samples/node/node_modules",
+        "samples/ts-node/node_modules",
+        "src/bundles",
+        "test/playwright/node_modules",
+        "test/wrangler"
+      ]
     }
   },
   "tasks": {

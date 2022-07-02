@@ -28,7 +28,7 @@ async function doHpke() {
     // new TextDecoder().decode(pt) === "my-secret-message"
     console.log("decrypted: ", new TextDecoder().decode(pt));
   } catch (e) {
-    console.log("failed to decrypt.");
+    console.log("failed to decrypt:", e.message);
   }
 }
 
