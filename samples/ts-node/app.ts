@@ -1,17 +1,17 @@
 import * as util from "util";
-import { Kem, Kdf, Aead, CipherSuite } from "hpke-js";
+import { Aead, CipherSuite, Kdf, Kem } from "hpke-js";
 
 async function doHpke() {
   const suite: CipherSuite = new CipherSuite({
     kem: Kem.DhkemP256HkdfSha256,
     kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    aead: Aead.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
 
   const sender = await suite.createSenderContext({
-    recipientPublicKey: rkp.publicKey
+    recipientPublicKey: rkp.publicKey,
   });
 
   const recipient = await suite.createRecipientContext({
@@ -20,7 +20,9 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new util.TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(
+    new util.TextEncoder().encode("my-secret-message"),
+  );
 
   // decrypt
   const pt = await recipient.open(ct);
