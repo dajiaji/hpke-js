@@ -21,7 +21,7 @@ jobs:
         run: |
           deno fmt --check
           deno task test
-          deno coverage ./coverage --lcov --exclude="test" --exclude="bundles" > coverage.lcov
+          deno task cov > coverage.lcov
       - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
