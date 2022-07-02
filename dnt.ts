@@ -1,4 +1,4 @@
-import { build, emptyDir } from "https://deno.land/x/dnt@0.25.1/mod.ts";
+import { build, emptyDir } from "dnt";
 
 await emptyDir("./npm");
 
@@ -9,6 +9,7 @@ await build({
   test: true,
   declaration: true,
   scriptModule: "umd",
+  importMap: "./import-map.json",
   compilerOptions: {
     lib: ["es2021", "dom"],
   },

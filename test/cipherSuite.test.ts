@@ -1,10 +1,6 @@
-import {
-  assertEquals,
-  assertRejects,
-  assertThrows,
-} from "https://deno.land/std@0.142.0/testing/asserts.ts";
+import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
 
-import { describe, it } from "https://deno.land/std@0.142.0/testing/bdd.ts";
+import { describe, it } from "testing/bdd.ts";
 
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
