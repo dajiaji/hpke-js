@@ -12,7 +12,7 @@ export class AesGcmKey implements AeadKey {
     this._api = api;
   }
 
-  public async encrypt(
+  public async seal(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
@@ -30,7 +30,7 @@ export class AesGcmKey implements AeadKey {
     return ct;
   }
 
-  public async decrypt(
+  public async open(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
