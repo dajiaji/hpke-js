@@ -86,7 +86,7 @@ export class EncryptionContext extends ExporterContext {
   }
 }
 
-function createAeadKey(
+export function createAeadKey(
   aead: Aead,
   key: ArrayBuffer,
   api: SubtleCrypto,

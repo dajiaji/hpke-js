@@ -13,7 +13,7 @@ export class RecipientContext extends EncryptionContext {
     }
     let ct: ArrayBuffer;
     try {
-      ct = await this._r.key.encrypt(this.computeNonce(this._r), data, aad);
+      ct = await this._r.key.seal(this.computeNonce(this._r), data, aad);
     } catch (e: unknown) {
       throw new errors.SealError(e);
     }
@@ -27,7 +27,7 @@ export class RecipientContext extends EncryptionContext {
   ): Promise<ArrayBuffer> {
     let pt: ArrayBuffer;
     try {
-      pt = await this._f.key.decrypt(this.computeNonce(this._f), data, aad);
+      pt = await this._f.key.open(this.computeNonce(this._f), data, aad);
     } catch (e: unknown) {
       throw new errors.OpenError(e);
     }

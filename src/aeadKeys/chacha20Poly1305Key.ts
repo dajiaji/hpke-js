@@ -9,23 +9,23 @@ export class Chacha20Poly1305Key implements AeadKey {
     this._key = new ChaCha20Poly1305(new Uint8Array(key));
   }
 
-  public async encrypt(
+  public async seal(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._encrypt(iv, data, aad);
+    return await this._seal(iv, data, aad);
   }
 
-  public async decrypt(
+  public async open(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._decrypt(iv, data, aad);
+    return await this._open(iv, data, aad);
   }
 
-  private _encrypt(
+  private _seal(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
@@ -40,7 +40,7 @@ export class Chacha20Poly1305Key implements AeadKey {
     });
   }
 
-  private _decrypt(
+  private _open(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
