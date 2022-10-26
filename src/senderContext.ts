@@ -26,7 +26,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
   ): Promise<ArrayBuffer> {
     let ct: ArrayBuffer;
     try {
-      ct = await this._f.key.encrypt(this.computeNonce(this._f), data, aad);
+      ct = await this._f.key.seal(this.computeNonce(this._f), data, aad);
     } catch (e: unknown) {
       throw new errors.SealError(e);
     }
@@ -43,7 +43,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
     }
     let pt: ArrayBuffer;
     try {
-      pt = await this._r.key.decrypt(this.computeNonce(this._r), data, aad);
+      pt = await this._r.key.open(this.computeNonce(this._r), data, aad);
     } catch (e: unknown) {
       throw new errors.OpenError(e);
     }
