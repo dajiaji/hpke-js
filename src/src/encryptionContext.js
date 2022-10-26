@@ -95,7 +95,7 @@ export class EncryptionContext extends ExporterContext {
         }
     }
 }
-function createAeadKey(aead, key, api) {
+export function createAeadKey(aead, key, api) {
     switch (aead) {
         case Aead.Aes128Gcm:
             return new AesGcmKey(key, api);

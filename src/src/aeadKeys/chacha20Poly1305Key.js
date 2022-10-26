@@ -9,19 +9,19 @@ export class Chacha20Poly1305Key {
         });
         this._key = new ChaCha20Poly1305(new Uint8Array(key));
     }
-    async encrypt(iv, data, aad) {
-        return await this._encrypt(iv, data, aad);
+    async seal(iv, data, aad) {
+        return await this._seal(iv, data, aad);
     }
-    async decrypt(iv, data, aad) {
-        return await this._decrypt(iv, data, aad);
+    async open(iv, data, aad) {
+        return await this._open(iv, data, aad);
     }
-    _encrypt(iv, data, aad) {
+    _seal(iv, data, aad) {
         return new Promise((resolve) => {
             const ret = this._key.seal(new Uint8Array(iv), new Uint8Array(data), new Uint8Array(aad));
             resolve(ret.buffer);
         });
     }
-    _decrypt(iv, data, aad) {
+    _open(iv, data, aad) {
         return new Promise((resolve, reject) => {
             const ret = this._key.open(new Uint8Array(iv), new Uint8Array(data), new Uint8Array(aad));
             if (ret instanceof Uint8Array) {

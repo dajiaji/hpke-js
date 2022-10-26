@@ -15,7 +15,7 @@ export class SenderContext extends EncryptionContext {
     async seal(data, aad = EMPTY) {
         let ct;
         try {
-            ct = await this._f.key.encrypt(this.computeNonce(this._f), data, aad);
+            ct = await this._f.key.seal(this.computeNonce(this._f), data, aad);
         }
         catch (e) {
             throw new errors.SealError(e);
@@ -29,7 +29,7 @@ export class SenderContext extends EncryptionContext {
         }
         let pt;
         try {
-            pt = await this._r.key.decrypt(this.computeNonce(this._r), data, aad);
+            pt = await this._r.key.open(this.computeNonce(this._r), data, aad);
         }
         catch (e) {
             throw new errors.OpenError(e);

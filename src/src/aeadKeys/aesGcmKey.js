@@ -22,7 +22,7 @@ export class AesGcmKey {
         this._rawKey = key;
         this._api = api;
     }
-    async encrypt(iv, data, aad) {
+    async seal(iv, data, aad) {
         if (this._key === undefined) {
             this._key = await this.importKey(this._rawKey);
             (new Uint8Array(this._rawKey)).fill(0);
@@ -35,7 +35,7 @@ export class AesGcmKey {
         const ct = await this._api.encrypt(alg, this._key, data);
         return ct;
     }
-    async decrypt(iv, data, aad) {
+    async open(iv, data, aad) {
         if (this._key === undefined) {
             this._key = await this.importKey(this._rawKey);
             (new Uint8Array(this._rawKey)).fill(0);
