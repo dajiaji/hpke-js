@@ -1,4 +1,5 @@
 import { RecipientExporterContext, SenderExporterContext, } from "./exporterContext.js";
+import { createAeadKey } from "./encryptionContext.js";
 import { Aead, Kdf, Kem, Mode } from "./identifiers.js";
 import { KdfContext } from "./kdfContext.js";
 import { KemContext } from "./kemContext.js";
@@ -100,6 +101,24 @@ export class CipherSuite {
         }
         this.aead = params.aead;
         this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
+    }
+    /**
+     * Gets a suite-specific KDF context.
+     *
+     * @returns A KDF context.
+     */
+    async kdfContext() {
+        await this.setup();
+        return this._kdf;
+    }
+    /**
+     * Gets a suite-specific KDF context.
+     *
+     * @returns A KDF context.
+     */
+    async createAeadKey(key) {
+        const api = await this.setup();
+        return createAeadKey(this.aead, key, api);
     }
     /**
      * Generates a key pair for the cipher suite.
