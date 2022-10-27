@@ -112,9 +112,11 @@ export class CipherSuite {
         return this._kdf;
     }
     /**
-     * Gets a suite-specific KDF context.
+     * Creates a suite-specific AEAD key.
      *
-     * @returns A KDF context.
+     * @param key A byte string of the raw key.
+     *
+     * @returns An AEAD key.
      */
     async createAeadKey(key) {
         const api = await this.setup();
