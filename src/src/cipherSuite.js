@@ -52,6 +52,27 @@ export class CipherSuite {
             writable: true,
             value: void 0
         });
+        /** The length in bytes of an AEAD key. */
+        Object.defineProperty(this, "aeadKeySize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
+        /** The length in bytes of an AEAD nonce. */
+        Object.defineProperty(this, "aeadNonceSize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
+        /** The length in bytes of an AEAD authentication tag. */
+        Object.defineProperty(this, "aeadTagSize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
         Object.defineProperty(this, "_ctx", {
             enumerable: true,
             configurable: true,
@@ -92,8 +113,20 @@ export class CipherSuite {
         this.kdf = params.kdf;
         switch (params.aead) {
             case Aead.Aes128Gcm:
+                this.aeadKeySize = 16;
+                this.aeadNonceSize = 12;
+                this.aeadTagSize = 16;
+                break;
             case Aead.Aes256Gcm:
+                this.aeadKeySize = 32;
+                this.aeadNonceSize = 12;
+                this.aeadTagSize = 16;
+                break;
             case Aead.Chacha20Poly1305:
+                this.aeadKeySize = 32;
+                this.aeadNonceSize = 12;
+                this.aeadTagSize = 16;
+                break;
             case Aead.ExportOnly:
                 break;
             default:
