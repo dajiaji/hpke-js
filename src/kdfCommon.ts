@@ -1,8 +1,10 @@
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+
 import { WebCrypto } from "./webCrypto.ts";
 
 import * as consts from "./consts.ts";
 
-export class KdfCommon extends WebCrypto {
+export class KdfCommon extends WebCrypto implements KdfInterface {
   protected readonly suiteId: Uint8Array;
   protected readonly algHash: HmacKeyGenParams;
   protected readonly _nH: number;
@@ -48,7 +50,7 @@ export class KdfCommon extends WebCrypto {
     return ret;
   }
 
-  protected async extract(
+  public async extract(
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
@@ -61,7 +63,7 @@ export class KdfCommon extends WebCrypto {
     return await this._api.sign("HMAC", key, ikm);
   }
 
-  protected async expand(
+  public async expand(
     prk: ArrayBuffer,
     info: ArrayBuffer,
     len: number,
@@ -104,7 +106,7 @@ export class KdfCommon extends WebCrypto {
     return okm;
   }
 
-  protected async extractAndExpand(
+  public async extractAndExpand(
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
     info: ArrayBuffer,

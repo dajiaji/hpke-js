@@ -5,6 +5,8 @@ import { describe, it } from "testing/bdd.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
+import { loadCrypto } from "../src/webCrypto.ts";
+import { concat } from "../src/utils/misc.ts";
 
 import * as errors from "../src/errors.ts";
 
@@ -1201,6 +1203,77 @@ describe("CipherSuite", () => {
         () => suite.importKey("raw", k, false),
         errors.DeserializeError,
       );
+    });
+  });
+
+  describe("A README example of Oblivious HTTP", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const nK = 16;
+      const nN = 12;
+      const cryptoApi = await loadCrypto();
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+      const rkp = await suite.generateKeyPair();
+
+      // The sender (OHTTP client) side:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const secretS = await sender.export(
+        te.encode("message/bhttp response"),
+        nK,
+      );
+
+      const responseNonce = new Uint8Array(nK);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce)
+        .slice(0, 32);
+
+      const kdfS = await suite.kdfContext();
+      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
+      const keyS = await kdfS.expand(prkS, te.encode("key"), nK);
+      const nonceS = await kdfS.expand(prkS, te.encode("nonce"), nN);
+
+      const aeadKeyS = await suite.createAeadKey(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
+
+      // The recipient (OHTTP server) side:
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
+
+      const secretR = await recipient.export(
+        te.encode("message/bhttp response"),
+        nK,
+      );
+
+      const saltR = concat(new Uint8Array(sender.enc), encResponse.slice(0, nK))
+        .slice(0, 32);
+      const kdfR = await suite.kdfContext();
+      const prkR = await kdfR.extract(
+        saltR.slice(0, 32),
+        new Uint8Array(secretR),
+      );
+      const keyR = await kdfR.expand(prkR, te.encode("key"), nK);
+      const nonceR = await kdfR.expand(prkR, te.encode("nonce"), nN);
+      const aeadKeyR = await suite.createAeadKey(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(nK),
+        te.encode(""),
+      );
+
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
     });
   });
 });

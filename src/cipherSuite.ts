@@ -1,4 +1,6 @@
+import type { AeadKey } from "./interfaces/aeadKey.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
 import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
@@ -12,6 +14,7 @@ import {
   RecipientExporterContext,
   SenderExporterContext,
 } from "./exporterContext.ts";
+import { createAeadKey } from "./encryptionContext.ts";
 import { Aead, Kdf, Kem, Mode } from "./identifiers.ts";
 import { KdfContext } from "./kdfContext.ts";
 import { KemContext } from "./kemContext.ts";
@@ -89,6 +92,28 @@ export class CipherSuite {
     }
     this.aead = params.aead;
     this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
+  }
+
+  /**
+   * Gets a suite-specific KDF context.
+   *
+   * @returns A KDF context.
+   */
+  public async kdfContext(): Promise<KdfInterface> {
+    await this.setup();
+    return this._kdf as KdfContext;
+  }
+
+  /**
+   * Creates a suite-specific AEAD key.
+   *
+   * @param key A byte string of the raw key.
+   *
+   * @returns An AEAD key.
+   */
+  public async createAeadKey(key: ArrayBuffer): Promise<AeadKey> {
+    const api = await this.setup();
+    return createAeadKey(this.aead, key, api);
   }
 
   /**
