@@ -46,6 +46,12 @@ export class CipherSuite {
   public readonly kdf: Kdf;
   /** The AEAD id of the cipher suite. */
   public readonly aead: Aead;
+  /** The length in bytes of an AEAD key. */
+  public readonly aeadKeySize: number = 0;
+  /** The length in bytes of an AEAD nonce. */
+  public readonly aeadNonceSize: number = 0;
+  /** The length in bytes of an AEAD authentication tag. */
+  public readonly aeadTagSize: number = 0;
 
   private _ctx: CipherSuiteParams;
   private _kem: KemContext | undefined = undefined;
@@ -83,8 +89,20 @@ export class CipherSuite {
 
     switch (params.aead) {
       case Aead.Aes128Gcm:
+        this.aeadKeySize = 16;
+        this.aeadNonceSize = 12;
+        this.aeadTagSize = 16;
+        break;
       case Aead.Aes256Gcm:
+        this.aeadKeySize = 32;
+        this.aeadNonceSize = 12;
+        this.aeadTagSize = 16;
+        break;
       case Aead.Chacha20Poly1305:
+        this.aeadKeySize = 32;
+        this.aeadNonceSize = 12;
+        this.aeadTagSize = 16;
+        break;
       case Aead.ExportOnly:
         break;
       default:

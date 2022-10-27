@@ -1209,8 +1209,6 @@ describe("CipherSuite", () => {
   describe("A README example of Oblivious HTTP", () => {
     it("should work normally", async () => {
       const te = new TextEncoder();
-      const nK = 16;
-      const nN = 12;
       const cryptoApi = await loadCrypto();
 
       const suite = new CipherSuite({
@@ -1228,18 +1226,26 @@ describe("CipherSuite", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        nK,
+        suite.aeadKeySize,
       );
 
-      const responseNonce = new Uint8Array(nK);
+      const responseNonce = new Uint8Array(suite.aeadKeySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce)
-        .slice(0, 32);
+        .slice(0, 32); // TODO fix
 
       const kdfS = await suite.kdfContext();
       const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
-      const keyS = await kdfS.expand(prkS, te.encode("key"), nK);
-      const nonceS = await kdfS.expand(prkS, te.encode("nonce"), nN);
+      const keyS = await kdfS.expand(
+        prkS,
+        te.encode("key"),
+        suite.aeadKeySize,
+      );
+      const nonceS = await kdfS.expand(
+        prkS,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
       const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
@@ -1253,22 +1259,29 @@ describe("CipherSuite", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        nK,
+        suite.aeadKeySize,
       );
 
-      const saltR = concat(new Uint8Array(sender.enc), encResponse.slice(0, nK))
-        .slice(0, 32);
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aeadKeySize),
+      )
+        .slice(0, 32); // TODO fix
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
-        saltR.slice(0, 32),
+        saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), nK);
-      const nonceR = await kdfR.expand(prkR, te.encode("nonce"), nN);
+      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const nonceR = await kdfR.expand(
+        prkR,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(nK),
+        encResponse.slice(suite.aeadKeySize),
         te.encode(""),
       );
 
