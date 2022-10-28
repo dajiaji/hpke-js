@@ -1,7 +1,7 @@
 import { hmac } from "../deps/deno.land/x/hmac@v2.0.1/mod.js";
 import { WebCrypto } from "./webCrypto.js";
 import * as consts from "./consts.js";
-import { NotSupportedError } from "./errors.js";
+import * as errors from "./errors.js";
 export class KdfCommon extends WebCrypto {
     constructor(api, suiteId, algHash) {
         if (algHash.length === undefined) {
@@ -60,7 +60,7 @@ export class KdfCommon extends WebCrypto {
                 case "SHA-512":
                     return hmac("sha512", new Uint8Array(salt), new Uint8Array(ikm));
                 default:
-                    throw new NotSupportedError(`${this.algHash.hash} key length should be ${this._nH}.`);
+                    throw new errors.NotSupportedError(`${this.algHash.hash} key length should be ${this._nH}.`);
             }
         }
         const key = await this._api.importKey("raw", salt, this.algHash, false, [
