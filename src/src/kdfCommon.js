@@ -1,4 +1,4 @@
-import { hmac } from "../deps/deno.land/x/hmac@v2.0.1/mod.js";
+import { hmac } from "./bundles/hmac/mod.js";
 import { WebCrypto } from "./webCrypto.js";
 import * as consts from "./consts.js";
 import * as errors from "./errors.js";
