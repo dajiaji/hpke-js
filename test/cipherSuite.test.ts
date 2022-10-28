@@ -5,6 +5,8 @@ import { describe, it } from "testing/bdd.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
+import { loadCrypto } from "../src/webCrypto.ts";
+import { concat } from "../src/utils/misc.ts";
 
 import * as errors from "../src/errors.ts";
 
@@ -1200,6 +1202,200 @@ describe("CipherSuite", () => {
       await assertRejects(
         () => suite.importKey("raw", k, false),
         errors.DeserializeError,
+      );
+    });
+  });
+
+  describe("A README example of Oblivious HTTP", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+      const rkp = await suite.generateKeyPair();
+
+      // The sender (OHTTP client) side:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const secretS = await sender.export(
+        te.encode("message/bhttp response"),
+        suite.aeadKeySize,
+      );
+
+      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+
+      const kdfS = await suite.kdfContext();
+      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
+      const keyS = await kdfS.expand(
+        prkS,
+        te.encode("key"),
+        suite.aeadKeySize,
+      );
+      const nonceS = await kdfS.expand(
+        prkS,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
+
+      const aeadKeyS = await suite.createAeadKey(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
+
+      // The recipient (OHTTP server) side:
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
+
+      const secretR = await recipient.export(
+        te.encode("message/bhttp response"),
+        suite.aeadKeySize,
+      );
+
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aeadKeySize),
+      );
+      const kdfR = await suite.kdfContext();
+      const prkR = await kdfR.extract(
+        saltR,
+        new Uint8Array(secretR),
+      );
+      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const nonceR = await kdfR.expand(
+        prkR,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
+      const aeadKeyR = await suite.createAeadKey(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(suite.aeadKeySize),
+        te.encode(""),
+      );
+
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
+    });
+  });
+
+  describe("A README example of Oblivious HTTP (HKDF-SHA512)", () => {
+    it("should work normally", async () => {
+      if (isDeno()) {
+        return;
+      }
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
+
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
+      });
+      const rkp = await suite.generateKeyPair();
+
+      // The sender (OHTTP client) side:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const secretS = await sender.export(
+        te.encode("message/bhttp response"),
+        suite.aeadKeySize,
+      );
+
+      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+
+      const kdfS = await suite.kdfContext();
+      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
+      const keyS = await kdfS.expand(
+        prkS,
+        te.encode("key"),
+        suite.aeadKeySize,
+      );
+      const nonceS = await kdfS.expand(
+        prkS,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
+
+      const aeadKeyS = await suite.createAeadKey(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
+
+      // The recipient (OHTTP server) side:
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
+
+      const secretR = await recipient.export(
+        te.encode("message/bhttp response"),
+        suite.aeadKeySize,
+      );
+
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aeadKeySize),
+      );
+      const kdfR = await suite.kdfContext();
+      const prkR = await kdfR.extract(
+        saltR,
+        new Uint8Array(secretR),
+      );
+      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const nonceR = await kdfR.expand(
+        prkR,
+        te.encode("nonce"),
+        suite.aeadNonceSize,
+      );
+      const aeadKeyR = await suite.createAeadKey(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(suite.aeadKeySize),
+        te.encode(""),
+      );
+
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
+    });
+  });
+
+  describe("kdfContext.extract/expand with unsupported key length", () => {
+    it("should throw NotSupportedError", async () => {
+      const cryptoApi = await loadCrypto();
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes256Gcm,
+      });
+
+      const kdf = await suite.kdfContext();
+
+      const salt = new Uint8Array(48 + 32);
+      cryptoApi.getRandomValues(salt);
+
+      const ikm = new Uint8Array(48);
+      cryptoApi.getRandomValues(ikm);
+
+      // assert
+      await assertRejects(
+        () => kdf.extract(salt, ikm),
+        errors.NotSupportedError,
       );
     });
   });

@@ -1,10 +1,10 @@
 export interface AeadKey {
-  encrypt(
+  seal(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer>;
-  decrypt(
+  open(
     iv: ArrayBuffer,
     data: ArrayBuffer,
     aad: ArrayBuffer,

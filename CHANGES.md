@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## Version 0.14.0
+
+Released 2022-10-28
+
+- [(#101) Expose suite-specific KDF and AEAD interface.](https://github.com/dajiaji/hpke-js/pull/101)
+- [(#98) Replace deno test jobs with parallel.](https://github.com/dajiaji/hpke-js/pull/98)
+- [(#94) Add edge and chrome to playwright test projects.](https://github.com/dajiaji/hpke-js/pull/94)
+- [(#93) Add cov to deno tasks.](https://github.com/dajiaji/hpke-js/pull/93)
+- [(#92) Introduce import-map.](https://github.com/dajiaji/hpke-js/pull/92)
+- [(#91) Refine deno.json.](https://github.com/dajiaji/hpke-js/pull/91)
+- [(#90) Add the minimum supported versions to README.](https://github.com/dajiaji/hpke-js/pull/90)
+
 ## Version 0.13.0
 
 Released 2022-07-01
