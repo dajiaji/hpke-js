@@ -1,8 +1,11 @@
+import { hmac } from "./bundles/hmac/mod.ts";
+
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { WebCrypto } from "./webCrypto.ts";
 
 import * as consts from "./consts.ts";
+import * as errors from "../src/errors.ts";
 
 export class KdfCommon extends WebCrypto implements KdfInterface {
   protected readonly suiteId: Uint8Array;
@@ -56,6 +59,28 @@ export class KdfCommon extends WebCrypto implements KdfInterface {
   ): Promise<ArrayBuffer> {
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this._nH);
+    }
+    if (salt.byteLength !== this._nH) {
+      // Web Cryptography API supports only _nH length key.
+      // In this case, fallback to the upper-layer hmac library.
+      switch (this.algHash.hash) {
+        case "SHA-256":
+          return hmac(
+            "sha256",
+            new Uint8Array(salt),
+            new Uint8Array(ikm),
+          ) as Uint8Array;
+        case "SHA-512":
+          return hmac(
+            "sha512",
+            new Uint8Array(salt),
+            new Uint8Array(ikm),
+          ) as Uint8Array;
+        default:
+          throw new errors.NotSupportedError(
+            `${this.algHash.hash} key length should be ${this._nH}.`,
+          );
+      }
     }
     const key = await this._api.importKey("raw", salt, this.algHash, false, [
       "sign",
