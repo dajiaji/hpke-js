@@ -2,6 +2,7 @@ import type { AeadKey } from "./interfaces/aeadKey.ts";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+import type { KemInterface } from "./interfaces/kemInterface.ts";
 import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
 import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
@@ -48,11 +49,20 @@ export class CipherSuite {
   public readonly kdf: Kdf;
   /** The AEAD id of the cipher suite. */
   public readonly aead: Aead;
-  /** The length in bytes of an AEAD key. */
+
+  /** The length in bytes of a KEM shared secret produced by this KEM (Nsecret). */
+  public readonly kemSecretSize: number = 0;
+  /** The length in bytes of an encapsulated key produced by this KEM (Nenc). */
+  public readonly kemEncSize: number = 0;
+  /** The length in bytes of an encoded public key for this KEM (Npk). */
+  public readonly kemPublicKeySize: number = 0;
+  /** The length in bytes of an encoded private key for this KEM (Nsk). */
+  public readonly kemPrivateKeySize: number = 0;
+  /** The length in bytes of an AEAD key (Nk). */
   public readonly aeadKeySize: number = 0;
-  /** The length in bytes of an AEAD nonce. */
+  /** The length in bytes of an AEAD nonce (Nn). */
   public readonly aeadNonceSize: number = 0;
-  /** The length in bytes of an AEAD authentication tag. */
+  /** The length in bytes of an AEAD authentication tag (Nt). */
   public readonly aeadTagSize: number = 0;
 
   private _api: SubtleCrypto | undefined = undefined;
@@ -70,10 +80,34 @@ export class CipherSuite {
   constructor(params: CipherSuiteParams) {
     switch (params.kem) {
       case Kem.DhkemP256HkdfSha256:
+        this.kemSecretSize = 32;
+        this.kemEncSize = 65;
+        this.kemPublicKeySize = 65;
+        this.kemPrivateKeySize = 32;
+        break;
       case Kem.DhkemP384HkdfSha384:
+        this.kemSecretSize = 48;
+        this.kemEncSize = 97;
+        this.kemPublicKeySize = 97;
+        this.kemPrivateKeySize = 48;
+        break;
       case Kem.DhkemP521HkdfSha512:
+        this.kemSecretSize = 64;
+        this.kemEncSize = 133;
+        this.kemPublicKeySize = 133;
+        this.kemPrivateKeySize = 66;
+        break;
       case Kem.DhkemX25519HkdfSha256:
+        this.kemSecretSize = 32;
+        this.kemEncSize = 32;
+        this.kemPublicKeySize = 32;
+        this.kemPrivateKeySize = 32;
+        break;
       case Kem.DhkemX448HkdfSha512:
+        this.kemSecretSize = 64;
+        this.kemEncSize = 56;
+        this.kemPublicKeySize = 56;
+        this.kemPrivateKeySize = 56;
         break;
       default:
         throw new errors.InvalidParamError("Invalid KEM id");
@@ -116,6 +150,16 @@ export class CipherSuite {
     this._suiteId.set(i2Osp(this.kem, 2), 4);
     this._suiteId.set(i2Osp(this.kdf, 2), 6);
     this._suiteId.set(i2Osp(this.aead, 2), 8);
+  }
+
+  /**
+   * Gets a suite-specific KEM context.
+   *
+   * @returns A KDF context.
+   */
+  public async kemContext(): Promise<KemInterface> {
+    await this.setup();
+    return this._kem as KemContext;
   }
 
   /**

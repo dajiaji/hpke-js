@@ -25,6 +25,10 @@ describe("CipherSuite", () => {
       // assert
       assertEquals(suite.kem, Kem.DhkemX25519HkdfSha256);
       assertEquals(suite.kem, 0x0020);
+      assertEquals(suite.kemSecretSize, 32);
+      assertEquals(suite.kemEncSize, 32);
+      assertEquals(suite.kemPublicKeySize, 32);
+      assertEquals(suite.kemPrivateKeySize, 32);
       assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
       assertEquals(suite.aead, Aead.Aes128Gcm);
