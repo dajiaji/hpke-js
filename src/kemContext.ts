@@ -1,3 +1,4 @@
+import type { KemInterface } from "./interfaces/kemInterface.ts";
 import type { KemPrimitives } from "./interfaces/kemPrimitives.ts";
 import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
@@ -5,63 +6,87 @@ import type { RecipientContextParams } from "./interfaces/recipientContextParams
 import { Ec } from "./kemPrimitives/ec.ts";
 import { X25519 } from "./kemPrimitives/x25519.ts";
 import { X448 } from "./kemPrimitives/x448.ts";
-import { Kem } from "./identifiers.ts";
-import { KdfCommon } from "./kdfCommon.ts";
+import { Kdf, Kem } from "./identifiers.ts";
+import { KdfContext } from "./kdfContext.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "./utils/misc.ts";
+import { WebCrypto } from "./webCrypto.ts";
 
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
-export class KemContext extends KdfCommon {
+export class KemContext extends WebCrypto implements KemInterface {
+  public readonly id: Kem;
+  public readonly secretSize: number;
+  public readonly encSize: number;
+  public readonly publicKeySize: number;
+  public readonly privateKeySize: number;
   private _prim: KemPrimitives;
-  private _nSecret: number;
+  private _kdf: KdfContext;
 
   constructor(api: SubtleCrypto, kem: Kem) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(kem, 2), 3);
+    super(api);
+    this.id = kem;
 
-    let algHash: HmacKeyGenParams;
+    let kdfId: Kdf = Kdf.HkdfSha256;
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
-        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
+        kdfId = Kdf.HkdfSha256;
         break;
       case Kem.DhkemP384HkdfSha384:
-        algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
+        kdfId = Kdf.HkdfSha384;
         break;
       case Kem.DhkemP521HkdfSha512:
-        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
+        kdfId = Kdf.HkdfSha512;
         break;
       case Kem.DhkemX25519HkdfSha256:
-        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
+        kdfId = Kdf.HkdfSha256;
         break;
       default:
+        kdfId = Kdf.HkdfSha512;
         // case Kem.DhkemX448HkdfSha512:
-        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
         break;
     }
-    super(api, suiteId, algHash);
+
+    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
+    suiteId.set(i2Osp(kem, 2), 3);
+    this._kdf = new KdfContext(this._api, kdfId, suiteId);
 
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
-        this._prim = new Ec(kem, this, this._api);
-        this._nSecret = 32;
+        this._prim = new Ec(kem, this._kdf, this._api);
+        this.secretSize = 32;
+        this.encSize = 65;
+        this.publicKeySize = 65;
+        this.privateKeySize = 32;
         break;
       case Kem.DhkemP384HkdfSha384:
-        this._prim = new Ec(kem, this, this._api);
-        this._nSecret = 48;
+        this._prim = new Ec(kem, this._kdf, this._api);
+        this.secretSize = 48;
+        this.encSize = 97;
+        this.publicKeySize = 97;
+        this.privateKeySize = 48;
         break;
       case Kem.DhkemP521HkdfSha512:
-        this._prim = new Ec(kem, this, this._api);
-        this._nSecret = 64;
+        this._prim = new Ec(kem, this._kdf, this._api);
+        this.secretSize = 64;
+        this.encSize = 133;
+        this.publicKeySize = 133;
+        this.privateKeySize = 66;
         break;
       case Kem.DhkemX25519HkdfSha256:
-        this._prim = new X25519(this);
-        this._nSecret = 32;
+        this._prim = new X25519(this._kdf);
+        this.secretSize = 32;
+        this.encSize = 32;
+        this.publicKeySize = 32;
+        this.privateKeySize = 32;
         break;
       default:
         // case Kem.DhkemX448HkdfSha512:
-        this._prim = new X448(this);
-        this._nSecret = 64;
+        this._prim = new X448(this._kdf);
+        this.secretSize = 64;
+        this.encSize = 56;
+        this.publicKeySize = 56;
+        this.privateKeySize = 56;
         break;
     }
   }
@@ -199,17 +224,17 @@ export class KemContext extends KdfCommon {
     dh: Uint8Array,
     kemContext: Uint8Array,
   ): Promise<ArrayBuffer> {
-    const labeledIkm = this.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
-    const labeledInfo = this.buildLabeledInfo(
+    const labeledIkm = this._kdf.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
+    const labeledInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_SHARED_SECRET,
       kemContext,
-      this._nSecret,
+      this.secretSize,
     );
-    return await this.extractAndExpand(
+    return await this._kdf.extractAndExpand(
       consts.EMPTY,
       labeledIkm,
       labeledInfo,
-      this._nSecret,
+      this.secretSize,
     );
   }
 }
