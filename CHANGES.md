@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.15.0
+
+Released 2022-11-06
+
+- [(#103) Disclose KEM attributes.](https://github.com/dajiaji/hpke-js/pull/103)
+
 ## Version 0.14.0
 
 Released 2022-10-28
