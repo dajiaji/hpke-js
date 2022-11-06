@@ -1,68 +1,116 @@
 import { Ec } from "./kemPrimitives/ec.js";
 import { X25519 } from "./kemPrimitives/x25519.js";
 import { X448 } from "./kemPrimitives/x448.js";
-import { Kem } from "./identifiers.js";
-import { KdfCommon } from "./kdfCommon.js";
+import { Kdf, Kem } from "./identifiers.js";
+import { KdfContext } from "./kdfContext.js";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "./utils/misc.js";
+import { WebCrypto } from "./webCrypto.js";
 import * as consts from "./consts.js";
 import * as errors from "./errors.js";
-export class KemContext extends KdfCommon {
+export class KemContext extends WebCrypto {
     constructor(api, kem) {
-        const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-        suiteId.set(i2Osp(kem, 2), 3);
-        let algHash;
-        switch (kem) {
-            case Kem.DhkemP256HkdfSha256:
-                algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
-                break;
-            case Kem.DhkemP384HkdfSha384:
-                algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
-                break;
-            case Kem.DhkemP521HkdfSha512:
-                algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
-                break;
-            case Kem.DhkemX25519HkdfSha256:
-                algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
-                break;
-            default:
-                // case Kem.DhkemX448HkdfSha512:
-                algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
-                break;
-        }
-        super(api, suiteId, algHash);
+        super(api);
+        Object.defineProperty(this, "id", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "secretSize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "encSize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "publicKeySize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "privateKeySize", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         Object.defineProperty(this, "_prim", {
             enumerable: true,
             configurable: true,
             writable: true,
             value: void 0
         });
-        Object.defineProperty(this, "_nSecret", {
+        Object.defineProperty(this, "_kdf", {
             enumerable: true,
             configurable: true,
             writable: true,
             value: void 0
         });
+        this.id = kem;
+        let kdfId = Kdf.HkdfSha256;
         switch (kem) {
             case Kem.DhkemP256HkdfSha256:
-                this._prim = new Ec(kem, this, this._api);
-                this._nSecret = 32;
+                kdfId = Kdf.HkdfSha256;
                 break;
             case Kem.DhkemP384HkdfSha384:
-                this._prim = new Ec(kem, this, this._api);
-                this._nSecret = 48;
+                kdfId = Kdf.HkdfSha384;
                 break;
             case Kem.DhkemP521HkdfSha512:
-                this._prim = new Ec(kem, this, this._api);
-                this._nSecret = 64;
+                kdfId = Kdf.HkdfSha512;
                 break;
             case Kem.DhkemX25519HkdfSha256:
-                this._prim = new X25519(this);
-                this._nSecret = 32;
+                kdfId = Kdf.HkdfSha256;
+                break;
+            default:
+                kdfId = Kdf.HkdfSha512;
+                // case Kem.DhkemX448HkdfSha512:
+                break;
+        }
+        const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
+        suiteId.set(i2Osp(kem, 2), 3);
+        this._kdf = new KdfContext(this._api, kdfId, suiteId);
+        switch (kem) {
+            case Kem.DhkemP256HkdfSha256:
+                this._prim = new Ec(kem, this._kdf, this._api);
+                this.secretSize = 32;
+                this.encSize = 65;
+                this.publicKeySize = 65;
+                this.privateKeySize = 32;
+                break;
+            case Kem.DhkemP384HkdfSha384:
+                this._prim = new Ec(kem, this._kdf, this._api);
+                this.secretSize = 48;
+                this.encSize = 97;
+                this.publicKeySize = 97;
+                this.privateKeySize = 48;
+                break;
+            case Kem.DhkemP521HkdfSha512:
+                this._prim = new Ec(kem, this._kdf, this._api);
+                this.secretSize = 64;
+                this.encSize = 133;
+                this.publicKeySize = 133;
+                this.privateKeySize = 66;
+                break;
+            case Kem.DhkemX25519HkdfSha256:
+                this._prim = new X25519(this._kdf);
+                this.secretSize = 32;
+                this.encSize = 32;
+                this.publicKeySize = 32;
+                this.privateKeySize = 32;
                 break;
             default:
                 // case Kem.DhkemX448HkdfSha512:
-                this._prim = new X448(this);
-                this._nSecret = 64;
+                this._prim = new X448(this._kdf);
+                this.secretSize = 64;
+                this.encSize = 56;
+                this.publicKeySize = 56;
+                this.privateKeySize = 56;
                 break;
         }
     }
@@ -168,8 +216,8 @@ export class KemContext extends KdfCommon {
         }
     }
     async generateSharedSecret(dh, kemContext) {
-        const labeledIkm = this.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
-        const labeledInfo = this.buildLabeledInfo(consts.LABEL_SHARED_SECRET, kemContext, this._nSecret);
-        return await this.extractAndExpand(consts.EMPTY, labeledIkm, labeledInfo, this._nSecret);
+        const labeledIkm = this._kdf.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
+        const labeledInfo = this._kdf.buildLabeledInfo(consts.LABEL_SHARED_SECRET, kemContext, this.secretSize);
+        return await this._kdf.extractAndExpand(consts.EMPTY, labeledIkm, labeledInfo, this.secretSize);
     }
 }
