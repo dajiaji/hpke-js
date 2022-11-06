@@ -1,5 +1,5 @@
 import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
-import type { KdfCommon } from "../kdfCommon.ts";
+import type { KdfContext } from "../kdfContext.ts";
 
 import { Kem } from "../identifiers.ts";
 
@@ -117,7 +117,7 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
 ]);
 
 export class Ec implements KemPrimitives {
-  private _hkdf: KdfCommon;
+  private _hkdf: KdfContext;
   private _api: SubtleCrypto;
   private _alg: EcKeyGenParams;
   private _nPk: number;
@@ -129,7 +129,7 @@ export class Ec implements KemPrimitives {
   private _bitmask: number;
   private _pkcs8AlgId: Uint8Array;
 
-  constructor(kem: Kem, hkdf: KdfCommon, api: SubtleCrypto) {
+  constructor(kem: Kem, hkdf: KdfContext, api: SubtleCrypto) {
     this._hkdf = hkdf;
     this._api = api;
     switch (kem) {

@@ -1,176 +1,189 @@
-import type { AeadParams } from "./interfaces/aeadParams.ts";
-import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
-import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
+import { hmac } from "./bundles/hmac/mod.ts";
 
-import { Aead, Kdf, Mode } from "./identifiers.ts";
-import { KdfCommon } from "./kdfCommon.ts";
-import { i2Osp } from "./utils/misc.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+
+import { Kdf } from "./identifiers.ts";
+import { WebCrypto } from "./webCrypto.ts";
 
 import * as consts from "./consts.ts";
+import * as errors from "../src/errors.ts";
 
-export class KdfContext extends KdfCommon {
-  private _aead: Aead;
-  private _nK: number;
-  private _nN: number;
-  private _nT: number;
+export class KdfContext extends WebCrypto implements KdfInterface {
+  public readonly id: Kdf;
+  public readonly hashSize: number;
+  protected readonly suiteId: Uint8Array;
+  protected readonly algHash: HmacKeyGenParams;
+  protected readonly _nH: number;
 
-  constructor(api: SubtleCrypto, params: CipherSuiteParams) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-    suiteId.set(i2Osp(params.kem, 2), 4);
-    suiteId.set(i2Osp(params.kdf, 2), 6);
-    suiteId.set(i2Osp(params.aead, 2), 8);
-
-    let algHash: HmacKeyGenParams;
-    switch (params.kdf) {
+  constructor(api: SubtleCrypto, kdf: Kdf, suiteId: Uint8Array) {
+    super(api);
+    this.id = kdf;
+    this.suiteId = suiteId;
+    switch (kdf) {
       case Kdf.HkdfSha256:
-        algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
+        this.hashSize = 32;
+        this.algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
         break;
       case Kdf.HkdfSha384:
-        algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
+        this.hashSize = 48;
+        this.algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
         break;
       default:
         // case Kdf.HkdfSha512:
-        algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
+        this.hashSize = 64;
+        this.algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
         break;
     }
-    super(api, suiteId, algHash);
-
-    this._aead = params.aead;
-    switch (this._aead) {
-      case Aead.Aes128Gcm:
-        this._nK = 16;
-        this._nN = 12;
-        this._nT = 16;
-        break;
-      case Aead.Aes256Gcm:
-        this._nK = 32;
-        this._nN = 12;
-        this._nT = 16;
-        break;
-      case Aead.Chacha20Poly1305:
-        this._nK = 32;
-        this._nN = 12;
-        this._nT = 16;
-        break;
-      default:
-        // case Aead.ExportOnly:
-        this._nK = 0;
-        this._nN = 0;
-        this._nT = 0;
-        break;
+    if (this.algHash.length === undefined) {
+      throw new Error("Unknown hash size.");
     }
+    this._nH = this.algHash.length / 8;
   }
 
-  // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
-  //   const gotPsk = (params.psk !== undefined);
-  //   const gotPskId = (params.psk !== undefined && params.psk.id.byteLength > 0);
-  //   if (gotPsk !== gotPskId) {
-  //     throw new Error('Inconsistent PSK inputs');
-  //   }
-  //   if (gotPsk && (mode === Mode.Base || mode === Mode.Auth)) {
-  //     throw new Error('PSK input provided when not needed');
-  //   }
-  //   if (!gotPsk && (mode === Mode.Psk || mode === Mode.AuthPsk)) {
-  //     throw new Error('Missing required PSK input');
-  //   }
-  //   return;
-  // }
-
-  public async keySchedule(
-    mode: Mode,
-    sharedSecret: ArrayBuffer,
-    params: KeyScheduleParams,
-  ): Promise<AeadParams> {
-    // Currently, there is no point in executing this function
-    // because this hpke library does not allow users to explicitly specify the mode.
-    //
-    // this.verifyPskInputs(mode, params);
-
-    const pskId = params.psk === undefined
-      ? consts.EMPTY
-      : new Uint8Array(params.psk.id);
-    const pskIdHash = await this.labeledExtract(
-      consts.EMPTY,
-      consts.LABEL_PSK_ID_HASH,
-      pskId,
+  public buildLabeledIkm(label: Uint8Array, ikm: Uint8Array): Uint8Array {
+    const ret = new Uint8Array(
+      7 + this.suiteId.byteLength + label.byteLength + ikm.byteLength,
     );
+    ret.set(consts.HPKE_VERSION, 0);
+    ret.set(this.suiteId, 7);
+    ret.set(label, 7 + this.suiteId.byteLength);
+    ret.set(ikm, 7 + this.suiteId.byteLength + label.byteLength);
+    return ret;
+  }
 
-    const info = params.info === undefined
-      ? consts.EMPTY
-      : new Uint8Array(params.info);
-    const infoHash = await this.labeledExtract(
-      consts.EMPTY,
-      consts.LABEL_INFO_HASH,
-      info,
+  public buildLabeledInfo(
+    label: Uint8Array,
+    info: Uint8Array,
+    len: number,
+  ): Uint8Array {
+    const ret = new Uint8Array(
+      9 + this.suiteId.byteLength + label.byteLength + info.byteLength,
     );
+    ret.set(new Uint8Array([0, len]), 0);
+    ret.set(consts.HPKE_VERSION, 2);
+    ret.set(this.suiteId, 9);
+    ret.set(label, 9 + this.suiteId.byteLength);
+    ret.set(info, 9 + this.suiteId.byteLength + label.byteLength);
+    return ret;
+  }
 
-    const keyScheduleContext = new Uint8Array(
-      1 + pskIdHash.byteLength + infoHash.byteLength,
-    );
-    keyScheduleContext.set(new Uint8Array([mode]), 0);
-    keyScheduleContext.set(new Uint8Array(pskIdHash), 1);
-    keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
+  public async extract(
+    salt: ArrayBuffer,
+    ikm: ArrayBuffer,
+  ): Promise<ArrayBuffer> {
+    if (salt.byteLength === 0) {
+      salt = new ArrayBuffer(this._nH);
+    }
+    if (salt.byteLength !== this._nH) {
+      // Web Cryptography API supports only _nH length key.
+      // In this case, fallback to the upper-layer hmac library.
+      switch (this.algHash.hash) {
+        case "SHA-256":
+          return hmac(
+            "sha256",
+            new Uint8Array(salt),
+            new Uint8Array(ikm),
+          ) as Uint8Array;
+        case "SHA-512":
+          return hmac(
+            "sha512",
+            new Uint8Array(salt),
+            new Uint8Array(ikm),
+          ) as Uint8Array;
+        default:
+          throw new errors.NotSupportedError(
+            `${this.algHash.hash} key length should be ${this._nH}.`,
+          );
+      }
+    }
+    const key = await this._api.importKey("raw", salt, this.algHash, false, [
+      "sign",
+    ]);
+    return await this._api.sign("HMAC", key, ikm);
+  }
 
-    const psk = params.psk === undefined
-      ? consts.EMPTY
-      : new Uint8Array(params.psk.key);
-    const ikm = this.buildLabeledIkm(consts.LABEL_SECRET, psk);
+  public async expand(
+    prk: ArrayBuffer,
+    info: ArrayBuffer,
+    len: number,
+  ): Promise<ArrayBuffer> {
+    const key = await this._api.importKey("raw", prk, this.algHash, false, [
+      "sign",
+    ]);
 
-    const exporterSecretInfo = this.buildLabeledInfo(
-      consts.LABEL_EXP,
-      keyScheduleContext,
-      this._nH,
-    );
-    const exporterSecret = await this.extractAndExpand(
-      sharedSecret,
-      ikm,
-      exporterSecretInfo,
-      this._nH,
-    );
+    const okm = new ArrayBuffer(len);
+    const p = new Uint8Array(okm);
+    let prev = consts.EMPTY;
+    const mid = new Uint8Array(info);
+    const tail = new Uint8Array(1);
 
-    if (this._aead === Aead.ExportOnly) {
-      return {
-        aead: this._aead,
-        nK: this._nK,
-        nN: this._nN,
-        nT: this._nT,
-        exporterSecret: exporterSecret,
-      };
+    if (len > 255 * this._nH) {
+      throw new Error("Entropy limit reached");
     }
 
-    const keyInfo = this.buildLabeledInfo(
-      consts.LABEL_KEY,
-      keyScheduleContext,
-      this._nK,
-    );
-    const key = await this.extractAndExpand(
-      sharedSecret,
-      ikm,
-      keyInfo,
-      this._nK,
-    );
+    const tmp = new Uint8Array(this._nH + mid.length + 1);
+    for (let i = 1, cur = 0; cur < p.length; i++) {
+      tail[0] = i;
+      tmp.set(prev, 0);
+      tmp.set(mid, prev.length);
+      tmp.set(tail, prev.length + mid.length);
+      prev = new Uint8Array(
+        await this._api.sign(
+          "HMAC",
+          key,
+          tmp.slice(0, prev.length + mid.length + 1),
+        ),
+      );
+      if (p.length - cur >= prev.length) {
+        p.set(prev, cur);
+        cur += prev.length;
+      } else {
+        p.set(prev.slice(0, p.length - cur), cur);
+        cur += p.length - cur;
+      }
+    }
+    return okm;
+  }
 
-    const baseNonceInfo = this.buildLabeledInfo(
-      consts.LABEL_BASE_NONCE,
-      keyScheduleContext,
-      this._nN,
-    );
-    const baseNonce = await this.extractAndExpand(
-      sharedSecret,
+  public async extractAndExpand(
+    salt: ArrayBuffer,
+    ikm: ArrayBuffer,
+    info: ArrayBuffer,
+    len: number,
+  ): Promise<ArrayBuffer> {
+    const baseKey = await this._api.importKey(
+      "raw",
       ikm,
-      baseNonceInfo,
-      this._nN,
+      "HKDF",
+      false,
+      consts.KEM_USAGES,
     );
+    return await this._api.deriveBits(
+      {
+        name: "HKDF",
+        hash: this.algHash.hash,
+        salt: salt,
+        info: info,
+      },
+      baseKey,
+      len * 8,
+    );
+  }
 
-    return {
-      aead: this._aead,
-      nK: this._nK,
-      nN: this._nN,
-      nT: this._nT,
-      exporterSecret: exporterSecret,
-      key: key,
-      baseNonce: new Uint8Array(baseNonce),
-      seq: 0,
-    };
+  public async labeledExtract(
+    salt: ArrayBuffer,
+    label: Uint8Array,
+    ikm: Uint8Array,
+  ): Promise<ArrayBuffer> {
+    return await this.extract(salt, this.buildLabeledIkm(label, ikm));
+  }
+
+  public async labeledExpand(
+    prk: ArrayBuffer,
+    label: Uint8Array,
+    info: Uint8Array,
+    len: number,
+  ): Promise<ArrayBuffer> {
+    return await this.expand(prk, this.buildLabeledInfo(label, info, len), len);
   }
 }

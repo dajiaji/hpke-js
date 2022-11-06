@@ -36,9 +36,29 @@ export class EncryptionContext extends ExporterContext {
       throw new Error("Required parameters are missing");
     }
     this._aead = params.aead;
-    this._nK = params.nK;
-    this._nN = params.nN;
-    this._nT = params.nT;
+    switch (this._aead) {
+      case Aead.Aes128Gcm:
+        this._nK = 16;
+        this._nN = 12;
+        this._nT = 16;
+        break;
+      case Aead.Aes256Gcm:
+        this._nK = 32;
+        this._nN = 12;
+        this._nT = 16;
+        break;
+      case Aead.Chacha20Poly1305:
+        this._nK = 32;
+        this._nN = 12;
+        this._nT = 16;
+        break;
+      default:
+        // case Aead.ExportOnly:
+        this._nK = 0;
+        this._nN = 0;
+        this._nT = 0;
+        break;
+    }
 
     const key = createAeadKey(this._aead, params.key, this._api);
 

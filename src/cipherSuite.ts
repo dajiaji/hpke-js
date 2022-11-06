@@ -1,6 +1,8 @@
 import type { AeadKey } from "./interfaces/aeadKey.ts";
+import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+import type { KemInterface } from "./interfaces/kemInterface.ts";
 import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
 import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
@@ -21,6 +23,7 @@ import { KemContext } from "./kemContext.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
 import { loadSubtleCrypto } from "./webCrypto.ts";
+import { i2Osp } from "./utils/misc.ts";
 
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
@@ -46,16 +49,26 @@ export class CipherSuite {
   public readonly kdf: Kdf;
   /** The AEAD id of the cipher suite. */
   public readonly aead: Aead;
-  /** The length in bytes of an AEAD key. */
+
+  /** The length in bytes of a KEM shared secret produced by this KEM (Nsecret). */
+  public readonly kemSecretSize: number = 0;
+  /** The length in bytes of an encapsulated key produced by this KEM (Nenc). */
+  public readonly kemEncSize: number = 0;
+  /** The length in bytes of an encoded public key for this KEM (Npk). */
+  public readonly kemPublicKeySize: number = 0;
+  /** The length in bytes of an encoded private key for this KEM (Nsk). */
+  public readonly kemPrivateKeySize: number = 0;
+  /** The length in bytes of an AEAD key (Nk). */
   public readonly aeadKeySize: number = 0;
-  /** The length in bytes of an AEAD nonce. */
+  /** The length in bytes of an AEAD nonce (Nn). */
   public readonly aeadNonceSize: number = 0;
-  /** The length in bytes of an AEAD authentication tag. */
+  /** The length in bytes of an AEAD authentication tag (Nt). */
   public readonly aeadTagSize: number = 0;
 
-  private _ctx: CipherSuiteParams;
+  private _api: SubtleCrypto | undefined = undefined;
   private _kem: KemContext | undefined = undefined;
   private _kdf: KdfContext | undefined = undefined;
+  private _suiteId: Uint8Array;
 
   /**
    * @param params A set of parameters for building a cipher suite.
@@ -67,10 +80,34 @@ export class CipherSuite {
   constructor(params: CipherSuiteParams) {
     switch (params.kem) {
       case Kem.DhkemP256HkdfSha256:
+        this.kemSecretSize = 32;
+        this.kemEncSize = 65;
+        this.kemPublicKeySize = 65;
+        this.kemPrivateKeySize = 32;
+        break;
       case Kem.DhkemP384HkdfSha384:
+        this.kemSecretSize = 48;
+        this.kemEncSize = 97;
+        this.kemPublicKeySize = 97;
+        this.kemPrivateKeySize = 48;
+        break;
       case Kem.DhkemP521HkdfSha512:
+        this.kemSecretSize = 64;
+        this.kemEncSize = 133;
+        this.kemPublicKeySize = 133;
+        this.kemPrivateKeySize = 66;
+        break;
       case Kem.DhkemX25519HkdfSha256:
+        this.kemSecretSize = 32;
+        this.kemEncSize = 32;
+        this.kemPublicKeySize = 32;
+        this.kemPrivateKeySize = 32;
+        break;
       case Kem.DhkemX448HkdfSha512:
+        this.kemSecretSize = 64;
+        this.kemEncSize = 56;
+        this.kemPublicKeySize = 56;
+        this.kemPrivateKeySize = 56;
         break;
       default:
         throw new errors.InvalidParamError("Invalid KEM id");
@@ -109,7 +146,20 @@ export class CipherSuite {
         throw new errors.InvalidParamError("Invalid AEAD id");
     }
     this.aead = params.aead;
-    this._ctx = { kem: this.kem, kdf: this.kdf, aead: this.aead };
+    this._suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+    this._suiteId.set(i2Osp(this.kem, 2), 4);
+    this._suiteId.set(i2Osp(this.kdf, 2), 6);
+    this._suiteId.set(i2Osp(this.aead, 2), 8);
+  }
+
+  /**
+   * Gets a suite-specific KEM context.
+   *
+   * @returns A KDF context.
+   */
+  public async kemContext(): Promise<KemInterface> {
+    await this.setup();
+    return this._kem as KemContext;
   }
 
   /**
@@ -130,8 +180,8 @@ export class CipherSuite {
    * @returns An AEAD key.
    */
   public async createAeadKey(key: ArrayBuffer): Promise<AeadKey> {
-    const api = await this.setup();
-    return createAeadKey(this.aead, key, api);
+    await this.setup();
+    return createAeadKey(this.aead, key, this._api as SubtleCrypto);
   }
 
   /**
@@ -201,7 +251,7 @@ export class CipherSuite {
   ): Promise<SenderContextInterface> {
     this.validateInputLength(params);
 
-    const api = await this.setup();
+    await this.setup();
 
     const dh = await (this._kem as KemContext).encap(params);
 
@@ -211,17 +261,7 @@ export class CipherSuite {
     } else {
       mode = params.senderKey !== undefined ? Mode.Auth : Mode.Base;
     }
-
-    const kdf = new KdfContext(api, this._ctx);
-    const res = await (this._kdf as KdfContext).keySchedule(
-      mode,
-      dh.sharedSecret,
-      params,
-    );
-    if (res.key === undefined) {
-      return new SenderExporterContext(api, kdf, res.exporterSecret, dh.enc);
-    }
-    return new SenderContext(api, kdf, res, dh.enc);
+    return await this.keyScheduleS(mode, dh.sharedSecret, dh.enc, params);
   }
 
   /**
@@ -238,7 +278,7 @@ export class CipherSuite {
   ): Promise<RecipientContextInterface> {
     this.validateInputLength(params);
 
-    const api = await this.setup();
+    await this.setup();
 
     const sharedSecret = await (this._kem as KemContext).decap(params);
 
@@ -248,17 +288,7 @@ export class CipherSuite {
     } else {
       mode = params.senderPublicKey !== undefined ? Mode.Auth : Mode.Base;
     }
-
-    const kdf = new KdfContext(api, this._ctx);
-    const res = await (this._kdf as KdfContext).keySchedule(
-      mode,
-      sharedSecret,
-      params,
-    );
-    if (res.key === undefined) {
-      return new RecipientExporterContext(api, kdf, res.exporterSecret);
-    }
-    return new RecipientContext(api, kdf, res);
+    return await this.keyScheduleR(mode, sharedSecret, params);
   }
 
   /**
@@ -304,13 +334,175 @@ export class CipherSuite {
     return await ctx.open(ct, aad);
   }
 
-  private async setup(): Promise<SubtleCrypto> {
-    const api = await loadSubtleCrypto();
+  private async setup() {
+    this._api = await loadSubtleCrypto();
     if (this._kem === undefined || this._kdf === undefined) {
-      this._kem = new KemContext(api, this.kem);
-      this._kdf = new KdfContext(api, this._ctx);
+      this._kem = new KemContext(this._api as SubtleCrypto, this.kem);
+      this._kdf = new KdfContext(
+        this._api as SubtleCrypto,
+        this.kdf,
+        this._suiteId,
+      );
     }
-    return api;
+    return;
+  }
+
+  // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
+  //   const gotPsk = (params.psk !== undefined);
+  //   const gotPskId = (params.psk !== undefined && params.psk.id.byteLength > 0);
+  //   if (gotPsk !== gotPskId) {
+  //     throw new Error('Inconsistent PSK inputs');
+  //   }
+  //   if (gotPsk && (mode === Mode.Base || mode === Mode.Auth)) {
+  //     throw new Error('PSK input provided when not needed');
+  //   }
+  //   if (!gotPsk && (mode === Mode.Psk || mode === Mode.AuthPsk)) {
+  //     throw new Error('Missing required PSK input');
+  //   }
+  //   return;
+  // }
+
+  private async keySchedule(
+    mode: Mode,
+    sharedSecret: ArrayBuffer,
+    params: KeyScheduleParams,
+  ): Promise<{ params: AeadParams; kdf: KdfContext }> {
+    // Currently, there is no point in executing this function
+    // because this hpke library does not allow users to explicitly specify the mode.
+    //
+    // this.verifyPskInputs(mode, params);
+
+    const kdf = new KdfContext(
+      this._api as SubtleCrypto,
+      this.kdf,
+      this._suiteId,
+    );
+
+    const pskId = params.psk === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.psk.id);
+    const pskIdHash = await kdf.labeledExtract(
+      consts.EMPTY,
+      consts.LABEL_PSK_ID_HASH,
+      pskId,
+    );
+
+    const info = params.info === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.info);
+    const infoHash = await kdf.labeledExtract(
+      consts.EMPTY,
+      consts.LABEL_INFO_HASH,
+      info,
+    );
+
+    const keyScheduleContext = new Uint8Array(
+      1 + pskIdHash.byteLength + infoHash.byteLength,
+    );
+    keyScheduleContext.set(new Uint8Array([mode]), 0);
+    keyScheduleContext.set(new Uint8Array(pskIdHash), 1);
+    keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
+
+    const psk = params.psk === undefined
+      ? consts.EMPTY
+      : new Uint8Array(params.psk.key);
+    const ikm = kdf.buildLabeledIkm(consts.LABEL_SECRET, psk);
+
+    const exporterSecretInfo = kdf.buildLabeledInfo(
+      consts.LABEL_EXP,
+      keyScheduleContext,
+      kdf.hashSize,
+    );
+    const exporterSecret = await kdf.extractAndExpand(
+      sharedSecret,
+      ikm,
+      exporterSecretInfo,
+      kdf.hashSize,
+    );
+
+    if (this.aead === Aead.ExportOnly) {
+      return {
+        params: {
+          aead: this.aead,
+          exporterSecret: exporterSecret,
+        },
+        kdf: kdf,
+      };
+    }
+
+    const keyInfo = kdf.buildLabeledInfo(
+      consts.LABEL_KEY,
+      keyScheduleContext,
+      this.aeadKeySize,
+    );
+    const key = await kdf.extractAndExpand(
+      sharedSecret,
+      ikm,
+      keyInfo,
+      this.aeadKeySize,
+    );
+
+    const baseNonceInfo = kdf.buildLabeledInfo(
+      consts.LABEL_BASE_NONCE,
+      keyScheduleContext,
+      this.aeadNonceSize,
+    );
+    const baseNonce = await kdf.extractAndExpand(
+      sharedSecret,
+      ikm,
+      baseNonceInfo,
+      this.aeadNonceSize,
+    );
+
+    return {
+      params: {
+        aead: this.aead,
+        exporterSecret: exporterSecret,
+        key: key,
+        baseNonce: new Uint8Array(baseNonce),
+        seq: 0,
+      },
+      kdf: kdf,
+    };
+  }
+
+  private async keyScheduleS(
+    mode: Mode,
+    sharedSecret: ArrayBuffer,
+    enc: ArrayBuffer,
+    params: KeyScheduleParams,
+  ): Promise<SenderContextInterface> {
+    const res = await this.keySchedule(mode, sharedSecret, params);
+    if (res.params.key === undefined) {
+      return new SenderExporterContext(
+        this._api as SubtleCrypto,
+        res.kdf,
+        res.params.exporterSecret,
+        enc,
+      );
+    }
+    return new SenderContext(
+      this._api as SubtleCrypto,
+      res.kdf,
+      res.params,
+      enc,
+    );
+  }
+
+  private async keyScheduleR(
+    mode: Mode,
+    sharedSecret: ArrayBuffer,
+    params: KeyScheduleParams,
+  ): Promise<RecipientContextInterface> {
+    const res = await this.keySchedule(mode, sharedSecret, params);
+    if (res.params.key === undefined) {
+      return new RecipientExporterContext(
+        this._api as SubtleCrypto,
+        res.kdf,
+        res.params.exporterSecret,
+      );
+    }
+    return new RecipientContext(this._api as SubtleCrypto, res.kdf, res.params);
   }
 
   private validateInputLength(params: KeyScheduleParams) {

@@ -7,6 +7,9 @@ import { EncryptionContext } from "../src/encryptionContext.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { KdfContext } from "../src/kdfContext.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
+import { i2Osp } from "../src/utils/misc.ts";
+
+import * as consts from "../src/consts.ts";
 import * as errors from "../src/errors.ts";
 
 const DUMMY_BYTES_12 = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
@@ -18,11 +21,11 @@ describe("constructor", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
       const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
+      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -47,11 +50,11 @@ describe("constructor", () => {
   describe("with invalid aead id", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
+      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -439,11 +442,11 @@ describe("createRecipientContext", () => {
   describe("without key info", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
+      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
       const params = {
         aead: Aead.Aes128Gcm,
         nK: 16,
@@ -515,11 +518,11 @@ describe("setupBidirectional", () => {
   describe("with invalid _nK", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
+      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -550,11 +553,11 @@ describe("setupBidirectional", () => {
   describe("with invalid _nN", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const kdf = new KdfContext(api, {
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
+      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
