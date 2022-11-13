@@ -151,7 +151,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.15.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.15.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -170,7 +170,7 @@ curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.15.0/es2022/
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@0.15.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@v0.15.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -272,7 +272,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.15.0/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.15.0/mod.ts";
 
 async function doHpke() {
   // setup
