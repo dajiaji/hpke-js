@@ -151,7 +151,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.15.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.15.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -170,7 +170,7 @@ curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.15.0/es2022/
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@0.15.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@v0.15.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -204,7 +204,7 @@ Browsers:
         });
       
         const recipient = await suite.createRecipientContext({
-          recipientKey: rkp,
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
           enc: sender.enc,
         });
       
@@ -248,7 +248,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -272,7 +272,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.15.0/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.15.0/mod.ts";
 
 async function doHpke() {
   // setup
@@ -289,7 +289,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -334,7 +334,7 @@ async function doHpke() {
 
   // decrypt
   try {
-  const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
+  const pt = await suite.open({ recipientKey: rkp.privateKey, enc: enc }, ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
   // decrypted: my-secret-message
@@ -370,7 +370,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -436,7 +436,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -478,7 +478,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     psk: {
       id: new TextEncoder().encode("our-pre-shared-key-id"),
@@ -528,7 +528,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
   });
@@ -579,7 +579,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
     psk: {
