@@ -204,7 +204,7 @@ Browsers:
         });
       
         const recipient = await suite.createRecipientContext({
-          recipientKey: rkp,
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
           enc: sender.enc,
         });
       
@@ -248,7 +248,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -289,7 +289,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -334,7 +334,7 @@ async function doHpke() {
 
   // decrypt
   try {
-  const pt = await suite.open({ recipientKey: rkp, enc: enc }, ct);
+  const pt = await suite.open({ recipientKey: rkp.privateKey, enc: enc }, ct);
 
   console.log('decrypted: ', new TextDecoder().decode(pt));
   // decrypted: my-secret-message
@@ -370,7 +370,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -436,7 +436,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
@@ -478,7 +478,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     psk: {
       id: new TextEncoder().encode("our-pre-shared-key-id"),
@@ -528,7 +528,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
   });
@@ -579,7 +579,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
     psk: {
