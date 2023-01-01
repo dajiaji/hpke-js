@@ -2,7 +2,7 @@ import {
   generateKeyPair,
   scalarMultBase,
   sharedKey,
-} from "../bundles/x25519/x25519.ts";
+} from "npm:@stablelib/x25519";
 
 import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
 import type { KdfContext } from "../kdfContext.ts";

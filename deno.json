@@ -15,7 +15,6 @@
       "exclude": [
         "samples/node/node_modules",
         "samples/ts-node/node_modules",
-        "src/bundles",
         "test/playwright/node_modules",
         "test/wrangler"
       ]
@@ -27,7 +26,6 @@
       "exclude": [
         "samples/node/node_modules",
         "samples/ts-node/node_modules",
-        "src/bundles",
         "test/playwright/node_modules",
         "test/wrangler"
       ]
@@ -36,8 +34,8 @@
   "importMap": "./import-map.json",
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
-    "cov": "deno coverage ./coverage --lcov --exclude='test' --exclude='bundles'",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
-    "minify": "deno bundle ./mod.ts | esbuild --minify"
+    "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
   }
 }

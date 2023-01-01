@@ -17,10 +17,13 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
+      - uses: actions/setup-node@v3
+        with:
+          node-version: v18.x
       - run: |
+          npm install -g esbuild
           deno task dnt
-          cp npm/esm/*.js test/pages/src/
-          cp -rf npm/esm/src test/pages/src/
+          deno task minify > test/pages/src/hpke.js
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
@@ -28,10 +31,13 @@ jobs:
 
   playwright-test:
     needs: pages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - uses: microsoft/playwright-github-action@v1
       - working-directory: ./test/playwright
-        run: npm install && npx playwright install && npx playwright test
+        run: |
+          npm ci
+          npx playwright install --with-deps
+          npx playwright test

@@ -52,34 +52,34 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 | Base | PSK | Auth | AuthPSK |
 | ---- | --- | ---- | ------- |
-| ✅    | ✅   | ✅    | ✅       |
+| ✅   | ✅  | ✅   | ✅      |
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js     | Deno          | Cloudflare<br>Workers |                                                                                                                                                                            |
-| --------------------------- | ------- | ----------- | ------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅       | ✅<br>v16.x- | ✅<br>v1.23.x- |                       |                                                                                                                                                                            |
-| DHKEM (P-384, HKDF-SHA384)  | ✅       | ✅<br>v16.x- |               |                       |                                                                                                                                                                            |
-| DHKEM (P-521, HKDF-SHA512)  | ✅       | ✅<br>v16.x- |               |                       |                                                                                                                                                                            |
-| DHKEM (X25519, HKDF-SHA256) | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
-| DHKEM (X448, HKDF-SHA512)   | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
+| KEMs                        | Browser | Node.js      | Deno           | Cloudflare<br>Workers |                                                                                                                                                                            |
+| --------------------------- | ------- | ------------ | -------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)  | ✅      | ✅<br>v16.x- | ✅<br>v1.23.x- |                       |                                                                                                                                                                            |
+| DHKEM (P-384, HKDF-SHA384)  | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
+| DHKEM (P-521, HKDF-SHA512)  | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
+| DHKEM (X25519, HKDF-SHA256) | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
+| DHKEM (X448, HKDF-SHA512)   | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js     | Deno          | Cloudflare<br>Workers |   |
-| ----------- | ------- | ----------- | ------------- | --------------------- | - |
-| HKDF-SHA256 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |   |
-| HKDF-SHA384 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |   |
-| HKDF-SHA512 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |   |
+| KDFs        | Browser | Node.js      | Deno           | Cloudflare<br>Workers |   |
+| ----------- | ------- | ------------ | -------------- | --------------------- | - |
+| HKDF-SHA256 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |   |
+| HKDF-SHA384 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |   |
+| HKDF-SHA512 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |   |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser | Node.js     | Deno          | Cloudflare<br>Workers |                                                                                                                    |
-| ---------------- | ------- | ----------- | ------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| AES-128-GCM      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |                                                                                                                    |
-| AES-256-GCM      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |                                                                                                                    |
-| ChaCha20Poly1305 | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
-| Export Only      | ✅       | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                     |                                                                                                                    |
+| AEADs            | Browser | Node.js      | Deno           | Cloudflare<br>Workers |                                                                                                                    |
+| ---------------- | ------- | ------------ | -------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| AES-128-GCM      | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |                                                                                                                    |
+| AES-256-GCM      | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |                                                                                                                    |
+| ChaCha20Poly1305 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html) is used. |
+| Export Only      | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    |                                                                                                                    |
 
 ## Supported Environments
 

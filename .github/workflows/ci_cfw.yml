@@ -19,8 +19,11 @@ jobs:
           deno-version: v1.x
       - uses: actions/setup-node@v3
         with:
-          node-version: v16.x
-      - run: deno bundle mod.ts test/wrangler/src/hpke.js
+          node-version: v18.x
+      - run: |
+          npm install -g esbuild
+          deno task dnt
+          deno task minify > test/wrangler/src/hpke.js
       - name: Run test
         working-directory: ./test/wrangler
         run: |
