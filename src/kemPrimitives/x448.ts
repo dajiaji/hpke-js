@@ -1,4 +1,4 @@
-import { getPublicKey, getSharedSecret } from "../bundles/x448-js/index.ts";
+import { getPublicKey, getSharedSecret } from "npm:x448-js";
 
 import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
 import type { KdfContext } from "../kdfContext.ts";

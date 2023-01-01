@@ -1,4 +1,6 @@
-import { hmac } from "./bundles/hmac/mod.ts";
+import { hmac } from "npm:@stablelib/hmac";
+import { SHA256 } from "npm:@stablelib/sha256";
+import { SHA512 } from "npm:@stablelib/sha512";
 
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
@@ -80,13 +82,13 @@ export class KdfContext extends WebCrypto implements KdfInterface {
       switch (this.algHash.hash) {
         case "SHA-256":
           return hmac(
-            "sha256",
+            SHA256,
             new Uint8Array(salt),
             new Uint8Array(ikm),
           ) as Uint8Array;
         case "SHA-512":
           return hmac(
-            "sha512",
+            SHA512,
             new Uint8Array(salt),
             new Uint8Array(ikm),
           ) as Uint8Array;
