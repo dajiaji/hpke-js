@@ -1,4 +1,4 @@
-import { generateKeyPair, scalarMultBase, sharedKey, } from "../bundles/x25519/x25519.js";
+import { generateKeyPair, scalarMultBase, sharedKey, } from "@stablelib/x25519";
 import { XCryptoKey } from "../xCryptoKey.js";
 import * as consts from "../consts.js";
 const ALG_NAME = "X25519";

@@ -1,4 +1,6 @@
-import { hmac } from "./bundles/hmac/mod.js";
+import { hmac } from "@stablelib/hmac";
+import { SHA256 } from "@stablelib/sha256";
+import { SHA512 } from "@stablelib/sha512";
 import { Kdf } from "./identifiers.js";
 import { WebCrypto } from "./webCrypto.js";
 import * as consts from "./consts.js";
@@ -84,9 +86,9 @@ export class KdfContext extends WebCrypto {
             // In this case, fallback to the upper-layer hmac library.
             switch (this.algHash.hash) {
                 case "SHA-256":
-                    return hmac("sha256", new Uint8Array(salt), new Uint8Array(ikm));
+                    return hmac(SHA256, new Uint8Array(salt), new Uint8Array(ikm));
                 case "SHA-512":
-                    return hmac("sha512", new Uint8Array(salt), new Uint8Array(ikm));
+                    return hmac(SHA512, new Uint8Array(salt), new Uint8Array(ikm));
                 default:
                     throw new errors.NotSupportedError(`${this.algHash.hash} key length should be ${this._nH}.`);
             }

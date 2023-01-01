@@ -1,4 +1,4 @@
-import { getPublicKey, getSharedSecret } from "../bundles/x448-js/index.js";
+import { getPublicKey, getSharedSecret } from "x448-js";
 import { loadCrypto } from "../webCrypto.js";
 import { XCryptoKey } from "../xCryptoKey.js";
 import * as consts from "../consts.js";

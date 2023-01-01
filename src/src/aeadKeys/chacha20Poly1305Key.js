@@ -1,4 +1,4 @@
-import { ChaCha20Poly1305 } from "../bundles/chacha20poly1305/chacha20poly1305.js";
+import { ChaCha20Poly1305 } from "@stablelib/chacha20poly1305";
 export class Chacha20Poly1305Key {
     constructor(key) {
         Object.defineProperty(this, "_key", {
