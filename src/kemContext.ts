@@ -92,7 +92,11 @@ export class KemContext extends WebCrypto implements KemInterface {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    return await this._prim.generateKeyPair();
+    try {
+      return await this._prim.generateKeyPair();
+    } catch (e: unknown) {
+      throw new errors.NotSupportedError(e);
+    }
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
@@ -100,6 +104,22 @@ export class KemContext extends WebCrypto implements KemInterface {
       return await this._prim.deriveKeyPair(ikm);
     } catch (e: unknown) {
       throw new errors.DeriveKeyPairError(e);
+    }
+  }
+
+  public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
+    try {
+      return await this._prim.serializePublicKey(key);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
+  }
+
+  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+    try {
+      return await this._prim.deserializePublicKey(key);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
   }
 
