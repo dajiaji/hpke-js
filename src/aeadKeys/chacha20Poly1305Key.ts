@@ -2,7 +2,13 @@ import { ChaCha20Poly1305 } from "npm:@stablelib/chacha20poly1305";
 
 import type { AeadKey } from "../interfaces/aeadKey.ts";
 
+import { Aead } from "../identifiers.ts";
+
 export class Chacha20Poly1305Key implements AeadKey {
+  public readonly id: Aead = Aead.Chacha20Poly1305;
+  public readonly keySize: number = 32;
+  public readonly nonceSize: number = 12;
+  public readonly tagSize: number = 16;
   private _key: ChaCha20Poly1305;
 
   public constructor(key: ArrayBuffer) {

@@ -3,7 +3,7 @@ import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
-import { AesGcmKey } from "./aeadKeys/aesGcmKey.ts";
+import { Aes128GcmKey, Aes256GcmKey } from "./aeadKeys/aesGcmKey.ts";
 import { Chacha20Poly1305Key } from "./aeadKeys/chacha20Poly1305Key.ts";
 import { ExporterContext } from "./exporterContext.ts";
 import { Aead } from "./identifiers.ts";
@@ -113,9 +113,9 @@ export function createAeadKey(
 ): AeadKey {
   switch (aead) {
     case Aead.Aes128Gcm:
-      return new AesGcmKey(key, api);
+      return new Aes128GcmKey(key, api);
     case Aead.Aes256Gcm:
-      return new AesGcmKey(key, api);
+      return new Aes256GcmKey(key, api);
     case Aead.Chacha20Poly1305:
       return new Chacha20Poly1305Key(key);
     default:

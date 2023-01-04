@@ -19,7 +19,6 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     hash: "SHA-256",
     length: 256,
   };
-  protected readonly _nH: number = 0;
 
   constructor(api: SubtleCrypto, suiteId: Uint8Array) {
     super(api);
@@ -58,10 +57,10 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     if (salt.byteLength === 0) {
-      salt = new ArrayBuffer(this._nH);
+      salt = new ArrayBuffer(this.hashSize);
     }
-    if (salt.byteLength !== this._nH) {
-      // Web Cryptography API supports only _nH length key.
+    if (salt.byteLength !== this.hashSize) {
+      // Web Cryptography API supports only Nh(hashSize) length key.
       // In this case, fallback to the upper-layer hmac library.
       switch (this.algHash.hash) {
         case "SHA-256":
@@ -78,7 +77,7 @@ export class Hkdf extends WebCrypto implements KdfInterface {
           ) as Uint8Array;
         default:
           throw new errors.NotSupportedError(
-            `${this.algHash.hash} key length should be ${this._nH}.`,
+            `${this.algHash.hash} key length should be ${this.hashSize}.`,
           );
       }
     }
@@ -103,11 +102,11 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     const mid = new Uint8Array(info);
     const tail = new Uint8Array(1);
 
-    if (len > 255 * this._nH) {
+    if (len > 255 * this.hashSize) {
       throw new Error("Entropy limit reached");
     }
 
-    const tmp = new Uint8Array(this._nH + mid.length + 1);
+    const tmp = new Uint8Array(this.hashSize + mid.length + 1);
     for (let i = 1, cur = 0; cur < p.length; i++) {
       tail[0] = i;
       tmp.set(prev, 0);
@@ -182,7 +181,6 @@ export class HkdfSha256 extends Hkdf implements KdfInterface {
     hash: "SHA-256",
     length: 256,
   };
-  protected readonly _nH: number = 32;
 }
 
 export class HkdfSha384 extends Hkdf implements KdfInterface {
@@ -193,7 +191,6 @@ export class HkdfSha384 extends Hkdf implements KdfInterface {
     hash: "SHA-384",
     length: 384,
   };
-  protected readonly _nH: number = 48;
 }
 
 export class HkdfSha512 extends Hkdf implements KdfInterface {
@@ -204,5 +201,4 @@ export class HkdfSha512 extends Hkdf implements KdfInterface {
     hash: "SHA-512",
     length: 512,
   };
-  protected readonly _nH: number = 64;
 }
