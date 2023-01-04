@@ -2,44 +2,28 @@ import { hmac } from "npm:@stablelib/hmac";
 import { SHA256 } from "npm:@stablelib/sha256";
 import { SHA512 } from "npm:@stablelib/sha512";
 
-import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
-import { Kdf } from "./identifiers.ts";
-import { WebCrypto } from "./webCrypto.ts";
+import { Kdf } from "../identifiers.ts";
+import { WebCrypto } from "../webCrypto.ts";
 
-import * as consts from "./consts.ts";
-import * as errors from "../src/errors.ts";
+import * as consts from "../consts.ts";
+import * as errors from "../errors.ts";
 
-export class KdfContext extends WebCrypto implements KdfInterface {
-  public readonly id: Kdf;
-  public readonly hashSize: number;
+export class Hkdf extends WebCrypto implements KdfInterface {
+  public readonly id: Kdf = 0;
+  public readonly hashSize: number = 0;
   protected readonly suiteId: Uint8Array;
-  protected readonly algHash: HmacKeyGenParams;
-  protected readonly _nH: number;
+  protected readonly algHash: HmacKeyGenParams = {
+    name: "HMAC",
+    hash: "SHA-256",
+    length: 256,
+  };
+  protected readonly _nH: number = 0;
 
-  constructor(api: SubtleCrypto, kdf: Kdf, suiteId: Uint8Array) {
+  constructor(api: SubtleCrypto, suiteId: Uint8Array) {
     super(api);
-    this.id = kdf;
     this.suiteId = suiteId;
-    switch (kdf) {
-      case Kdf.HkdfSha256:
-        this.hashSize = 32;
-        this.algHash = { name: "HMAC", hash: "SHA-256", length: 256 };
-        break;
-      case Kdf.HkdfSha384:
-        this.hashSize = 48;
-        this.algHash = { name: "HMAC", hash: "SHA-384", length: 384 };
-        break;
-      default:
-        // case Kdf.HkdfSha512:
-        this.hashSize = 64;
-        this.algHash = { name: "HMAC", hash: "SHA-512", length: 512 };
-        break;
-    }
-    if (this.algHash.length === undefined) {
-      throw new Error("Unknown hash size.");
-    }
-    this._nH = this.algHash.length / 8;
   }
 
   public buildLabeledIkm(label: Uint8Array, ikm: Uint8Array): Uint8Array {
@@ -188,4 +172,37 @@ export class KdfContext extends WebCrypto implements KdfInterface {
   ): Promise<ArrayBuffer> {
     return await this.expand(prk, this.buildLabeledInfo(label, info, len), len);
   }
+}
+
+export class HkdfSha256 extends Hkdf implements KdfInterface {
+  public readonly id: Kdf = Kdf.HkdfSha256;
+  public readonly hashSize: number = 32;
+  protected readonly algHash: HmacKeyGenParams = {
+    name: "HMAC",
+    hash: "SHA-256",
+    length: 256,
+  };
+  protected readonly _nH: number = 32;
+}
+
+export class HkdfSha384 extends Hkdf implements KdfInterface {
+  public readonly id: Kdf = Kdf.HkdfSha384;
+  public readonly hashSize: number = 48;
+  protected readonly algHash: HmacKeyGenParams = {
+    name: "HMAC",
+    hash: "SHA-384",
+    length: 384,
+  };
+  protected readonly _nH: number = 48;
+}
+
+export class HkdfSha512 extends Hkdf implements KdfInterface {
+  public readonly id: Kdf = Kdf.HkdfSha512;
+  public readonly hashSize: number = 64;
+  protected readonly algHash: HmacKeyGenParams = {
+    name: "HMAC",
+    hash: "SHA-512",
+    length: 512,
+  };
+  protected readonly _nH: number = 64;
 }

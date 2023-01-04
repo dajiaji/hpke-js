@@ -18,7 +18,7 @@ import {
 } from "./exporterContext.ts";
 import { createAeadKey } from "./encryptionContext.ts";
 import { Aead, Kdf, Kem, Mode } from "./identifiers.ts";
-import { KdfContext } from "./kdfContext.ts";
+import { HkdfSha256, HkdfSha384, HkdfSha512 } from "./kdfs/hkdf.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
 import { loadSubtleCrypto } from "./webCrypto.ts";
@@ -73,7 +73,7 @@ export class CipherSuite {
 
   private _api: SubtleCrypto | undefined = undefined;
   private _kem: KemInterface | undefined = undefined;
-  private _kdf: KdfContext | undefined = undefined;
+  private _kdf: KdfInterface | undefined = undefined;
   private _suiteId: Uint8Array;
 
   /**
@@ -175,7 +175,7 @@ export class CipherSuite {
    */
   public async kdfContext(): Promise<KdfInterface> {
     await this.setup();
-    return this._kdf as KdfContext;
+    return this._kdf as KdfInterface;
   }
 
   /**
@@ -344,11 +344,7 @@ export class CipherSuite {
     this._api = await loadSubtleCrypto();
     if (this._kem === undefined || this._kdf === undefined) {
       this._kem = this.createKemContext();
-      this._kdf = new KdfContext(
-        this._api as SubtleCrypto,
-        this.kdf,
-        this._suiteId,
-      );
+      this._kdf = this.createKdfContext();
     }
     return;
   }
@@ -372,17 +368,13 @@ export class CipherSuite {
     mode: Mode,
     sharedSecret: ArrayBuffer,
     params: KeyScheduleParams,
-  ): Promise<{ params: AeadParams; kdf: KdfContext }> {
+  ): Promise<{ params: AeadParams; kdf: KdfInterface }> {
     // Currently, there is no point in executing this function
     // because this hpke library does not allow users to explicitly specify the mode.
     //
     // this.verifyPskInputs(mode, params);
 
-    const kdf = new KdfContext(
-      this._api as SubtleCrypto,
-      this.kdf,
-      this._suiteId,
-    );
+    const kdf = this.createKdfContext();
 
     const pskId = params.psk === undefined
       ? consts.EMPTY
@@ -547,6 +539,18 @@ export class CipherSuite {
       default:
         // case Kem.DhkemX448HkdfSha512:
         return new DhkemX448HkdfSha512(this._api as SubtleCrypto);
+    }
+  }
+
+  private createKdfContext(): KdfInterface {
+    switch (this.kdf) {
+      case Kdf.HkdfSha256:
+        return new HkdfSha256(this._api as SubtleCrypto, this._suiteId);
+      case Kdf.HkdfSha384:
+        return new HkdfSha384(this._api as SubtleCrypto, this._suiteId);
+      default:
+        // case Kdf.HkdfSha512:
+        return new HkdfSha512(this._api as SubtleCrypto, this._suiteId);
     }
   }
 }

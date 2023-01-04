@@ -1,3 +1,4 @@
+import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 import type { KemInterface } from "../interfaces/kemInterface.ts";
 import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
@@ -6,8 +7,8 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 import { Ec } from "./dhkemPrimitives/ec.ts";
 import { X25519 } from "./dhkemPrimitives/x25519.ts";
 import { X448 } from "./dhkemPrimitives/x448.ts";
-import { Kdf, Kem } from "../identifiers.ts";
-import { KdfContext } from "../kdfContext.ts";
+import { Kem } from "../identifiers.ts";
+import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../kdfs/hkdf.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 import { WebCrypto } from "../webCrypto.ts";
 
@@ -21,9 +22,9 @@ export class Dhkem extends WebCrypto implements KemInterface {
   public readonly publicKeySize: number = 0;
   public readonly privateKeySize: number = 0;
   private _prim: KemPrimitives;
-  private _kdf: KdfContext;
+  private _kdf: KdfInterface;
 
-  constructor(api: SubtleCrypto, prim: KemPrimitives, kdf: KdfContext) {
+  constructor(api: SubtleCrypto, prim: KemPrimitives, kdf: KdfInterface) {
     super(api);
     this._prim = prim;
     this._kdf = kdf;
@@ -207,7 +208,7 @@ export class DhkemP256HkdfSha256 extends Dhkem implements KemInterface {
   constructor(api: SubtleCrypto) {
     const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 3);
-    const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+    const kdf = new HkdfSha256(api, suiteId);
     const prim = new Ec(Kem.DhkemP256HkdfSha256, kdf, api);
     super(api, prim, kdf);
   }
@@ -223,7 +224,7 @@ export class DhkemP384HkdfSha384 extends Dhkem implements KemInterface {
   constructor(api: SubtleCrypto) {
     const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 3);
-    const kdf = new KdfContext(api, Kdf.HkdfSha384, suiteId);
+    const kdf = new HkdfSha384(api, suiteId);
     const prim = new Ec(Kem.DhkemP384HkdfSha384, kdf, api);
     super(api, prim, kdf);
   }
@@ -239,7 +240,7 @@ export class DhkemP521HkdfSha512 extends Dhkem implements KemInterface {
   constructor(api: SubtleCrypto) {
     const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 3);
-    const kdf = new KdfContext(api, Kdf.HkdfSha512, suiteId);
+    const kdf = new HkdfSha512(api, suiteId);
     const prim = new Ec(Kem.DhkemP521HkdfSha512, kdf, api);
     super(api, prim, kdf);
   }
@@ -255,7 +256,7 @@ export class DhkemX25519HkdfSha256 extends Dhkem implements KemInterface {
   constructor(api: SubtleCrypto) {
     const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(Kem.DhkemX25519HkdfSha256, 2), 3);
-    const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+    const kdf = new HkdfSha256(api, suiteId);
     const prim = new X25519(kdf);
     super(api, prim, kdf);
   }
@@ -271,7 +272,7 @@ export class DhkemX448HkdfSha512 extends Dhkem implements KemInterface {
   constructor(api: SubtleCrypto) {
     const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(Kem.DhkemX448HkdfSha512, 2), 3);
-    const kdf = new KdfContext(api, Kdf.HkdfSha512, suiteId);
+    const kdf = new HkdfSha512(api, suiteId);
     const prim = new X448(kdf);
     super(api, prim, kdf);
   }

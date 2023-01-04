@@ -1,6 +1,6 @@
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
-import type { KdfContext } from "./kdfContext.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { EMPTY } from "./consts.ts";
 import { EncryptionContext } from "./encryptionContext.ts";
@@ -12,7 +12,7 @@ export class SenderContext extends EncryptionContext implements Encapsulator {
 
   constructor(
     api: SubtleCrypto,
-    kdf: KdfContext,
+    kdf: KdfInterface,
     params: AeadParams,
     enc: ArrayBuffer,
   ) {

@@ -1,6 +1,6 @@
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContextInterface } from "./interfaces/encryptionContextInterface.ts";
-import type { KdfContext } from "./kdfContext.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { WebCrypto } from "./webCrypto.ts";
 
@@ -10,9 +10,13 @@ import * as errors from "./errors.ts";
 export class ExporterContext extends WebCrypto
   implements EncryptionContextInterface {
   protected readonly exporterSecret: ArrayBuffer;
-  private _kdf: KdfContext;
+  private _kdf: KdfInterface;
 
-  constructor(api: SubtleCrypto, kdf: KdfContext, exporterSecret: ArrayBuffer) {
+  constructor(
+    api: SubtleCrypto,
+    kdf: KdfInterface,
+    exporterSecret: ArrayBuffer,
+  ) {
     super(api);
     this._kdf = kdf;
     this.exporterSecret = exporterSecret;
@@ -79,7 +83,7 @@ export class SenderExporterContext extends ExporterContext
 
   public constructor(
     api: SubtleCrypto,
-    kdf: KdfContext,
+    kdf: KdfInterface,
     exporterSecret: ArrayBuffer,
     enc: ArrayBuffer,
   ) {

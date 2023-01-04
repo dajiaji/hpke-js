@@ -1,7 +1,7 @@
 import type { AeadKey } from "./interfaces/aeadKey.ts";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
-import type { KdfContext } from "./kdfContext.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { AesGcmKey } from "./aeadKeys/aesGcmKey.ts";
 import { Chacha20Poly1305Key } from "./aeadKeys/chacha20Poly1305Key.ts";
@@ -26,7 +26,7 @@ export class EncryptionContext extends ExporterContext {
   // Reverse (recipient to sender) encryption key information.
   protected _r: KeyInfo;
 
-  constructor(api: SubtleCrypto, kdf: KdfContext, params: AeadParams) {
+  constructor(api: SubtleCrypto, kdf: KdfInterface, params: AeadParams) {
     super(api, kdf, params.exporterSecret);
 
     if (
