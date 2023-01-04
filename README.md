@@ -110,7 +110,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.15.0";
+  import * as hpke from "https://esm.sh/hpke-js@0.16.0";
   // ...
 </script>
 
@@ -126,7 +126,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.15.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.16.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -151,7 +151,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@v0.15.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.16.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -162,15 +162,15 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.15.0/es2022/hpke-js.js
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.16.0/es2022/hpke-js.js
 # if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.15.0/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.16.0/es2022/hpke.min.js
 ```
 
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@v0.15.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@v0.16.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -186,8 +186,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.15.0";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.15.0";
+      // import * as hpke from "https://esm.sh/hpke-js@0.16.0";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.16.0";
 
       globalThis.doHpke = async () => {
 
@@ -272,7 +272,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.15.0/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.16.0/mod.ts";
 
 async function doHpke() {
   // setup
