@@ -1,12 +1,12 @@
-import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
-import type { KdfContext } from "../kdfContext.ts";
+import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
+import type { KdfContext } from "../../kdfContext.ts";
 
-import { Kem } from "../identifiers.ts";
+import { Kem } from "../../identifiers.ts";
 
-import { Bignum } from "../utils/bignum.ts";
-import { i2Osp } from "../utils/misc.ts";
+import { Bignum } from "../../utils/bignum.ts";
+import { i2Osp } from "../../utils/misc.ts";
 
-import * as consts from "../consts.ts";
+import * as consts from "../../consts.ts";
 
 const PKCS8_ALG_ID_P_256 = new Uint8Array([
   48,

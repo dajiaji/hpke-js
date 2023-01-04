@@ -18,27 +18,36 @@ export interface KemInterface {
   /** The length in bytes of an encoded private key for this KEM (Nsk). */
   readonly privateKeySize: number;
 
-  /** `
+  /**
    * Generates a key pair.
    */
   generateKeyPair(): Promise<CryptoKeyPair>;
 
-  /** `
+  /**
    * Derives a key pair from the byte string ikm.
    */
   deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
 
-  /** `
+  /**
    * Serializes a public key as CryptoKey to a byte string of length `Npk`.
    */
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
-  /** `
+  /**
    * Deserializes a public key as a byte string of length `Npk` to CryptoKey.
    */
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
-  /** `
+  /**
+   * Imports a key for the KEM.
+   */
+  importKey(
+    format: "raw",
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey>;
+
+  /**
    * Generates an ephemeral, fixed-length symmetric key and
    * a fixed-length encapsulation of the key that can be decapsulated
    * by the holder of the private key corresponding to `pkR`.
@@ -47,7 +56,7 @@ export interface KemInterface {
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }>;
 
-  /** `
+  /**
    * Recovers the ephemeral symmetric key from its encapsulated representation `enc`.
    */
   decap(params: RecipientContextParams): Promise<ArrayBuffer>;

@@ -19,10 +19,16 @@ import {
 import { createAeadKey } from "./encryptionContext.ts";
 import { Aead, Kdf, Kem, Mode } from "./identifiers.ts";
 import { KdfContext } from "./kdfContext.ts";
-import { KemContext } from "./kemContext.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
 import { loadSubtleCrypto } from "./webCrypto.ts";
+import {
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
+} from "./kems/dhkem.ts";
 import { i2Osp } from "./utils/misc.ts";
 
 import * as consts from "./consts.ts";
@@ -66,7 +72,7 @@ export class CipherSuite {
   public readonly aeadTagSize: number = 0;
 
   private _api: SubtleCrypto | undefined = undefined;
-  private _kem: KemContext | undefined = undefined;
+  private _kem: KemInterface | undefined = undefined;
   private _kdf: KdfContext | undefined = undefined;
   private _suiteId: Uint8Array;
 
@@ -159,7 +165,7 @@ export class CipherSuite {
    */
   public async kemContext(): Promise<KemInterface> {
     await this.setup();
-    return this._kem as KemContext;
+    return this._kem as KemInterface;
   }
 
   /**
@@ -191,7 +197,7 @@ export class CipherSuite {
    */
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     await this.setup();
-    return await (this._kem as KemContext).generateKeyPair();
+    return await (this._kem as KemInterface).generateKeyPair();
   }
 
   /**
@@ -209,7 +215,7 @@ export class CipherSuite {
       throw new errors.InvalidParamError("Too long ikm");
     }
     await this.setup();
-    return await (this._kem as KemContext).deriveKeyPair(ikm);
+    return await (this._kem as KemInterface).deriveKeyPair(ikm);
   }
 
   /**
@@ -234,7 +240,7 @@ export class CipherSuite {
     isPublic = true,
   ): Promise<CryptoKey> {
     await this.setup();
-    return await (this._kem as KemContext).importKey(format, key, isPublic);
+    return await (this._kem as KemInterface).importKey(format, key, isPublic);
   }
 
   /**
@@ -253,7 +259,7 @@ export class CipherSuite {
 
     await this.setup();
 
-    const dh = await (this._kem as KemContext).encap(params);
+    const dh = await (this._kem as KemInterface).encap(params);
 
     let mode: Mode;
     if (params.psk !== undefined) {
@@ -280,7 +286,7 @@ export class CipherSuite {
 
     await this.setup();
 
-    const sharedSecret = await (this._kem as KemContext).decap(params);
+    const sharedSecret = await (this._kem as KemInterface).decap(params);
 
     let mode: Mode;
     if (params.psk !== undefined) {
@@ -337,7 +343,7 @@ export class CipherSuite {
   private async setup() {
     this._api = await loadSubtleCrypto();
     if (this._kem === undefined || this._kdf === undefined) {
-      this._kem = new KemContext(this._api as SubtleCrypto, this.kem);
+      this._kem = this.createKemContext();
       this._kdf = new KdfContext(
         this._api as SubtleCrypto,
         this.kdf,
@@ -526,5 +532,21 @@ export class CipherSuite {
       }
     }
     return;
+  }
+
+  private createKemContext(): KemInterface {
+    switch (this.kem) {
+      case Kem.DhkemP256HkdfSha256:
+        return new DhkemP256HkdfSha256(this._api as SubtleCrypto);
+      case Kem.DhkemP384HkdfSha384:
+        return new DhkemP384HkdfSha384(this._api as SubtleCrypto);
+      case Kem.DhkemP521HkdfSha512:
+        return new DhkemP521HkdfSha512(this._api as SubtleCrypto);
+      case Kem.DhkemX25519HkdfSha256:
+        return new DhkemX25519HkdfSha256(this._api as SubtleCrypto);
+      default:
+        // case Kem.DhkemX448HkdfSha512:
+        return new DhkemX448HkdfSha512(this._api as SubtleCrypto);
+    }
   }
 }

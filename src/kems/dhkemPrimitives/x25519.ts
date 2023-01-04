@@ -1,24 +1,27 @@
-import { getPublicKey, getSharedSecret } from "npm:x448-js";
+import {
+  generateKeyPair,
+  scalarMultBase,
+  sharedKey,
+} from "npm:@stablelib/x25519";
 
-import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
-import type { KdfContext } from "../kdfContext.ts";
+import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
+import type { KdfContext } from "../../kdfContext.ts";
 
-import { loadCrypto } from "../webCrypto.ts";
-import { XCryptoKey } from "../xCryptoKey.ts";
+import { XCryptoKey } from "../../xCryptoKey.ts";
 
-import * as consts from "../consts.ts";
+import * as consts from "../../consts.ts";
 
-const ALG_NAME = "X448";
+const ALG_NAME = "X25519";
 
-export class X448 implements KemPrimitives {
+export class X25519 implements KemPrimitives {
   private _hkdf: KdfContext;
   private _nPk: number;
   private _nSk: number;
 
   constructor(hkdf: KdfContext) {
     this._hkdf = hkdf;
-    this._nPk = 56;
-    this._nSk = 56;
+    this._nPk = 32;
+    this._nSk = 32;
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
@@ -45,10 +48,11 @@ export class X448 implements KemPrimitives {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    const sk = new Uint8Array(56);
-    const cryptoApi = await loadCrypto();
-    cryptoApi.getRandomValues(sk);
-    return await this.deriveKeyPair(sk);
+    const kp = await generateKeyPair();
+    return {
+      publicKey: new XCryptoKey(ALG_NAME, kp.publicKey, "public"),
+      privateKey: new XCryptoKey(ALG_NAME, kp.secretKey, "private"),
+    };
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
@@ -110,20 +114,14 @@ export class X448 implements KemPrimitives {
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      resolve(
-        new XCryptoKey(
-          ALG_NAME,
-          Uint8Array.from(getPublicKey(k.key)),
-          "public",
-        ),
-      );
+      resolve(new XCryptoKey(ALG_NAME, scalarMultBase(k.key), "public"));
     });
   }
 
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(Uint8Array.from(getSharedSecret(sk.key, pk.key)));
+        resolve(sharedKey(sk.key, pk.key, true));
       } catch (e: unknown) {
         reject(e);
       }
