@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## Version 0.16.0
+
+Released 2023-01-04
+
+- [(#118) Refine KDF Interface.](https://github.com/dajiaji/hpke-js/pull/118)
+- [(#117) Refine KDF Interface.](https://github.com/dajiaji/hpke-js/pull/117)
+- [(#116) Refine KEM Interface.](https://github.com/dajiaji/hpke-js/pull/116)
+- [(#112) Remove bundles.](https://github.com/dajiaji/hpke-js/pull/112)
+- [(#107) Add Node.js v19 to CI.](https://github.com/dajiaji/hpke-js/pull/107)
+- [(#106) Fix import path to deno.land on README.](https://github.com/dajiaji/hpke-js/pull/106)
+
 ## Version 0.15.0
 
 Released 2022-11-06
