@@ -3,7 +3,13 @@ import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { isDeno } from "../src/utils/misc.ts";
-import { KemContext } from "../src/kemContext.ts";
+import {
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
+} from "../src/kems/dhkem.ts";
 import { Kem } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 
@@ -15,26 +21,45 @@ describe("constructor", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      assertEquals(
-        typeof new KemContext(api, Kem.DhkemP256HkdfSha256),
-        "object",
-      );
-      assertEquals(
-        typeof new KemContext(api, Kem.DhkemP384HkdfSha384),
-        "object",
-      );
-      assertEquals(
-        typeof new KemContext(api, Kem.DhkemP521HkdfSha512),
-        "object",
-      );
-      assertEquals(
-        typeof new KemContext(api, Kem.DhkemX25519HkdfSha256),
-        "object",
-      );
-      assertEquals(
-        typeof new KemContext(api, Kem.DhkemX448HkdfSha512),
-        "object",
-      );
+      const dhkemP256 = new DhkemP256HkdfSha256(api);
+      assertEquals(typeof dhkemP256, "object");
+      assertEquals(dhkemP256.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(dhkemP256.secretSize, 32);
+      assertEquals(dhkemP256.encSize, 65);
+      assertEquals(dhkemP256.publicKeySize, 65);
+      assertEquals(dhkemP256.privateKeySize, 32);
+
+      const dhkemP384 = new DhkemP384HkdfSha384(api);
+      assertEquals(typeof dhkemP384, "object");
+      assertEquals(dhkemP384.id, Kem.DhkemP384HkdfSha384);
+      assertEquals(dhkemP384.secretSize, 48);
+      assertEquals(dhkemP384.encSize, 97);
+      assertEquals(dhkemP384.publicKeySize, 97);
+      assertEquals(dhkemP384.privateKeySize, 48);
+
+      const dhkemP521 = new DhkemP521HkdfSha512(api);
+      assertEquals(typeof dhkemP521, "object");
+      assertEquals(dhkemP521.id, Kem.DhkemP521HkdfSha512);
+      assertEquals(dhkemP521.secretSize, 64);
+      assertEquals(dhkemP521.encSize, 133);
+      assertEquals(dhkemP521.publicKeySize, 133);
+      assertEquals(dhkemP521.privateKeySize, 64);
+
+      const dhkemX25519 = new DhkemX25519HkdfSha256(api);
+      assertEquals(typeof dhkemX25519, "object");
+      assertEquals(dhkemX25519.id, Kem.DhkemX25519HkdfSha256);
+      assertEquals(dhkemX25519.secretSize, 32);
+      assertEquals(dhkemX25519.encSize, 32);
+      assertEquals(dhkemX25519.publicKeySize, 32);
+      assertEquals(dhkemX25519.privateKeySize, 32);
+
+      const dhkemX448 = new DhkemX448HkdfSha512(api);
+      assertEquals(typeof dhkemX448, "object");
+      assertEquals(dhkemX448.id, Kem.DhkemX448HkdfSha512);
+      assertEquals(dhkemX448.secretSize, 64);
+      assertEquals(dhkemX448.encSize, 56);
+      assertEquals(dhkemX448.publicKeySize, 56);
+      assertEquals(dhkemX448.privateKeySize, 56);
     });
   });
 });
@@ -45,7 +70,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
+      const kemContext = new DhkemP256HkdfSha256(api);
       const kp = await kemContext.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -64,7 +89,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP384HkdfSha384);
+      const kemContext = new DhkemP384HkdfSha384(api);
       const kp = await kemContext.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -86,7 +111,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP521HkdfSha512);
+      const kemContext = new DhkemP521HkdfSha512(api);
       const kp = await kemContext.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -105,7 +130,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX25519HkdfSha256);
+      const kemContext = new DhkemX25519HkdfSha256(api);
       const kp = await kemContext.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -123,7 +148,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX448HkdfSha512);
+      const kemContext = new DhkemX448HkdfSha512(api);
       const kp = await kemContext.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -146,7 +171,7 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP521HkdfSha512);
+      const kemContext = new DhkemP521HkdfSha512(api);
       await assertRejects(
         () => kemContext.generateKeyPair(),
         errors.NotSupportedError,
@@ -165,7 +190,7 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
+      const kemContext = new DhkemP256HkdfSha256(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
       const kp = await kemContext.deriveKeyPair(ikm.buffer);
@@ -190,7 +215,7 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP384HkdfSha384);
+      const kemContext = new DhkemP384HkdfSha384(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
       const kp = await kemContext.deriveKeyPair(ikm.buffer);
@@ -215,7 +240,7 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP521HkdfSha512);
+      const kemContext = new DhkemP521HkdfSha512(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
       const kp = await kemContext.deriveKeyPair(ikm.buffer);
@@ -237,7 +262,7 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX25519HkdfSha256);
+      const kemContext = new DhkemX25519HkdfSha256(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
       const kp = await kemContext.deriveKeyPair(ikm.buffer);
@@ -258,7 +283,7 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX448HkdfSha512);
+      const kemContext = new DhkemX448HkdfSha512(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
       const kp = await kemContext.deriveKeyPair(ikm.buffer);
@@ -286,7 +311,7 @@ describe("deriveKeyPair", () => {
       cryptoApi.getRandomValues(ikm);
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
+      const kemContext = new DhkemP256HkdfSha256(api);
       await assertRejects(
         () => kemContext.deriveKeyPair(ikm.buffer),
         errors.DeriveKeyPairError,
@@ -301,7 +326,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
+      const kemContext = new DhkemP256HkdfSha256(api);
       const kp = await kemContext.generateKeyPair();
       const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
       const pubKey = await kemContext.deserializePublicKey(bPubKey);
@@ -316,7 +341,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP384HkdfSha384);
+      const kemContext = new DhkemP384HkdfSha384(api);
       const kp = await kemContext.generateKeyPair();
       const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
       const pubKey = await kemContext.deserializePublicKey(bPubKey);
@@ -334,7 +359,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP521HkdfSha512);
+      const kemContext = new DhkemP521HkdfSha512(api);
       const kp = await kemContext.generateKeyPair();
       const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
       const pubKey = await kemContext.deserializePublicKey(bPubKey);
@@ -349,7 +374,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX25519HkdfSha256);
+      const kemContext = new DhkemX25519HkdfSha256(api);
       const kp = await kemContext.generateKeyPair();
       const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
       const pubKey = await kemContext.deserializePublicKey(bPubKey);
@@ -364,7 +389,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemX448HkdfSha512);
+      const kemContext = new DhkemX448HkdfSha512(api);
       const kp = await kemContext.generateKeyPair();
       const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
       const pubKey = await kemContext.deserializePublicKey(bPubKey);
@@ -384,9 +409,9 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const ctx = new KemContext(api, Kem.DhkemX25519HkdfSha256);
+      const ctx = new DhkemX25519HkdfSha256(api);
       const kp = await ctx.generateKeyPair();
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
+      const kemContext = new DhkemP256HkdfSha256(api);
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
         errors.SerializeError,
@@ -400,12 +425,7 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new KemContext(api, Kem.DhkemP256HkdfSha256);
-      // const kp = await kemContext.generateKeyPair();
-      // await assertRejects(
-      //   () => kemContext.serializePublicKey(kp.publicKey),
-      //   errors.SerializeError,
-      // );
+      const kemContext = new DhkemP256HkdfSha256(api);
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
       cryptoApi.getRandomValues(rawKey);
