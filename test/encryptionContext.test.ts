@@ -5,7 +5,7 @@ import { describe, it } from "testing/bdd.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { EncryptionContext } from "../src/encryptionContext.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
-import { KdfContext } from "../src/kdfContext.ts";
+import { HkdfSha256 } from "../src/kdfs/hkdf.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 
@@ -25,7 +25,7 @@ describe("constructor", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -54,7 +54,7 @@ describe("constructor", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -446,7 +446,7 @@ describe("createRecipientContext", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
       const params = {
         aead: Aead.Aes128Gcm,
         nK: 16,
@@ -522,7 +522,7 @@ describe("setupBidirectional", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -557,7 +557,7 @@ describe("setupBidirectional", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;

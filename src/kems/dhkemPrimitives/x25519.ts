@@ -5,7 +5,7 @@ import {
 } from "npm:@stablelib/x25519";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
-import type { KdfContext } from "../../kdfContext.ts";
+import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
@@ -14,11 +14,11 @@ import * as consts from "../../consts.ts";
 const ALG_NAME = "X25519";
 
 export class X25519 implements KemPrimitives {
-  private _hkdf: KdfContext;
+  private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
 
-  constructor(hkdf: KdfContext) {
+  constructor(hkdf: KdfInterface) {
     this._hkdf = hkdf;
     this._nPk = 32;
     this._nSk = 32;

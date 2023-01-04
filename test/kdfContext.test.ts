@@ -2,7 +2,7 @@ import { assertEquals, assertRejects } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
-import { KdfContext } from "../src/kdfContext.ts";
+import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
@@ -21,7 +21,7 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha256, suiteId);
+      const kdf = new HkdfSha256(api, suiteId);
 
       const salt = new Uint8Array(32);
       cryptoApi.getRandomValues(salt);
@@ -47,7 +47,7 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha384, suiteId);
+      const kdf = new HkdfSha384(api, suiteId);
 
       const salt = new Uint8Array(48);
       cryptoApi.getRandomValues(salt);
@@ -73,7 +73,7 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha512, suiteId);
+      const kdf = new HkdfSha512(api, suiteId);
 
       const salt = new Uint8Array(64);
       cryptoApi.getRandomValues(salt);
@@ -98,7 +98,7 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha512, suiteId);
+      const kdf = new HkdfSha512(api, suiteId);
 
       const salt = new Uint8Array(64 + 32);
       cryptoApi.getRandomValues(salt);
@@ -123,7 +123,7 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new KdfContext(api, Kdf.HkdfSha384, suiteId);
+      const kdf = new HkdfSha384(api, suiteId);
 
       const salt = new Uint8Array(48 + 32);
       cryptoApi.getRandomValues(salt);
