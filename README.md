@@ -56,13 +56,14 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                        | Browser | Node.js      | Deno           | Cloudflare<br>Workers |                                                                                                                                                                            |
-| --------------------------- | ------- | ------------ | -------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DHKEM (P-256, HKDF-SHA256)  | ✅      | ✅<br>v16.x- | ✅<br>v1.23.x- |                       |                                                                                                                                                                            |
-| DHKEM (P-384, HKDF-SHA384)  | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
-| DHKEM (P-521, HKDF-SHA512)  | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
-| DHKEM (X25519, HKDF-SHA256) | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
-| DHKEM (X448, HKDF-SHA512)   | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
+| KEMs                           | Browser | Node.js      | Deno           | Cloudflare<br>Workers |                                                                                                                                                                            |
+| ------------------------------ | ------- | ------------ | -------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)     | ✅      | ✅<br>v16.x- | ✅<br>v1.23.x- |                       |                                                                                                                                                                            |
+| DHKEM (P-384, HKDF-SHA384)     | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
+| DHKEM (P-521, HKDF-SHA512)     | ✅      | ✅<br>v16.x- |                |                       |                                                                                                                                                                            |
+| DHKEM (X25519, HKDF-SHA256)    | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented. |
+| DHKEM (X448, HKDF-SHA512)      | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | [x448-js](https://github.com/Iskander508/X448-js) is used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is implemented.                           |
+| DHKEM (secp256k1, HKDF-SHA256) | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION using [elliptic](https://github.com/indutny/elliptic).                                                                        |
 
 ### Key Derivation Functions (KDFs)
 
@@ -110,7 +111,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.16.0";
+  import * as hpke from "https://esm.sh/hpke-js@0.17.0";
   // ...
 </script>
 
@@ -126,7 +127,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.16.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.17.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -151,7 +152,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@v0.16.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@v0.17.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -162,15 +163,15 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.16.0/es2022/hpke-js.js
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.17.0/es2022/hpke-js.js
 # if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.16.0/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.17.0/es2022/hpke.min.js
 ```
 
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@v0.16.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@v0.17.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -186,8 +187,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.16.0";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.16.0";
+      // import * as hpke from "https://esm.sh/hpke-js@0.17.0";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.17.0";
 
       globalThis.doHpke = async () => {
 
@@ -272,7 +273,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.16.0/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@v0.17.0/mod.ts";
 
 async function doHpke() {
   // setup
