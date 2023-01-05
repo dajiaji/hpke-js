@@ -6,7 +6,6 @@
   "homepage": "https://github.com/dajiaji/hpke-js",
   "files": [
     "./src/**/*.ts",
-    "./src/**/*.js",
     "README.md",
     "LICENSE"
   ],
