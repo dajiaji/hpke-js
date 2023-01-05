@@ -16,6 +16,8 @@ import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 
 import * as errors from "../src/errors.ts";
 
+import { hexStringToBytes } from "./utils.ts";
+
 describe("constructor", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
@@ -498,6 +500,71 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
+        errors.DeserializeError,
+      );
+    });
+  });
+});
+
+describe("importKey", () => {
+  describe("with valid parameters", () => {
+    it("should return a valid private key with DhkemSecp256K1HkdfSha256 private key", async () => {
+      const api = await loadSubtleCrypto();
+      const kemContext = new DhkemSecp256K1HkdfSha256(api);
+
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(32);
+      cryptoApi.getRandomValues(rawKey);
+      const privKey = await kemContext.importKey("raw", rawKey, false);
+
+      // assert
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a valid public key with DhkemSecp256K1HkdfSha256 public key", async () => {
+      const api = await loadSubtleCrypto();
+      const kemContext = new DhkemSecp256K1HkdfSha256(api);
+
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(65);
+      rawKey[0] = hexStringToBytes("04")[0];
+      cryptoApi.getRandomValues(rawKey);
+      const privKey = await kemContext.importKey("raw", rawKey, true);
+
+      // assert
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+  });
+
+  describe("with invalid parameters", () => {
+    it("should throw DeserializeError with invalid DhkemSecp256K1HkdfSha256 private key", async () => {
+      const api = await loadSubtleCrypto();
+      const kemContext = new DhkemSecp256K1HkdfSha256(api);
+
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(33);
+      cryptoApi.getRandomValues(rawKey);
+
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("raw", rawKey, false),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError with invalid DhkemSecp256K1HkdfSha256 public key", async () => {
+      const api = await loadSubtleCrypto();
+      const kemContext = new DhkemSecp256K1HkdfSha256(api);
+
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(32);
+      cryptoApi.getRandomValues(rawKey);
+
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("raw", rawKey, true),
         errors.DeserializeError,
       );
     });
