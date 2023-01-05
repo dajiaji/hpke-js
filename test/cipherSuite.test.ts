@@ -158,6 +158,29 @@ describe("CipherSuite", () => {
     });
   });
 
+  describe("constructor with DhkemP256HkdfSha256/HkdfSha256/ExportOnly", () => {
+    it("should have ciphersuites", async () => {
+      const suite: CipherSuite = new CipherSuite({
+        kem: Kem.DhkemSecp256K1HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
+      });
+      const kem = await suite.kemContext();
+      assertEquals(kem.secretSize, 32);
+      assertEquals(kem.encSize, 65);
+      assertEquals(kem.publicKeySize, 65);
+      assertEquals(kem.privateKeySize, 32);
+
+      // assert
+      assertEquals(suite.kem, Kem.DhkemSecp256K1HkdfSha256);
+      assertEquals(suite.kem, 0x0013);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
+      assertEquals(suite.kdf, 0x0001);
+      assertEquals(suite.aead, Aead.ExportOnly);
+      assertEquals(suite.aead, 0xFFFF);
+    });
+  });
+
   describe("constructor with invalid KEM id", () => {
     it("should throw InvalidParamError", () => {
       assertThrows(
@@ -318,6 +341,39 @@ describe("CipherSuite", () => {
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
         kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+  });
+
+  describe("A README example of Base mode (Kem.DhkemSecp256K1HkdfSha256/Kdf.HkdfSha256)", () => {
+    it("should work normally", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemSecp256K1HkdfSha256,
+        kdf: Kdf.HkdfSha256,
         aead: Aead.Aes128Gcm,
       });
 

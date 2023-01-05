@@ -26,6 +26,7 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
+  DhkemSecp256K1HkdfSha256,
   DhkemX25519HkdfSha256,
   DhkemX448HkdfSha512,
 } from "./kems/dhkem.ts";
@@ -102,6 +103,12 @@ export class CipherSuite {
         this.kemEncSize = 133;
         this.kemPublicKeySize = 133;
         this.kemPrivateKeySize = 66;
+        break;
+      case Kem.DhkemSecp256K1HkdfSha256:
+        this.kemSecretSize = 32;
+        this.kemEncSize = 65;
+        this.kemPublicKeySize = 65;
+        this.kemPrivateKeySize = 32;
         break;
       case Kem.DhkemX25519HkdfSha256:
         this.kemSecretSize = 32;
@@ -536,9 +543,10 @@ export class CipherSuite {
         return new DhkemP521HkdfSha512(this._api as SubtleCrypto);
       case Kem.DhkemX25519HkdfSha256:
         return new DhkemX25519HkdfSha256(this._api as SubtleCrypto);
-      default:
-        // case Kem.DhkemX448HkdfSha512:
+      case Kem.DhkemX448HkdfSha512:
         return new DhkemX448HkdfSha512(this._api as SubtleCrypto);
+      default:
+        return new DhkemSecp256K1HkdfSha256(this._api as SubtleCrypto);
     }
   }
 

@@ -81,3 +81,26 @@ export function concat3(
   ret.set(c, a.length + b.length);
   return ret;
 }
+
+/**
+ * Converts hex string to bytes.
+ */
+export function hexToBytes(v: string): Uint8Array {
+  if (v.length === 0) {
+    return new Uint8Array([]);
+  }
+  const res = v.match(/[\da-f]{2}/gi);
+  if (res == null) {
+    throw new Error("hexToBytes: not hex string");
+  }
+  return new Uint8Array(res.map(function (h) {
+    return parseInt(h, 16);
+  }));
+}
+
+/**
+ * Converts bytes to hex string.
+ */
+export function bytesToHex(v: Uint8Array) {
+  return [...v].map((x) => x.toString(16).padStart(2, "0")).join("");
+}

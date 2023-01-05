@@ -18,6 +18,8 @@ export enum Kem {
   DhkemP384HkdfSha384 = 0x0011,
   /** DHKEM (P-521, HKDF-SHA512). */
   DhkemP521HkdfSha512 = 0x0012,
+  /** DHKEM (secp256k1, HKDF-SHA256). EXPERIMENTAL. The KEM id can be changed in the standardization process. */
+  DhkemSecp256K1HkdfSha256 = 0x0013,
   /** DHKEM (X25519, HKDF-SHA256) */
   DhkemX25519HkdfSha256 = 0x0020,
   /** DHKEM (X448, HKDF-SHA512) */
