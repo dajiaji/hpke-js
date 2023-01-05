@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.17.0
+
+Released 2023-01-05
+
+- [(#121) Bump deno/std to 0.170.0.](https://github.com/dajiaji/hpke-js/pull/121)
+- [(#120) Add support for DHKEM(secp256k1, HKDF-SHA256) experimentally.](https://github.com/dajiaji/hpke-js/pull/120)
+
 ## Version 0.16.0
 
 Released 2023-01-04
