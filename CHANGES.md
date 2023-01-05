@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.17.1
+
+Released 2023-01-05
+
+- [(#123) Add secp256k1 test for Cloudflare Workers.](https://github.com/dajiaji/hpke-js/pull/123)
+- [(#122) Fix error on release process for egg.](https://github.com/dajiaji/hpke-js/pull/122)
+
 ## Version 0.17.0
 
 Released 2023-01-05
