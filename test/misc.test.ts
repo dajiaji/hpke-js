@@ -69,7 +69,11 @@ describe("hexToBytes", () => {
 
   describe("with invalid hex string", () => {
     it("should throw Error", () => {
-      assertThrows(() => hexToBytes("@@@@"), Error, "hexToBytes: not hex string");
+      assertThrows(
+        () => hexToBytes("@@@@"),
+        Error,
+        "hexToBytes: not hex string",
+      );
     });
   });
 });
