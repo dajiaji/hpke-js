@@ -1,4 +1,4 @@
-name: Cloudflare Workers CI
+name: bun CI
 
 on:
   push:
@@ -23,11 +23,13 @@ jobs:
       - run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > test/wrangler/src/hpke.js
+          deno task minify > test/bun/src/hpke.js
+      - uses: antongolub/action-setup-bun@v1
+        with:
+          bun-version: 0.4
       - name: Run test
-        working-directory: ./test/wrangler
+        working-directory: ./test/bun
         run: |
-          npm install
-          nohup npm start &
+          nohup bun src/index.js &
           sleep 3
           deno test hpke.spec.ts --allow-net --allow-env
