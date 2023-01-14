@@ -30,4 +30,4 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test hpke.spec.ts --allow-net
+          deno test hpke.spec.ts --allow-net --allow-env
