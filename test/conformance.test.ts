@@ -23,10 +23,33 @@ describe("RFC9180 conformance", () => {
     console.log(`passed/total: ${count}/${testVectors.length}`);
   });
 
-  describe("Base/DhkemP*/HkdfSha*/Aes*Gcm in test-vectors.json", () => {
+  describe("Base/DhkemP256/HkdfSha*/Aes*Gcm in test-vectors.json", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
-        if (v.mode === 0 && v.kem_id < 0x0020 && v.aead_id <= 0x0002) {
+        if (v.mode === 0 && v.kem_id === 0x0010 && v.aead_id <= 0x0002) {
+          if (isDeno()) {
+            continue;
+          }
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe("Base/DhkemP384/HkdfSha*/Aes*Gcm in test-vectors.json", () => {
+    it("should match demonstrated values", async () => {
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id === 0x0011 && v.aead_id <= 0x0002) {
+          await tester.test(v);
+        }
+      }
+    });
+  });
+
+  describe("Base/DhkemP521/HkdfSha*/Aes*Gcm in test-vectors.json", () => {
+    it("should match demonstrated values", async () => {
+      for (const v of testVectors) {
+        if (v.mode === 0 && v.kem_id === 0x0012 && v.aead_id <= 0x0002) {
           if (isDeno()) {
             continue;
           }

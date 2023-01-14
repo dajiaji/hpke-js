@@ -263,10 +263,6 @@ describe("CipherSuite", () => {
 
   describe("A README example of Base mode (Kem.DhkemP384HkdfSha384/Kdf.HkdfSha384)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP384HkdfSha384,
