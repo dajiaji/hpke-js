@@ -1,6 +1,6 @@
-import { hmac } from "npm:@stablelib/hmac";
-import { SHA256 } from "npm:@stablelib/sha256";
-import { SHA512 } from "npm:@stablelib/sha512";
+import { hmac } from "@stablelib/hmac";
+import { SHA256 } from "@stablelib/sha256";
+import { SHA512 } from "@stablelib/sha512";
 
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
