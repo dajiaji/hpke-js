@@ -16,7 +16,7 @@
         "samples/node/node_modules",
         "samples/ts-node/node_modules",
         "test/playwright/node_modules",
-        "test/wrangler"
+        "test/wrangler/node_modules"
       ]
     }
   },
@@ -26,6 +26,7 @@
       "exclude": [
         "samples/node/node_modules",
         "samples/ts-node/node_modules",
+        "test/bun",
         "test/playwright/node_modules",
         "test/wrangler"
       ]
