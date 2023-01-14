@@ -57,14 +57,14 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                           | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun |
-| ------------------------------ | --------- | ------------ | -------------- | --------------------- | --- |
-| DHKEM (P-256, HKDF-SHA256)     | ✅        | ✅<br>v16.x- | ✅<br>v1.23.x- | ✅                    | ✅     |
-| DHKEM (P-384, HKDF-SHA384)     | ✅        | ✅<br>v16.x- | ✅<br>v1.25.x- | ✅                    | ✅     |
-| DHKEM (P-521, HKDF-SHA512)     | ✅        | ✅<br>v16.x- |                | ✅                    | ✅     |
-| DHKEM (X25519, HKDF-SHA256)    | ✅<br>\*1 | ✅<br>\*1    | ✅<br>\*1      | ✅ <br>\*1            | ✅ <br>\*1    |
-| DHKEM (X448, HKDF-SHA512)      | ✅<br>\*2 | ✅<br>\*2    | ✅<br>\*2      | ✅ <br>\*2            | ✅ <br>\*2    |
-| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>\*3 | ✅<br>\*3    | ✅<br>\*3      | ✅ <br>\*3            | ✅ <br>\*3    |
+| KEMs                           | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun        |
+| ------------------------------ | --------- | ------------ | -------------- | --------------------- | ---------- |
+| DHKEM (P-256, HKDF-SHA256)     | ✅        | ✅<br>v16.x- | ✅<br>v1.23.x- | ✅                    | ✅         |
+| DHKEM (P-384, HKDF-SHA384)     | ✅        | ✅<br>v16.x- | ✅<br>v1.25.x- | ✅                    | ✅         |
+| DHKEM (P-521, HKDF-SHA512)     | ✅        | ✅<br>v16.x- |                | ✅                    | ✅         |
+| DHKEM (X25519, HKDF-SHA256)    | ✅<br>\*1 | ✅<br>\*1    | ✅<br>\*1      | ✅ <br>\*1            | ✅ <br>\*1 |
+| DHKEM (X448, HKDF-SHA512)      | ✅<br>\*2 | ✅<br>\*2    | ✅<br>\*2      | ✅ <br>\*2            | ✅ <br>\*2 |
+| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>\*3 | ✅<br>\*3    | ✅<br>\*3      | ✅ <br>\*3            | ✅ <br>\*3 |
 
 - \*1:
   [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is
@@ -86,12 +86,12 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun |
-| ---------------- | --------- | ------------ | -------------- | --------------------- | --- |
-| AES-128-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅  |
-| AES-256-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅  |
-| ChaCha20Poly1305 | ✅<br>\*4 | ✅<br>\*4    | ✅<br>\*4      | ✅<br>\*4             | ✅<br>\*4    |
-| Export Only      | ✅        | ✅           | ✅             | ✅                    | ✅  |
+| AEADs            | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun       |
+| ---------------- | --------- | ------------ | -------------- | --------------------- | --------- |
+| AES-128-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅        |
+| AES-256-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅        |
+| ChaCha20Poly1305 | ✅<br>\*4 | ✅<br>\*4    | ✅<br>\*4      | ✅<br>\*4             | ✅<br>\*4 |
+| Export Only      | ✅        | ✅           | ✅             | ✅                    | ✅        |
 
 - \*4:
   [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html)
