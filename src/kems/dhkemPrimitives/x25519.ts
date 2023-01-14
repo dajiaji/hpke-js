@@ -1,8 +1,4 @@
-import {
-  generateKeyPair,
-  scalarMultBase,
-  sharedKey,
-} from "npm:@stablelib/x25519";
+import { generateKeyPair, scalarMultBase, sharedKey } from "@stablelib/x25519";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
