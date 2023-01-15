@@ -57,14 +57,14 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                           | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun        |
-| ------------------------------ | --------- | ------------ | -------------- | --------------------- | ---------- |
-| DHKEM (P-256, HKDF-SHA256)     | ✅        | ✅<br>v16.x- | ✅<br>v1.23.x- | ✅                    | ✅         |
-| DHKEM (P-384, HKDF-SHA384)     | ✅        | ✅<br>v16.x- | ✅<br>v1.25.x- | ✅                    | ✅         |
-| DHKEM (P-521, HKDF-SHA512)     | ✅        | ✅<br>v16.x- |                | ✅                    | ✅         |
-| DHKEM (X25519, HKDF-SHA256)    | ✅<br>\*1 | ✅<br>\*1    | ✅<br>\*1      | ✅ <br>\*1            | ✅ <br>\*1 |
-| DHKEM (X448, HKDF-SHA512)      | ✅<br>\*2 | ✅<br>\*2    | ✅<br>\*2      | ✅ <br>\*2            | ✅ <br>\*2 |
-| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>\*3 | ✅<br>\*3    | ✅<br>\*3      | ✅ <br>\*3            | ✅ <br>\*3 |
+| KEMs                           | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
+| ------------------------------ | --------- | ------------ | -------------- | --------------------- | ------------ |
+| DHKEM (P-256, HKDF-SHA256)     | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.23.x- | ✅<br>                | ✅<br>0.3.0- |
+| DHKEM (P-384, HKDF-SHA384)     | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.25.x- | ✅<br>                | ✅<br>0.3.0- |
+| DHKEM (P-521, HKDF-SHA512)     | ✅<br>    | ✅<br>v16.x- |                | ✅<br>                | ✅<br>0.3.0- |
+| DHKEM (X25519, HKDF-SHA256)    | ✅\*1<br> | ✅\*1<br>    | ✅\*1<br>      | ✅\*1<br>             | ✅\*1<br>    |
+| DHKEM (X448, HKDF-SHA512)      | ✅\*2<br> | ✅\*2<br>    | ✅\*2<br>      | ✅\*2<br>             | ✅\*2<br>    |
+| DHKEM (secp256k1, HKDF-SHA256) | ✅\*3<br> | ✅\*3<br>    | ✅\*3<br>      | ✅\*3<br>             | ✅\*3<br>    |
 
 - \*1:
   [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is
@@ -78,20 +78,20 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js      | Deno           | Cloudflare<br>Workers | bun |
-| ----------- | ------- | ------------ | -------------- | --------------------- | --- |
-| HKDF-SHA256 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅  |
-| HKDF-SHA384 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅  |
-| HKDF-SHA512 | ✅      | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅  |
+| KDFs        | Browser | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
+| ----------- | ------- | ------------ | -------------- | --------------------- | ------------ |
+| HKDF-SHA256 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
+| HKDF-SHA384 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
+| HKDF-SHA512 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun       |
-| ---------------- | --------- | ------------ | -------------- | --------------------- | --------- |
-| AES-128-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅        |
-| AES-256-GCM      | ✅        | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅                    | ✅        |
-| ChaCha20Poly1305 | ✅<br>\*4 | ✅<br>\*4    | ✅<br>\*4      | ✅<br>\*4             | ✅<br>\*4 |
-| Export Only      | ✅        | ✅           | ✅             | ✅                    | ✅        |
+| AEADs            | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
+| ---------------- | --------- | ------------ | -------------- | --------------------- | ------------ |
+| AES-128-GCM      | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
+| AES-256-GCM      | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
+| ChaCha20Poly1305 | ✅\*4<br> | ✅\*4<br>    | ✅\*4<br>      | ✅\*4<br>             | ✅\*4<br>    |
+| Export Only      | ✅<br>    | ✅<br>       | ✅<br>         | ✅<br>                | ✅<br>       |
 
 - \*4:
   [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html)
