@@ -1,4 +1,4 @@
-import { generateKeyPair, scalarMultBase, sharedKey } from "@stablelib/x25519";
+import { ed25519, x25519 } from "ed25519";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
@@ -44,11 +44,10 @@ export class X25519 implements KemPrimitives {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    const kp = await generateKeyPair();
-    return {
-      publicKey: new XCryptoKey(ALG_NAME, kp.publicKey, "public"),
-      privateKey: new XCryptoKey(ALG_NAME, kp.secretKey, "private"),
-    };
+    const rawSk = ed25519.utils.randomPrivateKey();
+    const sk = new XCryptoKey(ALG_NAME, rawSk, "private");
+    const pk = await this.derivePublicKey(sk);
+    return { publicKey: pk, privateKey: sk };
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
@@ -110,14 +109,15 @@ export class X25519 implements KemPrimitives {
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      resolve(new XCryptoKey(ALG_NAME, scalarMultBase(k.key), "public"));
+      const pk = x25519.getPublicKey(k.key);
+      resolve(new XCryptoKey(ALG_NAME, pk, "public"));
     });
   }
 
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(sharedKey(sk.key, pk.key, true));
+        resolve(x25519.getSharedSecret(sk.key, pk.key).buffer);
       } catch (e: unknown) {
         reject(e);
       }

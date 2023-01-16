@@ -42,6 +42,7 @@ export interface TestVector {
 
 // The minimum interface to load test vectors on https://github.com/google/wycheproof
 interface WycheproofTestCase {
+  tcId: number;
   public: string;
   flags: Array<string>;
   result: string;

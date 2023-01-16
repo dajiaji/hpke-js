@@ -1,9 +1,8 @@
-import { getPublicKey, getSharedSecret } from "x448-js";
+import { ed448, x448 } from "ed448";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
-import { loadCrypto } from "../../webCrypto.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 import * as consts from "../../consts.ts";
@@ -45,10 +44,10 @@ export class X448 implements KemPrimitives {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    const sk = new Uint8Array(56);
-    const cryptoApi = await loadCrypto();
-    cryptoApi.getRandomValues(sk);
-    return await this.deriveKeyPair(sk);
+    const rawSk = ed448.utils.randomPrivateKey();
+    const sk = new XCryptoKey(ALG_NAME, rawSk, "private");
+    const pk = await this.derivePublicKey(sk);
+    return { publicKey: pk, privateKey: sk };
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
@@ -110,20 +109,15 @@ export class X448 implements KemPrimitives {
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      resolve(
-        new XCryptoKey(
-          ALG_NAME,
-          Uint8Array.from(getPublicKey(k.key)),
-          "public",
-        ),
-      );
+      const pk = x448.getPublicKey(k.key);
+      resolve(new XCryptoKey(ALG_NAME, pk, "public"));
     });
   }
 
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(Uint8Array.from(getSharedSecret(sk.key, pk.key)));
+        resolve(x448.getSharedSecret(sk.key, pk.key).buffer);
       } catch (e: unknown) {
         reject(e);
       }
