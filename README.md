@@ -66,15 +66,14 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 | DHKEM (X448, HKDF-SHA512)      | ✅\*2<br> | ✅\*2<br>    | ✅\*2<br>      | ✅\*2<br>             | ✅\*2<br>    |
 | DHKEM (secp256k1, HKDF-SHA256) | ✅\*3<br> | ✅\*3<br>    | ✅\*3<br>      | ✅\*3<br>             | ✅\*3<br>    |
 
-- \*1:
-  [@stablelib/x25519](https://www.stablelib.com/modules/_x25519_x25519_.html) is
+- \*1: [@noble/curves/ed25519](https://github.com/paulmillr/noble-curves) is
   used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
   implemented.
-- \*2: [x448-js](https://github.com/Iskander508/X448-js) is used until
-  [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
+- \*2: [@noble/curves/ed448](https://github.com/paulmillr/noble-curves) is used
+  until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
   implemented.
 - \*3: NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION using
-  [elliptic](https://github.com/indutny/elliptic).
+  [@noble/secp256k1](https://github.com/paulmillr/secp256k1).
 
 ### Key Derivation Functions (KDFs)
 
