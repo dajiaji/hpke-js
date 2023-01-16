@@ -1,13 +1,13 @@
 {
   "imports": {
     "testing/": "https://deno.land/std@0.170.0/testing/",
-    "dnt": "https://deno.land/x/dnt@0.32.1/mod.ts",
+    "dnt": "https://deno.land/x/dnt@0.33.0/mod.ts",
     "secp256k1": "npm:@noble/secp256k1@1.7.1",
+    "ed448": "npm:@noble/curves@0.5.1/ed448",
     "@stablelib/chacha20poly1305": "npm:@stablelib/chacha20poly1305@1.0.1",
     "@stablelib/hmac": "npm:@stablelib/hmac@1.0.1",
     "@stablelib/sha256": "npm:@stablelib/sha256@1.0.1",
     "@stablelib/sha512": "npm:@stablelib/sha512@1.0.1",
-    "@stablelib/x25519": "npm:@stablelib/x25519@1.0.3",
-    "x448-js": "npm:x448-js@1.0.3"
+    "@stablelib/x25519": "npm:@stablelib/x25519@1.0.3"
   }
 }
