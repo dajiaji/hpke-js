@@ -2,9 +2,15 @@
 
 ## Unreleased
 
+## Version 0.18.0
+
+Released 2023-01-16
+
+- [(#138) Use noble/curves for x25519/x448.](https://github.com/dajiaji/hpke-js/pull/138)
+
 ## Version 0.17.2
 
-Released 2023-01-13
+Released 2023-01-16
 
 - [(#136) Use audited secp256k1 lib.](https://github.com/dajiaji/hpke-js/pull/136)
 - [(#135) Refine the table of supported runtimes.](https://github.com/dajiaji/hpke-js/pull/135)
