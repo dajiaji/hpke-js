@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## Version 0.17.2
+
+Released 2023-01-13
+
+- [(#136) Use audited secp256k1 lib.](https://github.com/dajiaji/hpke-js/pull/136)
+- [(#135) Refine the table of supported runtimes.](https://github.com/dajiaji/hpke-js/pull/135)
+- [(#134) Add support for bun.](https://github.com/dajiaji/hpke-js/pull/134)
+- [(#132) Activate DHKEM P-384 test for Deno.](https://github.com/dajiaji/hpke-js/pull/132)
+- [(#130) Add npm package to import-map.json.](https://github.com/dajiaji/hpke-js/pull/130)
+- [(#125) Add dependabot.yml.](https://github.com/dajiaji/hpke-js/pull/125)
+- Update dev dependencies:
+  - [(#131) Bump wrangler to 2.7.1.](https://github.com/dajiaji/hpke-js/pull/131)
+  - [(#126) Bump @playwright/test to 1.29.2.](https://github.com/dajiaji/hpke-js/pull/126)
+
 ## Version 0.17.1
 
 Released 2023-01-05
