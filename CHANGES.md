@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 0.18.2
+
+Released 2023-01-17
+
+- [(#143) Do not use import-map for npm module.](https://github.com/dajiaji/hpke-js/pull/143)
+
 ## Version 0.18.1
 
 Released 2023-01-17
