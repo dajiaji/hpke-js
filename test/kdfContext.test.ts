@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
+import { assertEquals } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
@@ -8,7 +8,6 @@ import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 
 import * as consts from "../src/consts.ts";
-import * as errors from "../src/errors.ts";
 
 describe("extract/expand", () => {
   describe("HKDF-SHA256 with valid parameters", () => {
@@ -115,8 +114,9 @@ describe("extract/expand", () => {
     });
   });
 
-  describe("HKDF-SHA384 with unsupported salt length", () => {
+  describe("HKDF-SHA384 with over Nh length of salt.", () => {
     it("should return a proper instance", async () => {
+      const te = new TextEncoder();
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
@@ -132,9 +132,10 @@ describe("extract/expand", () => {
       cryptoApi.getRandomValues(ikm);
 
       // assert
-      await assertRejects(
-        () => kdf.extract(salt, ikm),
-        errors.NotSupportedError,
+      const prk = await kdf.extract(salt, ikm);
+      assertEquals(
+        typeof await kdf.expand(prk, te.encode("key"), 16),
+        "object",
       );
     });
   });
