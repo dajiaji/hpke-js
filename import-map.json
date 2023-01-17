@@ -6,8 +6,8 @@
     "ed448": "npm:@noble/curves@0.5.1/ed448",
     "ed25519": "npm:@noble/curves@0.5.1/ed25519",
     "@stablelib/chacha20poly1305": "npm:@stablelib/chacha20poly1305@1.0.1",
-    "@stablelib/hmac": "npm:@stablelib/hmac@1.0.1",
-    "@stablelib/sha256": "npm:@stablelib/sha256@1.0.1",
-    "@stablelib/sha512": "npm:@stablelib/sha512@1.0.1"
+    "hmac": "npm:@noble/hashes@1.1.5/hmac",
+    "sha256": "npm:@noble/hashes@1.1.5/sha256",
+    "sha512": "npm:@noble/hashes@1.1.5/sha512"
   }
 }
