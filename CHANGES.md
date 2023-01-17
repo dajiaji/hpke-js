@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## Version 0.18.1
+
+Released 2023-01-17
+
+- [(#141) Allow to use over hash size length key for SHA384.](https://github.com/dajiaji/hpke-js/pull/141)
+- [(#140) Use noble/hashes for HDKF fallback process.](https://github.com/dajiaji/hpke-js/pull/140)
+
 ## Version 0.18.0
 
 Released 2023-01-16
