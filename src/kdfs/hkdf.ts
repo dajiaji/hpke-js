@@ -1,6 +1,6 @@
-import { hmac } from "@stablelib/hmac";
-import { SHA256 } from "@stablelib/sha256";
-import { SHA512 } from "@stablelib/sha512";
+import { hmac } from "hmac";
+import { sha256 } from "sha256";
+import { sha512 } from "sha512";
 
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
@@ -65,16 +65,16 @@ export class Hkdf extends WebCrypto implements KdfInterface {
       switch (this.algHash.hash) {
         case "SHA-256":
           return hmac(
-            SHA256,
+            sha256,
             new Uint8Array(salt),
             new Uint8Array(ikm),
-          ) as Uint8Array;
+          );
         case "SHA-512":
           return hmac(
-            SHA512,
+            sha512,
             new Uint8Array(salt),
             new Uint8Array(ikm),
-          ) as Uint8Array;
+          );
         default:
           throw new errors.NotSupportedError(
             `${this.algHash.hash} key length should be ${this.hashSize}.`,
