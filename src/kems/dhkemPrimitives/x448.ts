@@ -1,4 +1,4 @@
-import { ed448, x448 } from "ed448";
+import { ed448, x448 } from "npm:@noble/curves@0.5.1/ed448";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
