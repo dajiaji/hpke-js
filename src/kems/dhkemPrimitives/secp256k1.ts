@@ -1,4 +1,4 @@
-import * as secp from "secp256k1";
+import * as secp from "npm:@noble/secp256k1@1.7.1";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
