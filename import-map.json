@@ -1,6 +1,6 @@
 {
   "imports": {
     "testing/": "https://deno.land/std@0.170.0/testing/",
-    "dnt": "https://deno.land/x/dnt@0.33.0/mod.ts"
+    "dnt": "https://deno.land/x/dnt@0.34.0/mod.ts"
   }
 }
