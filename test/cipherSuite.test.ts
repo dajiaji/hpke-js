@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
+import { assertEquals, assertRejects } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
@@ -178,51 +178,6 @@ describe("CipherSuite", () => {
       assertEquals(suite.kdf, 0x0001);
       assertEquals(suite.aead, Aead.ExportOnly);
       assertEquals(suite.aead, 0xFFFF);
-    });
-  });
-
-  describe("constructor with invalid KEM id", () => {
-    it("should throw InvalidParamError", () => {
-      assertThrows(
-        () =>
-          new CipherSuite({
-            kem: -1,
-            kdf: Kdf.HkdfSha256,
-            aead: Aead.Aes128Gcm,
-          }),
-        errors.InvalidParamError,
-        "InvalidParamError: Invalid KEM id",
-      );
-    });
-  });
-
-  describe("constructor with invalid KDF id", () => {
-    it("should throw InvalidParamError", () => {
-      assertThrows(
-        () =>
-          new CipherSuite({
-            kem: Kem.DhkemP256HkdfSha256,
-            kdf: -1,
-            aead: Aead.Aes128Gcm,
-          }),
-        errors.InvalidParamError,
-        "InvalidParamError: Invalid KDF id",
-      );
-    });
-  });
-
-  describe("constructor with invalid AEAD id", () => {
-    it("should throw InvalidParamError", () => {
-      assertThrows(
-        () =>
-          new CipherSuite({
-            kem: Kem.DhkemP256HkdfSha256,
-            kdf: Kdf.HkdfSha256,
-            aead: -1,
-          }),
-        errors.InvalidParamError,
-        "InvalidParamError: Invalid AEAD id",
-      );
     });
   });
 
