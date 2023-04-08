@@ -4,7 +4,7 @@ import { Aead } from "../identifiers.ts";
 import * as consts from "../consts.ts";
 
 export class AesGcmKey implements AeadKey {
-  public readonly id: Aead = 0;
+  public readonly id: Aead = Aead.Aes128Gcm;
   public readonly keySize: number = 0;
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;

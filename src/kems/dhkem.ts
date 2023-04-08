@@ -17,7 +17,7 @@ import * as consts from "../consts.ts";
 import * as errors from "../errors.ts";
 
 export class Dhkem extends WebCrypto implements KemInterface {
-  public readonly id: Kem = 0;
+  public readonly id: Kem = Kem.DhkemP256HkdfSha256;
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;

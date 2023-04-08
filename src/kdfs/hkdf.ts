@@ -10,7 +10,7 @@ import { WebCrypto } from "../webCrypto.ts";
 import * as consts from "../consts.ts";
 
 export class Hkdf extends WebCrypto implements KdfInterface {
-  public readonly id: Kdf = 0;
+  public readonly id: Kdf = Kdf.HkdfSha256;
   public readonly hashSize: number = 0;
   protected readonly suiteId: Uint8Array;
   protected readonly algHash: HmacKeyGenParams = {
