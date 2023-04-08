@@ -1,6 +1,15 @@
 # Changes
 
-## Unreleased
+## Version 0.18.3
+
+Released 2023-04-08
+
+- [(#155) Fix TypeScript compile error.](https://github.com/dajiaji/hpke-js/pull/155)
+- [(#148) Add SECURITY.md.](https://github.com/dajiaji/hpke-js/pull/148)
+- Update dev dependencies:
+  - [(#154) Bump @playwright/test to 1.32.2.](https://github.com/dajiaji/hpke-js/pull/154)
+  - [(#148) Bump wrangler to 2.10.0.](https://github.com/dajiaji/hpke-js/pull/148)
+  - [(#146) Bump http-cache-semantics to 4.1.1.](https://github.com/dajiaji/hpke-js/pull/146)
 
 ## Version 0.18.2
 
