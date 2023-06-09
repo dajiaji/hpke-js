@@ -168,7 +168,7 @@ export class CipherSuite {
   /**
    * Gets a suite-specific KEM context.
    *
-   * @returns A KDF context.
+   * @returns A KEM context.
    */
   public async kemContext(): Promise<KemInterface> {
     await this.setup();
