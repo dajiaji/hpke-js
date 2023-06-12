@@ -1,5 +1,14 @@
 # Changes
 
+## Version 0.18.4
+
+Released 2023-06-13
+
+- [(#165) Use audited version of noble/curves.](https://github.com/dajiaji/hpke-js/pull/165)
+- [(#163) Fix a typo in the CipherSuite.ts.](https://github.com/dajiaji/hpke-js/pull/163)
+- Update dev dependencies:
+  - [(#162) Bump @playwright/test to 1.35.0.](https://github.com/dajiaji/hpke-js/pull/162)
+
 ## Version 0.18.3
 
 Released 2023-04-08
