@@ -6,7 +6,6 @@
         "CHANGES.md",
         "deno.json",
         "dnt.ts",
-        "egg.json",
         "import-map.json",
         "samples/",
         "src/",
