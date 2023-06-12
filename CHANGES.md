@@ -1,5 +1,15 @@
 # Changes
 
+## Version 0.18.5
+
+Released 2023-06-13
+
+- [(#172) Add deno.lock.](https://github.com/dajiaji/hpke-js/pull/172)
+- [(#170) Drop support for nest.land.](https://github.com/dajiaji/hpke-js/pull/170)
+- Update dev dependencies:
+  - [(#171) Bump deno/std to 0.191.0.](https://github.com/dajiaji/hpke-js/pull/171)
+  - [(#171) Bump deno/dnt to 0.37.0.](https://github.com/dajiaji/hpke-js/pull/171)
+
 ## Version 0.18.4
 
 Released 2023-06-13
