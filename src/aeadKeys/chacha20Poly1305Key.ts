@@ -1,4 +1,4 @@
-import { ChaCha20Poly1305 } from "npm:@stablelib/chacha20poly1305@1.0.1";
+import { ChaCha20Poly1305 } from "npm:@stablelib/chacha20poly1305";
 
 import type { AeadKey } from "../interfaces/aeadKey.ts";
 

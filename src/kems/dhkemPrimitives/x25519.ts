@@ -1,4 +1,4 @@
-import { ed25519, x25519 } from "npm:@noble/curves@1.1.0/ed25519";
+import { ed25519, x25519 } from "npm:@noble/curves/ed25519";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
