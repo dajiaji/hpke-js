@@ -1,4 +1,8 @@
 {
+  "imports": {
+    "testing/": "https://deno.land/std@0.191.0/testing/",
+    "dnt": "https://deno.land/x/dnt@0.37.0/mod.ts"
+  },
   "fmt": {
     "files": {
       "include": [
@@ -6,7 +10,6 @@
         "CHANGES.md",
         "deno.json",
         "dnt.ts",
-        "import-map.json",
         "samples/",
         "src/",
         "test/"
@@ -32,7 +35,6 @@
       ]
     }
   },
-  "importMap": "./import-map.json",
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
