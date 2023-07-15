@@ -1,4 +1,4 @@
-import { ChaCha20Poly1305 } from "npm:@stablelib/chacha20poly1305@1.0.1";
+import { chacha20_poly1305 } from "npm:@noble/ciphers@0.1.4/chacha";
 
 import type { AeadKey } from "../interfaces/aeadKey.ts";
 
@@ -9,10 +9,10 @@ export class Chacha20Poly1305Key implements AeadKey {
   public readonly keySize: number = 32;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
-  private _key: ChaCha20Poly1305;
+  private _key: Uint8Array;
 
   public constructor(key: ArrayBuffer) {
-    this._key = new ChaCha20Poly1305(new Uint8Array(key));
+    this._key = new Uint8Array(key);
   }
 
   public async seal(
@@ -37,11 +37,11 @@ export class Chacha20Poly1305Key implements AeadKey {
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
-      const ret = this._key.seal(
+      const ret = chacha20_poly1305(
+        this._key,
         new Uint8Array(iv),
-        new Uint8Array(data),
         new Uint8Array(aad),
-      );
+      ).encrypt(new Uint8Array(data));
       resolve(ret.buffer);
     });
   }
@@ -51,17 +51,13 @@ export class Chacha20Poly1305Key implements AeadKey {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return new Promise((resolve, reject) => {
-      const ret = this._key.open(
+    return new Promise((resolve) => {
+      const ret = chacha20_poly1305(
+        this._key,
         new Uint8Array(iv),
-        new Uint8Array(data),
         new Uint8Array(aad),
-      );
-      if (ret instanceof Uint8Array) {
-        resolve(ret.buffer);
-      } else {
-        reject(new Error("failed to open."));
-      }
+      ).decrypt(new Uint8Array(data));
+      resolve(ret.buffer);
     });
   }
 }
