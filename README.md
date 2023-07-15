@@ -92,9 +92,7 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 | ChaCha20Poly1305 | ✅\*4<br> | ✅\*4<br>    | ✅\*4<br>      | ✅\*4<br>             | ✅\*4<br>    |
 | Export Only      | ✅<br>    | ✅<br>       | ✅<br>         | ✅<br>                | ✅<br>       |
 
-- \*4:
-  [@stablelib/chacha20poly1305](https://www.stablelib.com/modules/_chacha20poly1305_chacha20poly1305_.html)
-  is used.
+- \*4: [@noble/ciphers/chacha](https://github.com/paulmillr/noble-ciphers) is used.
 
 ## Supported Environments
 
