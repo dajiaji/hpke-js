@@ -4,8 +4,8 @@ export interface KemPrimitives {
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
   importKey(
-    format: "raw",
-    key: ArrayBuffer,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey>;
 

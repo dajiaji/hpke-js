@@ -101,6 +101,19 @@ export function hexToBytes(v: string): Uint8Array {
 /**
  * Converts bytes to hex string.
  */
-export function bytesToHex(v: Uint8Array) {
+export function bytesToHex(v: Uint8Array): string {
   return [...v].map((x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Decodes Base64Url-encoded data.
+ */
+export function base64UrlToBytes(v: string): Uint8Array {
+  const base64 = v.replace(/-/g, "+").replace(/_/g, "/");
+  const byteString = atob(base64);
+  const ret = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ret[i] = byteString.charCodeAt(i);
+  }
+  return ret;
 }

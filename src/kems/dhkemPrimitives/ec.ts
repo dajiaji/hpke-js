@@ -185,13 +185,24 @@ export class Ec implements KemPrimitives {
   }
 
   public async importKey(
-    format: "raw",
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    if (format === "raw") {
+      return await this._importRawKey(key as ArrayBuffer, isPublic);
+    }
+    // jwk
+    if (key instanceof ArrayBuffer) {
+      throw new Error("Invalid jwk key format");
+    }
+    return await this._importJWK(key as JsonWebKey, isPublic);
+  }
+
+  private async _importRawKey(
     key: ArrayBuffer,
     isPublic: boolean,
   ): Promise<CryptoKey> {
-    if (format !== "raw") {
-      throw new Error("Unsupported format");
-    }
     if (isPublic && key.byteLength !== this._nPk) {
       throw new Error("Invalid public key for the ciphersuite");
     }
@@ -201,7 +212,7 @@ export class Ec implements KemPrimitives {
     try {
       if (isPublic) {
         // return await this._api.importKey(format, key, this._alg, true, consts.KEM_USAGES);
-        return await this._api.importKey(format, key, this._alg, true, []);
+        return await this._api.importKey("raw", key, this._alg, true, []);
       }
       const k = new Uint8Array(key);
       const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
@@ -217,6 +228,31 @@ export class Ec implements KemPrimitives {
     } catch (_e: unknown) {
       throw new Error("Invalid key for the ciphersuite");
     }
+  }
+
+  private async _importJWK(
+    key: JsonWebKey,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    if (typeof key.crv === "undefined" || key.crv !== this._alg.namedCurve) {
+      throw new Error(`Invalid crv: ${key.crv}`);
+    }
+    if (isPublic) {
+      if (typeof key.d !== "undefined") {
+        throw new Error("Invalid key: `d` should not be set");
+      }
+      return await this._api.importKey("jwk", key, this._alg, true, []);
+    }
+    if (typeof key.d === "undefined") {
+      throw new Error("Invalid key: `d` not found");
+    }
+    return await this._api.importKey(
+      "jwk",
+      key,
+      this._alg,
+      true,
+      consts.KEM_USAGES,
+    );
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {

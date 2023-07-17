@@ -64,8 +64,8 @@ export class Dhkem extends WebCrypto implements KemInterface {
   }
 
   public async importKey(
-    format: "raw",
-    key: ArrayBuffer,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey> {
     try {

@@ -11,5 +11,8 @@ export class XCryptoKey implements CryptoKey {
     this.key = key;
     this.type = type;
     this.algorithm = { name: name };
+    if (type === "public") {
+      this.usages = [];
+    }
   }
 }

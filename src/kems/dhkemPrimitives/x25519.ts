@@ -6,6 +6,7 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 import * as consts from "../../consts.ts";
+import { base64UrlToBytes } from "../../utils/misc.ts";
 
 const ALG_NAME = "X25519";
 
@@ -29,14 +30,18 @@ export class X25519 implements KemPrimitives {
   }
 
   public async importKey(
-    format: "raw",
-    key: ArrayBuffer,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey> {
-    if (format !== "raw") {
-      throw new Error("Unsupported format");
+    if (format === "raw") {
+      return await this._importRawKey(key as ArrayBuffer, isPublic);
     }
-    return await this._importKey(key, isPublic);
+    // jwk
+    if (key instanceof ArrayBuffer) {
+      throw new Error("Invalid jwk key format");
+    }
+    return await this._importJWK(key as JsonWebKey, isPublic);
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
@@ -89,7 +94,10 @@ export class X25519 implements KemPrimitives {
     });
   }
 
-  private _importKey(key: ArrayBuffer, isPublic: boolean): Promise<CryptoKey> {
+  private _importRawKey(
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
     return new Promise((resolve, reject) => {
       if (isPublic && key.byteLength !== this._nPk) {
         reject(new Error("Invalid public key for the ciphersuite"));
@@ -104,6 +112,43 @@ export class X25519 implements KemPrimitives {
           isPublic ? "public" : "private",
         ),
       );
+    });
+  }
+
+  private _importJWK(key: JsonWebKey, isPublic: boolean): Promise<CryptoKey> {
+    return new Promise((resolve, reject) => {
+      if (typeof key.kty === "undefined" || key.kty !== "OKP") {
+        reject(new Error(`Invalid kty: ${key.kty}`));
+      }
+      if (typeof key.crv === "undefined" || key.crv !== "X25519") {
+        reject(new Error(`Invalid crv: ${key.crv}`));
+      }
+      if (isPublic) {
+        if (typeof key.d !== "undefined") {
+          reject(new Error("Invalid key: `d` should not be set"));
+        }
+        if (typeof key.x === "undefined") {
+          reject(new Error("Invalid key: `x` not found"));
+        }
+        resolve(
+          new XCryptoKey(
+            ALG_NAME,
+            base64UrlToBytes(key.x as string),
+            "public",
+          ),
+        );
+      } else {
+        if (typeof key.d !== "string") {
+          reject(new Error("Invalid key: `d` not found"));
+        }
+        resolve(
+          new XCryptoKey(
+            ALG_NAME,
+            base64UrlToBytes(key.d as string),
+            "private",
+          ),
+        );
+      }
     });
   }
 

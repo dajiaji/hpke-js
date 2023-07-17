@@ -182,7 +182,7 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode", () => {
-    it("should work normally", async () => {
+    it("should work normally with generateKeyPair", async () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP256HkdfSha256,
@@ -214,10 +214,61 @@ describe("CipherSuite", () => {
       await assertRejects(() => recipient.seal(pt), errors.SealError);
       await assertRejects(() => sender.open(ct), errors.OpenError);
     });
+
+    it("should work normally with importKey('jwk')", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const jwkPkR = {
+        kty: "EC",
+        crv: "P-256",
+        kid: "P-256-01",
+        x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        key_ops: [],
+      };
+      const pkR = await suite.importKey("jwk", jwkPkR, true);
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const jwkSkR = {
+        kty: "EC",
+        crv: "P-256",
+        kid: "P-256-01",
+        x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+        key_ops: ["deriveBits"],
+      };
+      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
+    });
   });
 
   describe("A README example of Base mode (Kem.DhkemP384HkdfSha384/Kdf.HkdfSha384)", () => {
-    it("should work normally", async () => {
+    it("should work normally with generateKeyPair", async () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP384HkdfSha384,
@@ -247,10 +298,61 @@ describe("CipherSuite", () => {
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
+
+    it("should work normally with importKey('jwk')", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const jwkPkR = {
+        kty: "EC",
+        crv: "P-384",
+        kid: "P-384-01",
+        x: "_XyN9woHaS0mPimSW-etwJMEDSzxIMjp4PjezavU8SHJoClz1bQrcmPb1ZJxHxhI",
+        y: "GCNfc32p9sRotx7u2oDGJ3Eqz6q5zPHLdizNn83oRsUTN31eCWfGLHWRury3xF50",
+        key_ops: [],
+      };
+      const pkR = await suite.importKey("jwk", jwkPkR, true);
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const jwkSkR = {
+        kty: "EC",
+        crv: "P-384",
+        kid: "P-384-01",
+        x: "_XyN9woHaS0mPimSW-etwJMEDSzxIMjp4PjezavU8SHJoClz1bQrcmPb1ZJxHxhI",
+        y: "GCNfc32p9sRotx7u2oDGJ3Eqz6q5zPHLdizNn83oRsUTN31eCWfGLHWRury3xF50",
+        d: "1pImEKbrr771-RKi8Tb7tou_WjiR7kwui_nMu16449rk3lzAqf9buUhTkJ-pogkb",
+        key_ops: ["deriveBits"],
+      };
+      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
+    });
   });
 
-  describe("A README example of Base mode (Kem.DhkemP521HkdfSha512/Kdf.HkdfSha384)", () => {
-    it("should work normally", async () => {
+  describe("A README example of Base mode (Kem.DhkemP521HkdfSha512/Kdf.HkdfSha512)", () => {
+    it("should work normally with generateKeyPair", async () => {
       if (isDeno()) {
         return;
       }
@@ -258,7 +360,7 @@ describe("CipherSuite", () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP521HkdfSha512,
-        kdf: Kdf.HkdfSha384,
+        kdf: Kdf.HkdfSha512,
         aead: Aead.Aes128Gcm,
       });
 
@@ -284,14 +386,69 @@ describe("CipherSuite", () => {
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
+
+    it("should work normally with importKey('jwk')", async () => {
+      if (isDeno()) {
+        return;
+      }
+
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const jwkPkR = {
+        kty: "EC",
+        crv: "P-521",
+        kid: "P-521-01",
+        x: "APkZitSJMJUMB-iPCt47sWu_CrnUHg6IAR4qjmHON-2u41Rjg6DNOS0LZYJJt-AVH5NgGVi8ElIfjo71b9HXCTOc",
+        y: "ASx-Cb--149HJ-e1KlSaY-1BOhwOdcTkxSt8BGbW7_hnGfzHsoXM3ywwNcp1Yad-FHUKwmCyMelMQEn2Rh4V2l3I",
+        key_ops: [],
+      };
+      const pkR = await suite.importKey("jwk", jwkPkR, true);
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const jwkSkR = {
+        kty: "EC",
+        crv: "P-521",
+        kid: "P-521-01",
+        x: "APkZitSJMJUMB-iPCt47sWu_CrnUHg6IAR4qjmHON-2u41Rjg6DNOS0LZYJJt-AVH5NgGVi8ElIfjo71b9HXCTOc",
+        y: "ASx-Cb--149HJ-e1KlSaY-1BOhwOdcTkxSt8BGbW7_hnGfzHsoXM3ywwNcp1Yad-FHUKwmCyMelMQEn2Rh4V2l3I",
+        d: "ADYyo73ZKicOjwGDYQ_ybZKnVzdAcxGm9OVAxQjzgVM4jaS-Iwtkz90oLdDz3shgKlDgtRK2Aa9lMhqR94hBo4IE",
+        key_ops: ["deriveBits"],
+      };
+      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
+    });
   });
 
-  describe("A README example of Base mode (Kem.DhkemX25519HkdfSha256/Kdf.HkdfSha384)", () => {
+  describe("A README example of Base mode (Kem.DhkemX25519HkdfSha256/Kdf.HkdfSha256)", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemX25519HkdfSha256,
-        kdf: Kdf.HkdfSha384,
+        kdf: Kdf.HkdfSha256,
         aead: Aead.Aes128Gcm,
       });
 
@@ -316,6 +473,55 @@ describe("CipherSuite", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with importKey('jwk')", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
+      });
+
+      const jwkPkR = {
+        kty: "OKP",
+        crv: "X25519",
+        kid: "X25519-01",
+        x: "y3wJq3uXPHeoCO4FubvTc7VcBuqpvUrSvU6ZMbHDTCI",
+        key_ops: [],
+      };
+      const pkR = await suite.importKey("jwk", jwkPkR, true);
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const jwkSkR = {
+        kty: "OKP",
+        crv: "X25519",
+        kid: "X25519-01",
+        x: "y3wJq3uXPHeoCO4FubvTc7VcBuqpvUrSvU6ZMbHDTCI",
+        d: "vsJ1oX5NNi0IGdwGldiac75r-Utmq3Jq4LGv48Q_Qc4",
+        key_ops: ["deriveBits"],
+      };
+      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
     });
   });
 
@@ -352,13 +558,13 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (Kem.DhkemX448HkdfSha256/Kdf.HkdfSha384)", () => {
+  describe("A README example of Base mode (Kem.DhkemX448HkdfSha256/Kdf.HkdfSha512)", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemX448HkdfSha512,
-        kdf: Kdf.HkdfSha384,
-        aead: Aead.Aes128Gcm,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -382,6 +588,55 @@ describe("CipherSuite", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with importKey('jwk')", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
+      });
+
+      const jwkPkR = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        key_ops: [],
+      };
+      const pkR = await suite.importKey("jwk", jwkPkR, true);
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const jwkSkR = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
+      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
     });
   });
 
