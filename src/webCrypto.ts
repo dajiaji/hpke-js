@@ -2,13 +2,6 @@ import { isBrowser, isCloudflareWorkers } from "./utils/misc.ts";
 
 import * as errors from "./errors.ts";
 
-export class WebCrypto {
-  protected _api: SubtleCrypto;
-  constructor(api: SubtleCrypto) {
-    this._api = api;
-  }
-}
-
 export async function loadCrypto(): Promise<Crypto> {
   if (isBrowser() || isCloudflareWorkers()) {
     if (globalThis.crypto !== undefined) {

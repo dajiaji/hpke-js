@@ -1,6 +1,7 @@
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
+import { Algorithm } from "../../algorithm.ts";
 import { Kem } from "../../identifiers.ts";
 
 import { Bignum } from "../../utils/bignum.ts";
@@ -116,9 +117,8 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
   66,
 ]);
 
-export class Ec implements KemPrimitives {
+export class Ec extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
-  private _api: SubtleCrypto;
   private _alg: EcKeyGenParams;
   private _nPk: number;
   private _nSk: number;
@@ -129,9 +129,9 @@ export class Ec implements KemPrimitives {
   private _bitmask: number;
   private _pkcs8AlgId: Uint8Array;
 
-  constructor(kem: Kem, hkdf: KdfInterface, api: SubtleCrypto) {
+  constructor(kem: Kem, hkdf: KdfInterface) {
+    super();
     this._hkdf = hkdf;
-    this._api = api;
     switch (kem) {
       case Kem.DhkemP256HkdfSha256:
         this._alg = { name: "ECDH", namedCurve: "P-256" };
@@ -165,7 +165,8 @@ export class Ec implements KemPrimitives {
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
-    const ret = await this._api.exportKey("raw", key);
+    this.checkInit();
+    const ret = await (this._api as SubtleCrypto).exportKey("raw", key);
     // const ret = (await this._api.exportKey('spki', key)).slice(24);
     if (ret.byteLength !== this._nPk) {
       throw new Error("Invalid public key for the ciphersuite");
@@ -174,11 +175,18 @@ export class Ec implements KemPrimitives {
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+    this.checkInit();
     if (key.byteLength !== this._nPk) {
       throw new Error("Invalid public key for the ciphersuite");
     }
     try {
-      return await this._api.importKey("raw", key, this._alg, true, []);
+      return await (this._api as SubtleCrypto).importKey(
+        "raw",
+        key,
+        this._alg,
+        true,
+        [],
+      );
     } catch (_e: unknown) {
       throw new Error("Invalid public key for the ciphersuite");
     }
@@ -189,6 +197,7 @@ export class Ec implements KemPrimitives {
     key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey> {
+    this.checkInit();
     if (format === "raw") {
       return await this._importRawKey(key as ArrayBuffer, isPublic);
     }
@@ -212,13 +221,19 @@ export class Ec implements KemPrimitives {
     try {
       if (isPublic) {
         // return await this._api.importKey(format, key, this._alg, true, consts.KEM_USAGES);
-        return await this._api.importKey("raw", key, this._alg, true, []);
+        return await (this._api as SubtleCrypto).importKey(
+          "raw",
+          key,
+          this._alg,
+          true,
+          [],
+        );
       }
       const k = new Uint8Array(key);
       const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
       pkcs8Key.set(this._pkcs8AlgId, 0);
       pkcs8Key.set(k, this._pkcs8AlgId.length);
-      return await this._api.importKey(
+      return await (this._api as SubtleCrypto).importKey(
         "pkcs8",
         pkcs8Key,
         this._alg,
@@ -241,12 +256,18 @@ export class Ec implements KemPrimitives {
       if (typeof key.d !== "undefined") {
         throw new Error("Invalid key: `d` should not be set");
       }
-      return await this._api.importKey("jwk", key, this._alg, true, []);
+      return await (this._api as SubtleCrypto).importKey(
+        "jwk",
+        key,
+        this._alg,
+        true,
+        [],
+      );
     }
     if (typeof key.d === "undefined") {
       throw new Error("Invalid key: `d` not found");
     }
-    return await this._api.importKey(
+    return await (this._api as SubtleCrypto).importKey(
       "jwk",
       key,
       this._alg,
@@ -256,18 +277,31 @@ export class Ec implements KemPrimitives {
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
-    const jwk = await this._api.exportKey("jwk", key);
+    this.checkInit();
+    const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
     delete jwk["d"];
     delete jwk["key_ops"];
     // return await this._api.importKey('jwk', jwk, this._alg, true, consts.KEM_USAGES);
-    return await this._api.importKey("jwk", jwk, this._alg, true, []);
+    return await (this._api as SubtleCrypto).importKey(
+      "jwk",
+      jwk,
+      this._alg,
+      true,
+      [],
+    );
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    return await this._api.generateKey(this._alg, true, consts.KEM_USAGES);
+    this.checkInit();
+    return await (this._api as SubtleCrypto).generateKey(
+      this._alg,
+      true,
+      consts.KEM_USAGES,
+    );
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    this.checkInit();
     const dkpPrk = await this._hkdf.labeledExtract(
       consts.EMPTY,
       consts.LABEL_DKP_PRK,
@@ -292,7 +326,7 @@ export class Ec implements KemPrimitives {
     const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + bn.val().length);
     pkcs8Key.set(this._pkcs8AlgId, 0);
     pkcs8Key.set(bn.val(), this._pkcs8AlgId.length);
-    const sk = await this._api.importKey(
+    const sk = await (this._api as SubtleCrypto).importKey(
       "pkcs8",
       pkcs8Key,
       this._alg,
@@ -307,7 +341,8 @@ export class Ec implements KemPrimitives {
   }
 
   public async dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer> {
-    const bits = await this._api.deriveBits(
+    this.checkInit();
+    const bits = await (this._api as SubtleCrypto).deriveBits(
       {
         name: "ECDH",
         public: pk,

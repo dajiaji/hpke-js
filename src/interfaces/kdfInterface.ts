@@ -16,6 +16,8 @@ export interface KdfInterface {
     len: number,
   ): Uint8Array;
 
+  init(api: SubtleCrypto, suiteId: Uint8Array): void;
+
   extract(
     salt: ArrayBuffer,
     ikm: ArrayBuffer,

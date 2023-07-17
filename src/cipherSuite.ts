@@ -194,7 +194,9 @@ export class CipherSuite {
    */
   public async createAeadKey(key: ArrayBuffer): Promise<AeadKey> {
     await this.setup();
-    return createAeadKey(this.aead, key, this._api as SubtleCrypto);
+    const ret = createAeadKey(this.aead, key);
+    ret.init(this._api as SubtleCrypto);
+    return ret;
   }
 
   /**
@@ -534,31 +536,46 @@ export class CipherSuite {
   }
 
   private createKemContext(): KemInterface {
+    let ret: KemInterface;
     switch (this.kem) {
       case Kem.DhkemP256HkdfSha256:
-        return new DhkemP256HkdfSha256(this._api as SubtleCrypto);
+        ret = new DhkemP256HkdfSha256();
+        break;
       case Kem.DhkemP384HkdfSha384:
-        return new DhkemP384HkdfSha384(this._api as SubtleCrypto);
+        ret = new DhkemP384HkdfSha384();
+        break;
       case Kem.DhkemP521HkdfSha512:
-        return new DhkemP521HkdfSha512(this._api as SubtleCrypto);
+        ret = new DhkemP521HkdfSha512();
+        break;
       case Kem.DhkemX25519HkdfSha256:
-        return new DhkemX25519HkdfSha256(this._api as SubtleCrypto);
+        ret = new DhkemX25519HkdfSha256();
+        break;
       case Kem.DhkemX448HkdfSha512:
-        return new DhkemX448HkdfSha512(this._api as SubtleCrypto);
+        ret = new DhkemX448HkdfSha512();
+        break;
       default:
-        return new DhkemSecp256K1HkdfSha256(this._api as SubtleCrypto);
+        ret = new DhkemSecp256K1HkdfSha256();
+        break;
     }
+    ret.init(this._api as SubtleCrypto);
+    return ret;
   }
 
   private createKdfContext(): KdfInterface {
+    let ret: KdfInterface;
     switch (this.kdf) {
       case Kdf.HkdfSha256:
-        return new HkdfSha256(this._api as SubtleCrypto, this._suiteId);
+        ret = new HkdfSha256();
+        break;
       case Kdf.HkdfSha384:
-        return new HkdfSha384(this._api as SubtleCrypto, this._suiteId);
+        ret = new HkdfSha384();
+        break;
       default:
         // case Kdf.HkdfSha512:
-        return new HkdfSha512(this._api as SubtleCrypto, this._suiteId);
+        ret = new HkdfSha512();
+        break;
     }
+    ret.init(this._api as SubtleCrypto, this._suiteId);
+    return ret;
   }
 }

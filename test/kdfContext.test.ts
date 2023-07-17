@@ -20,7 +20,8 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha256(api, suiteId);
+      const kdf = new HkdfSha256();
+      kdf.init(api, suiteId);
 
       const salt = new Uint8Array(32);
       cryptoApi.getRandomValues(salt);
@@ -46,7 +47,8 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha384(api, suiteId);
+      const kdf = new HkdfSha384();
+      kdf.init(api, suiteId);
 
       const salt = new Uint8Array(48);
       cryptoApi.getRandomValues(salt);
@@ -72,7 +74,8 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha512(api, suiteId);
+      const kdf = new HkdfSha512();
+      kdf.init(api, suiteId);
 
       const salt = new Uint8Array(64);
       cryptoApi.getRandomValues(salt);
@@ -97,7 +100,8 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha512(api, suiteId);
+      const kdf = new HkdfSha512();
+      kdf.init(api, suiteId);
 
       const salt = new Uint8Array(64 + 32);
       cryptoApi.getRandomValues(salt);
@@ -123,7 +127,8 @@ describe("extract/expand", () => {
       suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha384(api, suiteId);
+      const kdf = new HkdfSha384();
+      kdf.init(api, suiteId);
 
       const salt = new Uint8Array(48 + 32);
       cryptoApi.getRandomValues(salt);

@@ -3,18 +3,20 @@ import * as secp from "npm:@noble/secp256k1@1.7.1";
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
+import { Algorithm } from "../../algorithm.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 import * as consts from "../../consts.ts";
 
 const ALG_NAME = "ECDH";
 
-export class Secp256K1 implements KemPrimitives {
+export class Secp256K1 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
 
   constructor(hkdf: KdfInterface) {
+    super();
     this._hkdf = hkdf;
     this._nPk = 65;
     this._nSk = 32;

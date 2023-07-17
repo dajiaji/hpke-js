@@ -4,6 +4,7 @@ import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
+import { Algorithm } from "../algorithm.ts";
 import { Ec } from "./dhkemPrimitives/ec.ts";
 import { Secp256K1 } from "./dhkemPrimitives/secp256k1.ts";
 import { X25519 } from "./dhkemPrimitives/x25519.ts";
@@ -11,24 +12,32 @@ import { X448 } from "./dhkemPrimitives/x448.ts";
 import { Kem } from "../identifiers.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../kdfs/hkdf.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
-import { WebCrypto } from "../webCrypto.ts";
 
 import * as consts from "../consts.ts";
 import * as errors from "../errors.ts";
 
-export class Dhkem extends WebCrypto implements KemInterface {
+export class Dhkem extends Algorithm implements KemInterface {
   public readonly id: Kem = Kem.DhkemP256HkdfSha256;
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;
   public readonly privateKeySize: number = 0;
-  private _prim: KemPrimitives;
-  private _kdf: KdfInterface;
+  protected _prim: KemPrimitives;
+  protected _kdf: KdfInterface;
 
-  constructor(api: SubtleCrypto, prim: KemPrimitives, kdf: KdfInterface) {
-    super(api);
+  constructor(prim: KemPrimitives, kdf: KdfInterface) {
+    super();
     this._prim = prim;
     this._kdf = kdf;
+  }
+
+  public init(api: SubtleCrypto): void {
+    super.init(api);
+    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
+    suiteId.set(i2Osp(this.id, 2), 3);
+    this._prim.init(api);
+    this._kdf.init(api, suiteId);
+    super.init(api);
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
@@ -206,12 +215,10 @@ export class DhkemP256HkdfSha256 extends Dhkem implements KemInterface {
   public readonly publicKeySize: number = 65;
   public readonly privateKeySize: number = 32;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 3);
-    const kdf = new HkdfSha256(api, suiteId);
-    const prim = new Ec(Kem.DhkemP256HkdfSha256, kdf, api);
-    super(api, prim, kdf);
+  constructor() {
+    const kdf = new HkdfSha256();
+    const prim = new Ec(Kem.DhkemP256HkdfSha256, kdf);
+    super(prim, kdf);
   }
 }
 
@@ -222,12 +229,10 @@ export class DhkemP384HkdfSha384 extends Dhkem implements KemInterface {
   public readonly publicKeySize: number = 97;
   public readonly privateKeySize: number = 48;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 3);
-    const kdf = new HkdfSha384(api, suiteId);
-    const prim = new Ec(Kem.DhkemP384HkdfSha384, kdf, api);
-    super(api, prim, kdf);
+  constructor() {
+    const kdf = new HkdfSha384();
+    const prim = new Ec(Kem.DhkemP384HkdfSha384, kdf);
+    super(prim, kdf);
   }
 }
 
@@ -238,12 +243,10 @@ export class DhkemP521HkdfSha512 extends Dhkem implements KemInterface {
   public readonly publicKeySize: number = 133;
   public readonly privateKeySize: number = 64;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 3);
-    const kdf = new HkdfSha512(api, suiteId);
-    const prim = new Ec(Kem.DhkemP521HkdfSha512, kdf, api);
-    super(api, prim, kdf);
+  constructor() {
+    const kdf = new HkdfSha512();
+    const prim = new Ec(Kem.DhkemP521HkdfSha512, kdf);
+    super(prim, kdf);
   }
 }
 
@@ -254,28 +257,24 @@ export class DhkemSecp256K1HkdfSha256 extends Dhkem implements KemInterface {
   public readonly publicKeySize: number = 65;
   public readonly privateKeySize: number = 32;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemSecp256K1HkdfSha256, 2), 3);
-    const kdf = new HkdfSha256(api, suiteId);
+  constructor() {
+    const kdf = new HkdfSha256();
     const prim = new Secp256K1(kdf);
-    super(api, prim, kdf);
+    super(prim, kdf);
   }
 }
 
-export class DhkemX25519HkdfSha256 extends Dhkem implements KemInterface {
+export class DhkemX25519HkdfSha256 extends Dhkem {
   public readonly id: Kem = Kem.DhkemX25519HkdfSha256;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 32;
   public readonly publicKeySize: number = 32;
   public readonly privateKeySize: number = 32;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemX25519HkdfSha256, 2), 3);
-    const kdf = new HkdfSha256(api, suiteId);
+  constructor() {
+    const kdf = new HkdfSha256();
     const prim = new X25519(kdf);
-    super(api, prim, kdf);
+    super(prim, kdf);
   }
 }
 
@@ -286,11 +285,9 @@ export class DhkemX448HkdfSha512 extends Dhkem implements KemInterface {
   public readonly publicKeySize: number = 56;
   public readonly privateKeySize: number = 56;
 
-  constructor(api: SubtleCrypto) {
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(Kem.DhkemX448HkdfSha512, 2), 3);
-    const kdf = new HkdfSha512(api, suiteId);
+  constructor() {
+    const kdf = new HkdfSha512();
     const prim = new X448(kdf);
-    super(api, prim, kdf);
+    super(prim, kdf);
   }
 }
