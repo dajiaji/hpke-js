@@ -1,4 +1,4 @@
-import * as secp from "npm:@noble/secp256k1@1.7.1";
+import { secp256k1 } from "npm:@noble/curves@1.1.0/secp256k1";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
@@ -18,7 +18,7 @@ export class Secp256K1 extends Algorithm implements KemPrimitives {
   constructor(hkdf: KdfInterface) {
     super();
     this._hkdf = hkdf;
-    this._nPk = 65;
+    this._nPk = 33;
     this._nSk = 32;
   }
 
@@ -46,7 +46,7 @@ export class Secp256K1 extends Algorithm implements KemPrimitives {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    const rawSk = secp.utils.randomPrivateKey();
+    const rawSk = secp256k1.utils.randomPrivateKey();
     const sk = new XCryptoKey(ALG_NAME, rawSk, "private");
     const pk = await this.derivePublicKey(sk);
     return { publicKey: pk, privateKey: sk };
@@ -111,7 +111,7 @@ export class Secp256K1 extends Algorithm implements KemPrimitives {
 
   private _derivePublicKey(k: XCryptoKey): Promise<CryptoKey> {
     return new Promise((resolve) => {
-      const pk = secp.getPublicKey(k.key);
+      const pk = secp256k1.getPublicKey(k.key);
       resolve(new XCryptoKey(ALG_NAME, pk, "public"));
     });
   }
@@ -119,7 +119,7 @@ export class Secp256K1 extends Algorithm implements KemPrimitives {
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(secp.getSharedSecret(sk.key, pk.key).buffer);
+        resolve(secp256k1.getSharedSecret(sk.key, pk.key).buffer);
       } catch (e: unknown) {
         reject(e);
       }

@@ -106,8 +106,8 @@ export class CipherSuite {
         break;
       case Kem.DhkemSecp256K1HkdfSha256:
         this.kemSecretSize = 32;
-        this.kemEncSize = 65;
-        this.kemPublicKeySize = 65;
+        this.kemEncSize = 33;
+        this.kemPublicKeySize = 33;
         this.kemPrivateKeySize = 32;
         break;
       case Kem.DhkemX25519HkdfSha256:

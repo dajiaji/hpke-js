@@ -763,7 +763,7 @@ describe("importKey", () => {
       kemContext.init(api);
 
       const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(65);
+      const rawKey = new Uint8Array(33);
       rawKey[0] = hexStringToBytes("04")[0];
       cryptoApi.getRandomValues(rawKey);
       const privKey = await kemContext.importKey("raw", rawKey, true);
