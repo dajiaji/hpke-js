@@ -4,36 +4,32 @@
     "dnt": "https://deno.land/x/dnt@0.37.0/mod.ts"
   },
   "fmt": {
-    "files": {
-      "include": [
-        "README.md",
-        "CHANGES.md",
-        "deno.json",
-        "dnt.ts",
-        "samples/",
-        "src/",
-        "test/"
-      ],
-      "exclude": [
-        "samples/node/node_modules",
-        "samples/ts-node/node_modules",
-        "test/bun",
-        "test/playwright/node_modules",
-        "test/wrangler"
-      ]
-    }
+    "include": [
+      "README.md",
+      "CHANGES.md",
+      "deno.json",
+      "dnt.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "samples/node/node_modules",
+      "samples/ts-node/node_modules",
+      "test/bun",
+      "test/playwright/node_modules",
+      "test/wrangler"
+    ]
   },
   "lint": {
-    "files": {
-      "include": ["samples/", "src/", "test/"],
-      "exclude": [
-        "samples/node/node_modules",
-        "samples/ts-node/node_modules",
-        "test/bun",
-        "test/playwright/node_modules",
-        "test/wrangler"
-      ]
-    }
+    "include": ["samples/", "src/", "test/"],
+    "exclude": [
+      "samples/node/node_modules",
+      "samples/ts-node/node_modules",
+      "test/bun",
+      "test/playwright/node_modules",
+      "test/wrangler"
+    ]
   },
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
