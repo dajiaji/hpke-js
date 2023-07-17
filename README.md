@@ -217,10 +217,41 @@ Browsers:
           recipientPublicKey: rkp.publicKey
         });
       
+        // A JWK-formatted recipient public key can also be used.
+        // const jwkPkR = {
+        //   kty: "EC",
+        //   crv: "P-256",
+        //   kid: "P-256-01",
+        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        //   key_ops: [],
+        // };
+        // const pkR = await suite.importKey("jwk", jwkPkR, true);
+        // const sender = await suite.createSenderContext({
+        //   recipientPublicKey: pkR,
+        // });
+
         const recipient = await suite.createRecipientContext({
           recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
           enc: sender.enc,
         });
+
+        // A JWK-formatted recipient private key can also be used.
+        // const jwkSkR = {
+        //   kty: "EC",
+        //   crv: "P-256",
+        //   kid: "P-256-01",
+        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+        //   key_ops: ["deriveBits"],
+        // };
+        // const skR = await suite.importKey("jwk", jwkSkR, false);
+        // const recipient = await suite.createRecipientContext({
+        //   recipientKey: skR,
+        //   enc: sender.enc,
+        // });
+
       
         // encrypt
         const ct = await sender.seal(new TextEncoder().encode("hello world!"));
