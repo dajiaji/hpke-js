@@ -2,7 +2,7 @@ import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
-import { Kem } from "../../identifiers.ts";
+import { KemId } from "../../identifiers.ts";
 
 import { Bignum } from "../../utils/bignum.ts";
 import { i2Osp } from "../../utils/misc.ts";
@@ -129,11 +129,11 @@ export class Ec extends Algorithm implements KemPrimitives {
   private _bitmask: number;
   private _pkcs8AlgId: Uint8Array;
 
-  constructor(kem: Kem, hkdf: KdfInterface) {
+  constructor(kem: KemId, hkdf: KdfInterface) {
     super();
     this._hkdf = hkdf;
     switch (kem) {
-      case Kem.DhkemP256HkdfSha256:
+      case KemId.DhkemP256HkdfSha256:
         this._alg = { name: "ECDH", namedCurve: "P-256" };
         this._nPk = 65;
         this._nSk = 32;
@@ -142,7 +142,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         this._bitmask = 0xFF;
         this._pkcs8AlgId = PKCS8_ALG_ID_P_256;
         break;
-      case Kem.DhkemP384HkdfSha384:
+      case KemId.DhkemP384HkdfSha384:
         this._alg = { name: "ECDH", namedCurve: "P-384" };
         this._nPk = 97;
         this._nSk = 48;
@@ -152,7 +152,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         this._pkcs8AlgId = PKCS8_ALG_ID_P_384;
         break;
       default:
-        // case Kem.DhkemP521HkdfSha512:
+        // case KemId.DhkemP521HkdfSha512:
         this._alg = { name: "ECDH", namedCurve: "P-521" };
         this._nPk = 133;
         this._nSk = 66;

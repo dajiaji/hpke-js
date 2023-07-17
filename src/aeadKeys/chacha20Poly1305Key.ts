@@ -2,10 +2,10 @@ import { chacha20_poly1305 } from "npm:@noble/ciphers@0.1.4/chacha";
 
 import { Algorithm } from "../algorithm.ts";
 import type { AeadKey } from "../interfaces/aeadKey.ts";
-import { Aead } from "../identifiers.ts";
+import { AeadId } from "../identifiers.ts";
 
 export class Chacha20Poly1305Key extends Algorithm implements AeadKey {
-  public readonly id: Aead = Aead.Chacha20Poly1305;
+  public readonly id: AeadId = AeadId.Chacha20Poly1305;
   public readonly keySize: number = 32;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;

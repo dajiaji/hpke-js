@@ -6,7 +6,7 @@ import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 import { Aes128GcmKey, Aes256GcmKey } from "./aeadKeys/aesGcmKey.ts";
 import { Chacha20Poly1305Key } from "./aeadKeys/chacha20Poly1305Key.ts";
 import { ExporterContext } from "./exporterContext.ts";
-import { Aead } from "./identifiers.ts";
+import { AeadId } from "./identifiers.ts";
 import { i2Osp, xor } from "./utils/misc.ts";
 
 import * as consts from "./consts.ts";
@@ -14,7 +14,7 @@ import * as errors from "./errors.ts";
 
 export class EncryptionContext extends ExporterContext {
   // AEAD id.
-  protected _aead: Aead;
+  protected _aead: AeadId;
   // The length in bytes of a key for the algorithm.
   protected _nK: number;
   // The length in bytes of a nonce for the algorithm.
@@ -37,23 +37,23 @@ export class EncryptionContext extends ExporterContext {
     }
     this._aead = params.aead;
     switch (this._aead) {
-      case Aead.Aes128Gcm:
+      case AeadId.Aes128Gcm:
         this._nK = 16;
         this._nN = 12;
         this._nT = 16;
         break;
-      case Aead.Aes256Gcm:
+      case AeadId.Aes256Gcm:
         this._nK = 32;
         this._nN = 12;
         this._nT = 16;
         break;
-      case Aead.Chacha20Poly1305:
+      case AeadId.Chacha20Poly1305:
         this._nK = 32;
         this._nN = 12;
         this._nT = 16;
         break;
       default:
-        // case Aead.ExportOnly:
+        // case AeadId.ExportOnly:
         this._nK = 0;
         this._nN = 0;
         this._nT = 0;
@@ -109,15 +109,15 @@ export class EncryptionContext extends ExporterContext {
 }
 
 export function createAeadKey(
-  aead: Aead,
+  aead: AeadId,
   key: ArrayBuffer,
 ): AeadKey {
   switch (aead) {
-    case Aead.Aes128Gcm:
+    case AeadId.Aes128Gcm:
       return new Aes128GcmKey(key);
-    case Aead.Aes256Gcm:
+    case AeadId.Aes256Gcm:
       return new Aes256GcmKey(key);
-    case Aead.Chacha20Poly1305:
+    case AeadId.Chacha20Poly1305:
       return new Chacha20Poly1305Key(key);
     default:
       throw new Error("Invalid or unsupported AEAD id");

@@ -17,7 +17,7 @@ import {
   SenderExporterContext,
 } from "./exporterContext.ts";
 import { createAeadKey } from "./encryptionContext.ts";
-import { Aead, Kdf, Kem, Mode } from "./identifiers.ts";
+import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "./kdfs/hkdf.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
@@ -51,11 +51,11 @@ import * as errors from "./errors.ts";
  */
 export class CipherSuite {
   /** The KEM id of the cipher suite. */
-  public readonly kem: Kem;
+  public readonly kem: KemId;
   /** The KDF id of the cipher suite. */
-  public readonly kdf: Kdf;
+  public readonly kdf: KdfId;
   /** The AEAD id of the cipher suite. */
-  public readonly aead: Aead;
+  public readonly aead: AeadId;
 
   /** The length in bytes of a KEM shared secret produced by this KEM (Nsecret). */
   public readonly kemSecretSize: number = 0;
@@ -86,37 +86,37 @@ export class CipherSuite {
    */
   constructor(params: CipherSuiteParams) {
     switch (params.kem) {
-      case Kem.DhkemP256HkdfSha256:
+      case KemId.DhkemP256HkdfSha256:
         this.kemSecretSize = 32;
         this.kemEncSize = 65;
         this.kemPublicKeySize = 65;
         this.kemPrivateKeySize = 32;
         break;
-      case Kem.DhkemP384HkdfSha384:
+      case KemId.DhkemP384HkdfSha384:
         this.kemSecretSize = 48;
         this.kemEncSize = 97;
         this.kemPublicKeySize = 97;
         this.kemPrivateKeySize = 48;
         break;
-      case Kem.DhkemP521HkdfSha512:
+      case KemId.DhkemP521HkdfSha512:
         this.kemSecretSize = 64;
         this.kemEncSize = 133;
         this.kemPublicKeySize = 133;
         this.kemPrivateKeySize = 66;
         break;
-      case Kem.DhkemSecp256K1HkdfSha256:
+      case KemId.DhkemSecp256K1HkdfSha256:
         this.kemSecretSize = 32;
         this.kemEncSize = 33;
         this.kemPublicKeySize = 33;
         this.kemPrivateKeySize = 32;
         break;
-      case Kem.DhkemX25519HkdfSha256:
+      case KemId.DhkemX25519HkdfSha256:
         this.kemSecretSize = 32;
         this.kemEncSize = 32;
         this.kemPublicKeySize = 32;
         this.kemPrivateKeySize = 32;
         break;
-      case Kem.DhkemX448HkdfSha512:
+      case KemId.DhkemX448HkdfSha512:
         this.kemSecretSize = 64;
         this.kemEncSize = 56;
         this.kemPublicKeySize = 56;
@@ -128,9 +128,9 @@ export class CipherSuite {
     this.kem = params.kem;
 
     switch (params.kdf) {
-      case Kdf.HkdfSha256:
-      case Kdf.HkdfSha384:
-      case Kdf.HkdfSha512:
+      case KdfId.HkdfSha256:
+      case KdfId.HkdfSha384:
+      case KdfId.HkdfSha512:
         break;
       default:
         throw new errors.InvalidParamError("Invalid KDF id");
@@ -138,22 +138,22 @@ export class CipherSuite {
     this.kdf = params.kdf;
 
     switch (params.aead) {
-      case Aead.Aes128Gcm:
+      case AeadId.Aes128Gcm:
         this.aeadKeySize = 16;
         this.aeadNonceSize = 12;
         this.aeadTagSize = 16;
         break;
-      case Aead.Aes256Gcm:
+      case AeadId.Aes256Gcm:
         this.aeadKeySize = 32;
         this.aeadNonceSize = 12;
         this.aeadTagSize = 16;
         break;
-      case Aead.Chacha20Poly1305:
+      case AeadId.Chacha20Poly1305:
         this.aeadKeySize = 32;
         this.aeadNonceSize = 12;
         this.aeadTagSize = 16;
         break;
-      case Aead.ExportOnly:
+      case AeadId.ExportOnly:
         break;
       default:
         throw new errors.InvalidParamError("Invalid AEAD id");
@@ -427,7 +427,7 @@ export class CipherSuite {
       kdf.hashSize,
     );
 
-    if (this.aead === Aead.ExportOnly) {
+    if (this.aead === AeadId.ExportOnly) {
       return {
         params: {
           aead: this.aead,
@@ -538,19 +538,19 @@ export class CipherSuite {
   private createKemContext(): KemInterface {
     let ret: KemInterface;
     switch (this.kem) {
-      case Kem.DhkemP256HkdfSha256:
+      case KemId.DhkemP256HkdfSha256:
         ret = new DhkemP256HkdfSha256();
         break;
-      case Kem.DhkemP384HkdfSha384:
+      case KemId.DhkemP384HkdfSha384:
         ret = new DhkemP384HkdfSha384();
         break;
-      case Kem.DhkemP521HkdfSha512:
+      case KemId.DhkemP521HkdfSha512:
         ret = new DhkemP521HkdfSha512();
         break;
-      case Kem.DhkemX25519HkdfSha256:
+      case KemId.DhkemX25519HkdfSha256:
         ret = new DhkemX25519HkdfSha256();
         break;
-      case Kem.DhkemX448HkdfSha512:
+      case KemId.DhkemX448HkdfSha512:
         ret = new DhkemX448HkdfSha512();
         break;
       default:
@@ -564,14 +564,14 @@ export class CipherSuite {
   private createKdfContext(): KdfInterface {
     let ret: KdfInterface;
     switch (this.kdf) {
-      case Kdf.HkdfSha256:
+      case KdfId.HkdfSha256:
         ret = new HkdfSha256();
         break;
-      case Kdf.HkdfSha384:
+      case KdfId.HkdfSha384:
         ret = new HkdfSha384();
         break;
       default:
-        // case Kdf.HkdfSha512:
+        // case KdfId.HkdfSha512:
         ret = new HkdfSha512();
         break;
     }

@@ -1,11 +1,11 @@
-import type { Aead } from "../identifiers.ts";
+import type { AeadId } from "../identifiers.ts";
 
 /**
  * The AEAD parameters for building a encryption context.
  */
 export interface AeadParams {
   /** The Aead indentifier. */
-  aead: Aead;
+  aead: AeadId;
 
   /** A secret used for the secret export interface. */
   exporterSecret: ArrayBuffer;
