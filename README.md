@@ -103,6 +103,7 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
 - **Deno**: 1.x (1.15-)
 - **Cloudflare Workers**
+- **bun**
 
 ## Warnings and Restrictions
 
