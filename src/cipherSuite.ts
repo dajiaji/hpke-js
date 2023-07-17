@@ -242,8 +242,8 @@ export class CipherSuite {
    * @throws {@link DeserializeError}
    */
   public async importKey(
-    format: "raw",
-    key: ArrayBuffer,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
     isPublic = true,
   ): Promise<CryptoKey> {
     await this.setup();

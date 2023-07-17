@@ -42,8 +42,8 @@ export interface KemInterface {
    * Imports a key for the KEM.
    */
   importKey(
-    format: "raw",
-    key: ArrayBuffer,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey>;
 
