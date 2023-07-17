@@ -124,7 +124,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.18.5";
+  import * as hpke from "https://esm.sh/hpke-js@0.19.0";
   // ...
 </script>
 
@@ -140,7 +140,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.18.5/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.19.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -165,7 +165,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.18.5/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@0.19.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -176,15 +176,15 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.18.5/es2022/hpke-js.js
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.19.0/es2022/hpke-js.js
 # if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.18.5/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.19.0/es2022/hpke.min.js
 ```
 
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@0.18.5/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@0.19.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -200,8 +200,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.18.5";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.18.5";
+      // import * as hpke from "https://esm.sh/hpke-js@0.19.0";
+      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.19.0";
 
       globalThis.doHpke = async () => {
 
@@ -217,10 +217,41 @@ Browsers:
           recipientPublicKey: rkp.publicKey
         });
       
+        // A JWK-formatted recipient public key can also be used.
+        // const jwkPkR = {
+        //   kty: "EC",
+        //   crv: "P-256",
+        //   kid: "P-256-01",
+        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        //   key_ops: [],
+        // };
+        // const pkR = await suite.importKey("jwk", jwkPkR, true);
+        // const sender = await suite.createSenderContext({
+        //   recipientPublicKey: pkR,
+        // });
+
         const recipient = await suite.createRecipientContext({
           recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
           enc: sender.enc,
         });
+
+        // A JWK-formatted recipient private key can also be used.
+        // const jwkSkR = {
+        //   kty: "EC",
+        //   crv: "P-256",
+        //   kid: "P-256-01",
+        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+        //   key_ops: ["deriveBits"],
+        // };
+        // const skR = await suite.importKey("jwk", jwkSkR, false);
+        // const recipient = await suite.createRecipientContext({
+        //   recipientKey: skR,
+        //   enc: sender.enc,
+        // });
+
       
         // encrypt
         const ct = await sender.seal(new TextEncoder().encode("hello world!"));
@@ -286,7 +317,7 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.18.5/mod.ts";
+import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.19.0/mod.ts";
 
 async function doHpke() {
   // setup

@@ -1,5 +1,15 @@
 # Changes
 
+## Version 0.19.0
+
+Released 2023-07-17
+
+- [(#183) Add support for importKey('jwk').](https://github.com/dajiaji/hpke-js/pull/183)
+- [(#181) Adopt noble-ciphers insterad of standardlib for ChaCha20/Poly1305.](https://github.com/dajiaji/hpke-js/pull/181)
+- [(#178) Merge import-map into deno.json.](https://github.com/dajiaji/hpke-js/pull/178)
+- Update dev dependencies:
+  - [(#180) Bump @playwright/test to 1.36.1.](https://github.com/dajiaji/hpke-js/pull/180)
+
 ## Version 0.18.5
 
 Released 2023-06-13
