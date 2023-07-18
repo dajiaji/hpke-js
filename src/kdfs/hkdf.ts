@@ -5,33 +5,31 @@ import { sha384, sha512 } from "npm:@noble/hashes@1.3.1/sha512";
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { Kdf } from "../identifiers.ts";
-import { WebCrypto } from "../webCrypto.ts";
+import { KdfAlgorithm } from "../algorithm.ts";
 
 import * as consts from "../consts.ts";
 
-export class Hkdf extends WebCrypto implements KdfInterface {
+export class Hkdf extends KdfAlgorithm implements KdfInterface {
   public readonly id: Kdf = Kdf.HkdfSha256;
   public readonly hashSize: number = 0;
-  protected readonly suiteId: Uint8Array;
   protected readonly algHash: HmacKeyGenParams = {
     name: "HMAC",
     hash: "SHA-256",
     length: 256,
   };
 
-  constructor(api: SubtleCrypto, suiteId: Uint8Array) {
-    super(api);
-    this.suiteId = suiteId;
+  constructor() {
+    super();
   }
 
   public buildLabeledIkm(label: Uint8Array, ikm: Uint8Array): Uint8Array {
     const ret = new Uint8Array(
-      7 + this.suiteId.byteLength + label.byteLength + ikm.byteLength,
+      7 + this._suiteId.byteLength + label.byteLength + ikm.byteLength,
     );
     ret.set(consts.HPKE_VERSION, 0);
-    ret.set(this.suiteId, 7);
-    ret.set(label, 7 + this.suiteId.byteLength);
-    ret.set(ikm, 7 + this.suiteId.byteLength + label.byteLength);
+    ret.set(this._suiteId, 7);
+    ret.set(label, 7 + this._suiteId.byteLength);
+    ret.set(ikm, 7 + this._suiteId.byteLength + label.byteLength);
     return ret;
   }
 
@@ -41,13 +39,13 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     len: number,
   ): Uint8Array {
     const ret = new Uint8Array(
-      9 + this.suiteId.byteLength + label.byteLength + info.byteLength,
+      9 + this._suiteId.byteLength + label.byteLength + info.byteLength,
     );
     ret.set(new Uint8Array([0, len]), 0);
     ret.set(consts.HPKE_VERSION, 2);
-    ret.set(this.suiteId, 9);
-    ret.set(label, 9 + this.suiteId.byteLength);
-    ret.set(info, 9 + this.suiteId.byteLength + label.byteLength);
+    ret.set(this._suiteId, 9);
+    ret.set(label, 9 + this._suiteId.byteLength);
+    ret.set(info, 9 + this._suiteId.byteLength + label.byteLength);
     return ret;
   }
 
@@ -55,6 +53,7 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
+    this.checkInit();
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this.hashSize);
     }
@@ -83,10 +82,16 @@ export class Hkdf extends WebCrypto implements KdfInterface {
           );
       }
     }
-    const key = await this._api.importKey("raw", salt, this.algHash, false, [
-      "sign",
-    ]);
-    return await this._api.sign("HMAC", key, ikm);
+    const key = await (this._api as SubtleCrypto).importKey(
+      "raw",
+      salt,
+      this.algHash,
+      false,
+      [
+        "sign",
+      ],
+    );
+    return await (this._api as SubtleCrypto).sign("HMAC", key, ikm);
   }
 
   public async expand(
@@ -94,9 +99,16 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     info: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    const key = await this._api.importKey("raw", prk, this.algHash, false, [
-      "sign",
-    ]);
+    this.checkInit();
+    const key = await (this._api as SubtleCrypto).importKey(
+      "raw",
+      prk,
+      this.algHash,
+      false,
+      [
+        "sign",
+      ],
+    );
 
     const okm = new ArrayBuffer(len);
     const p = new Uint8Array(okm);
@@ -115,7 +127,7 @@ export class Hkdf extends WebCrypto implements KdfInterface {
       tmp.set(mid, prev.length);
       tmp.set(tail, prev.length + mid.length);
       prev = new Uint8Array(
-        await this._api.sign(
+        await (this._api as SubtleCrypto).sign(
           "HMAC",
           key,
           tmp.slice(0, prev.length + mid.length + 1),
@@ -138,14 +150,15 @@ export class Hkdf extends WebCrypto implements KdfInterface {
     info: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    const baseKey = await this._api.importKey(
+    this.checkInit();
+    const baseKey = await (this._api as SubtleCrypto).importKey(
       "raw",
       ikm,
       "HKDF",
       false,
       consts.KEM_USAGES,
     );
-    return await this._api.deriveBits(
+    return await (this._api as SubtleCrypto).deriveBits(
       {
         name: "HKDF",
         hash: this.algHash.hash,

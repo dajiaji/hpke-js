@@ -60,7 +60,8 @@ export class EncryptionContext extends ExporterContext {
         break;
     }
 
-    const key = createAeadKey(this._aead, params.key, this._api);
+    const key = createAeadKey(this._aead, params.key);
+    key.init(this._api);
 
     this._f = {
       key: key,
@@ -97,7 +98,8 @@ export class EncryptionContext extends ExporterContext {
         await this.export(nonceSeed, this._nN),
       );
       const key = await this.export(keySeed, this._nK);
-      this._r.key = createAeadKey(this._aead, key, this._api);
+      this._r.key = createAeadKey(this._aead, key);
+      this._r.key.init(this._api);
       this._r.seq = 0;
     } catch (e: unknown) {
       this._r.baseNonce = consts.EMPTY;
@@ -109,13 +111,12 @@ export class EncryptionContext extends ExporterContext {
 export function createAeadKey(
   aead: Aead,
   key: ArrayBuffer,
-  api: SubtleCrypto,
 ): AeadKey {
   switch (aead) {
     case Aead.Aes128Gcm:
-      return new Aes128GcmKey(key, api);
+      return new Aes128GcmKey(key);
     case Aead.Aes256Gcm:
-      return new Aes256GcmKey(key, api);
+      return new Aes256GcmKey(key);
     case Aead.Chacha20Poly1305:
       return new Chacha20Poly1305Key(key);
     default:

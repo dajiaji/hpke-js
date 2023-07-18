@@ -6,15 +6,19 @@ import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts";
-import { WebCrypto } from "../src/webCrypto.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 
 import * as errors from "../src/errors.ts";
 
 import { hexStringToBytes, kemToKeyGenAlgorithm } from "./utils.ts";
 
-export class ConformanceTester extends WebCrypto {
+export class ConformanceTester {
+  protected _api: SubtleCrypto;
   private _count = 0;
+
+  constructor(api: SubtleCrypto) {
+    this._api = api;
+  }
 
   public count(): number {
     return this._count;

@@ -18,6 +18,8 @@ export interface KemInterface {
   /** The length in bytes of an encoded private key for this KEM (Nsk). */
   readonly privateKeySize: number;
 
+  init(api: SubtleCrypto): void;
+
   /**
    * Generates a key pair.
    */

@@ -1,4 +1,6 @@
 export interface KemPrimitives {
+  init(api: SubtleCrypto): void;
+
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;

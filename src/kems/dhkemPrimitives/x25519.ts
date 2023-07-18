@@ -3,6 +3,7 @@ import { ed25519, x25519 } from "npm:@noble/curves@1.1.0/ed25519";
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
+import { Algorithm } from "../../algorithm.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 import * as consts from "../../consts.ts";
@@ -10,12 +11,13 @@ import { base64UrlToBytes } from "../../utils/misc.ts";
 
 const ALG_NAME = "X25519";
 
-export class X25519 implements KemPrimitives {
+export class X25519 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
 
   constructor(hkdf: KdfInterface) {
+    super();
     this._hkdf = hkdf;
     this._nPk = 32;
     this._nSk = 32;

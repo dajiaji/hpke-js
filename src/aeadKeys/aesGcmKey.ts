@@ -1,20 +1,21 @@
 import type { AeadKey } from "../interfaces/aeadKey.ts";
 
+import { Algorithm } from "../algorithm.ts";
 import { Aead } from "../identifiers.ts";
 import * as consts from "../consts.ts";
 
-export class AesGcmKey implements AeadKey {
+export class AesGcmKey extends Algorithm implements AeadKey {
   public readonly id: Aead = Aead.Aes128Gcm;
   public readonly keySize: number = 0;
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;
   private _rawKey: ArrayBuffer;
   private _key: CryptoKey | undefined = undefined;
-  private _api: SubtleCrypto;
+  // private _api: SubtleCrypto;
 
-  public constructor(key: ArrayBuffer, api: SubtleCrypto) {
+  public constructor(key: ArrayBuffer) {
+    super();
     this._rawKey = key;
-    this._api = api;
   }
 
   public async seal(
@@ -22,6 +23,7 @@ export class AesGcmKey implements AeadKey {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
+    this.checkInit();
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
@@ -31,7 +33,11 @@ export class AesGcmKey implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    const ct: ArrayBuffer = await this._api.encrypt(alg, this._key, data);
+    const ct: ArrayBuffer = await (this._api as SubtleCrypto).encrypt(
+      alg,
+      this._key,
+      data,
+    );
     return ct;
   }
 
@@ -40,6 +46,7 @@ export class AesGcmKey implements AeadKey {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
+    this.checkInit();
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
@@ -49,12 +56,16 @@ export class AesGcmKey implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    const pt: ArrayBuffer = await this._api.decrypt(alg, this._key, data);
+    const pt: ArrayBuffer = await (this._api as SubtleCrypto).decrypt(
+      alg,
+      this._key,
+      data,
+    );
     return pt;
   }
 
   private async importKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._api.importKey(
+    return await (this._api as SubtleCrypto).importKey(
       "raw",
       key,
       { name: "AES-GCM" },
