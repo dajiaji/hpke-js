@@ -1,5 +1,13 @@
 # Changes
 
+## Version 0.20.0
+
+Released 2023-07-19
+
+- [(#187) Use noble/curves/secp256k1 instead of noble/secp256k1.](https://github.com/dajiaji/hpke-js/pull/187)
+- [(#186) Update deno.json not to use 'files'.](https://github.com/dajiaji/hpke-js/pull/186)
+- [(#185) Refactor KEM/KDF/AEAD constructor.](https://github.com/dajiaji/hpke-js/pull/185)
+
 ## Version 0.19.0
 
 Released 2023-07-17
