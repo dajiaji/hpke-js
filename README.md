@@ -73,7 +73,7 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
   until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
   implemented.
 - \*3: NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION using
-  [@noble/secp256k1](https://github.com/paulmillr/secp256k1).
+  [@noble/curves/secp256k1](https://github.com/paulmillr/noble-curves).
 
 ### Key Derivation Functions (KDFs)
 
@@ -100,9 +100,10 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 - **Web Browser**: [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/)
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
-- **Node.js**: 16.x, 17.x, 18.x, 19.x
+- **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
 - **Deno**: 1.x (1.15-)
 - **Cloudflare Workers**
+- **bun**
 
 ## Warnings and Restrictions
 
