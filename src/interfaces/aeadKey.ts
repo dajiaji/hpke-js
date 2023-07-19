@@ -1,11 +1,11 @@
-import { Aead } from "../identifiers.ts";
+import { AeadId } from "../identifiers.ts";
 
 /**
  * The AEAD interface.
  */
 export interface AeadKey {
   /** The AEAD identifier. */
-  readonly id: Aead;
+  readonly id: AeadId;
   /** The length in bytes of an AEAD key (Nk). */
   readonly keySize: number;
   /** The length in bytes of an AEAD nonce (Nn). */

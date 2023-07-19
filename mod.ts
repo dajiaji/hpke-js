@@ -14,5 +14,5 @@ export type { SenderContextParams } from "./src/interfaces/senderContextParams.t
 
 export * from "./src/errors.ts";
 
-export { Aead, Kdf, Kem } from "./src/identifiers.ts";
+export { Aead, AeadId, Kdf, KdfId, Kem, KemId } from "./src/identifiers.ts";
 export { CipherSuite } from "./src/cipherSuite.ts";

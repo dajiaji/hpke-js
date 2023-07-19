@@ -3,7 +3,7 @@ import { assertEquals } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
-import { Aead, Kdf, Kem } from "../src/identifiers.ts";
+import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 
@@ -17,9 +17,9 @@ describe("extract/expand", () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(Kem.DhkemP256HkdfSha256, 2), 4);
-      suiteId.set(i2Osp(Kdf.HkdfSha256, 2), 6);
-      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha256();
       kdf.init(api, suiteId);
 
@@ -44,9 +44,9 @@ describe("extract/expand", () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
-      suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
-      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      suiteId.set(i2Osp(KemId.DhkemP384HkdfSha384, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha384, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha384();
       kdf.init(api, suiteId);
 
@@ -71,9 +71,9 @@ describe("extract/expand", () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
-      suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
-      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      suiteId.set(i2Osp(KemId.DhkemP521HkdfSha512, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha512, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha512();
       kdf.init(api, suiteId);
 
@@ -97,9 +97,9 @@ describe("extract/expand", () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(Kem.DhkemP521HkdfSha512, 2), 4);
-      suiteId.set(i2Osp(Kdf.HkdfSha512, 2), 6);
-      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      suiteId.set(i2Osp(KemId.DhkemP521HkdfSha512, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha512, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha512();
       kdf.init(api, suiteId);
 
@@ -124,9 +124,9 @@ describe("extract/expand", () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
       const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(Kem.DhkemP384HkdfSha384, 2), 4);
-      suiteId.set(i2Osp(Kdf.HkdfSha384, 2), 6);
-      suiteId.set(i2Osp(Aead.Aes128Gcm, 2), 8);
+      suiteId.set(i2Osp(KemId.DhkemP384HkdfSha384, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha384, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha384();
       kdf.init(api, suiteId);
 

@@ -11,7 +11,7 @@ import {
   DhkemX25519HkdfSha256,
   DhkemX448HkdfSha512,
 } from "../src/kems/dhkem.ts";
-import { Kem } from "../src/identifiers.ts";
+import { KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 
 import * as errors from "../src/errors.ts";
@@ -31,7 +31,7 @@ describe("constructor", () => {
       );
       dhkemP256.init(api);
       assertEquals(typeof dhkemP256, "object");
-      assertEquals(dhkemP256.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(dhkemP256.id, KemId.DhkemP256HkdfSha256);
       assertEquals(dhkemP256.secretSize, 32);
       assertEquals(dhkemP256.encSize, 65);
       assertEquals(dhkemP256.publicKeySize, 65);
@@ -40,7 +40,7 @@ describe("constructor", () => {
       const dhkemP384 = new DhkemP384HkdfSha384();
       dhkemP384.init(api);
       assertEquals(typeof dhkemP384, "object");
-      assertEquals(dhkemP384.id, Kem.DhkemP384HkdfSha384);
+      assertEquals(dhkemP384.id, KemId.DhkemP384HkdfSha384);
       assertEquals(dhkemP384.secretSize, 48);
       assertEquals(dhkemP384.encSize, 97);
       assertEquals(dhkemP384.publicKeySize, 97);
@@ -49,7 +49,7 @@ describe("constructor", () => {
       const dhkemP521 = new DhkemP521HkdfSha512();
       dhkemP521.init(api);
       assertEquals(typeof dhkemP521, "object");
-      assertEquals(dhkemP521.id, Kem.DhkemP521HkdfSha512);
+      assertEquals(dhkemP521.id, KemId.DhkemP521HkdfSha512);
       assertEquals(dhkemP521.secretSize, 64);
       assertEquals(dhkemP521.encSize, 133);
       assertEquals(dhkemP521.publicKeySize, 133);
@@ -58,7 +58,7 @@ describe("constructor", () => {
       const dhkemSecp256K1 = new DhkemSecp256K1HkdfSha256();
       dhkemSecp256K1.init(api);
       assertEquals(typeof dhkemP256, "object");
-      assertEquals(dhkemSecp256K1.id, Kem.DhkemSecp256K1HkdfSha256);
+      assertEquals(dhkemSecp256K1.id, KemId.DhkemSecp256K1HkdfSha256);
       assertEquals(dhkemSecp256K1.secretSize, 32);
       assertEquals(dhkemSecp256K1.encSize, 65);
       assertEquals(dhkemSecp256K1.publicKeySize, 65);
@@ -67,7 +67,7 @@ describe("constructor", () => {
       const dhkemX25519 = new DhkemX25519HkdfSha256();
       dhkemX25519.init(api);
       assertEquals(typeof dhkemX25519, "object");
-      assertEquals(dhkemX25519.id, Kem.DhkemX25519HkdfSha256);
+      assertEquals(dhkemX25519.id, KemId.DhkemX25519HkdfSha256);
       assertEquals(dhkemX25519.secretSize, 32);
       assertEquals(dhkemX25519.encSize, 32);
       assertEquals(dhkemX25519.publicKeySize, 32);
@@ -76,7 +76,7 @@ describe("constructor", () => {
       const dhkemX448 = new DhkemX448HkdfSha512();
       dhkemX448.init(api);
       assertEquals(typeof dhkemX448, "object");
-      assertEquals(dhkemX448.id, Kem.DhkemX448HkdfSha512);
+      assertEquals(dhkemX448.id, KemId.DhkemX448HkdfSha512);
       assertEquals(dhkemX448.secretSize, 64);
       assertEquals(dhkemX448.encSize, 56);
       assertEquals(dhkemX448.publicKeySize, 56);

@@ -1,4 +1,4 @@
-import type { Aead, Kdf, Kem } from "../src/identifiers.ts";
+import type { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 
 interface TestVectorEncryption {
   aad: string;
@@ -15,9 +15,9 @@ interface TestVectorExport {
 
 export interface TestVector {
   mode: number;
-  kem_id: Kem;
-  kdf_id: Kdf;
-  aead_id: Aead;
+  kem_id: KemId;
+  kdf_id: KdfId;
+  aead_id: AeadId;
   psk_id?: string;
   psk?: string;
   info: string;

@@ -5,7 +5,7 @@ import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { Aead, Kdf, Kem } from "../src/identifiers.ts";
+import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 
 import * as errors from "../src/errors.ts";
@@ -129,19 +129,19 @@ export class ConformanceTester {
   }
 
   public async testValidEcPublicKey(crv: string, pk: string) {
-    let kemId: Kem;
+    let kemId: KemId;
     let nPk: number;
     switch (crv) {
       case "P-256":
-        kemId = Kem.DhkemP256HkdfSha256;
+        kemId = KemId.DhkemP256HkdfSha256;
         nPk = 65;
         break;
       case "P-384":
-        kemId = Kem.DhkemP384HkdfSha384;
+        kemId = KemId.DhkemP384HkdfSha384;
         nPk = 97;
         break;
       case "P-521":
-        kemId = Kem.DhkemP521HkdfSha512;
+        kemId = KemId.DhkemP521HkdfSha512;
         nPk = 133;
         break;
       default:
@@ -150,8 +150,8 @@ export class ConformanceTester {
 
     const suite = new CipherSuite({
       kem: kemId,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 
@@ -186,16 +186,16 @@ export class ConformanceTester {
   }
 
   public async testInvalidEcPublicKey(crv: string, pk: string) {
-    let kemId: Kem;
+    let kemId: KemId;
     switch (crv) {
       case "P-256":
-        kemId = Kem.DhkemP256HkdfSha256;
+        kemId = KemId.DhkemP256HkdfSha256;
         break;
       case "P-384":
-        kemId = Kem.DhkemP384HkdfSha384;
+        kemId = KemId.DhkemP384HkdfSha384;
         break;
       case "P-521":
-        kemId = Kem.DhkemP521HkdfSha512;
+        kemId = KemId.DhkemP521HkdfSha512;
         break;
       default:
         throw new Error("Invalid crv");
@@ -203,8 +203,8 @@ export class ConformanceTester {
 
     const suite = new CipherSuite({
       kem: kemId,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 
@@ -234,9 +234,9 @@ export class ConformanceTester {
 
   public async testValidX25519PublicKey(pk: string) {
     const suite = new CipherSuite({
-      kem: Kem.DhkemX25519HkdfSha256,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kem: KemId.DhkemX25519HkdfSha256,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 
@@ -257,9 +257,9 @@ export class ConformanceTester {
 
   public async testInvalidX25519PublicKey(pk: string) {
     const suite = new CipherSuite({
-      kem: Kem.DhkemX25519HkdfSha256,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kem: KemId.DhkemX25519HkdfSha256,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 
@@ -276,9 +276,9 @@ export class ConformanceTester {
 
   public async testValidX448PublicKey(pk: string) {
     const suite = new CipherSuite({
-      kem: Kem.DhkemX448HkdfSha512,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kem: KemId.DhkemX448HkdfSha512,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 
@@ -299,9 +299,9 @@ export class ConformanceTester {
 
   public async testInvalidX448PublicKey(pk: string) {
     const suite = new CipherSuite({
-      kem: Kem.DhkemX448HkdfSha512,
-      kdf: Kdf.HkdfSha256,
-      aead: Aead.Aes128Gcm,
+      kem: KemId.DhkemX448HkdfSha512,
+      kdf: KdfId.HkdfSha256,
+      aead: AeadId.Aes128Gcm,
     });
     const rkp = await suite.generateKeyPair();
 

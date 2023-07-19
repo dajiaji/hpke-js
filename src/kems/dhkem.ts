@@ -9,7 +9,7 @@ import { Ec } from "./dhkemPrimitives/ec.ts";
 import { Secp256K1 } from "./dhkemPrimitives/secp256k1.ts";
 import { X25519 } from "./dhkemPrimitives/x25519.ts";
 import { X448 } from "./dhkemPrimitives/x448.ts";
-import { Kem } from "../identifiers.ts";
+import { KemId } from "../identifiers.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../kdfs/hkdf.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
@@ -17,7 +17,7 @@ import * as consts from "../consts.ts";
 import * as errors from "../errors.ts";
 
 export class Dhkem extends Algorithm implements KemInterface {
-  public readonly id: Kem = Kem.DhkemP256HkdfSha256;
+  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;
@@ -209,7 +209,7 @@ export class Dhkem extends Algorithm implements KemInterface {
 }
 
 export class DhkemP256HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: Kem = Kem.DhkemP256HkdfSha256;
+  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 65;
   public readonly publicKeySize: number = 65;
@@ -217,13 +217,13 @@ export class DhkemP256HkdfSha256 extends Dhkem implements KemInterface {
 
   constructor() {
     const kdf = new HkdfSha256();
-    const prim = new Ec(Kem.DhkemP256HkdfSha256, kdf);
+    const prim = new Ec(KemId.DhkemP256HkdfSha256, kdf);
     super(prim, kdf);
   }
 }
 
 export class DhkemP384HkdfSha384 extends Dhkem implements KemInterface {
-  public readonly id: Kem = Kem.DhkemP384HkdfSha384;
+  public readonly id: KemId = KemId.DhkemP384HkdfSha384;
   public readonly secretSize: number = 48;
   public readonly encSize: number = 97;
   public readonly publicKeySize: number = 97;
@@ -231,13 +231,13 @@ export class DhkemP384HkdfSha384 extends Dhkem implements KemInterface {
 
   constructor() {
     const kdf = new HkdfSha384();
-    const prim = new Ec(Kem.DhkemP384HkdfSha384, kdf);
+    const prim = new Ec(KemId.DhkemP384HkdfSha384, kdf);
     super(prim, kdf);
   }
 }
 
 export class DhkemP521HkdfSha512 extends Dhkem implements KemInterface {
-  public readonly id: Kem = Kem.DhkemP521HkdfSha512;
+  public readonly id: KemId = KemId.DhkemP521HkdfSha512;
   public readonly secretSize: number = 64;
   public readonly encSize: number = 133;
   public readonly publicKeySize: number = 133;
@@ -245,13 +245,13 @@ export class DhkemP521HkdfSha512 extends Dhkem implements KemInterface {
 
   constructor() {
     const kdf = new HkdfSha512();
-    const prim = new Ec(Kem.DhkemP521HkdfSha512, kdf);
+    const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
     super(prim, kdf);
   }
 }
 
 export class DhkemSecp256K1HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: Kem = Kem.DhkemSecp256K1HkdfSha256;
+  public readonly id: KemId = KemId.DhkemSecp256K1HkdfSha256;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 65;
   public readonly publicKeySize: number = 65;
@@ -265,7 +265,7 @@ export class DhkemSecp256K1HkdfSha256 extends Dhkem implements KemInterface {
 }
 
 export class DhkemX25519HkdfSha256 extends Dhkem {
-  public readonly id: Kem = Kem.DhkemX25519HkdfSha256;
+  public readonly id: KemId = KemId.DhkemX25519HkdfSha256;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 32;
   public readonly publicKeySize: number = 32;
@@ -279,7 +279,7 @@ export class DhkemX25519HkdfSha256 extends Dhkem {
 }
 
 export class DhkemX448HkdfSha512 extends Dhkem implements KemInterface {
-  public readonly id: Kem = Kem.DhkemX448HkdfSha512;
+  public readonly id: KemId = KemId.DhkemX448HkdfSha512;
   public readonly secretSize: number = 64;
   public readonly encSize: number = 56;
   public readonly publicKeySize: number = 56;

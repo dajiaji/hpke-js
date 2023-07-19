@@ -1,4 +1,4 @@
-import { Kem } from "../src/identifiers.ts";
+import { KemId } from "../src/identifiers.ts";
 import { isDeno } from "../src/utils/misc.ts";
 
 export function testVectorPath(): string {
@@ -28,25 +28,25 @@ export function bytesToBase64Url(v: Uint8Array): string {
     .replace(/=*$/g, "");
 }
 
-export function kemToKeyGenAlgorithm(kem: Kem): KeyAlgorithm {
+export function kemToKeyGenAlgorithm(kem: KemId): KeyAlgorithm {
   switch (kem) {
-    case Kem.DhkemP256HkdfSha256:
+    case KemId.DhkemP256HkdfSha256:
       return {
         name: "ECDH",
         namedCurve: "P-256",
       } as KeyAlgorithm;
-    case Kem.DhkemP384HkdfSha384:
+    case KemId.DhkemP384HkdfSha384:
       return {
         name: "ECDH",
         namedCurve: "P-384",
       } as KeyAlgorithm;
-    case Kem.DhkemP521HkdfSha512:
+    case KemId.DhkemP521HkdfSha512:
       return {
         name: "ECDH",
         namedCurve: "P-521",
       } as KeyAlgorithm;
     default:
-      // case Kem.DhkemX25519HkdfSha256
+      // case KemId.DhkemX25519HkdfSha256
       return {
         name: "X25519",
       };

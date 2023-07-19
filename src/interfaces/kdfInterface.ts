@@ -1,11 +1,11 @@
-import { Kdf } from "../identifiers.ts";
+import { KdfId } from "../identifiers.ts";
 
 /**
  * The KDF interface.
  */
 export interface KdfInterface {
   /** The KDF identifier. */
-  readonly id: Kdf;
+  readonly id: KdfId;
   /** The output size of the extract() function in bytes (Nh). */
   readonly hashSize: number;
 

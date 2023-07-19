@@ -2,7 +2,7 @@ import { assertEquals, assertRejects } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
+import { Aead, Kdf, Kem } from "../src/identifiers.ts"; // deprecated identifiers as the test target.
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
 import { loadCrypto } from "../src/webCrypto.ts";
@@ -12,30 +12,30 @@ import * as errors from "../src/errors.ts";
 
 import { hexStringToBytes } from "./utils.ts";
 
-describe("CipherSuite", () => {
+describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
   describe("constructor with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should have ciphersuites", async () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemX25519HkdfSha256);
       assertEquals(suite.kem, 0x0020);
       assertEquals(suite.kemSecretSize, 32);
       assertEquals(suite.kemEncSize, 32);
       assertEquals(suite.kemPublicKeySize, 32);
       assertEquals(suite.kemPrivateKeySize, 32);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
+      assertEquals(suite.aead, Aead.Aes128Gcm);
       assertEquals(suite.aead, 0x0001);
 
       const kemContext = await suite.kemContext();
-      assertEquals(kemContext.id, KemId.DhkemX25519HkdfSha256);
+      assertEquals(kemContext.id, Kem.DhkemX25519HkdfSha256);
       assertEquals(kemContext.id, 0x0020);
       assertEquals(kemContext.secretSize, 32);
       assertEquals(kemContext.encSize, 32);
@@ -48,17 +48,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemX25519HkdfSha256/HkdfSha256/ChaCha20Poly1305", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Chacha20Poly1305,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Chacha20Poly1305,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemX25519HkdfSha256);
       assertEquals(suite.kem, 0x0020);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Chacha20Poly1305);
+      assertEquals(suite.aead, Aead.Chacha20Poly1305);
       assertEquals(suite.aead, 0x0003);
     });
   });
@@ -67,17 +67,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
       assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
+      assertEquals(suite.aead, Aead.Aes128Gcm);
       assertEquals(suite.aead, 0x0001);
     });
   });
@@ -86,17 +86,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP256HkdfSha256/HkdfSha512/Aes128Gcm", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes128Gcm,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
       assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha512);
+      assertEquals(suite.kdf, Kdf.HkdfSha512);
       assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
+      assertEquals(suite.aead, Aead.Aes128Gcm);
       assertEquals(suite.aead, 0x0001);
     });
   });
@@ -105,17 +105,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP256HkdfSha256/HkdfSha256/ChaCha20Poly1305", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Chacha20Poly1305,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Chacha20Poly1305,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
       assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Chacha20Poly1305);
+      assertEquals(suite.aead, Aead.Chacha20Poly1305);
       assertEquals(suite.aead, 0x0003);
     });
   });
@@ -124,17 +124,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP521HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes256Gcm,
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP521HkdfSha512);
+      assertEquals(suite.kem, Kem.DhkemP521HkdfSha512);
       assertEquals(suite.kem, 0x0012);
-      assertEquals(suite.kdf, KdfId.HkdfSha512);
+      assertEquals(suite.kdf, Kdf.HkdfSha512);
       assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, AeadId.Aes256Gcm);
+      assertEquals(suite.aead, Aead.Aes256Gcm);
       assertEquals(suite.aead, 0x0002);
     });
   });
@@ -143,17 +143,17 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP256HkdfSha256/HkdfSha256/ExportOnly", () => {
     it("should have ciphersuites", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.ExportOnly,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
       assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.ExportOnly);
+      assertEquals(suite.aead, Aead.ExportOnly);
       assertEquals(suite.aead, 0xFFFF);
     });
   });
@@ -161,9 +161,9 @@ describe("CipherSuite", () => {
   describe("constructor with DhkemP256HkdfSha256/HkdfSha256/ExportOnly", () => {
     it("should have ciphersuites", async () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemSecp256K1HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.ExportOnly,
+        kem: Kem.DhkemSecp256K1HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
       });
       const kem = await suite.kemContext();
       assertEquals(kem.secretSize, 32);
@@ -172,11 +172,11 @@ describe("CipherSuite", () => {
       assertEquals(kem.privateKeySize, 32);
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemSecp256K1HkdfSha256);
+      assertEquals(suite.kem, Kem.DhkemSecp256K1HkdfSha256);
       assertEquals(suite.kem, 0x0013);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
+      assertEquals(suite.kdf, Kdf.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.ExportOnly);
+      assertEquals(suite.aead, Aead.ExportOnly);
       assertEquals(suite.aead, 0xFFFF);
     });
   });
@@ -185,9 +185,9 @@ describe("CipherSuite", () => {
     it("should work normally with generateKeyPair", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -218,9 +218,9 @@ describe("CipherSuite", () => {
     it("should work normally with importKey('jwk')", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const jwkPkR = {
@@ -267,13 +267,13 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (KemId.DhkemP384HkdfSha384/KdfId.HkdfSha384)", () => {
+  describe("A README example of Base mode (Kem.DhkemP384HkdfSha384/Kdf.HkdfSha384)", () => {
     it("should work normally with generateKeyPair", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP384HkdfSha384,
-        kdf: KdfId.HkdfSha384,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -302,9 +302,9 @@ describe("CipherSuite", () => {
     it("should work normally with importKey('jwk')", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP384HkdfSha384,
-        kdf: KdfId.HkdfSha384,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes128Gcm,
       });
 
       const jwkPkR = {
@@ -351,7 +351,7 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (KemId.DhkemP521HkdfSha512/KdfId.HkdfSha512)", () => {
+  describe("A README example of Base mode (Kem.DhkemP521HkdfSha512/Kdf.HkdfSha512)", () => {
     it("should work normally with generateKeyPair", async () => {
       if (isDeno()) {
         return;
@@ -359,9 +359,9 @@ describe("CipherSuite", () => {
 
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP521HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -394,9 +394,9 @@ describe("CipherSuite", () => {
 
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP521HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes128Gcm,
       });
 
       const jwkPkR = {
@@ -443,13 +443,13 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (KemId.DhkemX25519HkdfSha256/KdfId.HkdfSha256)", () => {
+  describe("A README example of Base mode (Kem.DhkemX25519HkdfSha256/Kdf.HkdfSha256)", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -478,9 +478,9 @@ describe("CipherSuite", () => {
     it("should work normally with importKey('jwk')", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const jwkPkR = {
@@ -525,13 +525,13 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (KemId.DhkemSecp256K1HkdfSha256/KdfId.HkdfSha256)", () => {
+  describe("A README example of Base mode (Kem.DhkemSecp256K1HkdfSha256/Kdf.HkdfSha256)", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemSecp256K1HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemSecp256K1HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -558,13 +558,13 @@ describe("CipherSuite", () => {
     });
   });
 
-  describe("A README example of Base mode (KemId.DhkemX448HkdfSha256/KdfId.HkdfSha512)", () => {
+  describe("A README example of Base mode (Kem.DhkemX448HkdfSha256/Kdf.HkdfSha512)", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes256Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -593,9 +593,9 @@ describe("CipherSuite", () => {
     it("should work normally with importKey('jwk')", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes256Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
       });
 
       const jwkPkR = {
@@ -644,9 +644,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.ExportOnly,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -687,9 +687,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.ExportOnly,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.ExportOnly,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -730,9 +730,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -771,9 +771,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -807,9 +807,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -851,9 +851,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -895,9 +895,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -939,9 +939,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -972,9 +972,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1008,9 +1008,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1039,9 +1039,9 @@ describe("CipherSuite", () => {
     it("should work normally (X25519)", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1074,9 +1074,9 @@ describe("CipherSuite", () => {
 
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
@@ -1121,9 +1121,9 @@ describe("CipherSuite", () => {
 
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
@@ -1168,9 +1168,9 @@ describe("CipherSuite", () => {
 
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
@@ -1215,9 +1215,9 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1246,9 +1246,9 @@ describe("CipherSuite", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       await assertRejects(
@@ -1263,9 +1263,9 @@ describe("CipherSuite", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1286,9 +1286,9 @@ describe("CipherSuite", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1312,9 +1312,9 @@ describe("CipherSuite", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1338,9 +1338,9 @@ describe("CipherSuite", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const rkp = await suite.generateKeyPair();
@@ -1364,9 +1364,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1384,9 +1384,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1404,9 +1404,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1424,9 +1424,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX25519HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX25519HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1444,9 +1444,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1464,9 +1464,9 @@ describe("CipherSuite", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemX448HkdfSha512,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemX448HkdfSha512,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
 
       const kStr = "aabbccddeeff";
@@ -1486,9 +1486,9 @@ describe("CipherSuite", () => {
       const cryptoApi = await loadCrypto();
 
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kem: Kem.DhkemP256HkdfSha256,
+        kdf: Kdf.HkdfSha256,
+        aead: Aead.Aes128Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
@@ -1571,9 +1571,9 @@ describe("CipherSuite", () => {
       const cryptoApi = await loadCrypto();
 
       const suite = new CipherSuite({
-        kem: KemId.DhkemP384HkdfSha384,
-        kdf: KdfId.HkdfSha384,
-        aead: AeadId.Aes256Gcm,
+        kem: Kem.DhkemP384HkdfSha384,
+        kdf: Kdf.HkdfSha384,
+        aead: Aead.Aes256Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
@@ -1656,9 +1656,9 @@ describe("CipherSuite", () => {
       const cryptoApi = await loadCrypto();
 
       const suite = new CipherSuite({
-        kem: KemId.DhkemP521HkdfSha512,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes256Gcm,
+        kem: Kem.DhkemP521HkdfSha512,
+        kdf: Kdf.HkdfSha512,
+        aead: Aead.Aes256Gcm,
       });
       const rkp = await suite.generateKeyPair();
 
