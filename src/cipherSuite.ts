@@ -66,7 +66,7 @@ export class CipherSuite {
 
   private _api: SubtleCrypto | undefined = undefined;
   private _kem: KemInterface;
-  private _kdf: KdfInterface | undefined = undefined;
+  private _kdf: KdfInterface;
   private _suiteId: Uint8Array;
 
   /**
@@ -103,8 +103,13 @@ export class CipherSuite {
 
     switch (params.kdf) {
       case KdfId.HkdfSha256:
+        this._kdf = new HkdfSha256();
+        break;
       case KdfId.HkdfSha384:
+        this._kdf = new HkdfSha384();
+        break;
       case KdfId.HkdfSha512:
+        this._kdf = new HkdfSha512();
         break;
       default:
         throw new errors.InvalidParamError("Invalid KDF id");
@@ -373,11 +378,13 @@ export class CipherSuite {
   }
 
   private async setup() {
-    this._api = await loadSubtleCrypto();
-    if (this._kem === undefined || this._kdf === undefined) {
-      this._kem.init(this._api as SubtleCrypto);
-      this._kdf = this.createKdfContext();
+    if (this._api !== undefined) {
+      return;
     }
+    const api = await loadSubtleCrypto();
+    this._kem.init(api as SubtleCrypto);
+    this._kdf.init(api as SubtleCrypto, this._suiteId);
+    this._api = api;
     return;
   }
 
@@ -400,18 +407,16 @@ export class CipherSuite {
     mode: Mode,
     sharedSecret: ArrayBuffer,
     params: KeyScheduleParams,
-  ): Promise<{ params: AeadParams; kdf: KdfInterface }> {
+  ): Promise<AeadParams> {
     // Currently, there is no point in executing this function
     // because this hpke library does not allow users to explicitly specify the mode.
     //
     // this.verifyPskInputs(mode, params);
 
-    const kdf = this.createKdfContext();
-
     const pskId = params.psk === undefined
       ? consts.EMPTY
       : new Uint8Array(params.psk.id);
-    const pskIdHash = await kdf.labeledExtract(
+    const pskIdHash = await this._kdf.labeledExtract(
       consts.EMPTY,
       consts.LABEL_PSK_ID_HASH,
       pskId,
@@ -420,7 +425,7 @@ export class CipherSuite {
     const info = params.info === undefined
       ? consts.EMPTY
       : new Uint8Array(params.info);
-    const infoHash = await kdf.labeledExtract(
+    const infoHash = await this._kdf.labeledExtract(
       consts.EMPTY,
       consts.LABEL_INFO_HASH,
       info,
@@ -436,48 +441,42 @@ export class CipherSuite {
     const psk = params.psk === undefined
       ? consts.EMPTY
       : new Uint8Array(params.psk.key);
-    const ikm = kdf.buildLabeledIkm(consts.LABEL_SECRET, psk);
+    const ikm = this._kdf.buildLabeledIkm(consts.LABEL_SECRET, psk);
 
-    const exporterSecretInfo = kdf.buildLabeledInfo(
+    const exporterSecretInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_EXP,
       keyScheduleContext,
-      kdf.hashSize,
+      this._kdf.hashSize,
     );
-    const exporterSecret = await kdf.extractAndExpand(
+    const exporterSecret = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
       exporterSecretInfo,
-      kdf.hashSize,
+      this._kdf.hashSize,
     );
 
     if (this.aead === AeadId.ExportOnly) {
-      return {
-        params: {
-          aead: this.aead,
-          exporterSecret: exporterSecret,
-        },
-        kdf: kdf,
-      };
+      return { aead: this.aead, exporterSecret: exporterSecret };
     }
 
-    const keyInfo = kdf.buildLabeledInfo(
+    const keyInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_KEY,
       keyScheduleContext,
       this.aeadKeySize,
     );
-    const key = await kdf.extractAndExpand(
+    const key = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
       keyInfo,
       this.aeadKeySize,
     );
 
-    const baseNonceInfo = kdf.buildLabeledInfo(
+    const baseNonceInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_BASE_NONCE,
       keyScheduleContext,
       this.aeadNonceSize,
     );
-    const baseNonce = await kdf.extractAndExpand(
+    const baseNonce = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
       baseNonceInfo,
@@ -485,14 +484,11 @@ export class CipherSuite {
     );
 
     return {
-      params: {
-        aead: this.aead,
-        exporterSecret: exporterSecret,
-        key: key,
-        baseNonce: new Uint8Array(baseNonce),
-        seq: 0,
-      },
-      kdf: kdf,
+      aead: this.aead,
+      exporterSecret: exporterSecret,
+      key: key,
+      baseNonce: new Uint8Array(baseNonce),
+      seq: 0,
     };
   }
 
@@ -503,18 +499,18 @@ export class CipherSuite {
     params: KeyScheduleParams,
   ): Promise<SenderContextInterface> {
     const res = await this.keySchedule(mode, sharedSecret, params);
-    if (res.params.key === undefined) {
+    if (res.key === undefined) {
       return new SenderExporterContext(
         this._api as SubtleCrypto,
-        res.kdf,
-        res.params.exporterSecret,
+        this._kdf,
+        res.exporterSecret,
         enc,
       );
     }
     return new SenderContext(
       this._api as SubtleCrypto,
-      res.kdf,
-      res.params,
+      this._kdf,
+      res,
       enc,
     );
   }
@@ -525,14 +521,14 @@ export class CipherSuite {
     params: KeyScheduleParams,
   ): Promise<RecipientContextInterface> {
     const res = await this.keySchedule(mode, sharedSecret, params);
-    if (res.params.key === undefined) {
+    if (res.key === undefined) {
       return new RecipientExporterContext(
         this._api as SubtleCrypto,
-        res.kdf,
-        res.params.exporterSecret,
+        this._kdf,
+        res.exporterSecret,
       );
     }
-    return new RecipientContext(this._api as SubtleCrypto, res.kdf, res.params);
+    return new RecipientContext(this._api as SubtleCrypto, this._kdf, res);
   }
 
   private validateInputLength(params: KeyScheduleParams) {
@@ -556,23 +552,5 @@ export class CipherSuite {
       }
     }
     return;
-  }
-
-  private createKdfContext(): KdfInterface {
-    let ret: KdfInterface;
-    switch (this.kdf) {
-      case KdfId.HkdfSha256:
-        ret = new HkdfSha256();
-        break;
-      case KdfId.HkdfSha384:
-        ret = new HkdfSha384();
-        break;
-      default:
-        // case KdfId.HkdfSha512:
-        ret = new HkdfSha512();
-        break;
-    }
-    ret.init(this._api as SubtleCrypto, this._suiteId);
-    return ret;
   }
 }
