@@ -57,14 +57,6 @@ export class CipherSuite {
   /** The AEAD id of the cipher suite. */
   public readonly aead: AeadId;
 
-  /** The length in bytes of a KEM shared secret produced by this KEM (Nsecret). */
-  public readonly kemSecretSize: number = 0;
-  /** The length in bytes of an encapsulated key produced by this KEM (Nenc). */
-  public readonly kemEncSize: number = 0;
-  /** The length in bytes of an encoded public key for this KEM (Npk). */
-  public readonly kemPublicKeySize: number = 0;
-  /** The length in bytes of an encoded private key for this KEM (Nsk). */
-  public readonly kemPrivateKeySize: number = 0;
   /** The length in bytes of an AEAD key (Nk). */
   public readonly aeadKeySize: number = 0;
   /** The length in bytes of an AEAD nonce (Nn). */
@@ -73,7 +65,7 @@ export class CipherSuite {
   public readonly aeadTagSize: number = 0;
 
   private _api: SubtleCrypto | undefined = undefined;
-  private _kem: KemInterface | undefined = undefined;
+  private _kem: KemInterface;
   private _kdf: KdfInterface | undefined = undefined;
   private _suiteId: Uint8Array;
 
@@ -87,40 +79,22 @@ export class CipherSuite {
   constructor(params: CipherSuiteParams) {
     switch (params.kem) {
       case KemId.DhkemP256HkdfSha256:
-        this.kemSecretSize = 32;
-        this.kemEncSize = 65;
-        this.kemPublicKeySize = 65;
-        this.kemPrivateKeySize = 32;
+        this._kem = new DhkemP256HkdfSha256();
         break;
       case KemId.DhkemP384HkdfSha384:
-        this.kemSecretSize = 48;
-        this.kemEncSize = 97;
-        this.kemPublicKeySize = 97;
-        this.kemPrivateKeySize = 48;
+        this._kem = new DhkemP384HkdfSha384();
         break;
       case KemId.DhkemP521HkdfSha512:
-        this.kemSecretSize = 64;
-        this.kemEncSize = 133;
-        this.kemPublicKeySize = 133;
-        this.kemPrivateKeySize = 66;
+        this._kem = new DhkemP521HkdfSha512();
         break;
       case KemId.DhkemSecp256K1HkdfSha256:
-        this.kemSecretSize = 32;
-        this.kemEncSize = 33;
-        this.kemPublicKeySize = 33;
-        this.kemPrivateKeySize = 32;
+        this._kem = new DhkemSecp256K1HkdfSha256();
         break;
       case KemId.DhkemX25519HkdfSha256:
-        this.kemSecretSize = 32;
-        this.kemEncSize = 32;
-        this.kemPublicKeySize = 32;
-        this.kemPrivateKeySize = 32;
+        this._kem = new DhkemX25519HkdfSha256();
         break;
       case KemId.DhkemX448HkdfSha512:
-        this.kemSecretSize = 64;
-        this.kemEncSize = 56;
-        this.kemPublicKeySize = 56;
-        this.kemPrivateKeySize = 56;
+        this._kem = new DhkemX448HkdfSha512();
         break;
       default:
         throw new errors.InvalidParamError("Invalid KEM id");
@@ -164,6 +138,55 @@ export class CipherSuite {
     this._suiteId.set(i2Osp(this.kdf, 2), 6);
     this._suiteId.set(i2Osp(this.aead, 2), 8);
   }
+
+  /**
+   * The length in bytes of a KEM shared secret produced by this KEM (Nsecret).
+   */
+  public get kemSecretSize() {
+    return this._kem.secretSize;
+  }
+
+  /**
+   * The length in bytes of an encapsulated key produced by this KEM (Nenc).
+   */
+  public get kemEncSize() {
+    return this._kem.encSize;
+  }
+
+  /**
+   * The length in bytes of an encoded public key for this KEM (Npk).
+   */
+  public get kemPublicKeySize() {
+    return this._kem.publicKeySize;
+  }
+
+  /**
+   * The length in bytes of an encoded private key for this KEM (Nsk).
+   */
+  public get kemPrivateKeySize() {
+    return this._kem.privateKeySize;
+  }
+
+  // /**
+  //  * The length in bytes of an AEAD key (Nk).
+  //  */
+  // public get aeadKeySize() {
+  //   return this._aead.keySize;
+  // }
+
+  // /**
+  //  * The length in bytes of an AEAD nonce (Nn).
+  //  */
+  // public get aeadNonceSize() {
+  //   return this._aead.nonceSize;
+  // }
+
+  // /**
+  //  * The length in bytes of an AEAD authentication tag (Nt).
+  //  */
+  // public get aeadTagSize() {
+  //   return this._aead.tagSize;
+  // }
 
   /**
    * Gets a suite-specific KEM context.
@@ -352,7 +375,7 @@ export class CipherSuite {
   private async setup() {
     this._api = await loadSubtleCrypto();
     if (this._kem === undefined || this._kdf === undefined) {
-      this._kem = this.createKemContext();
+      this._kem.init(this._api as SubtleCrypto);
       this._kdf = this.createKdfContext();
     }
     return;
@@ -533,32 +556,6 @@ export class CipherSuite {
       }
     }
     return;
-  }
-
-  private createKemContext(): KemInterface {
-    let ret: KemInterface;
-    switch (this.kem) {
-      case KemId.DhkemP256HkdfSha256:
-        ret = new DhkemP256HkdfSha256();
-        break;
-      case KemId.DhkemP384HkdfSha384:
-        ret = new DhkemP384HkdfSha384();
-        break;
-      case KemId.DhkemP521HkdfSha512:
-        ret = new DhkemP521HkdfSha512();
-        break;
-      case KemId.DhkemX25519HkdfSha256:
-        ret = new DhkemX25519HkdfSha256();
-        break;
-      case KemId.DhkemX448HkdfSha512:
-        ret = new DhkemX448HkdfSha512();
-        break;
-      default:
-        ret = new DhkemSecp256K1HkdfSha256();
-        break;
-    }
-    ret.init(this._api as SubtleCrypto);
-    return ret;
   }
 
   private createKdfContext(): KdfInterface {
