@@ -1,4 +1,5 @@
 import type { AeadId, KdfId, KemId } from "../identifiers.ts";
+import type { AeadInterface } from "./aeadInterface.ts";
 import type { KdfInterface } from "./kdfInterface.ts";
 import type { KemInterface } from "./kemInterface.ts";
 
@@ -13,5 +14,5 @@ export interface CipherSuiteParams {
   kdf: KdfId | KdfInterface;
 
   /** The AEAD (Authenticated Encryption with Addtional Data) identifier. */
-  aead: AeadId;
+  aead: AeadId | AeadInterface;
 }

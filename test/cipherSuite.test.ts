@@ -37,6 +37,9 @@ describe("CipherSuite", () => {
       assertEquals(suite.kemEncSize, 32);
       assertEquals(suite.kemPublicKeySize, 32);
       assertEquals(suite.kemPrivateKeySize, 32);
+      assertEquals(suite.aeadKeySize, 16);
+      assertEquals(suite.aeadNonceSize, 12);
+      assertEquals(suite.aeadTagSize, 16);
       assertEquals(suite.kdf, KdfId.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
       assertEquals(suite.aead, AeadId.Aes128Gcm);
@@ -54,7 +57,7 @@ describe("CipherSuite", () => {
 
   // RFC9180 A.2.
   describe("constructor with DhkemX25519HkdfSha256/HkdfSha256/ChaCha20Poly1305", () => {
-    it("should have ciphersuites", () => {
+    it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
         kdf: KdfId.HkdfSha256,

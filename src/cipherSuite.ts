@@ -1,4 +1,5 @@
 import type { AeadKey } from "./interfaces/aeadKey.ts";
+import type { AeadInterface } from "./interfaces/aeadInterface.ts";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
@@ -16,8 +17,10 @@ import {
   RecipientExporterContext,
   SenderExporterContext,
 } from "./exporterContext.ts";
-import { createAeadKey } from "./encryptionContext.ts";
 import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
+import { Aes128Gcm, Aes256Gcm } from "./aeadKeys/aesGcmKey.ts";
+import { ExportOnly } from "./aeadKeys/exportOnly.ts";
+import { Chacha20Poly1305 } from "./aeadKeys/chacha20Poly1305Key.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "./kdfs/hkdf.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
@@ -57,16 +60,10 @@ export class CipherSuite {
   /** The AEAD id of the cipher suite. */
   public readonly aead: AeadId;
 
-  /** The length in bytes of an AEAD key (Nk). */
-  public readonly aeadKeySize: number = 0;
-  /** The length in bytes of an AEAD nonce (Nn). */
-  public readonly aeadNonceSize: number = 0;
-  /** The length in bytes of an AEAD authentication tag (Nt). */
-  public readonly aeadTagSize: number = 0;
-
   private _api: SubtleCrypto | undefined = undefined;
   private _kem: KemInterface;
   private _kdf: KdfInterface;
+  private _aead: AeadInterface;
   private _suiteId: Uint8Array;
 
   /**
@@ -77,6 +74,7 @@ export class CipherSuite {
    * @throws {@link InvalidParamError}
    */
   constructor(params: CipherSuiteParams) {
+    // KEM
     if (typeof params.kem !== "number") {
       this._kem = params.kem;
     } else {
@@ -96,15 +94,15 @@ export class CipherSuite {
         case KemId.DhkemX25519HkdfSha256:
           this._kem = new DhkemX25519HkdfSha256();
           break;
-        case KemId.DhkemX448HkdfSha512:
+        default:
+          // case KemId.DhkemX448HkdfSha512:
           this._kem = new DhkemX448HkdfSha512();
           break;
-        default:
-          throw new errors.InvalidParamError("Invalid KEM id");
       }
     }
     this.kem = this._kem.id;
 
+    // KDF
     if (typeof params.kdf !== "number") {
       this._kdf = params.kdf;
     } else {
@@ -115,37 +113,36 @@ export class CipherSuite {
         case KdfId.HkdfSha384:
           this._kdf = new HkdfSha384();
           break;
-        case KdfId.HkdfSha512:
+        default:
+          // case KdfId.HkdfSha512:
           this._kdf = new HkdfSha512();
           break;
-        default:
-          throw new errors.InvalidParamError("Invalid KDF id");
       }
     }
     this.kdf = this._kdf.id;
 
-    switch (params.aead) {
-      case AeadId.Aes128Gcm:
-        this.aeadKeySize = 16;
-        this.aeadNonceSize = 12;
-        this.aeadTagSize = 16;
-        break;
-      case AeadId.Aes256Gcm:
-        this.aeadKeySize = 32;
-        this.aeadNonceSize = 12;
-        this.aeadTagSize = 16;
-        break;
-      case AeadId.Chacha20Poly1305:
-        this.aeadKeySize = 32;
-        this.aeadNonceSize = 12;
-        this.aeadTagSize = 16;
-        break;
-      case AeadId.ExportOnly:
-        break;
-      default:
-        throw new errors.InvalidParamError("Invalid AEAD id");
+    // AEAD
+    if (typeof params.aead !== "number") {
+      this._aead = params.aead;
+    } else {
+      switch (params.aead) {
+        case AeadId.Aes128Gcm:
+          this._aead = new Aes128Gcm();
+          break;
+        case AeadId.Aes256Gcm:
+          this._aead = new Aes256Gcm();
+          break;
+        case AeadId.Chacha20Poly1305:
+          this._aead = new Chacha20Poly1305();
+          break;
+        default:
+          // case AeadId.ExportOnly:
+          this._aead = new ExportOnly();
+          break;
+      }
     }
-    this.aead = params.aead;
+    this.aead = this._aead.id;
+
     this._suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
     this._suiteId.set(i2Osp(this.kem, 2), 4);
     this._suiteId.set(i2Osp(this.kdf, 2), 6);
@@ -180,26 +177,26 @@ export class CipherSuite {
     return this._kem.privateKeySize;
   }
 
-  // /**
-  //  * The length in bytes of an AEAD key (Nk).
-  //  */
-  // public get aeadKeySize() {
-  //   return this._aead.keySize;
-  // }
+  /**
+   * The length in bytes of an AEAD key (Nk).
+   */
+  public get aeadKeySize() {
+    return this._aead.keySize;
+  }
 
-  // /**
-  //  * The length in bytes of an AEAD nonce (Nn).
-  //  */
-  // public get aeadNonceSize() {
-  //   return this._aead.nonceSize;
-  // }
+  /**
+   * The length in bytes of an AEAD nonce (Nn).
+   */
+  public get aeadNonceSize() {
+    return this._aead.nonceSize;
+  }
 
-  // /**
-  //  * The length in bytes of an AEAD authentication tag (Nt).
-  //  */
-  // public get aeadTagSize() {
-  //   return this._aead.tagSize;
-  // }
+  /**
+   * The length in bytes of an AEAD authentication tag (Nt).
+   */
+  public get aeadTagSize() {
+    return this._aead.tagSize;
+  }
 
   /**
    * Gets a suite-specific KEM context.
@@ -230,9 +227,7 @@ export class CipherSuite {
    */
   public async createAeadKey(key: ArrayBuffer): Promise<AeadKey> {
     await this.setup();
-    const ret = createAeadKey(this.aead, key);
-    ret.init(this._api as SubtleCrypto);
-    return ret;
+    return this._aead.createAeadKey(key);
   }
 
   /**
@@ -392,6 +387,7 @@ export class CipherSuite {
     const api = await loadSubtleCrypto();
     this._kem.init(api as SubtleCrypto);
     this._kdf.init(api as SubtleCrypto, this._suiteId);
+    this._aead.init(api as SubtleCrypto);
     this._api = api;
     return;
   }
@@ -463,36 +459,36 @@ export class CipherSuite {
       this._kdf.hashSize,
     );
 
-    if (this.aead === AeadId.ExportOnly) {
-      return { aead: this.aead, exporterSecret: exporterSecret };
+    if (this._aead.id === AeadId.ExportOnly) {
+      return { aead: this._aead, exporterSecret: exporterSecret };
     }
 
     const keyInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_KEY,
       keyScheduleContext,
-      this.aeadKeySize,
+      this._aead.keySize,
     );
     const key = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
       keyInfo,
-      this.aeadKeySize,
+      this._aead.keySize,
     );
 
     const baseNonceInfo = this._kdf.buildLabeledInfo(
       consts.LABEL_BASE_NONCE,
       keyScheduleContext,
-      this.aeadNonceSize,
+      this._aead.nonceSize,
     );
     const baseNonce = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
       baseNonceInfo,
-      this.aeadNonceSize,
+      this._aead.nonceSize,
     );
 
     return {
-      aead: this.aead,
+      aead: this._aead,
       exporterSecret: exporterSecret,
       key: key,
       baseNonce: new Uint8Array(baseNonce),
