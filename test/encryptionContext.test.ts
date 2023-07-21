@@ -8,8 +8,8 @@ import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdf.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
-import { ExportOnly } from "../src/aeadKeys/exportOnly.ts";
-import { Aes128Gcm } from "../src/aeadKeys/aesGcmKey.ts";
+import { ExportOnly } from "../src/aeads/exportOnly.ts";
+import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 
 import * as consts from "../src/consts.ts";
 import * as errors from "../src/errors.ts";
