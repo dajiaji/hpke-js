@@ -23,8 +23,4 @@ export {
   DhkemX25519HkdfSha256,
   DhkemX448HkdfSha512,
 } from "./src/kems/dhkem.ts";
-export {
-  HkdfSha256,
-  HkdfSha384,
-  HkdfSha512,
-} from "./src/kdfs/hkdf.ts";
+export { HkdfSha256, HkdfSha384, HkdfSha512 } from "./src/kdfs/hkdf.ts";

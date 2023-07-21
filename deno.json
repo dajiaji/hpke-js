@@ -9,6 +9,7 @@
       "CHANGES.md",
       "deno.json",
       "dnt.ts",
+      "mod.ts",
       "samples/",
       "src/",
       "test/"
@@ -22,7 +23,7 @@
     ]
   },
   "lint": {
-    "include": ["samples/", "src/", "test/"],
+    "include": ["mod.ts", "samples/", "src/", "test/"],
     "exclude": [
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
