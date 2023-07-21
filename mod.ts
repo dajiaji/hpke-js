@@ -16,3 +16,15 @@ export * from "./src/errors.ts";
 
 export { Aead, AeadId, Kdf, KdfId, Kem, KemId } from "./src/identifiers.ts";
 export { CipherSuite } from "./src/cipherSuite.ts";
+export {
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
+} from "./src/kems/dhkem.ts";
+export {
+  HkdfSha256,
+  HkdfSha384,
+  HkdfSha512,
+} from "./src/kdfs/hkdf.ts";

@@ -77,44 +77,52 @@ export class CipherSuite {
    * @throws {@link InvalidParamError}
    */
   constructor(params: CipherSuiteParams) {
-    switch (params.kem) {
-      case KemId.DhkemP256HkdfSha256:
-        this._kem = new DhkemP256HkdfSha256();
-        break;
-      case KemId.DhkemP384HkdfSha384:
-        this._kem = new DhkemP384HkdfSha384();
-        break;
-      case KemId.DhkemP521HkdfSha512:
-        this._kem = new DhkemP521HkdfSha512();
-        break;
-      case KemId.DhkemSecp256K1HkdfSha256:
-        this._kem = new DhkemSecp256K1HkdfSha256();
-        break;
-      case KemId.DhkemX25519HkdfSha256:
-        this._kem = new DhkemX25519HkdfSha256();
-        break;
-      case KemId.DhkemX448HkdfSha512:
-        this._kem = new DhkemX448HkdfSha512();
-        break;
-      default:
-        throw new errors.InvalidParamError("Invalid KEM id");
+    if (typeof params.kem !== "number") {
+      this._kem = params.kem;
+    } else {
+      switch (params.kem) {
+        case KemId.DhkemP256HkdfSha256:
+          this._kem = new DhkemP256HkdfSha256();
+          break;
+        case KemId.DhkemP384HkdfSha384:
+          this._kem = new DhkemP384HkdfSha384();
+          break;
+        case KemId.DhkemP521HkdfSha512:
+          this._kem = new DhkemP521HkdfSha512();
+          break;
+        case KemId.DhkemSecp256K1HkdfSha256:
+          this._kem = new DhkemSecp256K1HkdfSha256();
+          break;
+        case KemId.DhkemX25519HkdfSha256:
+          this._kem = new DhkemX25519HkdfSha256();
+          break;
+        case KemId.DhkemX448HkdfSha512:
+          this._kem = new DhkemX448HkdfSha512();
+          break;
+        default:
+          throw new errors.InvalidParamError("Invalid KEM id");
+      }
     }
-    this.kem = params.kem;
+    this.kem = this._kem.id;
 
-    switch (params.kdf) {
-      case KdfId.HkdfSha256:
-        this._kdf = new HkdfSha256();
-        break;
-      case KdfId.HkdfSha384:
-        this._kdf = new HkdfSha384();
-        break;
-      case KdfId.HkdfSha512:
-        this._kdf = new HkdfSha512();
-        break;
-      default:
-        throw new errors.InvalidParamError("Invalid KDF id");
+    if (typeof params.kdf !== "number") {
+      this._kdf = params.kdf;
+    } else {
+      switch (params.kdf) {
+        case KdfId.HkdfSha256:
+          this._kdf = new HkdfSha256();
+          break;
+        case KdfId.HkdfSha384:
+          this._kdf = new HkdfSha384();
+          break;
+        case KdfId.HkdfSha512:
+          this._kdf = new HkdfSha512();
+          break;
+        default:
+          throw new errors.InvalidParamError("Invalid KDF id");
+      }
     }
-    this.kdf = params.kdf;
+    this.kdf = this._kdf.id;
 
     switch (params.aead) {
       case AeadId.Aes128Gcm:
