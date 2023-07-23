@@ -8,6 +8,8 @@ import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdf.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
+import { ExportOnly } from "../src/aeadKeys/exportOnly.ts";
+import { Aes128Gcm } from "../src/aeadKeys/aesGcmKey.ts";
 
 import * as consts from "../src/consts.ts";
 import * as errors from "../src/errors.ts";
@@ -33,7 +35,7 @@ describe("constructor", () => {
       const seq = 0;
 
       const params = {
-        aead: AeadId.Aes128Gcm,
+        aead: new Aes128Gcm(),
         nK: 16,
         nN: 12,
         nT: 16,
@@ -44,6 +46,7 @@ describe("constructor", () => {
       };
 
       // assert
+      params.aead.init(api);
       assertEquals(typeof new EncryptionContext(api, kdf, params), "object");
     });
   });
@@ -63,7 +66,7 @@ describe("constructor", () => {
       const seq = 0;
 
       const params = {
-        aead: AeadId.ExportOnly, // invalid
+        aead: new ExportOnly(), // invalid
         nK: 16,
         nN: 12,
         nT: 16,
@@ -74,12 +77,13 @@ describe("constructor", () => {
       };
 
       // assert
+      params.aead.init(api);
       assertThrows(
         () => {
           new EncryptionContext(api, kdf, params);
         },
         Error,
-        "Invalid or unsupported AEAD id",
+        "NotSupportedError: createAeadKey() is not supported on ExportOnly",
       );
     });
   });
@@ -451,7 +455,7 @@ describe("createRecipientContext", () => {
       const kdf = new HkdfSha256();
       kdf.init(api, suiteId);
       const params = {
-        aead: AeadId.Aes128Gcm,
+        aead: new Aes128Gcm(),
         nK: 16,
         nN: 12,
         nT: 16,
@@ -533,7 +537,7 @@ describe("setupBidirectional", () => {
       const seq = 0;
 
       const params = {
-        aead: AeadId.Aes128Gcm,
+        aead: new Aes128Gcm(),
         nK: -1, // invalid
         nN: 12,
         nT: 16,
@@ -544,6 +548,7 @@ describe("setupBidirectional", () => {
       };
 
       const te = new TextEncoder();
+      params.aead.init(api);
       const ec = new EncryptionContext(api, kdf, params);
 
       // assert
@@ -569,7 +574,7 @@ describe("setupBidirectional", () => {
       const seq = 0;
 
       const params = {
-        aead: AeadId.Aes128Gcm,
+        aead: new Aes128Gcm(),
         nK: 16,
         nN: -1, // invalid
         nT: 16,
@@ -580,6 +585,7 @@ describe("setupBidirectional", () => {
       };
 
       const te = new TextEncoder();
+      params.aead.init(api);
       const ec = new EncryptionContext(api, kdf, params);
 
       // assert

@@ -14,11 +14,6 @@ export interface AeadKey {
   readonly tagSize: number;
 
   /**
-   * Initializes the key by setting the SubtleCrypto.
-   */
-  init(api: SubtleCrypto): void;
-
-  /**
    * Encrypts data with initial vector and additional authenticated data.
    */
   seal(

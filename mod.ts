@@ -1,3 +1,4 @@
+export type { AeadInterface } from "./src/interfaces/aeadInterface.ts";
 export type { AeadKey } from "./src/interfaces/aeadKey.ts";
 export type { CipherSuiteParams } from "./src/interfaces/cipherSuiteParams.ts";
 export type { KdfInterface } from "./src/interfaces/kdfInterface.ts";

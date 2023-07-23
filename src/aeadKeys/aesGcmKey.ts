@@ -1,20 +1,21 @@
 import type { AeadKey } from "../interfaces/aeadKey.ts";
+import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
 import { Algorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
 import * as consts from "../consts.ts";
 
-export class AesGcmKey extends Algorithm implements AeadKey {
+export class AesGcmKey implements AeadKey {
   public readonly id: AeadId = AeadId.Aes128Gcm;
   public readonly keySize: number = 0;
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;
   private _rawKey: ArrayBuffer;
   private _key: CryptoKey | undefined = undefined;
-  // private _api: SubtleCrypto;
+  private _api: SubtleCrypto;
 
-  public constructor(key: ArrayBuffer) {
-    super();
+  public constructor(api: SubtleCrypto, key: ArrayBuffer) {
+    this._api = api;
     this._rawKey = key;
   }
 
@@ -23,7 +24,6 @@ export class AesGcmKey extends Algorithm implements AeadKey {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
@@ -33,7 +33,7 @@ export class AesGcmKey extends Algorithm implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    const ct: ArrayBuffer = await (this._api as SubtleCrypto).encrypt(
+    const ct: ArrayBuffer = await this._api.encrypt(
       alg,
       this._key,
       data,
@@ -46,7 +46,6 @@ export class AesGcmKey extends Algorithm implements AeadKey {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
     if (this._key === undefined) {
       this._key = await this.importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
@@ -56,7 +55,7 @@ export class AesGcmKey extends Algorithm implements AeadKey {
       iv: iv,
       additionalData: aad,
     };
-    const pt: ArrayBuffer = await (this._api as SubtleCrypto).decrypt(
+    const pt: ArrayBuffer = await this._api.decrypt(
       alg,
       this._key,
       data,
@@ -65,7 +64,7 @@ export class AesGcmKey extends Algorithm implements AeadKey {
   }
 
   private async importKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await (this._api as SubtleCrypto).importKey(
+    return await this._api.importKey(
       "raw",
       key,
       { name: "AES-GCM" },
@@ -87,4 +86,28 @@ export class Aes256GcmKey extends AesGcmKey {
   public readonly keySize: number = 32;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
+}
+
+export class Aes128Gcm extends Algorithm implements AeadInterface {
+  public readonly id: AeadId = AeadId.Aes128Gcm;
+  public readonly keySize: number = 16;
+  public readonly nonceSize: number = 12;
+  public readonly tagSize: number = 16;
+
+  public createAeadKey(key: ArrayBuffer): AeadKey {
+    this.checkInit();
+    return new Aes128GcmKey(this._api as SubtleCrypto, key);
+  }
+}
+
+export class Aes256Gcm extends Algorithm implements AeadInterface {
+  public readonly id: AeadId = AeadId.Aes256Gcm;
+  public readonly keySize: number = 32;
+  public readonly nonceSize: number = 12;
+  public readonly tagSize: number = 16;
+
+  public createAeadKey(key: ArrayBuffer): AeadKey {
+    this.checkInit();
+    return new Aes256GcmKey(this._api as SubtleCrypto, key);
+  }
 }
