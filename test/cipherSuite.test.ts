@@ -7,6 +7,14 @@ import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
 import { loadCrypto } from "../src/webCrypto.ts";
 import { concat } from "../src/utils/misc.ts";
+import {
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
+} from "../src/kems/dhkem.ts";
+import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
 
 import * as errors from "../src/errors.ts";
 
@@ -15,7 +23,7 @@ import { hexStringToBytes } from "./utils.ts";
 describe("CipherSuite", () => {
   // RFC9180 A.1.
   describe("constructor with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm", () => {
-    it("should have ciphersuites", async () => {
+    it("should have a correct ciphersuite", async () => {
       const suite: CipherSuite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
         kdf: KdfId.HkdfSha256,
@@ -182,11 +190,44 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode", () => {
-    it("should work normally with generateKeyPair", async () => {
+    it("should work normally with ids", async () => {
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemP256HkdfSha256,
         kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+      await assertRejects(() => recipient.seal(pt), errors.SealError);
+      await assertRejects(() => sender.open(ct), errors.OpenError);
+    });
+
+    it("should work normally with instances", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
         aead: AeadId.Aes128Gcm,
       });
 
@@ -268,11 +309,42 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode (KemId.DhkemP384HkdfSha384/KdfId.HkdfSha384)", () => {
-    it("should work normally with generateKeyPair", async () => {
+    it("should work normally with ids", async () => {
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemP384HkdfSha384,
         kdf: KdfId.HkdfSha384,
+        aead: AeadId.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with instances", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: new DhkemP384HkdfSha384(),
+        kdf: new HkdfSha384(),
         aead: AeadId.Aes128Gcm,
       });
 
@@ -352,7 +424,7 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode (KemId.DhkemP521HkdfSha512/KdfId.HkdfSha512)", () => {
-    it("should work normally with generateKeyPair", async () => {
+    it("should work normally with ids", async () => {
       if (isDeno()) {
         return;
       }
@@ -361,6 +433,41 @@ describe("CipherSuite", () => {
       const suite = new CipherSuite({
         kem: KemId.DhkemP521HkdfSha512,
         kdf: KdfId.HkdfSha512,
+        aead: AeadId.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with instances", async () => {
+      if (isDeno()) {
+        return;
+      }
+
+      // setup
+      const suite = new CipherSuite({
+        kem: new DhkemP521HkdfSha512(),
+        kdf: new HkdfSha512(),
         aead: AeadId.Aes128Gcm,
       });
 
@@ -444,11 +551,42 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode (KemId.DhkemX25519HkdfSha256/KdfId.HkdfSha256)", () => {
-    it("should work normally", async () => {
+    it("should work normally with ids", async () => {
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
         kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with instances", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: new DhkemX25519HkdfSha256(),
+        kdf: new HkdfSha256(),
         aead: AeadId.Aes128Gcm,
       });
 
@@ -559,11 +697,42 @@ describe("CipherSuite", () => {
   });
 
   describe("A README example of Base mode (KemId.DhkemX448HkdfSha256/KdfId.HkdfSha512)", () => {
-    it("should work normally", async () => {
+    it("should work normally with ids", async () => {
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemX448HkdfSha512,
         kdf: KdfId.HkdfSha512,
+        aead: AeadId.Aes256Gcm,
+      });
+
+      const rkp = await suite.generateKeyPair();
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+
+      // decrypt
+      const pt = await recipient.open(ct);
+
+      // assert
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with instances", async () => {
+      // setup
+      const suite = new CipherSuite({
+        kem: new DhkemX448HkdfSha512(),
+        kdf: new HkdfSha512(),
         aead: AeadId.Aes256Gcm,
       });
 
