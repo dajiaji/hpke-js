@@ -103,7 +103,7 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
 - **Deno**: 1.x (1.15-)
 - **Cloudflare Workers**
-- **bun**
+- **bun**: 0.x (0.3.0-)
 
 ## Warnings and Restrictions
 
@@ -125,7 +125,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.20.0";
+  import * as hpke from "https://esm.sh/hpke-js@0.21.0";
   // ...
 </script>
 
@@ -141,7 +141,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.20.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.21.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -166,7 +166,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.20.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@0.21.0/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -177,15 +177,15 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.20.0/es2022/hpke-js.js
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.21.0/es2022/hpke-js.js
 # if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.20.0/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.21.0/es2022/hpke.min.js
 ```
 
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@0.20.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@0.21.0/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -201,15 +201,15 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.20.0";
-      import { Kem, Kdf, Aead, CipherSuite } from "https://esm.sh/hpke-js@0.20.0";
+      // import * as hpke from "https://esm.sh/hpke-js@0.21.0";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.21.0";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
-          kem: Kem.DhkemP256HkdfSha256,
-          kdf: Kdf.HkdfSha256,
-          aead: Aead.Aes128Gcm
+          kem: KemId.DhkemP256HkdfSha256,
+          kdf: KdfId.HkdfSha256,
+          aead: AeadId.Aes128Gcm
         });
  
         const rkp = await suite.generateKeyPair();
@@ -277,14 +277,14 @@ Browsers:
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -318,14 +318,14 @@ doHpke();
 Deno:
 
 ```js
-import { Kem, Kdf, Aead, CipherSuite } from "https://deno.land/x/hpke@0.20.0/mod.ts";
+import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.21.0/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemX25519HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemX25519HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -361,15 +361,15 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require('hpke-js');
+const { KemId, KdfId, AeadId, CipherSuite } = require('hpke-js');
 
 async function doHpke() {
 
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm
   });
 
   const rkp = await suite.generateKeyPair();
@@ -397,7 +397,7 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -405,9 +405,9 @@ const td = new TextDecoder();
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
   const rkp = await suite.generateKeyPair();
 
@@ -465,14 +465,14 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.ExportOnly,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.ExportOnly,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -502,14 +502,14 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -555,14 +555,14 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -601,14 +601,14 @@ doHpke();
 Node.js:
 
 ```js
-const { Kem, Kdf, Aead, CipherSuite } = require("hpke-js");
+const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
