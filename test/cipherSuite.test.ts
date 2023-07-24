@@ -15,6 +15,7 @@ import {
   DhkemX448HkdfSha512,
 } from "../src/kems/dhkem.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
+import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 
 import * as errors from "../src/errors.ts";
 
@@ -231,7 +232,7 @@ describe("CipherSuite", () => {
       const suite = new CipherSuite({
         kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256(),
-        aead: AeadId.Aes128Gcm,
+        aead: new Aes128Gcm(),
       });
 
       const rkp = await suite.generateKeyPair();
