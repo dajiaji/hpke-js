@@ -18,9 +18,9 @@ import {
   SenderExporterContext,
 } from "./exporterContext.ts";
 import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
-import { Aes128Gcm, Aes256Gcm } from "./aeadKeys/aesGcmKey.ts";
-import { ExportOnly } from "./aeadKeys/exportOnly.ts";
-import { Chacha20Poly1305 } from "./aeadKeys/chacha20Poly1305Key.ts";
+import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
+import { ExportOnly } from "./aeads/exportOnly.ts";
+import { Chacha20Poly1305 } from "./aeads/chacha20Poly1305.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "./kdfs/hkdf.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
