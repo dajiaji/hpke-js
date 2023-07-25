@@ -1,5 +1,16 @@
 # Changes
 
+## Version 0.21.0
+
+Released 2023-07-25
+
+- [(#194) Expose AEAD Classes for CipherSuiteParams.](https://github.com/dajiaji/hpke-js/pull/194)
+- [(#193) Add AeadInterface for CipherSuiteParams.](https://github.com/dajiaji/hpke-js/pull/193)
+- [(#192) Add mod.ts to formatter/linter targets.](https://github.com/dajiaji/hpke-js/pull/192)
+- [(#191) Update CipherSuiteParameters to make Kem/KdfInterface to be set instead of Kem/KdfId.](https://github.com/dajiaji/hpke-js/pull/191)
+- [(#190) Introduce union type algorithm identifier.](https://github.com/dajiaji/hpke-js/pull/190)
+- [(#189) Add support for Node.js 20.](https://github.com/dajiaji/hpke-js/pull/189)
+
 ## Version 0.20.0
 
 Released 2023-07-19
