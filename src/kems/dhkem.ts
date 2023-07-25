@@ -6,7 +6,6 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 
 import { Algorithm } from "../algorithm.ts";
 import { Ec } from "./dhkemPrimitives/ec.ts";
-import { Secp256K1 } from "./dhkemPrimitives/secp256k1.ts";
 import { X25519 } from "./dhkemPrimitives/x25519.ts";
 import { X448 } from "./dhkemPrimitives/x448.ts";
 import { KemId } from "../identifiers.ts";
@@ -246,20 +245,6 @@ export class DhkemP521HkdfSha512 extends Dhkem implements KemInterface {
   constructor() {
     const kdf = new HkdfSha512();
     const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
-    super(prim, kdf);
-  }
-}
-
-export class DhkemSecp256K1HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: KemId = KemId.DhkemSecp256K1HkdfSha256;
-  public readonly secretSize: number = 32;
-  public readonly encSize: number = 65;
-  public readonly publicKeySize: number = 65;
-  public readonly privateKeySize: number = 32;
-
-  constructor() {
-    const kdf = new HkdfSha256();
-    const prim = new Secp256K1(kdf);
     super(prim, kdf);
   }
 }

@@ -29,7 +29,6 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
-  DhkemSecp256K1HkdfSha256,
   DhkemX25519HkdfSha256,
   DhkemX448HkdfSha512,
 } from "./kems/dhkem.ts";
@@ -88,16 +87,16 @@ export class CipherSuite {
         case KemId.DhkemP521HkdfSha512:
           this._kem = new DhkemP521HkdfSha512();
           break;
-        case KemId.DhkemSecp256K1HkdfSha256:
-          this._kem = new DhkemSecp256K1HkdfSha256();
-          break;
         case KemId.DhkemX25519HkdfSha256:
           this._kem = new DhkemX25519HkdfSha256();
           break;
-        default:
-          // case KemId.DhkemX448HkdfSha512:
+        case KemId.DhkemX448HkdfSha512:
           this._kem = new DhkemX448HkdfSha512();
           break;
+        default:
+          throw new errors.InvalidParamError(
+            `The KEM (${params.kem}) cannot be specified by KemId. Use submodule for the KEM`,
+          );
       }
     }
     this.kem = this._kem.id;

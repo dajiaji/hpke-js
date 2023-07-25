@@ -1,16 +1,20 @@
 import { secp256k1 } from "npm:@noble/curves@1.1.0/secp256k1";
 
-import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
-import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
+import type { KemPrimitives } from "../../../src/interfaces/kemPrimitives.ts";
+import type { KdfInterface } from "../../../src/interfaces/kdfInterface.ts";
+import type { KemInterface } from "../../../src/interfaces/kemInterface.ts";
 
-import { Algorithm } from "../../algorithm.ts";
-import { XCryptoKey } from "../../xCryptoKey.ts";
+import { Algorithm } from "../../../src/algorithm.ts";
+import { KemId } from "../../../src/identifiers.ts";
+import { XCryptoKey } from "../../../src/xCryptoKey.ts";
+import { HkdfSha256 } from "../../../src/kdfs/hkdf.ts";
+import { Dhkem } from "../../../src/kems/dhkem.ts";
 
-import * as consts from "../../consts.ts";
+import * as consts from "../../../src/consts.ts";
 
 const ALG_NAME = "ECDH";
 
-export class Secp256K1 extends Algorithm implements KemPrimitives {
+class Secp256k1 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
@@ -124,5 +128,19 @@ export class Secp256K1 extends Algorithm implements KemPrimitives {
         reject(e);
       }
     });
+  }
+}
+
+export class DhkemSecp256k1HkdfSha256 extends Dhkem implements KemInterface {
+  public readonly id: KemId = KemId.DhkemSecp256K1HkdfSha256;
+  public readonly secretSize: number = 32;
+  public readonly encSize: number = 65;
+  public readonly publicKeySize: number = 65;
+  public readonly privateKeySize: number = 32;
+
+  constructor() {
+    const kdf = new HkdfSha256();
+    const prim = new Secp256k1(kdf);
+    super(prim, kdf);
   }
 }
