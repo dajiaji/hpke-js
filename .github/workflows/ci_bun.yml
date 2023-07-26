@@ -23,7 +23,7 @@ jobs:
       - run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > test/bun/src/hpke.js
+          deno task minify > test/runtimes/bun/src/hpke.js
           deno task minify > x/dhkemSecp256k1HkdfSha256/test/runtimes/bun/src/hpke.js
       - working-directory: ./x/dhkemSecp256k1HkdfSha256/
         run: |
@@ -33,7 +33,7 @@ jobs:
         with:
           bun-version: 0.4
       - name: Run test
-        working-directory: ./test/bun
+        working-directory: ./test/runtimes/bun
         run: |
           nohup bun src/index.js &
           sleep 3

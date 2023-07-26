@@ -23,14 +23,14 @@ jobs:
       - run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > test/wrangler/src/hpke.js
+          deno task minify > test/runtimes/cloudflare/src/hpke.js
           deno task minify > x/dhkemSecp256k1HkdfSha256/test/runtimes/cloudflare/src/hpke.js
       - working-directory: ./x/dhkemSecp256k1HkdfSha256/
         run: |
           deno task dnt
           deno task minify > test/runtimes/cloudflare/src/hpke-dhkemSecp256k1HkdfSha256.js
       - name: Run test
-        working-directory: ./test/wrangler
+        working-directory: ./test/runtimes/cloudflare
         run: |
           npm install
           nohup npm start &
