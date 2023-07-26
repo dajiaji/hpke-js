@@ -23,18 +23,18 @@ jobs:
       - run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > test/pages/src/hpke.js
-          mkdir test/pages/dhkemSecp256k1HkdfSha256
-          cp -rf x/dhkemSecp256k1HkdfSha256/test/runtimes/browsers/pages/* test/pages/dhkemSecp256k1HkdfSha256
-          deno task minify > test/pages/dhkemSecp256k1HkdfSha256/src/hpke.js
+          deno task minify > test/runtimes/browsers/pages/src/hpke.js
+          mkdir test/runtimes/browsers/pages/dhkemSecp256k1HkdfSha256
+          cp -rf x/dhkemSecp256k1HkdfSha256/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkemSecp256k1HkdfSha256
+          deno task minify > test/runtimes/browsers/pages/dhkemSecp256k1HkdfSha256/src/hpke.js
       - working-directory: ./x/dhkemSecp256k1HkdfSha256
         run: |
           deno task dnt
-          deno task minify > ../../test/pages/dhkemSecp256k1HkdfSha256/src/hpke-dhkemSecp256k1HkdfSha256.js
+          deno task minify > ../../test/runtimes/browsers/pages/dhkemSecp256k1HkdfSha256/src/hpke-dhkemSecp256k1HkdfSha256.js
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./test/pages
+          publish_dir: ./test/runtimes/browsers/pages
 
   playwright-test:
     needs: pages
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - uses: microsoft/playwright-github-action@v1
-      - working-directory: ./test/playwright
+      - working-directory: ./test/runtimes/browsers
         run: |
           npm ci
           npx playwright install --with-deps
