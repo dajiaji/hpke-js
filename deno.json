@@ -18,9 +18,9 @@
       "x",
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
-      "test/bun",
-      "test/playwright/node_modules",
-      "test/wrangler"
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
     ]
   },
   "lint": {
@@ -29,9 +29,9 @@
       "x",
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
-      "test/bun",
-      "test/playwright/node_modules",
-      "test/wrangler"
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
     ]
   },
   "tasks": {
