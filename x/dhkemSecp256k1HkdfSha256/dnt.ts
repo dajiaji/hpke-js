@@ -1,7 +1,6 @@
 import { build, emptyDir } from "dnt";
 
 await emptyDir("./npm");
-await emptyDir("./x/dhkemSecp256k1HkdfSha256/npm");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -18,10 +17,10 @@ await build({
     deno: "dev",
   },
   package: {
-    name: "hpke-js",
+    name: "@hpke-js/dhkemSecp256k1HkdfSha256",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) module for web browsers, Node.js and Deno",
+      "A Hybrid Public Key Encryption (HPKE) module extension for secp256k1 curve",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
@@ -39,14 +38,11 @@ await build({
     },
     keywords: [
       "hpke",
-      "public-key-encryption",
       "rfc9180",
       "hkdf",
       "dh",
       "security",
       "encryption",
-      "odoh",
-      "mls",
     ],
     engines: {
       "node": ">=16.0.0",
@@ -59,5 +55,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "npm/LICENSE");
+Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");

@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
+import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
@@ -158,26 +158,19 @@ describe("CipherSuite(backward-compat)", () => {
     });
   });
 
-  describe("constructor with DhkemP256HkdfSha256/HkdfSha256/ExportOnly", () => {
-    it("should have ciphersuites", async () => {
-      const suite: CipherSuite = new CipherSuite({
-        kem: Kem.DhkemSecp256K1HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.ExportOnly,
-      });
-      const kem = await suite.kemContext();
-      assertEquals(kem.secretSize, 32);
-      assertEquals(kem.encSize, 65);
-      assertEquals(kem.publicKeySize, 65);
-      assertEquals(kem.privateKeySize, 32);
-
+  describe("constructor with DhkemSecp256KHkdfSha256/HkdfSha256/ExportOnly", () => {
+    it("should throw InvalidParamError", async () => {
       // assert
-      assertEquals(suite.kem, Kem.DhkemSecp256K1HkdfSha256);
-      assertEquals(suite.kem, 0x0013);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.ExportOnly);
-      assertEquals(suite.aead, 0xFFFF);
+      await assertThrows(
+        () =>
+          new CipherSuite({
+            kem: Kem.DhkemSecp256K1HkdfSha256,
+            kdf: Kdf.HkdfSha256,
+            aead: Aead.ExportOnly,
+          }),
+        errors.InvalidParamError,
+        "The KEM (19) cannot be specified by KemId. Use submodule for the KEM",
+      );
     });
   });
 
@@ -522,39 +515,6 @@ describe("CipherSuite(backward-compat)", () => {
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
       await assertRejects(() => recipient.seal(pt), errors.SealError);
       await assertRejects(() => sender.open(ct), errors.OpenError);
-    });
-  });
-
-  describe("A README example of Base mode (Kem.DhkemSecp256K1HkdfSha256/Kdf.HkdfSha256)", () => {
-    it("should work normally", async () => {
-      // setup
-      const suite = new CipherSuite({
-        kem: Kem.DhkemSecp256K1HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
-
-      const rkp = await suite.generateKeyPair();
-
-      const sender = await suite.createSenderContext({
-        recipientPublicKey: rkp.publicKey,
-      });
-
-      const recipient = await suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: sender.enc,
-      });
-
-      // encrypt
-      const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
-      );
-
-      // decrypt
-      const pt = await recipient.open(ct);
-
-      // assert
-      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
   });
 

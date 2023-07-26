@@ -24,6 +24,13 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > test/pages/src/hpke.js
+          mkdir test/pages/dhkemSecp256k1HkdfSha256
+          cp -rf x/dhkemSecp256k1HkdfSha256/test/runtimes/browsers/pages/* test/pages/dhkemSecp256k1HkdfSha256
+          deno task minify > test/pages/dhkemSecp256k1HkdfSha256/src/hpke.js
+      - working-directory: ./x/dhkemSecp256k1HkdfSha256
+        run: |
+          deno task dnt
+          deno task minify > ../../test/pages/dhkemSecp256k1HkdfSha256/src/hpke-dhkemSecp256k1HkdfSha256.js
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
@@ -41,3 +48,5 @@ jobs:
           npm ci
           npx playwright install --with-deps
           npx playwright test
+      - working-directory: ./x/dhkemSecp256k1HkdfSha256/test/runtimes/browsers
+        run: npm install && npx playwright install && npx playwright test

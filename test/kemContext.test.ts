@@ -7,7 +7,6 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
-  DhkemSecp256K1HkdfSha256,
   DhkemX25519HkdfSha256,
   DhkemX448HkdfSha512,
 } from "../src/kems/dhkem.ts";
@@ -15,8 +14,6 @@ import { KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 
 import * as errors from "../src/errors.ts";
-
-import { hexStringToBytes } from "./utils.ts";
 
 describe("constructor", () => {
   describe("with valid parameters", () => {
@@ -54,15 +51,6 @@ describe("constructor", () => {
       assertEquals(dhkemP521.encSize, 133);
       assertEquals(dhkemP521.publicKeySize, 133);
       assertEquals(dhkemP521.privateKeySize, 64);
-
-      const dhkemSecp256K1 = new DhkemSecp256K1HkdfSha256();
-      dhkemSecp256K1.init(api);
-      assertEquals(typeof dhkemP256, "object");
-      assertEquals(dhkemSecp256K1.id, KemId.DhkemSecp256K1HkdfSha256);
-      assertEquals(dhkemSecp256K1.secretSize, 32);
-      assertEquals(dhkemSecp256K1.encSize, 65);
-      assertEquals(dhkemSecp256K1.publicKeySize, 65);
-      assertEquals(dhkemSecp256K1.privateKeySize, 32);
 
       const dhkemX25519 = new DhkemX25519HkdfSha256();
       dhkemX25519.init(api);
@@ -146,27 +134,6 @@ describe("generateKeyPair", () => {
       assertEquals(kp.privateKey.extractable, true);
       assertEquals(kp.privateKey.algorithm.name, "ECDH");
       // assertEquals(kp.privateKey.algorithm.namedCurve, "P-521");
-      assertEquals(kp.privateKey.usages.length, 1);
-      assertEquals(kp.privateKey.usages[0], "deriveBits");
-    });
-
-    it("should return a proper instance with DhkemSecp256K1HkdfSha256", async () => {
-      const api = await loadSubtleCrypto();
-
-      // assert
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-      const kp = await kemContext.generateKeyPair();
-      assertEquals(kp.publicKey.type, "public");
-      assertEquals(kp.publicKey.extractable, true);
-      assertEquals(kp.publicKey.algorithm.name, "ECDH");
-      // assertEquals(kp.publicKey.algorithm.namedCurve, "secp256k1");
-      assertEquals(kp.publicKey.usages.length, 0);
-      // assertEquals(kp.publicKey.usages[0], "deriveBits");
-      assertEquals(kp.privateKey.type, "private");
-      assertEquals(kp.privateKey.extractable, true);
-      assertEquals(kp.privateKey.algorithm.name, "ECDH");
-      // assertEquals(kp.privateKey.algorithm.namedCurve, "secp256k1");
       assertEquals(kp.privateKey.usages.length, 1);
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
@@ -308,29 +275,6 @@ describe("deriveKeyPair", () => {
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
 
-    it("should return a proper instance with DhkemSecp256K1HkdfSha256", async () => {
-      const api = await loadSubtleCrypto();
-      const cryptoApi = await loadCrypto();
-
-      // assert
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-      const ikm = new Uint8Array(32);
-      cryptoApi.getRandomValues(ikm);
-      const kp = await kemContext.deriveKeyPair(ikm.buffer);
-      assertEquals(kp.publicKey.type, "public");
-      assertEquals(kp.publicKey.extractable, true);
-      assertEquals(kp.publicKey.algorithm.name, "ECDH");
-      // assertEquals(kp.publicKey.algorithm.namedCurve, "secp256k1");
-      assertEquals(kp.publicKey.usages.length, 0);
-      // assertEquals(kp.publicKey.usages[0], "deriveBits");
-      assertEquals(kp.privateKey.type, "private");
-      assertEquals(kp.privateKey.extractable, true);
-      assertEquals(kp.privateKey.algorithm.name, "ECDH");
-      // assertEquals(kp.privateKey.algorithm.namedCurve, "secp256k1");
-      assertEquals(kp.privateKey.usages.length, 1);
-      assertEquals(kp.privateKey.usages[0], "deriveBits");
-    });
     it("should return a proper instance with DhkemX25519HkdfSha256", async () => {
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
@@ -448,23 +392,6 @@ describe("serialize/deserializePublicKey", () => {
       assertEquals(pubKey.algorithm.name, "ECDH");
       // assertEquals(pubKey.algorithm.namedCurve, "P-521");
       assertEquals(pubKey.usages.length, 0);
-    });
-
-    it("should return a proper instance with DhkemSecp256K1HkdfSha256", async () => {
-      const api = await loadSubtleCrypto();
-
-      // assert
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-      const kp = await kemContext.generateKeyPair();
-      const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
-      const pubKey = await kemContext.deserializePublicKey(bPubKey);
-      assertEquals(pubKey.type, "public");
-      assertEquals(pubKey.extractable, true);
-      assertEquals(pubKey.algorithm.name, "ECDH");
-      // assertEquals(pubKey.algorithm.namedCurve, "secp256k1");
-      assertEquals(pubKey.usages.length, 0);
-      // assertEquals(pubKey.usages[0], "deriveBits");
     });
 
     it("should return a proper instance with DhkemX25519HkdfSha256", async () => {
@@ -740,37 +667,6 @@ describe("importKey", () => {
 
       // assert
       assertEquals(privKey.usages.length, 0);
-    });
-
-    it("should return a valid private key for DhkemSecp256K1HkdfSha256 from raw key", async () => {
-      const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-
-      const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(32);
-      cryptoApi.getRandomValues(rawKey);
-      const privKey = await kemContext.importKey("raw", rawKey, false);
-
-      // assert
-      assertEquals(privKey.usages.length, 1);
-      assertEquals(privKey.usages[0], "deriveBits");
-    });
-
-    it("should return a valid public key for DhkemSecp256K1HkdfSha256 from raw key", async () => {
-      const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-
-      const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(33);
-      rawKey[0] = hexStringToBytes("04")[0];
-      cryptoApi.getRandomValues(rawKey);
-      const privKey = await kemContext.importKey("raw", rawKey, true);
-
-      // assert
-      assertEquals(privKey.usages.length, 0);
-      // assertEquals(privKey.usages[0], "deriveBits");
     });
   });
 
@@ -1203,38 +1099,6 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
-      );
-    });
-
-    it("should throw DeserializeError with invalid DhkemSecp256K1HkdfSha256 private key", async () => {
-      const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-
-      const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(33);
-      cryptoApi.getRandomValues(rawKey);
-
-      // assert
-      await assertRejects(
-        () => kemContext.importKey("raw", rawKey, false),
-        errors.DeserializeError,
-      );
-    });
-
-    it("should throw DeserializeError with invalid DhkemSecp256K1HkdfSha256 public key", async () => {
-      const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256K1HkdfSha256();
-      kemContext.init(api);
-
-      const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(32);
-      cryptoApi.getRandomValues(rawKey);
-
-      // assert
-      await assertRejects(
-        () => kemContext.importKey("raw", rawKey, true),
         errors.DeserializeError,
       );
     });
