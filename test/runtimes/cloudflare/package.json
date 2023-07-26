@@ -2,7 +2,7 @@
   "name": "wrangler",
   "version": "0.1.0",
   "devDependencies": {
-    "wrangler": "2.10.0"
+    "wrangler": "3.3.0"
   },
   "private": true,
   "scripts": {
