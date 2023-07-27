@@ -1,4 +1,4 @@
-import type { AeadKey } from "./aeadKey.ts";
+import type { AeadEncryptionContext } from "./aeadEncryptionContext.ts";
 
 import { AeadId } from "../identifiers.ts";
 
@@ -29,5 +29,5 @@ export interface AeadInterface {
    *
    * @returns An AEAD encryption context.
    */
-  createAeadKey(key: ArrayBuffer): AeadKey;
+  createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext;
 }

@@ -1,11 +1,11 @@
-import type { AeadKey } from "../interfaces/aeadKey.ts";
+import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
 import { Algorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
 import * as consts from "../consts.ts";
 
-export class AesGcmKey implements AeadKey {
+export class AesGcmKey implements AeadEncryptionContext {
   public readonly id: AeadId = AeadId.Aes128Gcm;
   public readonly keySize: number = 0;
   public readonly nonceSize: number = 0;
@@ -94,7 +94,7 @@ export class Aes128Gcm extends Algorithm implements AeadInterface {
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
 
-  public createAeadKey(key: ArrayBuffer): AeadKey {
+  public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
     this.checkInit();
     return new Aes128GcmKey(this._api as SubtleCrypto, key);
   }
@@ -106,7 +106,7 @@ export class Aes256Gcm extends Algorithm implements AeadInterface {
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
 
-  public createAeadKey(key: ArrayBuffer): AeadKey {
+  public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
     this.checkInit();
     return new Aes256GcmKey(this._api as SubtleCrypto, key);
   }

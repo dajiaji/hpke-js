@@ -37,7 +37,7 @@ export class EncryptionContext extends ExporterContext {
     this._nN = this._aead.nonceSize;
     this._nT = this._aead.tagSize;
 
-    const key = this._aead.createAeadKey(params.key);
+    const key = this._aead.createEncryptionContext(params.key);
     this._f = {
       key: key,
       baseNonce: params.baseNonce,
@@ -73,7 +73,7 @@ export class EncryptionContext extends ExporterContext {
         await this.export(nonceSeed, this._nN),
       );
       const key = await this.export(keySeed, this._nK);
-      this._r.key = this._aead.createAeadKey(key);
+      this._r.key = this._aead.createEncryptionContext(key);
       this._r.seq = 0;
     } catch (e: unknown) {
       this._r.baseNonce = consts.EMPTY;

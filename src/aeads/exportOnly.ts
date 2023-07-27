@@ -1,4 +1,4 @@
-import type { AeadKey } from "../interfaces/aeadKey.ts";
+import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
 import { Algorithm } from "../algorithm.ts";
@@ -12,9 +12,9 @@ export class ExportOnly extends Algorithm implements AeadInterface {
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;
 
-  public createAeadKey(_key: ArrayBuffer): AeadKey {
+  public createEncryptionContext(_key: ArrayBuffer): AeadEncryptionContext {
     throw new NotSupportedError(
-      "createAeadKey() is not supported on ExportOnly",
+      "createEncryptionContext() is not supported on ExportOnly",
     );
   }
 }

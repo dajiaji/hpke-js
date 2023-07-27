@@ -83,7 +83,7 @@ describe("constructor", () => {
           new EncryptionContext(api, kdf, params);
         },
         Error,
-        "NotSupportedError: createAeadKey() is not supported on ExportOnly",
+        "NotSupportedError: createEncryptionContext() is not supported on ExportOnly",
       );
     });
   });
@@ -515,7 +515,7 @@ describe("createRecipientContext", () => {
 //       seq: seq,
 //     };
 //     const ec = new EncryptionContext(api, kdf, params);
-//     let ki = { key: createAeadKey(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
+//     let ki = { key: createEncryptionContext(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
 //     ec.incrementSeq(ki);
 //     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
 //   });

@@ -1,7 +1,7 @@
-import type { AeadKey } from "./aeadKey.ts";
+import type { AeadEncryptionContext } from "./aeadEncryptionContext.ts";
 
 export interface KeyInfo {
-  key: AeadKey;
+  key: AeadEncryptionContext;
   baseNonce: Uint8Array;
   seq: number;
 }

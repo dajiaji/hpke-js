@@ -1,0 +1,43 @@
+import { AeadId } from "../identifiers.ts";
+
+/**
+ * The AEAD encryption context interface.
+ */
+export interface AeadEncryptionContext {
+  /** The AEAD identifier. */
+  readonly id: AeadId;
+  /** The length in bytes of an AEAD key (Nk). */
+  readonly keySize: number;
+  /** The length in bytes of an AEAD nonce (Nn). */
+  readonly nonceSize: number;
+  /** The length in bytes of an AEAD authentication tag (Nt). */
+  readonly tagSize: number;
+
+  /**
+   * Encrypts data with an initialization vector and additional authenticated data.
+   *
+   * @param iv An initialization vector.
+   * @param data A plain text as bytes to be encrypted.
+   * @param aad Additional authenticated data as bytes fed by an application.
+   * @returns A cipher text as bytes.
+   */
+  seal(
+    iv: ArrayBuffer,
+    data: ArrayBuffer,
+    aad: ArrayBuffer,
+  ): Promise<ArrayBuffer>;
+
+  /**
+   * Decrypts data with an initialization vector and additional authenticated data.
+   *
+   * @param iv An initialization vector.
+   * @param data A plain text as bytes to be encrypted.
+   * @param aad Additional authenticated data as bytes fed by an application.
+   * @returns A decrypted plain text as bytes.
+   */
+  open(
+    iv: ArrayBuffer,
+    data: ArrayBuffer,
+    aad: ArrayBuffer,
+  ): Promise<ArrayBuffer>;
+}
