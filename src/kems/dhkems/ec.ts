@@ -3,6 +3,8 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
 import { KemId } from "../../identifiers.ts";
+import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../../kdfs/hkdf.ts";
+import { Dhkem } from "../dhkem.ts";
 
 import { Bignum } from "../../utils/bignum.ts";
 import { i2Osp } from "../../utils/misc.ts";
@@ -117,7 +119,7 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
   66,
 ]);
 
-export class Ec extends Algorithm implements KemPrimitives {
+class Ec extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: EcKeyGenParams;
   private _nPk: number;
@@ -351,5 +353,47 @@ export class Ec extends Algorithm implements KemPrimitives {
       this._nDh * 8,
     );
     return bits;
+  }
+}
+
+export class DhkemP256HkdfSha256 extends Dhkem {
+  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
+  public readonly secretSize: number = 32;
+  public readonly encSize: number = 65;
+  public readonly publicKeySize: number = 65;
+  public readonly privateKeySize: number = 32;
+
+  constructor() {
+    const kdf = new HkdfSha256();
+    const prim = new Ec(KemId.DhkemP256HkdfSha256, kdf);
+    super(prim, kdf);
+  }
+}
+
+export class DhkemP384HkdfSha384 extends Dhkem {
+  public readonly id: KemId = KemId.DhkemP384HkdfSha384;
+  public readonly secretSize: number = 48;
+  public readonly encSize: number = 97;
+  public readonly publicKeySize: number = 97;
+  public readonly privateKeySize: number = 48;
+
+  constructor() {
+    const kdf = new HkdfSha384();
+    const prim = new Ec(KemId.DhkemP384HkdfSha384, kdf);
+    super(prim, kdf);
+  }
+}
+
+export class DhkemP521HkdfSha512 extends Dhkem {
+  public readonly id: KemId = KemId.DhkemP521HkdfSha512;
+  public readonly secretSize: number = 64;
+  public readonly encSize: number = 133;
+  public readonly publicKeySize: number = 133;
+  public readonly privateKeySize: number = 64;
+
+  constructor() {
+    const kdf = new HkdfSha512();
+    const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
+    super(prim, kdf);
   }
 }
