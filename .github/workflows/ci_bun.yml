@@ -29,11 +29,11 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > test/runtimes/hpke.js
-          deno task minify > x/dhkemSecp256k1HkdfSha256/test/runtimes/hpke.js
-      - working-directory: ./x/dhkemSecp256k1HkdfSha256/
+          deno task minify > x/dhkem-secp256k1/test/runtimes/hpke.js
+      - working-directory: ./x/dhkem-secp256k1/
         run: |
           deno task dnt
-          deno task minify > test/runtimes/hpke-dhkemSecp256k1HkdfSha256.js
+          deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
       - uses: antongolub/action-setup-bun@v1
         with:
           bun-version: ${{ matrix.bun-version }}
@@ -43,9 +43,9 @@ jobs:
           nohup bun src/index.js &
           sleep 3
           deno test hpke.spec.ts --allow-net
-      - name: Run test for dhkemSecp256k1HkdfSha256
-        working-directory: ./x/dhkemSecp256k1HkdfSha256/test/runtimes/bun
+      - name: Run test for dhkem-secp256k1
+        working-directory: ./x/dhkem-secp256k1/test/runtimes/bun
         run: |
           nohup bun src/index.js &
           sleep 3
-          deno test dhkemSecp256k1HkdfSha256.spec.ts --allow-net
+          deno test dhkem-secp256k1.spec.ts --allow-net

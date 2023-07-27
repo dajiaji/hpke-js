@@ -27,8 +27,8 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > ./npm/hpke.min.js
-      - name: Run dnt & minify for /x/dhkemSecp256k1HkdfSha256
-        working-directory: ./x/dhkemSecp256k1HkdfSha256
+      - name: Run dnt & minify for /x/dhkem-secp256k1
+        working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
-          deno task minify > ./npm/hpke-dhkemSecp256k1.min.js
+          deno task minify > ./npm/hpke-dhkem-secp256k1.min.js

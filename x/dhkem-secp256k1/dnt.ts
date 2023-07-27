@@ -17,7 +17,7 @@ await build({
     deno: "dev",
   },
   package: {
-    name: "@hpke-js/dhkemSecp256k1HkdfSha256",
+    name: "@hpke/dhkem-secp256k1",
     version: Deno.args[0],
     description:
       "A Hybrid Public Key Encryption (HPKE) module extension for secp256k1 curve",
@@ -27,12 +27,12 @@ await build({
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
-    main: "./script/x/dhkemSecp256k1HkdfSha256/mod.js",
-    types: "./script/x/dhkemSecp256k1HkdfSha256/mod.d.ts",
+    main: "./script/x/dhkem-secp256k1/mod.js",
+    types: "./script/x/dhkem-secp256k1/mod.d.ts",
     exports: {
       ".": {
-        "import": "./esm/x/dhkemSecp256k1HkdfSha256/mod.js",
-        "require": "./script/x/dhkemSecp256k1HkdfSha256/mod.js",
+        "import": "./esm/x/dhkem-secp256k1/mod.js",
+        "require": "./script/x/dhkem-secp256k1/mod.js",
       },
       "./package.json": "./package.json",
     },
