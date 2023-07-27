@@ -6,11 +6,7 @@ import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 import { Algorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
 
-export class Chacha20Poly1305Key implements AeadEncryptionContext {
-  public readonly id: AeadId = AeadId.Chacha20Poly1305;
-  public readonly keySize: number = 32;
-  public readonly nonceSize: number = 12;
-  public readonly tagSize: number = 16;
+export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;
   private _api: SubtleCrypto;
 
@@ -73,6 +69,6 @@ export class Chacha20Poly1305 extends Algorithm implements AeadInterface {
   public readonly tagSize: number = 16;
 
   public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
-    return new Chacha20Poly1305Key(this._api as SubtleCrypto, key);
+    return new Chacha20Poly1305Context(this._api as SubtleCrypto, key);
   }
 }
