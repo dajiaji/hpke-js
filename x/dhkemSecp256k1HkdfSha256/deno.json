@@ -11,7 +11,11 @@
       "src/",
       "test/"
     ],
-    "exclude": []
+    "exclude": [
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
+    ]
   },
   "lint": {
     "include": ["mod.ts", "src/", "test/"],

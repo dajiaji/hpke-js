@@ -27,12 +27,12 @@ await build({
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
-    main: "./script/mod.js",
-    types: "./types/mod.d.ts",
+    main: "./script/x/dhkemSecp256k1HkdfSha256/mod.js",
+    types: "./script/x/dhkemSecp256k1HkdfSha256/mod.d.ts",
     exports: {
       ".": {
-        "import": "./esm/mod.js",
-        "require": "./script/mod.js",
+        "import": "./esm/x/dhkemSecp256k1HkdfSha256/mod.js",
+        "require": "./script/x/dhkemSecp256k1HkdfSha256/mod.js",
       },
       "./package.json": "./package.json",
     },
