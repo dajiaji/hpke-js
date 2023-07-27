@@ -8,7 +8,7 @@ import {
   KemId,
 } from "https://deno.land/x/hpke/mod.ts";
 
-import { DhkemSecp256k1HkdfSha256 } from "../src/dhkemSecp256k1HkdfSha256.ts";
+import { DhkemSecp256k1HkdfSha256 } from "../src/dhkem-secp256k1.ts";
 
 const isBrowser = () => typeof window !== "undefined";
 

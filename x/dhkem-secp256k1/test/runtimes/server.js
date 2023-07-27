@@ -1,5 +1,5 @@
 import * as hpke from "./hpke.js";
-import * as secp256k1 from "./hpke-dhkemSecp256k1HkdfSha256.js";
+import * as secp256k1 from "./hpke-dhkem-secp256k1.js";
 
 export async function testServer(request) {
   const url = new URL(request.url);

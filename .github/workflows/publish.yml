@@ -26,7 +26,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-  publish-dhkemSecp256k1HkdfSha256:
+  publish-dhkem-secp256k1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -38,12 +38,12 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt & minify
-        working-directory: ./x/dhkemSecp256k1HkdfSha256
+        working-directory: ./x/dhkem-secp256k1
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-dhkemSecp256k1HkdfSha256.min.js
-      - working-directory: ./x/dhkemSecp256k1HkdfSha256/npm
+          deno task minify > ./npm/hpke-dhkem-secp256k1.min.js
+      - working-directory: ./x/dhkem-secp256k1/npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
