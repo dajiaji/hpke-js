@@ -29,7 +29,7 @@ await build({
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
     main: "./script/mod.js",
-    types: "./types/mod.d.ts",
+    types: "./script/mod.d.ts",
     exports: {
       ".": {
         "import": "./esm/mod.js",
