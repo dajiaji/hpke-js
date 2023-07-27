@@ -1,7 +1,7 @@
 import { build, emptyDir } from "dnt";
 
 await emptyDir("./npm");
-await emptyDir("./x/dhkemSecp256k1HkdfSha256/npm");
+await emptyDir("./x/dhkem-secp256k1/npm");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -21,7 +21,7 @@ await build({
     name: "hpke-js",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) module for web browsers, Node.js and Deno",
+      "A Hybrid Public Key Encryption (HPKE) module for various JavaScript runtimes",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
