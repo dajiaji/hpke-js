@@ -32,19 +32,19 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemX25519HkdfSha256);
-      assertEquals(suite.kem, 0x0020);
-      assertEquals(suite.kemSecretSize, 32);
-      assertEquals(suite.kemEncSize, 32);
-      assertEquals(suite.kemPublicKeySize, 32);
-      assertEquals(suite.kemPrivateKeySize, 32);
-      assertEquals(suite.aeadKeySize, 16);
-      assertEquals(suite.aeadNonceSize, 12);
-      assertEquals(suite.aeadTagSize, 16);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, KemId.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem.id, 0x0020);
+      assertEquals(suite.kem.secretSize, 32);
+      assertEquals(suite.kem.encSize, 32);
+      assertEquals(suite.kem.publicKeySize, 32);
+      assertEquals(suite.kem.privateKeySize, 32);
+      assertEquals(suite.aead.keySize, 16);
+      assertEquals(suite.aead.nonceSize, 12);
+      assertEquals(suite.aead.tagSize, 16);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
 
       const kemContext = await suite.kemContext();
       assertEquals(kemContext.id, KemId.DhkemX25519HkdfSha256);
@@ -66,12 +66,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemX25519HkdfSha256);
-      assertEquals(suite.kem, 0x0020);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Chacha20Poly1305);
-      assertEquals(suite.aead, 0x0003);
+      assertEquals(suite.kem.id, KemId.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem.id, 0x0020);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.Chacha20Poly1305);
+      assertEquals(suite.aead.id, 0x0003);
     });
   });
 
@@ -85,12 +85,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
     });
   });
 
@@ -104,12 +104,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha512);
-      assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, AeadId.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha512);
+      assertEquals(suite.kdf.id, 0x0003);
+      assertEquals(suite.aead.id, AeadId.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
     });
   });
 
@@ -123,12 +123,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.Chacha20Poly1305);
-      assertEquals(suite.aead, 0x0003);
+      assertEquals(suite.kem.id, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.Chacha20Poly1305);
+      assertEquals(suite.aead.id, 0x0003);
     });
   });
 
@@ -142,12 +142,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP521HkdfSha512);
-      assertEquals(suite.kem, 0x0012);
-      assertEquals(suite.kdf, KdfId.HkdfSha512);
-      assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, AeadId.Aes256Gcm);
-      assertEquals(suite.aead, 0x0002);
+      assertEquals(suite.kem.id, KemId.DhkemP521HkdfSha512);
+      assertEquals(suite.kem.id, 0x0012);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha512);
+      assertEquals(suite.kdf.id, 0x0003);
+      assertEquals(suite.aead.id, AeadId.Aes256Gcm);
+      assertEquals(suite.aead.id, 0x0002);
     });
   });
 
@@ -161,12 +161,12 @@ describe("CipherSuite", () => {
       });
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.ExportOnly);
-      assertEquals(suite.aead, 0xFFFF);
+      assertEquals(suite.kem.id, KemId.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.ExportOnly);
+      assertEquals(suite.aead.id, 0xFFFF);
     });
   });
 
@@ -1633,10 +1633,10 @@ describe("CipherSuite", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1645,12 +1645,12 @@ describe("CipherSuite", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1665,28 +1665,32 @@ describe("CipherSuite", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 
@@ -1718,10 +1722,10 @@ describe("CipherSuite", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1730,12 +1734,12 @@ describe("CipherSuite", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1750,28 +1754,32 @@ describe("CipherSuite", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 
@@ -1803,10 +1811,10 @@ describe("CipherSuite", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1815,12 +1823,12 @@ describe("CipherSuite", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1835,28 +1843,32 @@ describe("CipherSuite", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 

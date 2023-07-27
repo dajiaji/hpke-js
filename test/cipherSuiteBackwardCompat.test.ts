@@ -23,16 +23,16 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemX25519HkdfSha256);
-      assertEquals(suite.kem, 0x0020);
-      assertEquals(suite.kemSecretSize, 32);
-      assertEquals(suite.kemEncSize, 32);
-      assertEquals(suite.kemPublicKeySize, 32);
-      assertEquals(suite.kemPrivateKeySize, 32);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, Kem.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem.id, 0x0020);
+      assertEquals(suite.kem.secretSize, 32);
+      assertEquals(suite.kem.encSize, 32);
+      assertEquals(suite.kem.publicKeySize, 32);
+      assertEquals(suite.kem.privateKeySize, 32);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, Aead.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
 
       const kemContext = await suite.kemContext();
       assertEquals(kemContext.id, Kem.DhkemX25519HkdfSha256);
@@ -54,12 +54,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemX25519HkdfSha256);
-      assertEquals(suite.kem, 0x0020);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.Chacha20Poly1305);
-      assertEquals(suite.aead, 0x0003);
+      assertEquals(suite.kem.id, Kem.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem.id, 0x0020);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, Aead.Chacha20Poly1305);
+      assertEquals(suite.aead.id, 0x0003);
     });
   });
 
@@ -73,12 +73,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, Aead.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
     });
   });
 
@@ -92,12 +92,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, Kdf.HkdfSha512);
-      assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, Aead.Aes128Gcm);
-      assertEquals(suite.aead, 0x0001);
+      assertEquals(suite.kem.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha512);
+      assertEquals(suite.kdf.id, 0x0003);
+      assertEquals(suite.aead.id, Aead.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
     });
   });
 
@@ -111,12 +111,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.Chacha20Poly1305);
-      assertEquals(suite.aead, 0x0003);
+      assertEquals(suite.kem.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, Aead.Chacha20Poly1305);
+      assertEquals(suite.aead.id, 0x0003);
     });
   });
 
@@ -130,12 +130,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemP521HkdfSha512);
-      assertEquals(suite.kem, 0x0012);
-      assertEquals(suite.kdf, Kdf.HkdfSha512);
-      assertEquals(suite.kdf, 0x0003);
-      assertEquals(suite.aead, Aead.Aes256Gcm);
-      assertEquals(suite.aead, 0x0002);
+      assertEquals(suite.kem.id, Kem.DhkemP521HkdfSha512);
+      assertEquals(suite.kem.id, 0x0012);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha512);
+      assertEquals(suite.kdf.id, 0x0003);
+      assertEquals(suite.aead.id, Aead.Aes256Gcm);
+      assertEquals(suite.aead.id, 0x0002);
     });
   });
 
@@ -149,12 +149,12 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       // assert
-      assertEquals(suite.kem, Kem.DhkemP256HkdfSha256);
-      assertEquals(suite.kem, 0x0010);
-      assertEquals(suite.kdf, Kdf.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, Aead.ExportOnly);
-      assertEquals(suite.aead, 0xFFFF);
+      assertEquals(suite.kem.id, Kem.DhkemP256HkdfSha256);
+      assertEquals(suite.kem.id, 0x0010);
+      assertEquals(suite.kdf.id, Kdf.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, Aead.ExportOnly);
+      assertEquals(suite.aead.id, 0xFFFF);
     });
   });
 
@@ -1460,10 +1460,10 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1472,12 +1472,12 @@ describe("CipherSuite(backward-compat)", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1492,28 +1492,32 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 
@@ -1545,10 +1549,10 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1557,12 +1561,12 @@ describe("CipherSuite(backward-compat)", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1577,28 +1581,32 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 
@@ -1630,10 +1638,10 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretS = await sender.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
-      const responseNonce = new Uint8Array(suite.aeadKeySize);
+      const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
@@ -1642,12 +1650,12 @@ describe("CipherSuite(backward-compat)", () => {
       const keyS = await kdfS.expand(
         prkS,
         te.encode("key"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
       const nonceS = await kdfS.expand(
         prkS,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.createAeadKey(keyS);
@@ -1662,28 +1670,32 @@ describe("CipherSuite(backward-compat)", () => {
 
       const secretR = await recipient.export(
         te.encode("message/bhttp response"),
-        suite.aeadKeySize,
+        suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
-        encResponse.slice(0, suite.aeadKeySize),
+        encResponse.slice(0, suite.aead.keySize),
       );
       const kdfR = await suite.kdfContext();
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(prkR, te.encode("key"), suite.aeadKeySize);
+      const keyR = await kdfR.expand(
+        prkR,
+        te.encode("key"),
+        suite.aead.keySize,
+      );
       const nonceR = await kdfR.expand(
         prkR,
         te.encode("nonce"),
-        suite.aeadNonceSize,
+        suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aeadKeySize),
+        encResponse.slice(suite.aead.keySize),
         te.encode(""),
       );
 

@@ -52,13 +52,6 @@ import * as errors from "./errors.ts";
  * - Decrypts an encrypted message as as single-shot API.
  */
 export class CipherSuite {
-  /** The KEM id of the cipher suite. */
-  public readonly kem: KemId;
-  /** The KDF id of the cipher suite. */
-  public readonly kdf: KdfId;
-  /** The AEAD id of the cipher suite. */
-  public readonly aead: AeadId;
-
   private _api: SubtleCrypto | undefined = undefined;
   private _kem: KemInterface;
   private _kdf: KdfInterface;
@@ -99,7 +92,6 @@ export class CipherSuite {
           );
       }
     }
-    this.kem = this._kem.id;
 
     // KDF
     if (typeof params.kdf !== "number") {
@@ -118,7 +110,6 @@ export class CipherSuite {
           break;
       }
     }
-    this.kdf = this._kdf.id;
 
     // AEAD
     if (typeof params.aead !== "number") {
@@ -140,61 +131,32 @@ export class CipherSuite {
           break;
       }
     }
-    this.aead = this._aead.id;
 
     this._suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-    this._suiteId.set(i2Osp(this.kem, 2), 4);
-    this._suiteId.set(i2Osp(this.kdf, 2), 6);
-    this._suiteId.set(i2Osp(this.aead, 2), 8);
+    this._suiteId.set(i2Osp(this._kem.id, 2), 4);
+    this._suiteId.set(i2Osp(this._kdf.id, 2), 6);
+    this._suiteId.set(i2Osp(this._aead.id, 2), 8);
   }
 
   /**
-   * The length in bytes of a KEM shared secret produced by this KEM (Nsecret).
+   * The KEM context of the ciphersuite.
    */
-  public get kemSecretSize() {
-    return this._kem.secretSize;
+  public get kem() {
+    return this._kem;
   }
 
   /**
-   * The length in bytes of an encapsulated key produced by this KEM (Nenc).
+   * The KDF context of the ciphersuite.
    */
-  public get kemEncSize() {
-    return this._kem.encSize;
+  public get kdf() {
+    return this._kdf;
   }
 
   /**
-   * The length in bytes of an encoded public key for this KEM (Npk).
+   * The AEAD context of the ciphersuite.
    */
-  public get kemPublicKeySize() {
-    return this._kem.publicKeySize;
-  }
-
-  /**
-   * The length in bytes of an encoded private key for this KEM (Nsk).
-   */
-  public get kemPrivateKeySize() {
-    return this._kem.privateKeySize;
-  }
-
-  /**
-   * The length in bytes of an AEAD key (Nk).
-   */
-  public get aeadKeySize() {
-    return this._aead.keySize;
-  }
-
-  /**
-   * The length in bytes of an AEAD nonce (Nn).
-   */
-  public get aeadNonceSize() {
-    return this._aead.nonceSize;
-  }
-
-  /**
-   * The length in bytes of an AEAD authentication tag (Nt).
-   */
-  public get aeadTagSize() {
-    return this._aead.tagSize;
+  public get aead() {
+    return this._aead;
   }
 
   /**
