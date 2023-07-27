@@ -20,7 +20,7 @@ await build({
     name: "@hpke/dhkem-secp256k1",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) module extension for secp256k1 curve",
+      "A Hybrid Public Key Encryption (HPKE) module extension for secp256k1 curve (EXPERIMENTAL)",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",

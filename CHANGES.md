@@ -1,5 +1,11 @@
 # Changes
 
+## Version 0.22.1
+
+Released 2023-07-28
+
+- [(#206) Change scoped package name.](https://github.com/dajiaji/hpke-js/pull/206)
+
 ## Version 0.22.0
 
 Released 2023-07-27

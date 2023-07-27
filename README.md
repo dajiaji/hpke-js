@@ -72,8 +72,8 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 - \*2: [@noble/curves/ed448](https://github.com/paulmillr/noble-curves) is used
   until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
   implemented.
-- \*3: NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION using
-  [@noble/curves/secp256k1](https://github.com/paulmillr/noble-curves).
+- \*3: NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION. See
+  [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md)
 
 ### Key Derivation Functions (KDFs)
 
@@ -125,7 +125,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.22.0";
+  import * as hpke from "https://esm.sh/hpke-js@0.22.1";
   // ...
 </script>
 
@@ -141,7 +141,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.22.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.22.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -166,7 +166,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.22.0/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@0.22.1/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -177,15 +177,15 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.22.0/es2022/hpke-js.js
+curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.22.1/es2022/hpke-js.js
 # if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.0/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.1/es2022/hpke.min.js
 ```
 
 Emits a single js file by using `deno bundle`:
 
 ```sh
-deno bundle https://deno.land/x/hpke@0.22.0/mod.ts > $YOUR_SRC_PATH/hpke.js
+deno bundle https://deno.land/x/hpke@0.22.1/mod.ts > $YOUR_SRC_PATH/hpke.js
 ```
 
 ## Usage
@@ -201,8 +201,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.22.0";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.0";
+      // import * as hpke from "https://esm.sh/hpke-js@0.22.1";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.1";
 
       globalThis.doHpke = async () => {
 
@@ -318,7 +318,7 @@ doHpke();
 Deno:
 
 ```js
-import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.0/mod.ts";
+import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.1/mod.ts";
 
 async function doHpke() {
   // setup
