@@ -196,8 +196,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
 
     it("should work normally with importKey('jwk')", async () => {
@@ -247,8 +247,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
@@ -331,8 +331,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
@@ -505,8 +505,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
@@ -587,8 +587,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
@@ -628,10 +628,6 @@ describe("CipherSuite(backward-compat)", () => {
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
         errors.NotSupportedError,
       );
-      await assertRejects(
-        () => sender.setupBidirectional(te.encode("a"), te.encode("b")),
-        errors.NotSupportedError,
-      );
     });
   });
 
@@ -669,10 +665,6 @@ describe("CipherSuite(backward-compat)", () => {
       );
       await assertRejects(
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
-        errors.NotSupportedError,
-      );
-      await assertRejects(
-        () => sender.setupBidirectional(te.encode("a"), te.encode("b")),
         errors.NotSupportedError,
       );
     });
@@ -1017,149 +1009,6 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-    });
-  });
-
-  describe("bidirectional seal and open", () => {
-    it("should work normally (DhkemP256HkdfSha256)", async () => {
-      const te = new TextEncoder();
-
-      // setup
-      const suite = new CipherSuite({
-        kem: Kem.DhkemP256HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
-      const rkp = await suite.generateKeyPair();
-
-      const sender = await suite.createSenderContext({
-        recipientPublicKey: rkp.publicKey,
-      });
-
-      const recipient = await suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: sender.enc,
-      });
-
-      // setup bidirectional encryption
-      await sender.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
-      // encrypt
-      const ct = await sender.seal(te.encode("my-secret-message"));
-
-      // decrypt
-      const pt = await recipient.open(ct);
-
-      // encrypt reversely
-      const rct = await recipient.seal(te.encode("my-secret-message"));
-
-      // decrypt reversely
-      const rpt = await sender.open(rct);
-
-      // assert
-      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      assertEquals(new TextDecoder().decode(rpt), "my-secret-message");
-    });
-
-    it("should work normally (DhkemX25519HkdfSha256)", async () => {
-      const te = new TextEncoder();
-
-      // setup
-      const suite = new CipherSuite({
-        kem: Kem.DhkemX25519HkdfSha256,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
-      const rkp = await suite.generateKeyPair();
-
-      const sender = await suite.createSenderContext({
-        recipientPublicKey: rkp.publicKey,
-      });
-
-      const recipient = await suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: sender.enc,
-      });
-
-      // setup bidirectional encryption
-      await sender.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
-      // encrypt
-      const ct = await sender.seal(te.encode("my-secret-message"));
-
-      // decrypt
-      const pt = await recipient.open(ct);
-
-      // encrypt reversely
-      const rct = await recipient.seal(te.encode("my-secret-message"));
-
-      // decrypt reversely
-      const rpt = await sender.open(rct);
-
-      // assert
-      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      assertEquals(new TextDecoder().decode(rpt), "my-secret-message");
-    });
-
-    it("should work normally (DhkemX448HkdfSha512)", async () => {
-      const te = new TextEncoder();
-
-      // setup
-      const suite = new CipherSuite({
-        kem: Kem.DhkemX448HkdfSha512,
-        kdf: Kdf.HkdfSha256,
-        aead: Aead.Aes128Gcm,
-      });
-      const rkp = await suite.generateKeyPair();
-
-      const sender = await suite.createSenderContext({
-        recipientPublicKey: rkp.publicKey,
-      });
-
-      const recipient = await suite.createRecipientContext({
-        recipientKey: rkp,
-        enc: sender.enc,
-      });
-
-      // setup bidirectional encryption
-      await sender.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
-      // encrypt
-      const ct = await sender.seal(te.encode("my-secret-message"));
-
-      // decrypt
-      const pt = await recipient.open(ct);
-
-      // encrypt reversely
-      const rct = await recipient.seal(te.encode("my-secret-message"));
-
-      // decrypt reversely
-      const rpt = await sender.open(rct);
-
-      // assert
-      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      assertEquals(new TextDecoder().decode(rpt), "my-secret-message");
     });
   });
 

@@ -6,7 +6,6 @@ import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 import { ExporterContext } from "./exporterContext.ts";
 import { i2Osp, xor } from "./utils/misc.ts";
 
-import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
 export class EncryptionContext extends ExporterContext {
@@ -18,10 +17,8 @@ export class EncryptionContext extends ExporterContext {
   protected _nN: number;
   // The length in bytes of an authentication tag for the algorithm.
   protected _nT: number;
-  // Forward (sender to recipient) encryption key information.
-  protected _f: KeyInfo;
-  // Reverse (recipient to sender) encryption key information.
-  protected _r: KeyInfo;
+  // The end-to-end encryption key information.
+  protected _ctx: KeyInfo;
 
   constructor(api: SubtleCrypto, kdf: KdfInterface, params: AeadParams) {
     super(api, kdf, params.exporterSecret);
@@ -38,15 +35,10 @@ export class EncryptionContext extends ExporterContext {
     this._nT = this._aead.tagSize;
 
     const key = this._aead.createEncryptionContext(params.key);
-    this._f = {
+    this._ctx = {
       key: key,
       baseNonce: params.baseNonce,
       seq: params.seq,
-    };
-    this._r = {
-      key: key,
-      baseNonce: consts.EMPTY,
-      seq: 0,
     };
   }
 
@@ -62,22 +54,5 @@ export class EncryptionContext extends ExporterContext {
     }
     k.seq += 1;
     return;
-  }
-
-  public async setupBidirectional(
-    keySeed: ArrayBuffer,
-    nonceSeed: ArrayBuffer,
-  ): Promise<void> {
-    try {
-      this._r.baseNonce = new Uint8Array(
-        await this.export(nonceSeed, this._nN),
-      );
-      const key = await this.export(keySeed, this._nK);
-      this._r.key = this._aead.createEncryptionContext(key);
-      this._r.seq = 0;
-    } catch (e: unknown) {
-      this._r.baseNonce = consts.EMPTY;
-      throw e;
-    }
   }
 }

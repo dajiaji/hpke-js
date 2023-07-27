@@ -27,22 +27,6 @@ export interface EncryptionContextInterface extends Exporter {
    * @throws {@link OpenError}
    */
   open(data: ArrayBuffer, aad?: ArrayBuffer): Promise<ArrayBuffer>;
-
-  /**
-   * Sets up bi-directional encryption to allow a recipient to send
-   * encrypted messages to a sender. This function follows the manner
-   * demonstrated in [RFC9180 Section 9.8](https://www.rfc-editor.org/rfc/rfc9180.html#section-9.8).
-   *
-   * If the error occurred, throws `ExportError`.
-   *
-   * @param keySeed A seed for generating a secret key as bytes.
-   * @param nonceSeed A seed for generating a base nonce as bytes.
-   * @throws {@link ExportError}
-   */
-  setupBidirectional(
-    keySeed: ArrayBuffer,
-    nonceSeed: ArrayBuffer,
-  ): Promise<void>;
 }
 
 /**
