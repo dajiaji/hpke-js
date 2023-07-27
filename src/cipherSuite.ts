@@ -25,13 +25,11 @@ import { HkdfSha256, HkdfSha384, HkdfSha512 } from "./kdfs/hkdf.ts";
 import { RecipientContext } from "./recipientContext.ts";
 import { SenderContext } from "./senderContext.ts";
 import { loadSubtleCrypto } from "./webCrypto.ts";
-import {
-  DhkemP256HkdfSha256,
-  DhkemP384HkdfSha384,
-  DhkemP521HkdfSha512,
-} from "./kems/dhkems/ec.ts";
-import { DhkemX25519HkdfSha256 } from "./kems/dhkems/x25519.ts";
-import { DhkemX448HkdfSha512 } from "./kems/dhkems/x448.ts";
+import { DhkemP256HkdfSha256 } from "./kems/dhkemP256.ts";
+import { DhkemP384HkdfSha384 } from "./kems/dhkemP384.ts";
+import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
+import { DhkemX25519HkdfSha256 } from "./kems/dhkemX25519.ts";
+import { DhkemX448HkdfSha512 } from "./kems/dhkemX448.ts";
 import { i2Osp } from "./utils/misc.ts";
 
 import * as consts from "./consts.ts";

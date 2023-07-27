@@ -18,13 +18,11 @@ export * from "./src/errors.ts";
 export { Aead, AeadId, Kdf, KdfId, Kem, KemId } from "./src/identifiers.ts";
 export { CipherSuite } from "./src/cipherSuite.ts";
 
-export {
-  DhkemP256HkdfSha256,
-  DhkemP384HkdfSha384,
-  DhkemP521HkdfSha512,
-} from "./src/kems/dhkems/ec.ts";
-export { DhkemX25519HkdfSha256 } from "./src/kems/dhkems/x25519.ts";
-export { DhkemX448HkdfSha512 } from "./src/kems/dhkems/x448.ts";
+export { DhkemP256HkdfSha256 } from "./src/kems/dhkemP256.ts";
+export { DhkemP384HkdfSha384 } from "./src/kems/dhkemP384.ts";
+export { DhkemP521HkdfSha512 } from "./src/kems/dhkemP521.ts";
+export { DhkemX25519HkdfSha256 } from "./src/kems/dhkemX25519.ts";
+export { DhkemX448HkdfSha512 } from "./src/kems/dhkemX448.ts";
 
 export { HkdfSha256, HkdfSha384, HkdfSha512 } from "./src/kdfs/hkdf.ts";
 export { Aes128Gcm, Aes256Gcm } from "./src/aeads/aesGcm.ts";

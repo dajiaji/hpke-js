@@ -4,17 +4,14 @@ import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
-import { KemId } from "../../identifiers.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
-import { HkdfSha256 } from "../../kdfs/hkdf.ts";
-import { Dhkem } from "../dhkem.ts";
 
 import * as consts from "../../consts.ts";
 import { base64UrlToBytes } from "../../utils/misc.ts";
 
 const ALG_NAME = "X25519";
 
-class X25519 extends Algorithm implements KemPrimitives {
+export class X25519 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
@@ -172,19 +169,5 @@ class X25519 extends Algorithm implements KemPrimitives {
         reject(e);
       }
     });
-  }
-}
-
-export class DhkemX25519HkdfSha256 extends Dhkem {
-  public readonly id: KemId = KemId.DhkemX25519HkdfSha256;
-  public readonly secretSize: number = 32;
-  public readonly encSize: number = 32;
-  public readonly publicKeySize: number = 32;
-  public readonly privateKeySize: number = 32;
-
-  constructor() {
-    const kdf = new HkdfSha256();
-    const prim = new X25519(kdf);
-    super(prim, kdf);
   }
 }

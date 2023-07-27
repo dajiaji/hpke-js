@@ -3,13 +3,11 @@ import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { isDeno } from "../src/utils/misc.ts";
-import {
-  DhkemP256HkdfSha256,
-  DhkemP384HkdfSha384,
-  DhkemP521HkdfSha512,
-} from "../src/kems/dhkems/ec.ts";
-import { DhkemX25519HkdfSha256 } from "../src/kems/dhkems/x25519.ts";
-import { DhkemX448HkdfSha512 } from "../src/kems/dhkems/x448.ts";
+import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
+import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
+import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
+import { DhkemX25519HkdfSha256 } from "../src/kems/dhkemX25519.ts";
+import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
 import { KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 
