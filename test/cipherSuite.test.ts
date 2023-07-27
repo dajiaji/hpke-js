@@ -1645,7 +1645,7 @@ describe("CipherSuite", () => {
         suite.aead.nonceSize,
       );
 
-      const aeadKeyS = await suite.createAeadKey(keyS);
+      const aeadKeyS = await suite.aead.createAeadKey(keyS);
       const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
@@ -1679,7 +1679,7 @@ describe("CipherSuite", () => {
         te.encode("nonce"),
         suite.aead.nonceSize,
       );
-      const aeadKeyR = await suite.createAeadKey(keyR);
+      const aeadKeyR = await suite.aead.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
         encResponse.slice(suite.aead.keySize),
@@ -1734,7 +1734,7 @@ describe("CipherSuite", () => {
         suite.aead.nonceSize,
       );
 
-      const aeadKeyS = await suite.createAeadKey(keyS);
+      const aeadKeyS = await suite.aead.createAeadKey(keyS);
       const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
@@ -1768,7 +1768,7 @@ describe("CipherSuite", () => {
         te.encode("nonce"),
         suite.aead.nonceSize,
       );
-      const aeadKeyR = await suite.createAeadKey(keyR);
+      const aeadKeyR = await suite.aead.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
         encResponse.slice(suite.aead.keySize),
@@ -1823,7 +1823,7 @@ describe("CipherSuite", () => {
         suite.aead.nonceSize,
       );
 
-      const aeadKeyS = await suite.createAeadKey(keyS);
+      const aeadKeyS = await suite.aead.createAeadKey(keyS);
       const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
@@ -1857,7 +1857,7 @@ describe("CipherSuite", () => {
         te.encode("nonce"),
         suite.aead.nonceSize,
       );
-      const aeadKeyR = await suite.createAeadKey(keyR);
+      const aeadKeyR = await suite.aead.createAeadKey(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
         encResponse.slice(suite.aead.keySize),

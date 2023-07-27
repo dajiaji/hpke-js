@@ -1,4 +1,3 @@
-import type { AeadKey } from "./interfaces/aeadKey.ts";
 import type { AeadInterface } from "./interfaces/aeadInterface.ts";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
@@ -157,18 +156,6 @@ export class CipherSuite {
    */
   public get aead() {
     return this._aead;
-  }
-
-  /**
-   * Creates a suite-specific AEAD key.
-   *
-   * @param key A byte string of the raw key.
-   *
-   * @returns An AEAD key.
-   */
-  public async createAeadKey(key: ArrayBuffer): Promise<AeadKey> {
-    await this.setup();
-    return this._aead.createAeadKey(key);
   }
 
   /**

@@ -17,11 +17,17 @@ export interface AeadInterface {
 
   /**
    * Initializes the key by setting the SubtleCrypto.
+   *
+   * @param api A SubtleCrypto API.
    */
   init(api: SubtleCrypto): void;
 
   /**
-   * Creates an AeadKey which has seal/open operation.
+   * Creates an AEAD encryption context which has seal/open operation.
+   *
+   * @param key A byte string of the raw key.
+   *
+   * @returns An AEAD encryption context.
    */
   createAeadKey(key: ArrayBuffer): AeadKey;
 }
