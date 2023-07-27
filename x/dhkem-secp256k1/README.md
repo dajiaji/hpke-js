@@ -42,8 +42,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.22.1";
-  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@0.22.1";
+  import * as hpke from "https://esm.sh/hpke-js@0.22.2";
+  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@0.22.2";
   // ...
 </script>
 
@@ -60,8 +60,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.22.1/esm/mod.js";
-  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@0.22.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@0.22.2/esm/mod.js";
+  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@0.22.2/esm/mod.js";
   // ...
 </script>
 ```
@@ -86,8 +86,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.22.1/mod.ts";
-import * as secp256k1 from "https://deno.land/x/hpke@0.22.1/x/dhkem-secp256k1/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@0.22.2/mod.ts";
+import * as secp256k1 from "https://deno.land/x/hpke@0.22.2/x/dhkem-secp256k1/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -99,8 +99,8 @@ import * as secp256k1 from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
 Downloads a single js file from esm.sh:
 
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.1/es2022/hpke.min.js
-curl -sS -o $YOUR_SRC_PATH/hpke-dhkem-secp256k1.min.js https://esm.sh/v86/@hpke/dhkem-secp256k1@0.22.1/es2022/hpke-dhkem-secp256k1.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.2/es2022/hpke.min.js
+curl -sS -o $YOUR_SRC_PATH/hpke-dhkem-secp256k1.min.js https://esm.sh/v86/@hpke/dhkem-secp256k1@0.22.2/es2022/hpke-dhkem-secp256k1.min.js
 ```
 
 ## Usage
@@ -116,9 +116,9 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.22.1";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.1";
-      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@0.22.1";
+      // import * as hpke from "https://esm.sh/hpke-js@0.22.2";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.2";
+      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@0.22.2";
 
       globalThis.doHpke = async () => {
 
@@ -204,8 +204,8 @@ doHpke();
 Deno:
 
 ```js
-import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.1/mod.ts";
-import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@0.22.1/x/dhkem-secp256k1/mod.ts";
+import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.2/mod.ts";
+import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@0.22.2/x/dhkem-secp256k1/mod.ts";
 
 async function doHpke() {
   // setup

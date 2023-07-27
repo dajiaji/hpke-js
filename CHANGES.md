@@ -1,5 +1,11 @@
 # Changes
 
+## Version 0.22.2
+
+Released 2023-07-28
+
+- [(#208) Fix encSize and publicKeySize of DhkemSecp256k1HkdfSha256.](https://github.com/dajiaji/hpke-js/pull/208)
+
 ## Version 0.22.1
 
 Released 2023-07-28
