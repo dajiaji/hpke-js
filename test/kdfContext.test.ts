@@ -2,7 +2,9 @@ import { assertEquals } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
-import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
+import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
+import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
+import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
