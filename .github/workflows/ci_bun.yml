@@ -12,6 +12,11 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        bun-version: [0.4, 0.5, 0.6, 0.7]
+
     steps:
       - uses: actions/checkout@v3
       - uses: denoland/setup-deno@v1
@@ -31,7 +36,7 @@ jobs:
           deno task minify > test/runtimes/hpke-dhkemSecp256k1HkdfSha256.js
       - uses: antongolub/action-setup-bun@v1
         with:
-          bun-version: 0.4
+          bun-version: ${{ matrix.bun-version }}
       - name: Run test
         working-directory: ./test/runtimes/bun
         run: |
