@@ -4,6 +4,7 @@ import { KdfId } from "../identifiers.ts";
 import { KdfAlgorithm } from "../algorithm.ts";
 
 import * as consts from "../consts.ts";
+import * as errors from "../errors.ts";
 
 export class HkdfNative extends KdfAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
@@ -54,7 +55,9 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
       salt = new ArrayBuffer(this.hashSize);
     }
     if (salt.byteLength !== this.hashSize) {
-      throw new Error("The salt length must be the same as the hashSize");
+      throw new errors.InvalidParamError(
+        "The salt length must be the same as the hashSize",
+      );
     }
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
