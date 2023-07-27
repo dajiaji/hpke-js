@@ -15,7 +15,11 @@
   },
   "lint": {
     "include": ["mod.ts", "src/", "test/"],
-    "exclude": []
+    "exclude": [
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
+    ]
   },
   "tasks": {
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
