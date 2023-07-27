@@ -22,8 +22,6 @@ export const Kem = {
   DhkemP384HkdfSha384: 0x0011,
   /** DHKEM (P-521, HKDF-SHA512). */
   DhkemP521HkdfSha512: 0x0012,
-  /** DHKEM (secp256k1, HKDF-SHA256). EXPERIMENTAL/DEPRECATED. The KEM id can be changed in the standardization process. */
-  DhkemSecp256K1HkdfSha256: 0x0013,
   /** DHKEM (secp256k1, HKDF-SHA256). EXPERIMENTAL. The KEM id can be changed in the standardization process. */
   DhkemSecp256k1HkdfSha256: 0x0013,
   /** DHKEM (X25519, HKDF-SHA256) */

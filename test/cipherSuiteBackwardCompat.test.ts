@@ -164,7 +164,7 @@ describe("CipherSuite(backward-compat)", () => {
       await assertThrows(
         () =>
           new CipherSuite({
-            kem: Kem.DhkemSecp256K1HkdfSha256,
+            kem: Kem.DhkemSecp256k1HkdfSha256,
             kdf: Kdf.HkdfSha256,
             aead: Aead.ExportOnly,
           }),
