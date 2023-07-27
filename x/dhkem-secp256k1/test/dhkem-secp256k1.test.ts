@@ -59,7 +59,7 @@ async function loadSubtleCrypto(): Promise<SubtleCrypto> {
   }
 }
 
-describe("DhkemP256k1Hkdf256", () => {
+describe("DhkemSecp256k1Hkdf256", () => {
   describe("with valid parameters", () => {
     it("should have a correct KEM object", async () => {
       const api = await loadSubtleCrypto();
@@ -70,8 +70,8 @@ describe("DhkemP256k1Hkdf256", () => {
       assertEquals(typeof dhkemSecp256k1, "object");
       assertEquals(dhkemSecp256k1.id, KemId.DhkemSecp256K1HkdfSha256);
       assertEquals(dhkemSecp256k1.secretSize, 32);
-      assertEquals(dhkemSecp256k1.encSize, 65);
-      assertEquals(dhkemSecp256k1.publicKeySize, 65);
+      assertEquals(dhkemSecp256k1.encSize, 33);
+      assertEquals(dhkemSecp256k1.publicKeySize, 33);
       assertEquals(dhkemSecp256k1.privateKeySize, 32);
     });
   });
@@ -230,8 +230,8 @@ describe("CipherSuite", () => {
       });
       const kem = await suite.kemContext();
       assertEquals(kem.secretSize, 32);
-      assertEquals(kem.encSize, 65);
-      assertEquals(kem.publicKeySize, 65);
+      assertEquals(kem.encSize, 33);
+      assertEquals(kem.publicKeySize, 33);
       assertEquals(kem.privateKeySize, 32);
 
       // assert
@@ -247,8 +247,9 @@ describe("CipherSuite", () => {
   describe("A README example of Base mode (DhkemSecp256k1HkdfSha256/KdfId.HkdfSha256)", () => {
     it("should work normally", async () => {
       // setup
+      const kemInstance = new DhkemSecp256k1HkdfSha256();
       const suite = new CipherSuite({
-        kem: new DhkemSecp256k1HkdfSha256(),
+        kem: kemInstance,
         kdf: KdfId.HkdfSha256,
         aead: AeadId.Aes128Gcm,
       });
@@ -263,6 +264,8 @@ describe("CipherSuite", () => {
         recipientKey: rkp,
         enc: sender.enc,
       });
+      assertEquals(sender.enc.byteLength, kemInstance.encSize);
+      assertEquals(sender.enc.byteLength, kemInstance.publicKeySize);
 
       // encrypt
       const ct = await sender.seal(

@@ -1,7 +1,7 @@
 <h1 align="center">@hpke/dhkem-secp256k1</h1>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for DH-KEM with secp256k1 curve, which is implemented by using [@noble/curves/secp256k1](https://github.com/paulmillr/noble-curves). Note that the extension is EXPERIMENTAL and NOT STANDARDIZED.</div>
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for DH-KEM with secp256k1 curve, which is implemented by using <a href="https://github.com/paulmillr/noble-curves">@noble/curves/secp256k1</a>. Note that the extension is EXPERIMENTAL and NOT STANDARDIZED.</div>
 <p></p>
 
 <div align="center">

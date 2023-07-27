@@ -132,10 +132,10 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
 }
 
 export class DhkemSecp256k1HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: KemId = KemId.DhkemSecp256K1HkdfSha256;
+  public readonly id: KemId = KemId.DhkemSecp256k1HkdfSha256;
   public readonly secretSize: number = 32;
-  public readonly encSize: number = 65;
-  public readonly publicKeySize: number = 65;
+  public readonly encSize: number = 33;
+  public readonly publicKeySize: number = 33;
   public readonly privateKeySize: number = 32;
 
   constructor() {
