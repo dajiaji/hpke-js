@@ -29,9 +29,9 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
-  DhkemX25519HkdfSha256,
-  DhkemX448HkdfSha512,
-} from "./kems/dhkem.ts";
+} from "./kems/dhkems/ec.ts";
+import { DhkemX25519HkdfSha256 } from "./kems/dhkems/x25519.ts";
+import { DhkemX448HkdfSha512 } from "./kems/dhkems/x448.ts";
 import { i2Osp } from "./utils/misc.ts";
 
 import * as consts from "./consts.ts";

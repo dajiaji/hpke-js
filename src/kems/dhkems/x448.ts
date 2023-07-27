@@ -4,14 +4,17 @@ import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
+import { KemId } from "../../identifiers.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
+import { HkdfSha512 } from "../../kdfs/hkdf.ts";
+import { Dhkem } from "../dhkem.ts";
 
 import * as consts from "../../consts.ts";
 import { base64UrlToBytes } from "../../utils/misc.ts";
 
 const ALG_NAME = "X448";
 
-export class X448 extends Algorithm implements KemPrimitives {
+class X448 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
@@ -169,5 +172,19 @@ export class X448 extends Algorithm implements KemPrimitives {
         reject(e);
       }
     });
+  }
+}
+
+export class DhkemX448HkdfSha512 extends Dhkem {
+  public readonly id: KemId = KemId.DhkemX448HkdfSha512;
+  public readonly secretSize: number = 64;
+  public readonly encSize: number = 56;
+  public readonly publicKeySize: number = 56;
+  public readonly privateKeySize: number = 56;
+
+  constructor() {
+    const kdf = new HkdfSha512();
+    const prim = new X448(kdf);
+    super(prim, kdf);
   }
 }

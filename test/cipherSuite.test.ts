@@ -11,9 +11,9 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
-  DhkemX25519HkdfSha256,
-  DhkemX448HkdfSha512,
-} from "../src/kems/dhkem.ts";
+} from "../src/kems/dhkems/ec.ts";
+import { DhkemX25519HkdfSha256 } from "../src/kems/dhkems/x25519.ts";
+import { DhkemX448HkdfSha512 } from "../src/kems/dhkems/x448.ts";
 import { HkdfSha256, HkdfSha384, HkdfSha512 } from "../src/kdfs/hkdf.ts";
 import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 
