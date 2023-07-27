@@ -1,5 +1,14 @@
 # Changes
 
+## Version 0.22.0
+
+Released 2023-07-27
+
+- [(#199) Add common server for testing.](https://github.com/dajiaji/hpke-js/pull/199)
+- [(#196) BREAKING: Separate dhkemSecp256k1HkdfSha256 from core module.](https://github.com/dajiaji/hpke-js/pull/196)
+- Update dev dependencies:
+  - [(#201) Bump undici to 5.22.1.](https://github.com/dajiaji/hpke-js/pull/201)
+
 ## Version 0.21.0
 
 Released 2023-07-25
