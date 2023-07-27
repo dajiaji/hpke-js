@@ -160,16 +160,6 @@ export class CipherSuite {
   }
 
   /**
-   * Gets a suite-specific KDF context.
-   *
-   * @returns A KDF context.
-   */
-  public async kdfContext(): Promise<KdfInterface> {
-    await this.setup();
-    return this._kdf as KdfInterface;
-  }
-
-  /**
    * Creates a suite-specific AEAD key.
    *
    * @param key A byte string of the raw key.

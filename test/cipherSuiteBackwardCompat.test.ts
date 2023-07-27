@@ -1459,7 +1459,7 @@ describe("CipherSuite(backward-compat)", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = await suite.kdfContext();
+      const kdfS = suite.kdf;
       const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
       const keyS = await kdfS.expand(
         prkS,
@@ -1491,7 +1491,7 @@ describe("CipherSuite(backward-compat)", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = await suite.kdfContext();
+      const kdfR = suite.kdf;
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
@@ -1548,7 +1548,7 @@ describe("CipherSuite(backward-compat)", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = await suite.kdfContext();
+      const kdfS = suite.kdf;
       const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
       const keyS = await kdfS.expand(
         prkS,
@@ -1580,7 +1580,7 @@ describe("CipherSuite(backward-compat)", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = await suite.kdfContext();
+      const kdfR = suite.kdf;
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
@@ -1637,7 +1637,7 @@ describe("CipherSuite(backward-compat)", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = await suite.kdfContext();
+      const kdfS = suite.kdf;
       const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
       const keyS = await kdfS.expand(
         prkS,
@@ -1669,7 +1669,7 @@ describe("CipherSuite(backward-compat)", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = await suite.kdfContext();
+      const kdfR = suite.kdf;
       const prkR = await kdfR.extract(
         saltR,
         new Uint8Array(secretR),
