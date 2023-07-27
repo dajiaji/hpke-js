@@ -24,7 +24,7 @@ import { hexStringToBytes } from "./utils.ts";
 describe("CipherSuite", () => {
   // RFC9180 A.1.
   describe("constructor with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm", () => {
-    it("should have a correct ciphersuite", async () => {
+    it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
         kdf: KdfId.HkdfSha256,
@@ -45,14 +45,6 @@ describe("CipherSuite", () => {
       assertEquals(suite.kdf.id, 0x0001);
       assertEquals(suite.aead.id, AeadId.Aes128Gcm);
       assertEquals(suite.aead.id, 0x0001);
-
-      const kemContext = await suite.kemContext();
-      assertEquals(kemContext.id, KemId.DhkemX25519HkdfSha256);
-      assertEquals(kemContext.id, 0x0020);
-      assertEquals(kemContext.secretSize, 32);
-      assertEquals(kemContext.encSize, 32);
-      assertEquals(kemContext.publicKeySize, 32);
-      assertEquals(kemContext.privateKeySize, 32);
     });
   });
 

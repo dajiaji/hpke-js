@@ -139,34 +139,24 @@ export class CipherSuite {
   }
 
   /**
-   * The KEM context of the ciphersuite.
+   * Gets the KEM context of the ciphersuite.
    */
   public get kem() {
     return this._kem;
   }
 
   /**
-   * The KDF context of the ciphersuite.
+   * Gets the KDF context of the ciphersuite.
    */
   public get kdf() {
     return this._kdf;
   }
 
   /**
-   * The AEAD context of the ciphersuite.
+   * Gets the AEAD context of the ciphersuite.
    */
   public get aead() {
     return this._aead;
-  }
-
-  /**
-   * Gets a suite-specific KEM context.
-   *
-   * @returns A KEM context.
-   */
-  public async kemContext(): Promise<KemInterface> {
-    await this.setup();
-    return this._kem as KemInterface;
   }
 
   /**
