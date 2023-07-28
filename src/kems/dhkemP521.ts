@@ -1,5 +1,5 @@
 import { KemId } from "../identifiers.ts";
-import { HkdfSha512 } from "../kdfs/hkdf.ts";
+import { HkdfSha512 } from "../kdfs/hkdfSha512.ts";
 import { Dhkem } from "./dhkem.ts";
 import { Ec } from "./dhkemPrimitives/ec.ts";
 

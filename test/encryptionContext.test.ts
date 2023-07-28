@@ -5,7 +5,7 @@ import { describe, it } from "testing/bdd.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { EncryptionContext } from "../src/encryptionContext.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
-import { HkdfSha256 } from "../src/kdfs/hkdf.ts";
+import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 import { ExportOnly } from "../src/aeads/exportOnly.ts";

@@ -1,7 +1,3 @@
-import { hmac } from "npm:@noble/hashes@1.3.1/hmac";
-import { sha256 } from "npm:@noble/hashes@1.3.1/sha256";
-import { sha384, sha512 } from "npm:@noble/hashes@1.3.1/sha512";
-
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { KdfId } from "../identifiers.ts";
@@ -9,7 +5,7 @@ import { KdfAlgorithm } from "../algorithm.ts";
 
 import * as consts from "../consts.ts";
 
-export class Hkdf extends KdfAlgorithm implements KdfInterface {
+export class HkdfNative extends KdfAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
   public readonly hashSize: number = 0;
   protected readonly algHash: HmacKeyGenParams = {
@@ -58,29 +54,7 @@ export class Hkdf extends KdfAlgorithm implements KdfInterface {
       salt = new ArrayBuffer(this.hashSize);
     }
     if (salt.byteLength !== this.hashSize) {
-      // Web Cryptography API supports only Nh(hashSize) length key.
-      // In this case, fallback to the upper-layer hmac library.
-      switch (this.algHash.hash) {
-        case "SHA-256":
-          return hmac(
-            sha256,
-            new Uint8Array(salt),
-            new Uint8Array(ikm),
-          );
-        case "SHA-384":
-          return hmac(
-            sha384,
-            new Uint8Array(salt),
-            new Uint8Array(ikm),
-          );
-        default:
-          // case "SHA-512":
-          return hmac(
-            sha512,
-            new Uint8Array(salt),
-            new Uint8Array(ikm),
-          );
-      }
+      throw new Error("The salt length must be the same as the hashSize");
     }
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
@@ -188,7 +162,7 @@ export class Hkdf extends KdfAlgorithm implements KdfInterface {
   }
 }
 
-export class HkdfSha256 extends Hkdf implements KdfInterface {
+export class HkdfSha256Native extends HkdfNative {
   public readonly id: KdfId = KdfId.HkdfSha256;
   public readonly hashSize: number = 32;
   protected readonly algHash: HmacKeyGenParams = {
@@ -198,7 +172,7 @@ export class HkdfSha256 extends Hkdf implements KdfInterface {
   };
 }
 
-export class HkdfSha384 extends Hkdf implements KdfInterface {
+export class HkdfSha384Native extends HkdfNative {
   public readonly id: KdfId = KdfId.HkdfSha384;
   public readonly hashSize: number = 48;
   protected readonly algHash: HmacKeyGenParams = {
@@ -208,7 +182,7 @@ export class HkdfSha384 extends Hkdf implements KdfInterface {
   };
 }
 
-export class HkdfSha512 extends Hkdf implements KdfInterface {
+export class HkdfSha512Native extends HkdfNative {
   public readonly id: KdfId = KdfId.HkdfSha512;
   public readonly hashSize: number = 64;
   protected readonly algHash: HmacKeyGenParams = {

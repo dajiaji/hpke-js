@@ -24,6 +24,8 @@ export { DhkemP521HkdfSha512 } from "./src/kems/dhkemP521.ts";
 export { DhkemX25519HkdfSha256 } from "./src/kems/dhkemX25519.ts";
 export { DhkemX448HkdfSha512 } from "./src/kems/dhkemX448.ts";
 
-export { HkdfSha256, HkdfSha384, HkdfSha512 } from "./src/kdfs/hkdf.ts";
+export { HkdfSha256 } from "./src/kdfs/hkdfSha256.ts";
+export { HkdfSha384 } from "./src/kdfs/hkdfSha384.ts";
+export { HkdfSha512 } from "./src/kdfs/hkdfSha512.ts";
 export { Aes128Gcm, Aes256Gcm } from "./src/aeads/aesGcm.ts";
 export { Chacha20Poly1305 } from "./src/aeads/chacha20Poly1305.ts";

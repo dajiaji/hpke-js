@@ -7,7 +7,7 @@ import type { KemInterface } from "../../../src/interfaces/kemInterface.ts";
 import { Algorithm } from "../../../src/algorithm.ts";
 import { KemId } from "../../../src/identifiers.ts";
 import { XCryptoKey } from "../../../src/xCryptoKey.ts";
-import { HkdfSha256 } from "../../../src/kdfs/hkdf.ts";
+import { HkdfSha256 } from "../../../src/kdfs/hkdfSha256.ts";
 import { Dhkem } from "../../../src/kems/dhkem.ts";
 
 import * as consts from "../../../src/consts.ts";
