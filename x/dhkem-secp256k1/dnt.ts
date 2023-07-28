@@ -39,8 +39,10 @@ await build({
     keywords: [
       "hpke",
       "rfc9180",
+      "kem",
       "hkdf",
       "dh",
+      "secp256k1",
       "security",
       "encryption",
     ],
