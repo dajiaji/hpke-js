@@ -20,7 +20,7 @@ describe("DhkemSecp256k1Hkdf256", () => {
       const dhkemSecp256k1 = new DhkemSecp256k1HkdfSha256();
       dhkemSecp256k1.init(api);
       assertEquals(typeof dhkemSecp256k1, "object");
-      assertEquals(dhkemSecp256k1.id, KemId.DhkemSecp256K1HkdfSha256);
+      assertEquals(dhkemSecp256k1.id, KemId.DhkemSecp256k1HkdfSha256);
       assertEquals(dhkemSecp256k1.secretSize, 32);
       assertEquals(dhkemSecp256k1.encSize, 33);
       assertEquals(dhkemSecp256k1.publicKeySize, 33);
@@ -173,7 +173,7 @@ describe("importKey", () => {
 });
 
 describe("CipherSuite", () => {
-  describe("constructor with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
+  describe("constructor with DhkemSecp256k1HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should have a correct ciphersuite", async () => {
       const suite: CipherSuite = new CipherSuite({
         kem: new DhkemSecp256k1HkdfSha256(),
@@ -187,7 +187,7 @@ describe("CipherSuite", () => {
       assertEquals(kem.privateKeySize, 32);
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemSecp256K1HkdfSha256);
+      assertEquals(suite.kem, KemId.DhkemSecp256k1HkdfSha256);
       assertEquals(suite.kem, 0x0013);
       assertEquals(suite.kdf, KdfId.HkdfSha256);
       assertEquals(suite.kdf, 0x0001);
