@@ -107,9 +107,7 @@ curl -sS -o $YOUR_SRC_PATH/hpke-dhkem-secp256k1.min.js https://esm.sh/v86/@hpke/
 
 This section shows some typical usage examples.
 
-### Base mode
-
-Browsers:
+### Browsers
 
 ```html
 <html>
@@ -117,7 +115,7 @@ Browsers:
   <body>
     <script type="module">
       // import * as hpke from "https://esm.sh/hpke-js@0.22.2";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.2";
+      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.2";
       import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@0.22.2";
 
       globalThis.doHpke = async () => {
@@ -159,10 +157,10 @@ Browsers:
 </html>
 ```
 
-Node.js:
+### Node.js
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+const { KdfId, AeadId, CipherSuite } = require("hpke-js");
 const { DhkemSecp256k1HkdfSha256 } = require("@hpke/dhkem-secp256k1");
 
 async function doHpke() {
@@ -201,10 +199,10 @@ async function doHpke() {
 doHpke();
 ```
 
-Deno:
+### Deno
 
 ```js
-import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.2/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.2/mod.ts";
 import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@0.22.2/x/dhkem-secp256k1/mod.ts";
 
 async function doHpke() {
