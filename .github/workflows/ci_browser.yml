@@ -28,6 +28,8 @@ jobs:
           cp -rf core/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/core
           mkdir test/runtimes/browsers/pages/dhkem-x25519
           cp -rf x/dhkem-x25519/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x25519
+          mkdir test/runtimes/browsers/pages/dhkem-x448
+          cp -rf x/dhkem-x448/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x448
           mkdir test/runtimes/browsers/pages/dhkem-secp256k1
           cp -rf x/dhkem-secp256k1/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-secp256k1
       - working-directory: ./core
@@ -35,11 +37,16 @@ jobs:
           deno task dnt
           deno task minify > ../test/runtimes/browsers/pages/core/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/dhkem-x25519/src/hpke-core.js
+          deno task minify > ../test/runtimes/browsers/pages/dhkem-x448/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-core.js
       - working-directory: ./x/dhkem-x25519
         run: |
           deno task dnt
           deno task minify > ../../test/runtimes/browsers/pages/dhkem-x25519/src/hpke-dhkem-x25519.js
+      - working-directory: ./x/dhkem-x448
+        run: |
+          deno task dnt
+          deno task minify > ../../test/runtimes/browsers/pages/dhkem-x448/src/hpke-dhkem-x448.js
       - working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
@@ -64,6 +71,8 @@ jobs:
       - working-directory: ./core/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/dhkem-x25519/test/runtimes/browsers
+        run: npm install && npx playwright install && npx playwright test
+      - working-directory: ./x/dhkem-x448/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/dhkem-secp256k1/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
