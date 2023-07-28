@@ -1,12 +1,8 @@
 import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
-import {
-  AeadId,
-  CipherSuite,
-  KdfId,
-  KemId,
-} from "https://deno.land/x/hpke/mod.ts";
+import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
+// } from "https://deno.land/x/hpke/mod.ts";
 
 import { DhkemSecp256k1HkdfSha256 } from "../src/dhkem-secp256k1.ts";
 import { hexStringToBytes, loadCrypto, loadSubtleCrypto } from "./utils.ts";
@@ -17,14 +13,14 @@ describe("DhkemSecp256k1Hkdf256", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const dhkemSecp256k1 = new DhkemSecp256k1HkdfSha256();
-      dhkemSecp256k1.init(api);
-      assertEquals(typeof dhkemSecp256k1, "object");
-      assertEquals(dhkemSecp256k1.id, KemId.DhkemSecp256k1HkdfSha256);
-      assertEquals(dhkemSecp256k1.secretSize, 32);
-      assertEquals(dhkemSecp256k1.encSize, 33);
-      assertEquals(dhkemSecp256k1.publicKeySize, 33);
-      assertEquals(dhkemSecp256k1.privateKeySize, 32);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
+      assertEquals(typeof kem, "object");
+      assertEquals(kem.id, KemId.DhkemSecp256k1HkdfSha256);
+      assertEquals(kem.secretSize, 32);
+      assertEquals(kem.encSize, 33);
+      assertEquals(kem.publicKeySize, 33);
+      assertEquals(kem.privateKeySize, 32);
     });
   });
 });
@@ -35,9 +31,9 @@ describe("generateKeyPair", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
-      const kp = await kemContext.generateKeyPair();
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
+      const kp = await kem.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
       assertEquals(kp.publicKey.algorithm.name, "ECDH");
@@ -61,11 +57,11 @@ describe("deriveKeyPair", () => {
       const cryptoApi = await loadCrypto();
 
       // assert
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
       const ikm = new Uint8Array(32);
       cryptoApi.getRandomValues(ikm);
-      const kp = await kemContext.deriveKeyPair(ikm.buffer);
+      const kp = await kem.deriveKeyPair(ikm.buffer);
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
       assertEquals(kp.publicKey.algorithm.name, "ECDH");
@@ -88,11 +84,11 @@ describe("serialize/deserializePublicKey", () => {
       const api = await loadSubtleCrypto();
 
       // assert
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
-      const kp = await kemContext.generateKeyPair();
-      const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
-      const pubKey = await kemContext.deserializePublicKey(bPubKey);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
+      const kp = await kem.generateKeyPair();
+      const bPubKey = await kem.serializePublicKey(kp.publicKey);
+      const pubKey = await kem.deserializePublicKey(bPubKey);
       assertEquals(pubKey.type, "public");
       assertEquals(pubKey.extractable, true);
       assertEquals(pubKey.algorithm.name, "ECDH");
@@ -107,13 +103,13 @@ describe("importKey", () => {
   describe("with valid parameters", () => {
     it("should return a valid private key for DhkemSecp256k1HkdfSha256 from raw key", async () => {
       const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
       cryptoApi.getRandomValues(rawKey);
-      const privKey = await kemContext.importKey("raw", rawKey, false);
+      const privKey = await kem.importKey("raw", rawKey, false);
 
       // assert
       assertEquals(privKey.usages.length, 1);
@@ -122,14 +118,14 @@ describe("importKey", () => {
 
     it("should return a valid public key for DhkemSecp256k1HkdfSha256 from raw key", async () => {
       const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(33);
       rawKey[0] = hexStringToBytes("04")[0];
       cryptoApi.getRandomValues(rawKey);
-      const privKey = await kemContext.importKey("raw", rawKey, true);
+      const privKey = await kem.importKey("raw", rawKey, true);
 
       // assert
       assertEquals(privKey.usages.length, 0);
@@ -140,8 +136,8 @@ describe("importKey", () => {
   describe("with invalid parameters", () => {
     it("should throw DeserializeError with invalid DhkemSecp256k1HkdfSha256 private key", async () => {
       const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(33);
@@ -149,15 +145,15 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => kemContext.importKey("raw", rawKey, false),
+        () => kem.importKey("raw", rawKey, false),
         Error,
       );
     });
 
     it("should throw DeserializeError with invalid DhkemSecp256k1HkdfSha256 public key", async () => {
       const api = await loadSubtleCrypto();
-      const kemContext = new DhkemSecp256k1HkdfSha256();
-      kemContext.init(api);
+      const kem = new DhkemSecp256k1HkdfSha256();
+      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
@@ -165,7 +161,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => kemContext.importKey("raw", rawKey, true),
+        () => kem.importKey("raw", rawKey, true),
         Error,
       );
     });
@@ -173,35 +169,34 @@ describe("importKey", () => {
 });
 
 describe("CipherSuite", () => {
-  describe("constructor with DhkemSecp256k1HkdfSha256/HkdfSha256/Aes128Gcm", () => {
-    it("should have a correct ciphersuite", async () => {
+  describe("constructor with DhkemSecp256k1HkdfSha256", () => {
+    it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
         kem: new DhkemSecp256k1HkdfSha256(),
         kdf: KdfId.HkdfSha256,
         aead: AeadId.ExportOnly,
       });
-      const kem = await suite.kemContext();
-      assertEquals(kem.secretSize, 32);
-      assertEquals(kem.encSize, 33);
-      assertEquals(kem.publicKeySize, 33);
-      assertEquals(kem.privateKeySize, 32);
+      assertEquals(suite.kem.secretSize, 32);
+      assertEquals(suite.kem.encSize, 33);
+      assertEquals(suite.kem.publicKeySize, 33);
+      assertEquals(suite.kem.privateKeySize, 32);
 
       // assert
-      assertEquals(suite.kem, KemId.DhkemSecp256k1HkdfSha256);
-      assertEquals(suite.kem, 0x0013);
-      assertEquals(suite.kdf, KdfId.HkdfSha256);
-      assertEquals(suite.kdf, 0x0001);
-      assertEquals(suite.aead, AeadId.ExportOnly);
-      assertEquals(suite.aead, 0xFFFF);
+      assertEquals(suite.kem.id, KemId.DhkemSecp256k1HkdfSha256);
+      assertEquals(suite.kem.id, 0x0013);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.ExportOnly);
+      assertEquals(suite.aead.id, 0xFFFF);
     });
   });
 
-  describe("A README example of Base mode (DhkemSecp256k1HkdfSha256/KdfId.HkdfSha256)", () => {
+  describe("A README example of DhkemSecp256k1HkdfSha256", () => {
     it("should work normally", async () => {
       // setup
-      const kemInstance = new DhkemSecp256k1HkdfSha256();
+      const kem = new DhkemSecp256k1HkdfSha256();
       const suite = new CipherSuite({
-        kem: kemInstance,
+        kem: kem,
         kdf: KdfId.HkdfSha256,
         aead: AeadId.Aes128Gcm,
       });
@@ -216,8 +211,8 @@ describe("CipherSuite", () => {
         recipientKey: rkp,
         enc: sender.enc,
       });
-      assertEquals(sender.enc.byteLength, kemInstance.encSize);
-      assertEquals(sender.enc.byteLength, kemInstance.publicKeySize);
+      assertEquals(sender.enc.byteLength, kem.encSize);
+      assertEquals(sender.enc.byteLength, kem.publicKeySize);
 
       // encrypt
       const ct = await sender.seal(
