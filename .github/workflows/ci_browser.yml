@@ -30,12 +30,12 @@ jobs:
           cp -rf x/dhkem-x25519/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x25519
           mkdir test/runtimes/browsers/pages/dhkem-secp256k1
           cp -rf x/dhkem-secp256k1/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-secp256k1
-          deno task minify > test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke.js
       - working-directory: ./core
         run: |
           deno task dnt
           deno task minify > ../test/runtimes/browsers/pages/core/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/dhkem-x25519/src/hpke-core.js
+          deno task minify > ../test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-core.js
       - working-directory: ./x/dhkem-x25519
         run: |
           deno task dnt

@@ -1,5 +1,5 @@
-import * as hpke from "./hpke.js";
-import * as secp256k1 from "./hpke-dhkem-secp256k1.js";
+import * as hpke from "./hpke-core.js";
+import { DhkemSecp256k1HkdfSha256 } from "./hpke-dhkem-secp256k1.js";
 
 export async function testServer(request) {
   const url = new URL(request.url);
@@ -12,7 +12,7 @@ export async function testServer(request) {
   if (kdfStr === null || aeadStr === null) {
     return new Response("ng: invalid params");
   }
-  const kem = new secp256k1.DhkemSecp256k1HkdfSha256();
+  const kem = new DhkemSecp256k1HkdfSha256();
   const kdf = Number.parseInt(kdfStr);
   const aead = Number.parseInt(aeadStr);
   if (Number.isNaN(kdf) || Number.isNaN(aead)) {

@@ -24,7 +24,6 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > test/runtimes/hpke.js
-          deno task minify > x/dhkem-secp256k1/test/runtimes/hpke.js
       - name: Run test
         working-directory: ./test/runtimes/cloudflare
         run: |
@@ -37,6 +36,7 @@ jobs:
           deno task dnt
           deno task minify > test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-x25519/test/runtimes/hpke-core.js
+          deno task minify > ../x/dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run test for core
         working-directory: ./core/test/runtimes/cloudflare
         run: |
