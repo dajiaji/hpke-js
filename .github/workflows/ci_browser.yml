@@ -24,9 +24,15 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > test/runtimes/browsers/pages/src/hpke.js
+          mkdir test/runtimes/browsers/pages/core
+          cp -rf core/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/core
           mkdir test/runtimes/browsers/pages/dhkem-secp256k1
           cp -rf x/dhkem-secp256k1/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-secp256k1
           deno task minify > test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke.js
+      - working-directory: ./core
+        run: |
+          deno task dnt
+          deno task minify > ../test/runtimes/browsers/pages/core/src/hpke-core.js
       - working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
@@ -38,7 +44,7 @@ jobs:
 
   playwright-test:
     needs: pages
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -48,5 +54,7 @@ jobs:
           npm ci
           npx playwright install --with-deps
           npx playwright test
+      - working-directory: ./core/test/runtimes/browsers
+        run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/dhkem-secp256k1/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test

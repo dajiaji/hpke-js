@@ -24,11 +24,8 @@ jobs:
           npm install -g esbuild
           deno task dnt
           deno task minify > test/runtimes/hpke.js
+          deno task minify > core/test/runtimes/hpke.js
           deno task minify > x/dhkem-secp256k1/test/runtimes/hpke.js
-      - working-directory: ./x/dhkem-secp256k1/
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
       - name: Run test
         working-directory: ./test/runtimes/cloudflare
         run: |
@@ -36,6 +33,21 @@ jobs:
           nohup npm start &
           sleep 3
           deno test hpke.spec.ts --allow-net
+      - working-directory: ./core/
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-core.js
+      - name: Run test for core
+        working-directory: ./core/test/runtimes/cloudflare
+        run: |
+          npm install
+          nohup npm start &
+          sleep 3
+          deno test core.spec.ts --allow-net
+      - working-directory: ./x/dhkem-secp256k1/
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
       - name: Run test for dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1/test/runtimes/cloudflare
         run: |

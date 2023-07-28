@@ -26,6 +26,28 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
+  publish-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run dnt & minify
+        working-directory: ./core
+        run: |
+          npm install -g esbuild
+          deno task dnt
+          deno task minify > ./npm/hpke-core.min.js
+      - working-directory: ./core/npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
   publish-dhkem-secp256k1:
     runs-on: ubuntu-latest
     steps:
