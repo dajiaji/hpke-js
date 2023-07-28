@@ -159,7 +159,7 @@ export class CipherSuiteNative {
    * @returns A key pair generated.
    */
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    await this.setup();
+    await this._setup();
     return await (this._kem as KemInterface).generateKeyPair();
   }
 
@@ -177,7 +177,7 @@ export class CipherSuiteNative {
     if (ikm.byteLength > consts.INPUT_LENGTH_LIMIT) {
       throw new errors.InvalidParamError("Too long ikm");
     }
-    await this.setup();
+    await this._setup();
     return await (this._kem as KemInterface).deriveKeyPair(ikm);
   }
 
@@ -202,7 +202,7 @@ export class CipherSuiteNative {
     key: ArrayBuffer | JsonWebKey,
     isPublic = true,
   ): Promise<CryptoKey> {
-    await this.setup();
+    await this._setup();
     return await (this._kem as KemInterface).importKey(format, key, isPublic);
   }
 
@@ -218,9 +218,9 @@ export class CipherSuiteNative {
   public async createSenderContext(
     params: SenderContextParams,
   ): Promise<SenderContextInterface> {
-    this.validateInputLength(params);
+    this._validateInputLength(params);
 
-    await this.setup();
+    await this._setup();
 
     const dh = await (this._kem as KemInterface).encap(params);
 
@@ -230,7 +230,7 @@ export class CipherSuiteNative {
     } else {
       mode = params.senderKey !== undefined ? Mode.Auth : Mode.Base;
     }
-    return await this.keyScheduleS(mode, dh.sharedSecret, dh.enc, params);
+    return await this._keyScheduleS(mode, dh.sharedSecret, dh.enc, params);
   }
 
   /**
@@ -245,9 +245,9 @@ export class CipherSuiteNative {
   public async createRecipientContext(
     params: RecipientContextParams,
   ): Promise<RecipientContextInterface> {
-    this.validateInputLength(params);
+    this._validateInputLength(params);
 
-    await this.setup();
+    await this._setup();
 
     const sharedSecret = await (this._kem as KemInterface).decap(params);
 
@@ -257,7 +257,7 @@ export class CipherSuiteNative {
     } else {
       mode = params.senderPublicKey !== undefined ? Mode.Auth : Mode.Base;
     }
-    return await this.keyScheduleR(mode, sharedSecret, params);
+    return await this._keyScheduleR(mode, sharedSecret, params);
   }
 
   /**
@@ -303,7 +303,7 @@ export class CipherSuiteNative {
     return await ctx.open(ct, aad);
   }
 
-  private async setup() {
+  private async _setup() {
     if (this._api !== undefined) {
       return;
     }
@@ -330,7 +330,7 @@ export class CipherSuiteNative {
   //   return;
   // }
 
-  private async keySchedule(
+  private async _keySchedule(
     mode: Mode,
     sharedSecret: ArrayBuffer,
     params: KeyScheduleParams,
@@ -419,13 +419,13 @@ export class CipherSuiteNative {
     };
   }
 
-  private async keyScheduleS(
+  private async _keyScheduleS(
     mode: Mode,
     sharedSecret: ArrayBuffer,
     enc: ArrayBuffer,
     params: KeyScheduleParams,
   ): Promise<SenderContextInterface> {
-    const res = await this.keySchedule(mode, sharedSecret, params);
+    const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
       return new SenderExporterContext(
         this._api as SubtleCrypto,
@@ -442,12 +442,12 @@ export class CipherSuiteNative {
     );
   }
 
-  private async keyScheduleR(
+  private async _keyScheduleR(
     mode: Mode,
     sharedSecret: ArrayBuffer,
     params: KeyScheduleParams,
   ): Promise<RecipientContextInterface> {
-    const res = await this.keySchedule(mode, sharedSecret, params);
+    const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
       return new RecipientExporterContext(
         this._api as SubtleCrypto,
@@ -458,7 +458,7 @@ export class CipherSuiteNative {
     return new RecipientContext(this._api as SubtleCrypto, this._kdf, res);
   }
 
-  private validateInputLength(params: KeyScheduleParams) {
+  private _validateInputLength(params: KeyScheduleParams) {
     if (
       params.info !== undefined &&
       params.info.byteLength > consts.INPUT_LENGTH_LIMIT
