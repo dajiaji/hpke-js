@@ -131,11 +131,28 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
   }
 }
 
+/**
+ * The class of the DH-KEM with secp256k1 curve.
+ *
+ * The public keys are assumed to be compressed.
+ * Note that it is experimental and not standardized.
+ *
+ * The instance of this class can be specified to the CipherSuiteParams as follows:
+ *
+ * @example
+ * import { KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/mod.ts";
+ * import { DhkemSecp256k1HkdfSha256} from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
+ * const suite = new CipherSuite({
+ *   kem: new DhkemSecp256k1HkdfSha256(),
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ */
 export class DhkemSecp256k1HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: KemId = KemId.DhkemSecp256K1HkdfSha256;
+  public readonly id: KemId = KemId.DhkemSecp256k1HkdfSha256;
   public readonly secretSize: number = 32;
-  public readonly encSize: number = 65;
-  public readonly publicKeySize: number = 65;
+  public readonly encSize: number = 33;
+  public readonly publicKeySize: number = 33;
   public readonly privateKeySize: number = 32;
 
   constructor() {
