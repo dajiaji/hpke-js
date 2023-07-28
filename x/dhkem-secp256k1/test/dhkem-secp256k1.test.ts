@@ -123,8 +123,8 @@ describe("importKey", () => {
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(33);
-      rawKey[0] = hexStringToBytes("04")[0];
       cryptoApi.getRandomValues(rawKey);
+      rawKey[0] = hexStringToBytes("04")[0];
       const privKey = await kem.importKey("raw", rawKey, true);
 
       // assert
