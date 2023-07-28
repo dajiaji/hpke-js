@@ -534,8 +534,8 @@ describe("CipherSuite", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.SealError);
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
