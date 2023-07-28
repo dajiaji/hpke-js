@@ -32,6 +32,11 @@ jobs:
         run: |
           deno task dnt
           deno task minify > ./npm/hpke-core.min.js
+      - name: Run dnt & minify for /x/dhkem-x25519
+        working-directory: ./x/dhkem-x25519
+        run: |
+          deno task dnt
+          deno task minify > ./npm/hpke-dhkem-x25519.min.js
       - name: Run dnt & minify for /x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
