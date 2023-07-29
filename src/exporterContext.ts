@@ -24,21 +24,14 @@ export class ExporterContext implements EncryptionContextInterface {
     _data: ArrayBuffer,
     _aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._emitError1();
+    return await this._emitError();
   }
 
   public async open(
     _data: ArrayBuffer,
     _aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._emitError1();
-  }
-
-  public async setupBidirectional(
-    _keySeed: ArrayBuffer,
-    _nonceSeed: ArrayBuffer,
-  ): Promise<void> {
-    return await this._emitError2();
+    return await this._emitError();
   }
 
   public async export(
@@ -60,15 +53,9 @@ export class ExporterContext implements EncryptionContextInterface {
     }
   }
 
-  private _emitError1(): Promise<ArrayBuffer> {
+  private _emitError(): Promise<ArrayBuffer> {
     return new Promise((_resolve, reject) => {
-      reject(new errors.NotSupportedError("Not available on export-only mode"));
-    });
-  }
-
-  private _emitError2(): Promise<void> {
-    return new Promise((_resolve, reject) => {
-      reject(new errors.NotSupportedError("Not available on export-only mode"));
+      reject(new errors.NotSupportedError("Not available"));
     });
   }
 }

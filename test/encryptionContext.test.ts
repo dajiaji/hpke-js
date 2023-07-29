@@ -83,14 +83,14 @@ describe("constructor", () => {
           new EncryptionContext(api, kdf, params);
         },
         Error,
-        "NotSupportedError: createAeadKey() is not supported on ExportOnly",
+        "NotSupportedError: createEncryptionContext() is not supported on ExportOnly",
       );
     });
   });
 });
 
 describe("open", () => {
-  describe("by sender without calling setupBidirectional", () => {
+  describe("by sender", () => {
     it("should throw OpenError", async () => {
       const suite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
@@ -109,7 +109,7 @@ describe("open", () => {
       );
 
       // assert
-      await assertRejects(() => sender.open(ct), errors.OpenError);
+      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
     });
   });
 
@@ -133,17 +133,6 @@ describe("open", () => {
         enc: sender1.enc,
       });
 
-      const te = new TextEncoder();
-
-      await sender1.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient1.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
       const sender2 = await suite.createSenderContext({
         recipientPublicKey: rkp2.publicKey,
       });
@@ -153,25 +142,16 @@ describe("open", () => {
         enc: sender2.enc,
       });
 
-      await sender2.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient2.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
       const ct1 = await sender1.seal(
         new TextEncoder().encode("my-secret-message"),
       );
-      const ct2 = await recipient1.seal(
-        new TextEncoder().encode("my-secret-message"),
-      );
+      await assertRejects(() =>
+        recipient1.seal(
+          new TextEncoder().encode("my-secret-message"),
+        ), errors.NotSupportedError);
 
       // assert
       await assertRejects(() => recipient2.open(ct1), errors.OpenError);
-      await assertRejects(() => sender2.open(ct2), errors.OpenError);
     });
   });
 
@@ -195,17 +175,6 @@ describe("open", () => {
         enc: sender1.enc,
       });
 
-      const te = new TextEncoder();
-
-      await sender1.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient1.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
       const sender2 = await suite.createSenderContext({
         recipientPublicKey: rkp2.publicKey,
       });
@@ -215,25 +184,16 @@ describe("open", () => {
         enc: sender2.enc,
       });
 
-      await sender2.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-      await recipient2.setupBidirectional(
-        te.encode("seed-for-key"),
-        te.encode("seed-for-nonce"),
-      );
-
       const ct1 = await sender1.seal(
         new TextEncoder().encode("my-secret-message"),
       );
-      const ct2 = await recipient1.seal(
-        new TextEncoder().encode("my-secret-message"),
+      await assertRejects(
+        () => recipient1.seal(new TextEncoder().encode("my-secret-message")),
+        errors.NotSupportedError,
       );
 
       // assert
       await assertRejects(() => recipient2.open(ct1), errors.OpenError);
-      await assertRejects(() => sender2.open(ct2), errors.OpenError);
     });
   });
 });
@@ -515,84 +475,8 @@ describe("createRecipientContext", () => {
 //       seq: seq,
 //     };
 //     const ec = new EncryptionContext(api, kdf, params);
-//     let ki = { key: createAeadKey(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
+//     let ki = { key: createEncryptionContext(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
 //     ec.incrementSeq(ki);
 //     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
 //   });
 // });
-
-describe("setupBidirectional", () => {
-  describe("with invalid _nK", () => {
-    it("should throw Error", async () => {
-      const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
-      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
-      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha256();
-      kdf.init(api, suiteId);
-
-      const key = DUMMY_BYTES_16.buffer;
-      const baseNonce = DUMMY_BYTES_12;
-      const seq = 0;
-
-      const params = {
-        aead: new Aes128Gcm(),
-        nK: -1, // invalid
-        nN: 12,
-        nT: 16,
-        exporterSecret: DUMMY_BYTES_16.buffer,
-        key: key,
-        baseNonce: baseNonce,
-        seq: seq,
-      };
-
-      const te = new TextEncoder();
-      params.aead.init(api);
-      const ec = new EncryptionContext(api, kdf, params);
-
-      // assert
-      await assertRejects(
-        () => ec.setupBidirectional(te.encode("jyugemu"), te.encode("jyugemu")),
-        errors.ExportError,
-      );
-    });
-  });
-
-  describe("with invalid _nN", () => {
-    it("should throw Error", async () => {
-      const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
-      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
-      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha256();
-      kdf.init(api, suiteId);
-
-      const key = DUMMY_BYTES_16.buffer;
-      const baseNonce = DUMMY_BYTES_12;
-      const seq = 0;
-
-      const params = {
-        aead: new Aes128Gcm(),
-        nK: 16,
-        nN: -1, // invalid
-        nT: 16,
-        exporterSecret: DUMMY_BYTES_16.buffer,
-        key: key,
-        baseNonce: baseNonce,
-        seq: seq,
-      };
-
-      const te = new TextEncoder();
-      params.aead.init(api);
-      const ec = new EncryptionContext(api, kdf, params);
-
-      // assert
-      await assertRejects(
-        () => ec.setupBidirectional(te.encode("jyugemu"), te.encode("jyugemu")),
-        errors.ExportError,
-      );
-    });
-  });
-});

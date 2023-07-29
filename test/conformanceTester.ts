@@ -165,7 +165,7 @@ export class ConformanceTester {
     });
     await assertRejects(
       () => sender.open(new Uint8Array([1, 2, 3, 4])),
-      errors.OpenError,
+      errors.NotSupportedError,
     );
 
     if (pkb.length < nPk) {
@@ -180,7 +180,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.SealError,
+      errors.NotSupportedError,
     );
     this._count++;
   }
@@ -250,7 +250,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.SealError,
+      errors.NotSupportedError,
     );
     this._count++;
   }
@@ -292,7 +292,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.SealError,
+      errors.NotSupportedError,
     );
     this._count++;
   }
