@@ -44,6 +44,7 @@ jobs:
           deno task minify > test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-x448/test/runtimes/hpke-core.js
+          deno task minify > ../x/chacha20poly1305/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run test for core
         working-directory: ./core/test/runtimes/bun
@@ -71,6 +72,16 @@ jobs:
           nohup bun src/index.js &
           sleep 3
           deno test dhkem-x448.spec.ts --allow-net
+      - working-directory: ./x/chacha20poly1305
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-chacha20poly1305.js
+      - name: Run test for chacha20poly1305
+        working-directory: ./x/chacha20poly1305/test/runtimes/bun
+        run: |
+          nohup bun src/index.js &
+          sleep 3
+          deno test chacha20poly1305.spec.ts --allow-net
       - working-directory: ./x/dhkem-secp256k1/
         run: |
           deno task dnt
