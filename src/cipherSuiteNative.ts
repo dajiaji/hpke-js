@@ -38,9 +38,23 @@ import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
 /**
- * The class of Hybrid Public Key Encryption (HPKE) cipher suite.
+ * The class of Hybrid Public Key Encryption (HPKE) ciphersuite.
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.
+ *
+ * This class supports only the ciphersuites which are
+ * supported by the native Web Cryptography API. Therefore,
+ * the following cryptographic algorithms are not supported for now:
+ *   - DHKEM(X25519, HKDF-SHA256)
+ *   - DHKEM(X448, HKDF-SHA512)
+ *   - ChaCha20/Poly1305
+ *
+ * In addtion, the HKDF functions contained in this `CipherSuiteNative`
+ * class can only derive keys of the same length as the `hashSize`.
+ *
+ * Therefore, if you want to use the unsupported cryptographic algorithms
+ * above or derive keys longer than the `hashSize`,
+ * please use {@link CipherSuite}
  *
  * This class provides following functions:
  *
