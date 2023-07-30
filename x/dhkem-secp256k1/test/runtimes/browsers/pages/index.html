@@ -1,8 +1,8 @@
 <html>
-  <head><title>hpke-js test</title></head>
+  <head><title>@hpke/dhkem-secp256k1 test</title></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from './src/hpke.js';
+      import { KdfId, AeadId, CipherSuite } from './src/hpke-core.js';
       import { DhkemSecp256k1HkdfSha256 } from './src/hpke-dhkem-secp256k1.js';
 
       const kdfs = [
@@ -14,7 +14,7 @@
       const aeads = [
         AeadId.Aes128Gcm,
         AeadId.Aes256Gcm,
-        AeadId.Chacha20Poly1305,
+        // AeadId.Chacha20Poly1305,
       ];
 
       globalThis.run = async () => {
@@ -62,7 +62,7 @@
       
     </script>
 
-    <h1><a href="https://github.com/dajiaji/hpke-js">hpke-js</a> test</h1>
+    <h1><a href="https://github.com/dajiaji/hpke-js">@hpke/dhkem-secp256k1</a> test</h1>
 
     <div id="operation">
       <button type="button" onclick="run()">run</button>
