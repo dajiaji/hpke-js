@@ -6,31 +6,21 @@
   "fmt": {
     "include": [
       "README.md",
-      "CHANGES.md",
       "deno.json",
       "dnt.ts",
       "mod.ts",
-      "samples/",
       "src/",
       "test/"
     ],
     "exclude": [
-      "core",
-      "x",
-      "samples/node/node_modules",
-      "samples/ts-node/node_modules",
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",
       "test/runtimes/cloudflare"
     ]
   },
   "lint": {
-    "include": ["mod.ts", "samples/", "src/", "test/"],
+    "include": ["mod.ts", "src/", "test/"],
     "exclude": [
-      "core",
-      "x",
-      "samples/node/node_modules",
-      "samples/ts-node/node_modules",
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",
       "test/runtimes/cloudflare"
@@ -40,6 +30,6 @@
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
-    "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
+    "minify": "esbuild npm/esm/core/mod.js --bundle --format=esm --minify"
   }
 }

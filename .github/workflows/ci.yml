@@ -27,6 +27,11 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov
           flags: unittests
+      - name: Run deno test for /core
+        working-directory: ./core
+        run: |
+          deno fmt --check
+          deno task test
       - name: Run deno test for /x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
