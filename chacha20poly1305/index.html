@@ -3,7 +3,7 @@
   <body>
     <script type="module">
       import { KdfId, AeadId, CipherSuite } from './src/hpke-core.js';
-      import { DhkemSecp256k1HkdfSha256 } from './src/hpke-chacha20poly1305.js';
+      import { Chacha20Poly1305 } from './src/hpke-chacha20poly1305.js';
 
       const kems = [
         Kem.DhkemP256HkdfSha256,
@@ -23,7 +23,7 @@
       globalThis.run = async () => {
         let pass = 0;
         let fail = 0;
-        const aead = new DhkemSecp256k1HkdfSha256();
+        const aead = new Chacha20Poly1305();
         for (const kem of kems) {
           for (const kdf of kdfs) {
             try {
