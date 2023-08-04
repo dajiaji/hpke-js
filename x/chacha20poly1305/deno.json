@@ -1,0 +1,33 @@
+{
+  "imports": {
+    "testing/": "https://deno.land/std@0.195.0/testing/",
+    "dnt": "https://deno.land/x/dnt@0.38.0/mod.ts"
+  },
+  "fmt": {
+    "include": [
+      "deno.json",
+      "dnt.ts",
+      "mod.ts",
+      "test/"
+    ],
+    "exclude": [
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
+    ]
+  },
+  "lint": {
+    "include": ["mod.ts", "test/"],
+    "exclude": [
+      "test/runtimes/bun",
+      "test/runtimes/browsers/node_modules",
+      "test/runtimes/cloudflare"
+    ]
+  },
+  "tasks": {
+    "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
+    "minify": "esbuild npm/esm/x/chacha20poly1305/mod.js --bundle --format=esm --minify"
+  }
+}
