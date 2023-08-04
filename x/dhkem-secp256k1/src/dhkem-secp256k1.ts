@@ -141,7 +141,7 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
  * The instance of this class can be specified to the CipherSuiteParams as follows:
  *
  * @example
- * import { KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/mod.ts";
+ * import { KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
  * import { DhkemSecp256k1HkdfSha256} from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
  * const suite = new CipherSuite({
  *   kem: new DhkemSecp256k1HkdfSha256(),
