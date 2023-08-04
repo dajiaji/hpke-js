@@ -8,20 +8,21 @@ import { concat } from "../../src/utils/misc.ts";
 
 import {
   AeadId,
-  Aes128Gcm,
   CipherSuite,
   DeserializeError,
-  DhkemP256HkdfSha256,
-  DhkemP384HkdfSha384,
-  DhkemP521HkdfSha512,
-  HkdfSha256,
-  HkdfSha384,
-  HkdfSha512,
   InvalidParamError,
   KdfId,
   KemId,
   NotSupportedError,
 } from "../mod.ts";
+
+import { DhkemP256HkdfSha256 } from "../../src/kems/dhkemP256.ts";
+import { DhkemP384HkdfSha384 } from "../../src/kems/dhkemP384.ts";
+import { DhkemP521HkdfSha512 } from "../../src/kems/dhkemP521.ts";
+import { HkdfSha256 } from "../../src/kdfs/hkdfSha256.ts";
+import { HkdfSha384 } from "../../src/kdfs/hkdfSha384.ts";
+import { HkdfSha512 } from "../../src/kdfs/hkdfSha512.ts";
+import { Aes128Gcm } from "../../src/aeads/aesGcm.ts";
 
 import { hexStringToBytes } from "../../test/utils.ts";
 

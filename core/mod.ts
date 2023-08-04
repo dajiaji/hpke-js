@@ -16,14 +16,6 @@ export type { SenderContextParams } from "../src/interfaces/senderContextParams.
 export { Aes128Gcm, Aes256Gcm } from "../src/aeads/aesGcm.ts";
 export { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 
-export {
-  CipherSuite,
-  DhkemP256HkdfSha256,
-  DhkemP384HkdfSha384,
-  DhkemP521HkdfSha512,
-  HkdfSha256,
-  HkdfSha384,
-  HkdfSha512,
-} from "./src/native.ts";
+export { CipherSuite } from "./src/native.ts";
 
 export * from "../src/errors.ts";

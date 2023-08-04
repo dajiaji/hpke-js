@@ -3,21 +3,14 @@ import { describe, it } from "testing/bdd.ts";
 
 import {
   AeadId,
-  Aes128Gcm,
-  // CipherSuite,
+  CipherSuiteNative,
   DeserializeError,
-  // DhkemP256HkdfSha256,
-  // DhkemP384HkdfSha384,
-  // DhkemP521HkdfSha512,
-  // HkdfSha256,
-  // HkdfSha384,
-  // HkdfSha512,
   InvalidParamError,
   KdfId,
   KemId,
   NotSupportedError,
 } from "../mod.ts";
-import { CipherSuiteNative } from "../src/cipherSuiteNative.ts";
+import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 import {
   HkdfSha256Native,
   HkdfSha384Native,
