@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "es2022",
+    "target": "es2022",
+    "allowImportingTsExtensions": true
+  }, 
+  "include": [
+    "mod.ts",
+    "src/**/*"
+  ]
+}
