@@ -23,7 +23,8 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 <div align="center">
 
 Documentation:
-[deno.land](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)/[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/docs/)
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/mod.ts) |
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/docs/)
 
 </div>
 

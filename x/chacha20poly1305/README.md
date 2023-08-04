@@ -6,7 +6,7 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation: [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/chacha20poly1305/mod.ts)/[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/chacha20poly1305/docs/)
+Documentation: [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/chacha20poly1305/mod.ts) | [pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/chacha20poly1305/docs/)
 
 </div>
 

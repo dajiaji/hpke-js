@@ -7,7 +7,9 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 <div align="center">
 
 Documentation:
-[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts)/[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-secp256k1/docs/)
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts)
+|
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-secp256k1/docs/)
 
 </div>
 
