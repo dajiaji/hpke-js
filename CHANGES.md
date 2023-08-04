@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.0.1
+
+Released 2023-08-06
+
+- [(#226) Remove unnecessary ciphersuite classes.](https://github.com/dajiaji/hpke-js/pull/226)
+- [(#225) Deploy tsdoc-based document to pages.](https://github.com/dajiaji/hpke-js/pull/225)
+
 ## Version 1.0.0
 
 Released 2023-08-05

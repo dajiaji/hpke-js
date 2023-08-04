@@ -22,7 +22,7 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 
 <div align="center">
 
-[Documentation](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)
+[Doc(deno.land)](https://doc.deno.land/https://deno.land/x/hpke/mod.ts)/[Doc(pages, only for the latest version)](https://dajiaji.github.io/hpke-js/docs/)
 
 </div>
 
