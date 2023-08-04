@@ -204,9 +204,12 @@ export class CipherSuiteNative {
    *
    * @remarks
    *
+   * If the error occurred, throws {@link NotSupportedError}.
+   *
    * @deprecated Use {@link KemInterface.generateKeyPair} instead.
    *
    * @returns A key pair generated.
+   * @throws {@link NotSupportedError}
    */
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     await this._setup();

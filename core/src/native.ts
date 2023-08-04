@@ -55,6 +55,5 @@ import { CipherSuiteNative } from "../../src/cipherSuiteNative.ts";
  *   aead: AeadId.Aes128Gcm,
  * });
  * ```
- *
  */
 export class CipherSuite extends CipherSuiteNative {}
