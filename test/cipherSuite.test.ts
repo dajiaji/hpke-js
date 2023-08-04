@@ -1226,7 +1226,7 @@ describe("CipherSuite", () => {
       });
 
       await assertRejects(
-        () => suite.deriveKeyPair((new Uint8Array(129)).buffer),
+        () => suite.deriveKeyPair((new Uint8Array(8193)).buffer),
         errors.InvalidParamError,
         "Too long ikm",
       );
@@ -1247,7 +1247,7 @@ describe("CipherSuite", () => {
       await assertRejects(
         () =>
           suite.createSenderContext({
-            info: (new Uint8Array(129)).buffer,
+            info: (new Uint8Array(8193)).buffer,
             recipientPublicKey: rkp.publicKey,
           }),
         errors.InvalidParamError,
@@ -1271,7 +1271,7 @@ describe("CipherSuite", () => {
         () =>
           suite.createSenderContext({
             psk: {
-              key: (new Uint8Array(129)).buffer,
+              key: (new Uint8Array(8193)).buffer,
               id: new Uint8Array([1, 2, 3, 4]),
             },
             recipientPublicKey: rkp.publicKey,
@@ -1324,7 +1324,7 @@ describe("CipherSuite", () => {
           suite.createSenderContext({
             psk: {
               key: new Uint8Array(32),
-              id: (new Uint8Array(129)).buffer,
+              id: (new Uint8Array(8193)).buffer,
             },
             recipientPublicKey: rkp.publicKey,
           }),
