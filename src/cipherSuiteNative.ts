@@ -38,32 +38,62 @@ import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
 /**
- * The class of Hybrid Public Key Encryption (HPKE) ciphersuite.
- * The calling of the constructor of this class is the starting
- * point for HPKE operations for both senders and recipients.
+ * The Hybrid Public Key Encryption (HPKE) ciphersuite,
+ * which is implemented using only
+ * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  *
- * This class supports only the ciphersuites which are
- * supported by the native Web Cryptography API. Therefore,
- * the following cryptographic algorithms are not supported for now:
+ * @remarks
+ *
+ * This is the super class of {@link CipherSuite} and the same as
+ * {@link https://deno.land/x/hpke@1.0.1/core/mod.ts?s=CipherSuite | @hpke/core#CipherSuite },
+ * which supports only the ciphersuites that can be implemented on the native
+ * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
+ * Therefore, the following cryptographic algorithms are not supported for now:
  *   - DHKEM(X25519, HKDF-SHA256)
  *   - DHKEM(X448, HKDF-SHA512)
- *   - ChaCha20/Poly1305
+ *   - ChaCha20Poly1305
  *
  * In addtion, the HKDF functions contained in this `CipherSuiteNative`
  * class can only derive keys of the same length as the `hashSize`.
  *
- * Therefore, if you want to use the unsupported cryptographic algorithms
+ * If you want to use the unsupported cryptographic algorithms
  * above or derive keys longer than the `hashSize`,
- * please use {@link CipherSuite}
+ * please use {@link CipherSuite}.
  *
  * This class provides following functions:
  *
- * - Generates a key pair for the cipher suite.
- * - Derives a key pair for the cipher suite.
- * - Imports and converts a key to a CryptoKey.
+ * - [DEPRECATED] Generates a key pair for the cipher suite.
+ * - [DEPRECATED] Derives a key pair for the cipher suite.
+ * - [DEPRECATED] Imports and converts a key to a CryptoKey.
  * - Creates an encryption context both for senders and recipients.
  * - Encrypts a message as a single-shot API.
  * - Decrypts an encrypted message as as single-shot API.
+ *
+ * The calling of the constructor of this class is the starting
+ * point for HPKE operations for both senders and recipients.
+ *
+ * @example Use only ciphersuites supported by Web Cryptography API.
+ *
+ * ```ts
+ * import { KemId, KdfId, AeadId, CipherSuiteNative } from "http://deno.land/x/hpke/mod.ts";
+ * const suite = new CipherSuiteNative({
+ *   kem: KemId.DhkemP256HkdfSha256,
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
+ *
+ * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
+ *
+ * ```ts
+ * import { KdfId, AeadId, CipherSuiteNative } from "http://deno.land/x/hpke/mod.ts";
+ * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+ * const suite = new CipherSuiteNative({
+ *   kem: new DhkemX25519HkdfSha256(),
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
  */
 export class CipherSuiteNative {
   private _api: SubtleCrypto | undefined = undefined;
@@ -75,7 +105,9 @@ export class CipherSuiteNative {
   /**
    * @param params A set of parameters for building a cipher suite.
    *
-   * If the error occurred, throws `InvalidParamError`.
+   * @remarks
+   *
+   * If the error occurred, throws {@link InvalidParamError}.
    *
    * @throws {@link InvalidParamError}
    */
@@ -170,6 +202,10 @@ export class CipherSuiteNative {
   /**
    * Generates a key pair for the cipher suite.
    *
+   * @remarks
+   *
+   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
+   *
    * @returns A key pair generated.
    */
   public async generateKeyPair(): Promise<CryptoKeyPair> {
@@ -181,7 +217,11 @@ export class CipherSuiteNative {
    * Derives a key pair for the cipher suite in the manner
    * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
    *
-   * If the error occurred, throws `DeriveKeyPairError`.
+   * @remarks
+   *
+   * If the error occurred, throws {@link DeriveKeyPairError}.
+   *
+   * @deprecated Use {@link KemInterface.deriveKeyPair} instead.
    *
    * @param ikm A byte string of input keying material. The maximum length is 128 bytes.
    * @returns A key pair derived.
@@ -196,17 +236,23 @@ export class CipherSuiteNative {
   }
 
   /**
-   * Imports a public or private key and converts to a CryptoKey
-   * which can be used on `createSenderContext` or `createRecipientContext`.
+   * Imports a public or private key and converts to a {@link CryptoKey}.
+   *
+   * @remarks
+   *
+   * Since key parameters for {@link createSenderContext} or {@link createRecipientContext}
+   * are {@link CryptoKey} format, you have to use this function to convert provided keys
+   * to {@link CryptoKey}.
+   *
    * Basically, this is a thin wrapper function of
    * [SubtleCrypto.importKey](https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey).
    *
-   * If the error occurred, throws `DeserializeError`.
+   * If the error occurred, throws {@link DeserializeError}.
    *
-   * NOTE: Currently, EC keys (P-256, P-384 and P-521) are supported on Deno environment.
+   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
    *
-   * @param format For now, `'raw'` is only supported.
-   * @param key A byte string of a raw key.
+   * @param format For now, `'raw'` and `'jwk'` are supported.
+   * @param key A byte string of a raw key or A {@link JsonWebKey} object.
    * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
    * @returns A public or private CryptoKey.
    * @throws {@link DeserializeError}
@@ -223,7 +269,9 @@ export class CipherSuiteNative {
   /**
    * Creates an encryption context for a sender.
    *
-   * If the error occurred, throws `EncapError` | `ValidationError`.
+   * @remarks
+   *
+   * If the error occurred, throws {@link DecapError} | {@link ValidationError}.
    *
    * @param params A set of parameters for the sender encryption context.
    * @returns A sender encryption context.
@@ -250,7 +298,10 @@ export class CipherSuiteNative {
   /**
    * Creates an encryption context for a recipient.
    *
-   * If the error occurred, throws `DecapError` | `DeserializeError` | `ValidationError`.
+   * @remarks
+   *
+   * If the error occurred, throws {@link DecapError}
+   * | {@link DeserializeError} | {@link ValidationError}.
    *
    * @param params A set of parameters for the recipient encryption context.
    * @returns A recipient encryption context.
@@ -277,6 +328,8 @@ export class CipherSuiteNative {
   /**
    * Encrypts a message to a recipient.
    *
+   * @remarks
+   *
    * If the error occurred, throws `EncapError` | `MessageLimitReachedError` | `SealError` | `ValidationError`.
    *
    * @param params A set of parameters for building a sender encryption context.
@@ -299,6 +352,8 @@ export class CipherSuiteNative {
 
   /**
    * Decrypts a message from a sender.
+   *
+   * @remarks
    *
    * If the error occurred, throws `DecapError` | `DeserializeError` | `OpenError` | `ValidationError`.
    *

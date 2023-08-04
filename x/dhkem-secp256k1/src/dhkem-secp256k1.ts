@@ -133,14 +133,20 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
 }
 
 /**
- * The class of the DH-KEM with secp256k1 curve.
+ * The DHKEM(secp256k1, HKDF-SHA256).
+ *
+ * @remarks
+ * 
+ * This class is implemented using
+ * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
  *
  * The public keys are assumed to be compressed.
- * Note that it is experimental and not standardized.
  *
- * The instance of this class can be specified to the CipherSuiteParams as follows:
+ * The instance of this class can be specified to the
+ * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
  *
  * @example
+ * ```ts
  * import { KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
  * import { DhkemSecp256k1HkdfSha256} from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
  * const suite = new CipherSuite({
@@ -148,6 +154,9 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
  *   kdf: KdfId.HkdfSha256,
  *   aead: AeadId.Aes128Gcm,
  * });
+ * ```
+ *
+ * @experimental Note that it is experimental and not standardized.
  */
 export class DhkemSecp256k1HkdfSha256 extends Dhkem implements KemInterface {
   public readonly id: KemId = KemId.DhkemSecp256k1HkdfSha256;
