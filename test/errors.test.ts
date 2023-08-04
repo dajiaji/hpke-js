@@ -11,7 +11,7 @@ describe("ValidationError", () => {
 
       // assert
       assertEquals(err.name, "ValidationError");
-      assertEquals(err.message, "ValidationError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -21,7 +21,7 @@ describe("ValidationError", () => {
 
       // assert
       assertEquals(err.name, "ValidationError");
-      assertEquals(err.message, "ValidationError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -32,7 +32,7 @@ describe("ValidationError", () => {
 
       // assert
       assertEquals(err.name, "ValidationError");
-      assertEquals(err.message, "ValidationError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -44,7 +44,7 @@ describe("DeserializeError", () => {
 
       // assert
       assertEquals(err.name, "DeserializeError");
-      assertEquals(err.message, "DeserializeError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -54,7 +54,7 @@ describe("DeserializeError", () => {
 
       // assert
       assertEquals(err.name, "DeserializeError");
-      assertEquals(err.message, "DeserializeError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -65,7 +65,7 @@ describe("DeserializeError", () => {
 
       // assert
       assertEquals(err.name, "DeserializeError");
-      assertEquals(err.message, "DeserializeError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -77,7 +77,7 @@ describe("EncapError", () => {
 
       // assert
       assertEquals(err.name, "EncapError");
-      assertEquals(err.message, "EncapError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -87,7 +87,7 @@ describe("EncapError", () => {
 
       // assert
       assertEquals(err.name, "EncapError");
-      assertEquals(err.message, "EncapError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -98,7 +98,7 @@ describe("EncapError", () => {
 
       // assert
       assertEquals(err.name, "EncapError");
-      assertEquals(err.message, "EncapError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -110,7 +110,7 @@ describe("DecapError", () => {
 
       // assert
       assertEquals(err.name, "DecapError");
-      assertEquals(err.message, "DecapError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -120,7 +120,7 @@ describe("DecapError", () => {
 
       // assert
       assertEquals(err.name, "DecapError");
-      assertEquals(err.message, "DecapError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -131,7 +131,7 @@ describe("DecapError", () => {
 
       // assert
       assertEquals(err.name, "DecapError");
-      assertEquals(err.message, "DecapError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -143,7 +143,7 @@ describe("ExportError", () => {
 
       // assert
       assertEquals(err.name, "ExportError");
-      assertEquals(err.message, "ExportError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -153,7 +153,7 @@ describe("ExportError", () => {
 
       // assert
       assertEquals(err.name, "ExportError");
-      assertEquals(err.message, "ExportError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -164,7 +164,7 @@ describe("ExportError", () => {
 
       // assert
       assertEquals(err.name, "ExportError");
-      assertEquals(err.message, "ExportError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -176,7 +176,7 @@ describe("SealError", () => {
 
       // assert
       assertEquals(err.name, "SealError");
-      assertEquals(err.message, "SealError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -186,7 +186,7 @@ describe("SealError", () => {
 
       // assert
       assertEquals(err.name, "SealError");
-      assertEquals(err.message, "SealError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -197,7 +197,7 @@ describe("SealError", () => {
 
       // assert
       assertEquals(err.name, "SealError");
-      assertEquals(err.message, "SealError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -209,7 +209,7 @@ describe("OpenError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -219,7 +219,7 @@ describe("OpenError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -230,7 +230,7 @@ describe("OpenError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -242,7 +242,7 @@ describe("MessageLimitReachedError", () => {
 
       // assert
       assertEquals(err.name, "MessageLimitReachedError");
-      assertEquals(err.message, "MessageLimitReachedError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -252,7 +252,7 @@ describe("MessageLimitReachedError", () => {
 
       // assert
       assertEquals(err.name, "MessageLimitReachedError");
-      assertEquals(err.message, "MessageLimitReachedError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -263,7 +263,7 @@ describe("MessageLimitReachedError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -275,7 +275,7 @@ describe("DeriveKeyPairError", () => {
 
       // assert
       assertEquals(err.name, "DeriveKeyPairError");
-      assertEquals(err.message, "DeriveKeyPairError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -285,7 +285,7 @@ describe("DeriveKeyPairError", () => {
 
       // assert
       assertEquals(err.name, "DeriveKeyPairError");
-      assertEquals(err.message, "DeriveKeyPairError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -296,7 +296,7 @@ describe("DeriveKeyPairError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
@@ -308,7 +308,7 @@ describe("NotSupportedError", () => {
 
       // assert
       assertEquals(err.name, "NotSupportedError");
-      assertEquals(err.message, "NotSupportedError");
+      assertEquals(err.message, "");
     });
   });
 
@@ -318,7 +318,7 @@ describe("NotSupportedError", () => {
 
       // assert
       assertEquals(err.name, "NotSupportedError");
-      assertEquals(err.message, "NotSupportedError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 
@@ -329,7 +329,7 @@ describe("NotSupportedError", () => {
 
       // assert
       assertEquals(err.name, "OpenError");
-      assertEquals(err.message, "OpenError: failed");
+      assertEquals(err.message, "failed");
     });
   });
 });
