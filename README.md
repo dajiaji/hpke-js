@@ -15,7 +15,7 @@
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
 implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
-This module works on web browsers, Node.js, Deno and Cloudflare Workers.
+This module works on web browsers, Node.js, Deno and various other JavaScript runtimes.
 </div>
 
 <p></p>
@@ -26,8 +26,60 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 </div>
 
+For Node.js, you can install `hpke-js` via npm/yarn:
+
+```sh
+npm install @hpke/core
+# if necessary...
+npm install @hpke/dhkem-x25519
+npm install @hpke/dhkem-x448
+npm install @hpke/chacha20poly1305
+# ...or you can use the v0.x-compatible all-in package below.
+npm install hpke-js
+```
+
+Then, you can use it as follows:
+
+```js
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
+
+async function doHpke() {
+  const suite = new CipherSuite({
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
+  });
+
+  // A recipient generates a key pair.
+  const rkp = await suite.generateKeyPair();
+
+  // A sender encrypts a message with the recipient public key.
+  const sender = await suite.createSenderContext({
+    recipientPublicKey: rkp.publicKey,
+  });
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
+  // The recipient decrypts it.
+  const recipient = await suite.createRecipientContext({
+    recipientKey: rkp.privateKey,
+    enc: sender.enc,
+  });
+  try {
+    const pt = await recipient.open(ct);
+    console.log("decrypted: ", new TextDecoder().decode(pt));
+  } catch (e) {
+    console.log("failed to decrypt:", e.message);
+  }
+}
+
+doHpke();
+```
+
 ## Index
 
+- [Packages](#packages)
 - [Supported Features](#supported-features)
 - [Supported Environments](#supported-environments)
 - [Warnings and Restrictions](#warnings-and-restrictions)
@@ -46,6 +98,19 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 - [Contributing](#contributing)
 - [References](#references)
 
+## Packages
+
+The hpke-js includes the following packages.
+
+| name                   | since   | description                                                                                                                                                                                                                                                                                                                               |
+| ---------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| hpke-js                | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                              |
+| @hpke/core             | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies and is small in size. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md). |
+| @hpke/dhkem-x25519     | v1.0.0- | The HPKE extension module for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                            |
+| @hpke/dhkem-x448       | v1.0.0- | The HPKE extension module for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                  |
+| @hpke/chacha20poly1305 | v1.0.0- | The HPKE extension module for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                         |
+| @hpke/dhkem-secp256k1  | v1.0.0- | [EXPERIMENTAL AND NOT STANDARDIZED] The HPKE extension module for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                               |
+
 ## Supported Features
 
 ### HPKE Modes
@@ -56,43 +121,35 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                           | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
-| ------------------------------ | --------- | ------------ | -------------- | --------------------- | ------------ |
-| DHKEM (P-256, HKDF-SHA256)     | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.23.x- | ✅<br>                | ✅<br>0.3.0- |
-| DHKEM (P-384, HKDF-SHA384)     | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.25.x- | ✅<br>                | ✅<br>0.3.0- |
-| DHKEM (P-521, HKDF-SHA512)     | ✅<br>    | ✅<br>v16.x- |                | ✅<br>                | ✅<br>0.3.0- |
-| DHKEM (X25519, HKDF-SHA256)    | ✅\*1<br> | ✅\*1<br>    | ✅\*1<br>      | ✅\*1<br>             | ✅\*1<br>    |
-| DHKEM (X448, HKDF-SHA512)      | ✅\*2<br> | ✅\*2<br>    | ✅\*2<br>      | ✅\*2<br>             | ✅\*2<br>    |
-| DHKEM (secp256k1, HKDF-SHA256) | ✅\*3<br> | ✅\*3<br>    | ✅\*3<br>      | ✅\*3<br>             | ✅\*3<br>    |
-
-- \*1: [@noble/curves/ed25519](https://github.com/paulmillr/noble-curves) is
-  used until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
-  implemented.
-- \*2: [@noble/curves/ed448](https://github.com/paulmillr/noble-curves) is used
-  until [Secure Curves](https://wicg.github.io/webcrypto-secure-curves/) is
-  implemented.
-- \*3: NOT STANDARDIZED EXPERIMENTAL IMPLEMENTATION. See
-  [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md)
+| KEMs                           | Browser                             | Node.js                             | Deno                                | Cloudflare<br>Workers               | bun                                 |
+| ------------------------------ | ----------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
+| DHKEM (P-384, HKDF-SHA384)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
+| DHKEM (P-521, HKDF-SHA512)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |                                     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
+| DHKEM (X25519, HKDF-SHA256)    | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 |
+| DHKEM (X448, HKDF-SHA512)      | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   |
+| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         |
 
 ### Key Derivation Functions (KDFs)
 
-| KDFs        | Browser | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
-| ----------- | ------- | ------------ | -------------- | --------------------- | ------------ |
-| HKDF-SHA256 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
-| HKDF-SHA384 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
-| HKDF-SHA512 | ✅<br>  | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
+| KDFs        | Browser                          | Node.js                          | Deno                             | Cloudflare<br>Workers            | bun                              |
+| ----------- | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- |
+| HKDF-SHA256 | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) |
+| HKDF-SHA384 | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) |
+| HKDF-SHA512 | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) | ✅<br>hpke-js<br>@hpke/core(\*1) |
+
+- (\*1) The HKDF functions built in `@hpke/core` can derive keys of the same
+  length as the hash size. If you want to derive keys longer than the hash size,
+  use `hpke-js`.
 
 ### Authenticated Encryption with Associated Data (AEAD) Functions
 
-| AEADs            | Browser   | Node.js      | Deno           | Cloudflare<br>Workers | bun          |
-| ---------------- | --------- | ------------ | -------------- | --------------------- | ------------ |
-| AES-128-GCM      | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
-| AES-256-GCM      | ✅<br>    | ✅<br>v16.x- | ✅<br>v1.15.x- | ✅<br>                | ✅<br>0.3.0- |
-| ChaCha20Poly1305 | ✅\*4<br> | ✅\*4<br>    | ✅\*4<br>      | ✅\*4<br>             | ✅\*4<br>    |
-| Export Only      | ✅<br>    | ✅<br>       | ✅<br>         | ✅<br>                | ✅<br>       |
-
-- \*4: [@noble/ciphers/chacha](https://github.com/paulmillr/noble-ciphers) is
-  used.
+| AEADs                | Browser                                     | Node.js                                     | Deno                                        | Cloudflare<br>Workers                       | bun                                         |
+| -------------------- | ------------------------------------------- | ------------------------------------------- | ------------------------------------------- | ------------------------------------------- | ------------------------------------------- |
+| AES-128-GCM          | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 |
+| AES-256-GCM          | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 |
+| ChaCha20<br>Poly1305 | ✅<br>hpke-js<br>@hpke/chacha<br>20poly1305 | ✅<br>hpke-js<br>@hpke/chacha<br>20poly1305 | ✅<br>hpke-js<br>@hpke/chacha<br>20poly1305 | ✅<br>hpke-js<br>@hpke/chacha<br>20poly1305 | ✅<br>hpke-js<br>@hpke/chacha<br>20poly1305 |
+| Export Only          | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 | ✅<br>hpke-js<br>@hpke/core                 |
 
 ## Supported Environments
 
@@ -100,9 +157,9 @@ This module works on web browsers, Node.js, Deno and Cloudflare Workers.
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
-- **Deno**: 1.x (1.15-)
+- **Deno**: 1.x (1.25-)
 - **Cloudflare Workers**
-- **bun**: 0.x (0.3.0-)
+- **bun**: 0.x (0.4.0-)
 
 ## Warnings and Restrictions
 
@@ -124,13 +181,15 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.22.2";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.0";
+  // import * as hpke from "https://esm.sh/hpke-js@1.0.0";
   // ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js";
+  import * as hpke from "https://esm.sh/@hpke/core";
+  // import * as hpke from "https://esm.sh/hpke-js";
   // ...
 </script>
 ```
@@ -140,7 +199,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.22.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.0/esm/mod.js";
+  // import * as hpke from "https://unpkg.com/hpke-js@1.0.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -150,12 +210,24 @@ Using unpkg:
 Using npm:
 
 ```sh
+npm install @hpke/core
+# if necessary...
+npm install @hpke/dhkem-x25519
+npm install @hpke/dhkem-x448
+npm install @hpke/chacha20poly1305
+# ...or you can use the v0.x-compatible all-in package below.
 npm install hpke-js
 ```
 
 Using yarn:
 
 ```sh
+yarn add @hpke/core
+# if necessary...
+yarn add @hpke/dhkem-x25519
+yarn add @hpke/dhkem-x448
+yarn add @hpke/chacha20poly1305
+# ...or you can use the v0.x-compatible all-in package below.
 yarn add hpke-js
 ```
 
@@ -165,26 +237,37 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.22.2/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.0.0/x/dhkem-x25519/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.0.0/mod.ts";
 
 // use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/mod.ts";
+import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke/mod.ts";
 ```
 
 ### Cloudflare Workers
 
-Downloads a single js file from esm.sh:
-
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.js https://esm.sh/v86/hpke-js@0.22.2/es2022/hpke-js.js
-# if you want to use a minified version:
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.2/es2022/hpke.min.js
-```
+git clone git@github.com:dajiaji/hpke-js.git
+cd hpke-js
+# for hpke-js
+npm install -g esbuild
+deno task dnt
+deno task minify > $YOUR_SRC_PATH/hpke.js
 
-Emits a single js file by using `deno bundle`:
+# for @hpke/core
+cd hpke-js/core
+npm install -g esbuild
+deno task dnt
+deno task minify > $YOUR_SRC_PATH/hpke-core.js
 
-```sh
-deno bundle https://deno.land/x/hpke@0.22.2/mod.ts > $YOUR_SRC_PATH/hpke.js
+# for @hpke/dhkem-x25519
+cd hpke-js/x/dhkem-x25519
+npm install -g esbuild
+deno task dnt
+deno task minify > $YOUR_SRC_PATH/hpke-dhkem-x25519.js
 ```
 
 ## Usage
@@ -200,8 +283,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.22.2";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.2";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.0";
+      // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@1.0.0";
 
       globalThis.doHpke = async () => {
 
@@ -276,38 +359,36 @@ Browsers:
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
-  // setup
   const suite = new CipherSuite({
     kem: KemId.DhkemP256HkdfSha256,
     kdf: KdfId.HkdfSha256,
     aead: AeadId.Aes128Gcm,
   });
 
+  // A recipient generates a key pair.
   const rkp = await suite.generateKeyPair();
 
+  // A sender encrypts a message with the recipient public key.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
 
+  // The recipient decrypts it.
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
-
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
-
-  // decrypt
   try {
     const pt = await recipient.open(ct);
-
     console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt.");
+  } catch (e) {
+    console.log("failed to decrypt:", e.message);
   }
 }
 
@@ -317,12 +398,16 @@ doHpke();
 Deno:
 
 ```js
-import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.2/mod.ts";
+import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.0.0/x/dhkem-x25519/mod.ts";
+// import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.0/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: KemId.DhkemX25519HkdfSha256,
+    kem: new DhkemX25519HkdfSha256(),
+    // If you use "https://deno.land/x/hpke@1.0.0/mod.ts", you can specify it with id as follows:
+    // kem: KemId.DhkemX25519HkdfSha256, 
     kdf: KdfId.HkdfSha256,
     aead: AeadId.Aes128Gcm,
   });
@@ -360,7 +445,9 @@ doHpke();
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require('hpke-js');
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
 
@@ -396,7 +483,9 @@ doHpke();
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   // setup
@@ -433,7 +522,9 @@ doHpke();
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   // setup
@@ -486,7 +577,9 @@ doHpke();
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   // setup
@@ -532,7 +625,9 @@ doHpke();
 Node.js:
 
 ```js
-const { KemId, KdfId, AeadId, CipherSuite } = require("hpke-js");
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   // setup
