@@ -16,7 +16,7 @@ export interface AeadInterface {
   readonly tagSize: number;
 
   /**
-   * Initializes the key by setting the SubtleCrypto.
+   * Initializes the instance by setting a SubtleCrypto API.
    *
    * @param api A SubtleCrypto API.
    */

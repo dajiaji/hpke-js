@@ -16,6 +16,11 @@ export interface KdfInterface {
     len: number,
   ): Uint8Array;
 
+  /**
+   * Initializes the instance by setting a SubtleCrypto API.
+   *
+   * @param api A SubtleCrypto API.
+   */
   init(api: SubtleCrypto, suiteId: Uint8Array): void;
 
   extract(

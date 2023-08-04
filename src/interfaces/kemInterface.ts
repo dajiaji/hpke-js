@@ -18,6 +18,11 @@ export interface KemInterface {
   /** The length in bytes of an encoded private key for this KEM (Nsk). */
   readonly privateKeySize: number;
 
+  /**
+   * Initializes the instance by setting a SubtleCrypto API.
+   *
+   * @param api A SubtleCrypto API.
+   */
   init(api: SubtleCrypto): void;
 
   /**
