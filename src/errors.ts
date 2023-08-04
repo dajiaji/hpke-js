@@ -14,9 +14,6 @@ class HpkeError extends Error {
     }
     super(message);
 
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
     this.name = this.constructor.name;
     if (this.message === "") {
       this.message = this.name;
