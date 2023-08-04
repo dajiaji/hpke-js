@@ -263,7 +263,7 @@ describe("export", () => {
 
       // assert
       await assertRejects(
-        () => sender.export(new Uint8Array(129), 32),
+        () => sender.export(new Uint8Array(8193), 32),
         errors.InvalidParamError,
         "Too long exporter context",
       );
