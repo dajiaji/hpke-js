@@ -1,11 +1,12 @@
 import * as util from "util";
-import { Aead, CipherSuite, Kdf, Kem } from "hpke-js";
+import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
+// import { AeadId, CipherSuite, KdfId, KemId } from "hpke-js";
 
 async function doHpke() {
   const suite: CipherSuite = new CipherSuite({
-    kem: Kem.DhkemP256HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Aes128Gcm,
+    kem: KemId.DhkemP256HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -15,7 +16,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
