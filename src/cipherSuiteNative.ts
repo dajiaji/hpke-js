@@ -45,7 +45,7 @@ import * as errors from "./errors.ts";
  * @remarks
  *
  * This is the super class of {@link CipherSuite} and the same as
- * {@link https://deno.land/x/hpke@1.0.1/core/mod.ts?s=CipherSuite | @hpke/core#CipherSuite },
+ * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuite | @hpke/core#CipherSuite },
  * which supports only the ciphersuites that can be implemented on the native
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  * Therefore, the following cryptographic algorithms are not supported for now:

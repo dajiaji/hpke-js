@@ -31,8 +31,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.1";
-  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.0.1";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.2";
+  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.0.2";
   // ...
 </script>
 
@@ -49,8 +49,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.1/esm/mod.js";
-  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.0.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.2/esm/mod.js";
+  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.0.2/esm/mod.js";
   // ...
 </script>
 ```
@@ -75,8 +75,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke@1.0.1/x/dhkem-x448/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.2/core/mod.ts";
+import * as x448 from "https://deno.land/x/hpke@1.0.2/x/dhkem-x448/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -104,8 +104,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.1";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.0.1";
+      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.2";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.0.2";
 
       globalThis.doHpke = async () => {
 
@@ -192,8 +192,8 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
-import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke@1.0.1/x/dhkem-x448/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.2/core/mod.ts";
+import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke@1.0.2/x/dhkem-x448/mod.ts";
 
 async function doHpke() {
   // setup

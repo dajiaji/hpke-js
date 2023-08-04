@@ -1,5 +1,13 @@
 # Changes
 
+## Version 1.0.2
+
+Released 2023-08-06
+
+- [(#230) Simplify and expose HpkeError.](https://github.com/dajiaji/hpke-js/pull/230)
+- [(#229) Rename \*ContextInterface to \*Context.](https://github.com/dajiaji/hpke-js/pull/229)
+- [(#227) Refine tsdoc description.](https://github.com/dajiaji/hpke-js/pull/227)
+
 ## Version 1.0.1
 
 Released 2023-08-06
