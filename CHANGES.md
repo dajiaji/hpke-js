@@ -4,7 +4,8 @@
 
 Released 2023-08-05
 
-- [(#222) Increase the input limits from 128 bytes to 8192 bytes.](https://github.com/dajiaji/hpke-js/pull/222) by @snorp
+- [(#222) Increase the input limits from 128 bytes to 8192 bytes.](https://github.com/dajiaji/hpke-js/pull/222)
+  by @snorp
 - [(#220) Add hpke/chacha20poly1305.](https://github.com/dajiaji/hpke-js/pull/220)
 - [(#219) Add hpke/dhkem-x448.](https://github.com/dajiaji/hpke-js/pull/219)
 - [(#218) Update dhkem-secp256k1 test to use hpke/core.](https://github.com/dajiaji/hpke-js/pull/218)
@@ -12,14 +13,15 @@ Released 2023-08-05
 - [(#216) Add hpke/core.](https://github.com/dajiaji/hpke-js/pull/216)
 - [(#215) Expose CipherSuiteNative class for hpke-js.](https://github.com/dajiaji/hpke-js/pull/215)
 - [(#214) BREAKING CHANGES for 1.0.0.](https://github.com/dajiaji/hpke-js/pull/214)
-    - Change CipherSuite.kem/kdf/aead to CipherSuite.kem.id/kdf.id/aead.id.
-    - Remove KemId.DhkemSecp256"K"1HkdfSha256.
-    - Remove CipherSuite.kemContext(). (Use CipherSuite.kem)
-    - Remove CipherSuite.kdfContext(). (Use CipherSuite.kdf)
-    - Remove createAeadKey from CipherSuite. (Use CipherSuite.aead.createEncryptionContext())
-    - Rename AeadKey to AeadEncryptionContext.
-    - Simplify AeadEncryptionContext interface.
-    - Drop support for bi-drectional encryption.
+  - Change CipherSuite.kem/kdf/aead to CipherSuite.kem.id/kdf.id/aead.id.
+  - Remove KemId.DhkemSecp256"K"1HkdfSha256.
+  - Remove CipherSuite.kemContext(). (Use CipherSuite.kem)
+  - Remove CipherSuite.kdfContext(). (Use CipherSuite.kdf)
+  - Remove createAeadKey from CipherSuite. (Use
+    CipherSuite.aead.createEncryptionContext())
+  - Rename AeadKey to AeadEncryptionContext.
+  - Simplify AeadEncryptionContext interface.
+  - Drop support for bi-drectional encryption.
 - [(#213) Update x/dhkem-secp256k1/deno.json.](https://github.com/dajiaji/hpke-js/pull/213)
 - [(#212) Separate the HKDF classes dependent on external modules from the independent base class.](https://github.com/dajiaji/hpke-js/pull/212)
 - [(#211) Separate dhkemPrimitives from dhkem classes.](https://github.com/dajiaji/hpke-js/pull/211)
