@@ -1,10 +1,13 @@
-import { Aead, CipherSuite, Kdf, Kem } from "https://deno.land/x/hpke/mod.ts";
+// import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke/core/mod.ts";
+// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke/mod.ts";
 
 async function doHpke() {
   const suite: CipherSuite = new CipherSuite({
-    kem: Kem.DhkemX25519HkdfSha256,
-    kdf: Kdf.HkdfSha256,
-    aead: Aead.Chacha20Poly1305,
+    // kem: new DhkemX25519HkdfSha256(),
+    kem: KemId.DhkemX25519HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Chacha20Poly1305,
   });
 
   const rkp = await suite.generateKeyPair();
@@ -14,7 +17,7 @@ async function doHpke() {
   });
 
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp,
+    recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
