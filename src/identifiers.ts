@@ -13,7 +13,7 @@ export type Mode = typeof Mode[keyof typeof Mode];
 /**
  * Supported Key Encapsulation Mechanisms (KEMs).
  *
- * DEPRECATED. Use {@link KdfId}.
+ * @deprecated Use {@link KdfId} instead.
  */
 export const Kem = {
   DhkemP256HkdfSha256: 0x0010,
@@ -35,7 +35,7 @@ export type KemId = typeof KemId[keyof typeof KemId];
 /**
  * Supported Key Derivation Functions (KDFs).
  *
- * DEPRECATED. Use {@link KdfId}.
+ * @deprecated Use {@link KdfId} instead.
  */
 export const Kdf = {
   HkdfSha256: 0x0001,
@@ -54,7 +54,7 @@ export type KdfId = typeof KdfId[keyof typeof KdfId];
 /**
  * Supported Authenticated Encryption with Associated Data (AEAD) Functions.
  *
- * DEPRECATED. Use {@link AeadId}.
+ * @deprecated Use {@link AeadId} instead.
  */
 export const Aead = {
   Aes128Gcm: 0x0001,

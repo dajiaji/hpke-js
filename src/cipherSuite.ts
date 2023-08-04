@@ -33,9 +33,6 @@ import * as errors from "./errors.ts";
 export class CipherSuite extends CipherSuiteNative {
   /**
    * @param params A set of parameters for building a cipher suite.
-   *
-   * If the error occurred, throws `InvalidParamError`.
-   *
    * @throws {@link InvalidParamError}
    */
   constructor(params: CipherSuiteParams) {

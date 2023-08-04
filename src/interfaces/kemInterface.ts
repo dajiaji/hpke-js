@@ -27,26 +27,42 @@ export interface KemInterface {
 
   /**
    * Generates a key pair.
+   *
+   * @returns A key pair.
    */
   generateKeyPair(): Promise<CryptoKeyPair>;
 
   /**
    * Derives a key pair from the byte string ikm.
+   *
+   * @param ikm An input keying material.
+   * @returns A key pair.
    */
   deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
 
   /**
    * Serializes a public key as CryptoKey to a byte string of length `Npk`.
+   *
+   * @param key A CryptoKey.
+   * @returns A key as bytes.
    */
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
   /**
    * Deserializes a public key as a byte string of length `Npk` to CryptoKey.
+   *
+   * @param key A key as bytes.
+   * @returns A CryptoKey.
    */
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
   /**
    * Imports a key for the KEM.
+   *
+   * @param format An imput KEM key format.
+   * @param key A KEM key.
+   * @param isPublic The indicator whether the KEM key is public or not.
+   * @returns A CryptoKey.
    */
   importKey(
     format: "raw" | "jwk",
@@ -58,6 +74,9 @@ export interface KemInterface {
    * Generates an ephemeral, fixed-length symmetric key and
    * a fixed-length encapsulation of the key that can be decapsulated
    * by the holder of the private key corresponding to `pkR`.
+   *
+   * @param params A set of parameters for the sender context.
+   * @returns A shared secret and an encapsulated key as the output of the encapsulation step.
    */
   encap(
     params: SenderContextParams,
@@ -65,6 +84,9 @@ export interface KemInterface {
 
   /**
    * Recovers the ephemeral symmetric key from its encapsulated representation `enc`.
+   *
+   * @param params A set of parameters for the recipient context.
+   * @returns A shared secret as the output of the decapsulation step.
    */
   decap(params: RecipientContextParams): Promise<ArrayBuffer>;
 }

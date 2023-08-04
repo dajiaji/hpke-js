@@ -26,7 +26,6 @@ export interface AeadInterface {
    * Creates an AEAD encryption context which has seal/open operation.
    *
    * @param key A byte string of the raw key.
-   *
    * @returns An AEAD encryption context.
    */
   createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext;
