@@ -31,8 +31,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.0";
-  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@1.0.0";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.1";
+  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@1.0.1";
   // ...
 </script>
 
@@ -49,8 +49,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.0/esm/mod.js";
-  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@1.0.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.1/esm/mod.js";
+  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@1.0.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -75,8 +75,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
-import * as chacha20 from "https://deno.land/x/hpke@1.0.0/x/chacha20poly1305/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
+import * as chacha20 from "https://deno.land/x/hpke@1.0.1/x/chacha20poly1305/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -104,9 +104,9 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.0.0";
-      import { KemId, KdfId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.0";
-      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.0.0";
+      // import * as hpke from "https://esm.sh/hpke-js@1.0.1";
+      import { KemId, KdfId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.1";
+      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.0.1";
 
       globalThis.doHpke = async () => {
 
@@ -193,8 +193,8 @@ doHpke();
 ### Deno
 
 ```js
-import { KemId, KdfId, CipherSuite } from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
-import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.0.0/x/chacha20poly1305/mod.ts";
+import { KemId, KdfId, CipherSuite } from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
+import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.0.1/x/chacha20poly1305/mod.ts";
 
 async function doHpke() {
   // setup
