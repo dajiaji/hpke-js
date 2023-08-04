@@ -3,7 +3,7 @@ import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { EncryptionContext } from "../src/encryptionContext.ts";
+import { EncryptionContextImpl } from "../src/encryptionContext.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { loadSubtleCrypto } from "../src/webCrypto.ts";
@@ -47,7 +47,10 @@ describe("constructor", () => {
 
       // assert
       params.aead.init(api);
-      assertEquals(typeof new EncryptionContext(api, kdf, params), "object");
+      assertEquals(
+        typeof new EncryptionContextImpl(api, kdf, params),
+        "object",
+      );
     });
   });
 
@@ -80,7 +83,7 @@ describe("constructor", () => {
       params.aead.init(api);
       assertThrows(
         () => {
-          new EncryptionContext(api, kdf, params);
+          new EncryptionContextImpl(api, kdf, params);
         },
         Error,
         "NotSupportedError: createEncryptionContext() is not supported on ExportOnly",
@@ -442,7 +445,7 @@ describe("createRecipientContext", () => {
       // assert
       assertThrows(
         () => {
-          new EncryptionContext(api, kdf, params);
+          new EncryptionContextImpl(api, kdf, params);
         },
         Error,
         "Required parameters are missing",

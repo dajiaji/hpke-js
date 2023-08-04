@@ -1,9 +1,9 @@
 import { EMPTY } from "./consts.ts";
-import { EncryptionContext } from "./encryptionContext.ts";
+import { EncryptionContextImpl } from "./encryptionContext.ts";
 
 import * as errors from "./errors.ts";
 
-export class RecipientContext extends EncryptionContext {
+export class RecipientContextImpl extends EncryptionContextImpl {
   public async open(
     data: ArrayBuffer,
     aad: ArrayBuffer = EMPTY,

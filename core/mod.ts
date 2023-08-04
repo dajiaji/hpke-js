@@ -2,10 +2,10 @@ export type { AeadEncryptionContext } from "../src/interfaces/aeadEncryptionCont
 export type { AeadInterface } from "../src/interfaces/aeadInterface.ts";
 export type { CipherSuiteParams } from "../src/interfaces/cipherSuiteParams.ts";
 export type {
-  EncryptionContextInterface,
-  RecipientContextInterface,
-  SenderContextInterface,
-} from "../src/interfaces/encryptionContextInterface.ts";
+  EncryptionContext,
+  RecipientContext,
+  SenderContext,
+} from "../src/interfaces/encryptionContext.ts";
 export type { KdfInterface } from "../src/interfaces/kdfInterface.ts";
 export type { KemInterface } from "../src/interfaces/kemInterface.ts";
 export type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";

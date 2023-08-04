@@ -8,13 +8,13 @@ import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
 import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 import type {
-  RecipientContextInterface,
-  SenderContextInterface,
-} from "./interfaces/encryptionContextInterface.ts";
+  RecipientContext,
+  SenderContext,
+} from "./interfaces/encryptionContext.ts";
 
 import {
-  RecipientExporterContext,
-  SenderExporterContext,
+  RecipientExporterContextImpl,
+  SenderExporterContextImpl,
 } from "./exporterContext.ts";
 import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
 import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
@@ -24,8 +24,8 @@ import {
   HkdfSha384Native,
   HkdfSha512Native,
 } from "./kdfs/hkdf.ts";
-import { RecipientContext } from "./recipientContext.ts";
-import { SenderContext } from "./senderContext.ts";
+import { RecipientContextImpl } from "./recipientContext.ts";
+import { SenderContextImpl } from "./senderContext.ts";
 import { loadSubtleCrypto } from "./webCrypto.ts";
 import {
   DhkemP256HkdfSha256Native,
@@ -282,7 +282,7 @@ export class CipherSuiteNative {
    */
   public async createSenderContext(
     params: SenderContextParams,
-  ): Promise<SenderContextInterface> {
+  ): Promise<SenderContext> {
     this._validateInputLength(params);
 
     await this._setup();
@@ -312,7 +312,7 @@ export class CipherSuiteNative {
    */
   public async createRecipientContext(
     params: RecipientContextParams,
-  ): Promise<RecipientContextInterface> {
+  ): Promise<RecipientContext> {
     this._validateInputLength(params);
 
     await this._setup();
@@ -496,17 +496,17 @@ export class CipherSuiteNative {
     sharedSecret: ArrayBuffer,
     enc: ArrayBuffer,
     params: KeyScheduleParams,
-  ): Promise<SenderContextInterface> {
+  ): Promise<SenderContext> {
     const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
-      return new SenderExporterContext(
+      return new SenderExporterContextImpl(
         this._api as SubtleCrypto,
         this._kdf,
         res.exporterSecret,
         enc,
       );
     }
-    return new SenderContext(
+    return new SenderContextImpl(
       this._api as SubtleCrypto,
       this._kdf,
       res,
@@ -518,16 +518,16 @@ export class CipherSuiteNative {
     mode: Mode,
     sharedSecret: ArrayBuffer,
     params: KeyScheduleParams,
-  ): Promise<RecipientContextInterface> {
+  ): Promise<RecipientContext> {
     const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
-      return new RecipientExporterContext(
+      return new RecipientExporterContextImpl(
         this._api as SubtleCrypto,
         this._kdf,
         res.exporterSecret,
       );
     }
-    return new RecipientContext(this._api as SubtleCrypto, this._kdf, res);
+    return new RecipientContextImpl(this._api as SubtleCrypto, this._kdf, res);
   }
 
   private _validateInputLength(params: KeyScheduleParams) {

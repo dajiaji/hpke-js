@@ -1,11 +1,11 @@
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
-import type { EncryptionContextInterface } from "./interfaces/encryptionContextInterface.ts";
+import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
-export class ExporterContext implements EncryptionContextInterface {
+export class ExporterContextImpl implements EncryptionContext {
   protected _api: SubtleCrypto;
   protected readonly exporterSecret: ArrayBuffer;
   private _kdf: KdfInterface;
@@ -60,9 +60,9 @@ export class ExporterContext implements EncryptionContextInterface {
   }
 }
 
-export class RecipientExporterContext extends ExporterContext {}
+export class RecipientExporterContextImpl extends ExporterContextImpl {}
 
-export class SenderExporterContext extends ExporterContext
+export class SenderExporterContextImpl extends ExporterContextImpl
   implements Encapsulator {
   public readonly enc: ArrayBuffer;
 
