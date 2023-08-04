@@ -36,7 +36,7 @@ npm install @hpke/core
 npm install @hpke/dhkem-x25519
 npm install @hpke/dhkem-x448
 npm install @hpke/chacha20poly1305
-# ...or you can use the v0.x-compatible all-in package below.
+# ...or you can use the v0.x-compatible all-in-one package below.
 npm install hpke-js
 ```
 
@@ -217,7 +217,7 @@ npm install @hpke/core
 npm install @hpke/dhkem-x25519
 npm install @hpke/dhkem-x448
 npm install @hpke/chacha20poly1305
-# ...or you can use the v0.x-compatible all-in package below.
+# ...or you can use the v0.x-compatible all-in-one package below.
 npm install hpke-js
 ```
 
@@ -229,7 +229,7 @@ yarn add @hpke/core
 yarn add @hpke/dhkem-x25519
 yarn add @hpke/dhkem-x448
 yarn add @hpke/chacha20poly1305
-# ...or you can use the v0.x-compatible all-in package below.
+# ...or you can use the v0.x-compatible all-in-one package below.
 yarn add hpke-js
 ```
 
