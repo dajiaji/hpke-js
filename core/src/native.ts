@@ -5,8 +5,6 @@ import { CipherSuiteNative } from "../../src/cipherSuiteNative.ts";
  * which is implemented using only
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  *
- * @remarks
- *
  * This class is the same as
  * {@link https://deno.land/x/hpke/mod.ts?s=CipherSuiteNative | @hpke/core#CipherSuiteNative },
  * which supports only the ciphersuites that can be implemented on the native
