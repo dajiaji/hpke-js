@@ -12,7 +12,6 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 ## Index
 
-- [Supported Environments](#supported-environments)
 - [Installation](#installation)
   - [Web Browser](#web-browser)
   - [Node.js](#nodejs)
@@ -20,16 +19,6 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
   - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
 - [Contributing](#contributing)
-
-## Supported Environments
-
-- **Web Browser**: [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/)
-  supported browsers
-  - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
-- **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
-- **Deno**: 1.x (1.15-)
-- **Cloudflare Workers**
-- **bun**: 0.x (0.3.0-)
 
 ## Installation
 
@@ -42,14 +31,14 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@0.22.2";
-  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@0.22.2";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.0";
+  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@1.0.0";
   // ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js";
+  import * as hpke from "https://esm.sh/@hpke/core";
   import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519";
   // ...
 </script>
@@ -60,8 +49,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@0.22.2/esm/mod.js";
-  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@0.22.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.0/esm/mod.js";
+  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@1.0.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -86,21 +75,22 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@0.22.2/mod.ts";
-import * as x25519 from "https://deno.land/x/hpke@0.22.2/x/dhkem-x25519/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+import * as x25519 from "https://deno.land/x/hpke@1.0.0/x/dhkem-x25519/mod.ts";
 
 // use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/mod.ts";
+import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
 import * as x25519 from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
 ```
 
 ### Cloudflare Workers
 
-Downloads a single js file from esm.sh:
-
 ```sh
-curl -sS -o $YOUR_SRC_PATH/hpke.min.js https://esm.sh/v86/hpke-js@0.22.2/es2022/hpke.min.js
-curl -sS -o $YOUR_SRC_PATH/hpke-dhkem-x25519.min.js https://esm.sh/v86/@hpke/dhkem-x25519@0.22.2/es2022/hpke-dhkem-x25519.min.js
+git clone git@github.com:dajiaji/hpke-js.git
+cd hpke-js/x/dhkem-x25519
+npm install -g esbuild
+deno task dnt
+deno task minify > $YOUR_SRC_PATH/hpke-dhkem-x25519.js
 ```
 
 ## Usage
@@ -114,9 +104,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@0.22.2";
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@0.22.2";
-      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@0.22.2";
+      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.0";
+      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.0.0";
 
       globalThis.doHpke = async () => {
 
@@ -160,8 +149,9 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-const { KdfId, AeadId, CipherSuite } = require("hpke-js");
-const { DhkemX25519HkdfSha256 } = require("@hpke/dhkem-x25519");
+import { KdfId, AeadId, CipherSuite } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+// const { DhkemX25519HkdfSha256 } = require("@hpke/dhkem-x25519");
 
 async function doHpke() {
   // setup
@@ -202,8 +192,8 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@0.22.2/mod.ts";
-import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@0.22.2/x/dhkem-x25519/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.0.0/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {
   // setup

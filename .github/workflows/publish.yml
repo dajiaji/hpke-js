@@ -16,11 +16,10 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke.min.js
       - working-directory: ./npm
         run: npm publish
         env:
@@ -37,12 +36,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         working-directory: ./core
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-core.min.js
       - working-directory: ./core/npm
         run: npm publish
         env:
@@ -59,12 +57,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         working-directory: ./x/dhkem-x25519
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-dhkem-x25519.min.js
       - working-directory: ./x/dhkem-x25519/npm
         run: npm publish
         env:
@@ -81,12 +78,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         working-directory: ./x/dhkem-x448
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-dhkem-x448.min.js
       - working-directory: ./x/dhkem-x448/npm
         run: npm publish
         env:
@@ -103,12 +99,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         working-directory: ./x/chacha20poly1305
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-chacha20poly1305.min.js
       - working-directory: ./x/chacha20poly1305/npm
         run: npm publish
         env:
@@ -125,12 +120,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt & minify
+      - name: Run dnt
         working-directory: ./x/dhkem-secp256k1
         run: |
           npm install -g esbuild
           deno task dnt
-          deno task minify > ./npm/hpke-dhkem-secp256k1.min.js
       - working-directory: ./x/dhkem-secp256k1/npm
         run: npm publish
         env:
