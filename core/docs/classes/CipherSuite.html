@@ -15,6 +15,47 @@
 <li><a href="../modules.html">@hpke/core </a></li>
 <li><a href="CipherSuite.html">CipherSuite</a></li></ul>
 <h1>Class CipherSuite</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>The Hybrid Public Key Encryption (HPKE) ciphersuite,
+which is implemented using only
+<a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>This class is the same as
+<a href="https://deno.land/x/hpke/mod.ts?s=CipherSuiteNative">@hpke/core#CipherSuiteNative</a>,
+which supports only the ciphersuites that can be implemented on the native
+<a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
+Therefore, the following cryptographic algorithms are not supported for now:</p>
+<ul>
+<li>DHKEM(X25519, HKDF-SHA256)</li>
+<li>DHKEM(X448, HKDF-SHA512)</li>
+<li>ChaCha20Poly1305</li>
+</ul>
+<p>In addtion, the HKDF functions contained in this <code>CipherSuiteNative</code>
+class can only derive keys of the same length as the <code>hashSize</code>.</p>
+<p>If you want to use the unsupported cryptographic algorithms
+above or derive keys longer than the <code>hashSize</code>,
+please use <a href="https://deno.land/x/hpke/mod.ts?s=CipherSuite">hpke-js#CipherSuite</a>.</p>
+<p>This class provides following functions:</p>
+<ul>
+<li>[DEPRECATED] Generates a key pair for the cipher suite.</li>
+<li>[DEPRECATED] Derives a key pair for the cipher suite.</li>
+<li>[DEPRECATED] Imports and converts a key to a CryptoKey.</li>
+<li>Creates an encryption context both for senders and recipients.</li>
+<li>Encrypts a message as a single-shot API.</li>
+<li>Decrypts an encrypted message as as single-shot API.</li>
+</ul>
+<p>The calling of the constructor of this class is the starting
+point for HPKE operations for both senders and recipients.</p>
+
+<h4>Example</h4><p>Use only ciphersuites supported by Web Cryptography API.</p>
+<pre><code class="language-ts"><span class="hl-6">import</span><span class="hl-11"> { </span><span class="hl-8">KemId</span><span class="hl-11">, </span><span class="hl-8">KdfId</span><span class="hl-11">, </span><span class="hl-8">AeadId</span><span class="hl-11">, </span><span class="hl-8">CipherSuite</span><span class="hl-11"> } </span><span class="hl-6">from</span><span class="hl-11"> </span><span class="hl-9">&quot;http://deno.land/x/hpke/core/mod.ts&quot;</span><span class="hl-11">;</span><br/><span class="hl-7">const</span><span class="hl-11"> </span><span class="hl-12">suite</span><span class="hl-11"> = </span><span class="hl-7">new</span><span class="hl-11"> </span><span class="hl-10">CipherSuite</span><span class="hl-11">({</span><br/><span class="hl-11">  </span><span class="hl-8">kem:</span><span class="hl-11"> </span><span class="hl-8">KemId</span><span class="hl-11">.</span><span class="hl-8">DhkemP256HkdfSha256</span><span class="hl-11">,</span><br/><span class="hl-11">  </span><span class="hl-8">kdf:</span><span class="hl-11"> </span><span class="hl-8">KdfId</span><span class="hl-11">.</span><span class="hl-8">HkdfSha256</span><span class="hl-11">,</span><br/><span class="hl-11">  </span><span class="hl-8">aead:</span><span class="hl-11"> </span><span class="hl-8">AeadId</span><span class="hl-11">.</span><span class="hl-8">Aes128Gcm</span><span class="hl-11">,</span><br/><span class="hl-11">});</span>
+</code><button>Copy</button></pre>
+
+<h4>Example</h4><p>Use a ciphersuite which is currently not supported by Web Cryptography API.</p>
+<pre><code class="language-ts"><span class="hl-6">import</span><span class="hl-11"> { </span><span class="hl-8">KdfId</span><span class="hl-11">, </span><span class="hl-8">AeadId</span><span class="hl-11">, </span><span class="hl-8">CipherSuiteNative</span><span class="hl-11"> } </span><span class="hl-6">from</span><span class="hl-11"> </span><span class="hl-9">&quot;http://deno.land/x/hpke/core/mod.ts&quot;</span><span class="hl-11">;</span><br/><span class="hl-6">import</span><span class="hl-11"> { </span><span class="hl-8">DhkemX25519HkdfSha256</span><span class="hl-11"> } </span><span class="hl-6">from</span><span class="hl-11"> </span><span class="hl-9">&quot;https://deno.land/x/hpke/x/dhkem-x25519/mod.ts&quot;</span><span class="hl-11">;</span><br/><span class="hl-7">const</span><span class="hl-11"> </span><span class="hl-12">suite</span><span class="hl-11"> = </span><span class="hl-7">new</span><span class="hl-11"> </span><span class="hl-10">CipherSuite</span><span class="hl-11">({</span><br/><span class="hl-11">  </span><span class="hl-8">kem:</span><span class="hl-11"> </span><span class="hl-7">new</span><span class="hl-11"> </span><span class="hl-10">DhkemX25519HkdfSha256</span><span class="hl-11">(),</span><br/><span class="hl-11">  </span><span class="hl-8">kdf:</span><span class="hl-11"> </span><span class="hl-8">KdfId</span><span class="hl-11">.</span><span class="hl-8">HkdfSha256</span><span class="hl-11">,</span><br/><span class="hl-11">  </span><span class="hl-8">aead:</span><span class="hl-11"> </span><span class="hl-8">AeadId</span><span class="hl-11">.</span><span class="hl-8">Aes128Gcm</span><span class="hl-11">,</span><br/><span class="hl-11">});</span>
+</code><button>Copy</button></pre>
+</div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -22,7 +63,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">CipherSuite</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/core/src/native.ts#L13">src/native.ts:13</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/core/src/native.ts#L60">src/native.ts:60</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -61,16 +102,17 @@
 <li>
 <h5><span class="tsd-kind-parameter">params</span>: <a href="../interfaces/CipherSuiteParams.html" class="tsd-signature-type tsd-kind-interface">CipherSuiteParams</a></h5>
 <div class="tsd-comment tsd-typography"><p>A set of parameters for building a cipher suite.</p>
-<p>If the error occurred, throws <code>InvalidParamError</code>.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="CipherSuite.html" class="tsd-signature-type tsd-kind-class">CipherSuite</a></h4>
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <a href="InvalidParamError.html" class="tsd-kind-class">InvalidParamError</a>.</p>
+
 <h4>Throws</h4><p><a href="InvalidParamError.html" class="tsd-kind-class">InvalidParamError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L82">../src/cipherSuiteNative.ts:82</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L114">../src/cipherSuiteNative.ts:114</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="aead" class="tsd-anchor"></a>
@@ -84,7 +126,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.aead</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L166">../src/cipherSuiteNative.ts:166</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L198">../src/cipherSuiteNative.ts:198</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="kdf" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>kdf</span><a href="#kdf" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -96,7 +138,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.kdf</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L159">../src/cipherSuiteNative.ts:159</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L191">../src/cipherSuiteNative.ts:191</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="kem" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>kem</span><a href="#kem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -108,7 +150,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.kem</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L152">../src/cipherSuiteNative.ts:152</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L184">../src/cipherSuiteNative.ts:184</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="createRecipientContext" class="tsd-anchor"></a>
@@ -117,7 +159,6 @@
 <li class="tsd-signature tsd-anchor-link" id="createRecipientContext.createRecipientContext-1"><span class="tsd-kind-call-signature">create<wbr/>Recipient<wbr/>Context</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/EncryptionContextInterface.html" class="tsd-signature-type tsd-kind-interface">EncryptionContextInterface</a><span class="tsd-signature-symbol">&gt;</span><a href="#createRecipientContext.createRecipientContext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Creates an encryption context for a recipient.</p>
-<p>If the error occurred, throws <code>DecapError</code> | <code>DeserializeError</code> | <code>ValidationError</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -130,18 +171,20 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/EncryptionContextInterface.html" class="tsd-signature-type tsd-kind-interface">EncryptionContextInterface</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A recipient encryption context.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <a href="DecapError.html" class="tsd-kind-class">DecapError</a>
+| <a href="DeserializeError.html" class="tsd-kind-class">DeserializeError</a> | <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a>.</p>
+
 <h4>Throws</h4><p><a href="DecapError.html" class="tsd-kind-class">DecapError</a>, <a href="DeserializeError.html" class="tsd-kind-class">DeserializeError</a>, <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.createRecipientContext</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L259">../src/cipherSuiteNative.ts:259</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L310">../src/cipherSuiteNative.ts:310</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="createSenderContext" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>create<wbr/>Sender<wbr/>Context</span><a href="#createSenderContext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="createSenderContext.createSenderContext-1"><span class="tsd-kind-call-signature">create<wbr/>Sender<wbr/>Context</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/SenderContextInterface.html" class="tsd-signature-type tsd-kind-interface">SenderContextInterface</a><span class="tsd-signature-symbol">&gt;</span><a href="#createSenderContext.createSenderContext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Creates an encryption context for a sender.</p>
-<p>If the error occurred, throws <code>EncapError</code> | <code>ValidationError</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,11 +197,13 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/SenderContextInterface.html" class="tsd-signature-type tsd-kind-interface">SenderContextInterface</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A sender encryption context.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <a href="DecapError.html" class="tsd-kind-class">DecapError</a> | <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a>.</p>
+
 <h4>Throws</h4><p><a href="EncapError.html" class="tsd-kind-class">EncapError</a>, <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.createSenderContext</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L232">../src/cipherSuiteNative.ts:232</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L280">../src/cipherSuiteNative.ts:280</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="deriveKeyPair" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>derive<wbr/>Key<wbr/>Pair</span><a href="#deriveKeyPair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -166,7 +211,6 @@
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Derives a key pair for the cipher suite in the manner
 defined in <a href="https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3">RFC9180 Section 7.1.3</a>.</p>
-<p>If the error occurred, throws <code>DeriveKeyPairError</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -179,11 +223,15 @@ defined in <a href="https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3">R
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A key pair derived.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <a href="DeriveKeyPairError.html" class="tsd-kind-class">DeriveKeyPairError</a>.</p>
+
+<h4>Deprecated</h4><p>Use <a href="../interfaces/KemInterface.html#deriveKeyPair" class="tsd-kind-method">deriveKeyPair</a> instead.</p>
+
 <h4>Throws</h4><p><a href="DeriveKeyPairError.html" class="tsd-kind-class">DeriveKeyPairError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.deriveKeyPair</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L190">../src/cipherSuiteNative.ts:190</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L230">../src/cipherSuiteNative.ts:230</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="generateKeyPair" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>Key<wbr/>Pair</span><a href="#generateKeyPair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -193,33 +241,31 @@ defined in <a href="https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3">R
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A key pair generated.</p>
 
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<div class="tsd-comment tsd-typography">
+<h4>Remarks</h4>
+<h4>Deprecated</h4><p>Use <a href="../interfaces/KemInterface.html#generateKeyPair" class="tsd-kind-method">generateKeyPair</a> instead.</p>
+</div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.generateKeyPair</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L175">../src/cipherSuiteNative.ts:175</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L211">../src/cipherSuiteNative.ts:211</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="importKey" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>import<wbr/>Key</span><a href="#importKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="importKey.importKey-1"><span class="tsd-kind-call-signature">import<wbr/>Key</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">format</span>, <span class="tsd-kind-parameter">key</span>, <span class="tsd-kind-parameter">isPublic</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span><a href="#importKey.importKey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Imports a public or private key and converts to a CryptoKey
-which can be used on <code>createSenderContext</code> or <code>createRecipientContext</code>.
-Basically, this is a thin wrapper function of
-<a href="https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey">SubtleCrypto.importKey</a>.</p>
-<p>If the error occurred, throws <code>DeserializeError</code>.</p>
-<p>NOTE: Currently, EC keys (P-256, P-384 and P-521) are supported on Deno environment.</p>
+<div class="tsd-comment tsd-typography"><p>Imports a public or private key and converts to a CryptoKey.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5><span class="tsd-kind-parameter">format</span>: <span class="tsd-signature-type">&quot;raw&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;jwk&quot;</span></h5>
-<div class="tsd-comment tsd-typography"><p>For now, <code>&#39;raw&#39;</code> is only supported.</p>
+<div class="tsd-comment tsd-typography"><p>For now, <code>&#39;raw&#39;</code> and <code>&#39;jwk&#39;</code> are supported.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li>
 <li>
 <h5><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type ">ArrayBuffer</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">JsonWebKey</span></h5>
-<div class="tsd-comment tsd-typography"><p>A byte string of a raw key.</p>
+<div class="tsd-comment tsd-typography"><p>A byte string of a raw key or A JsonWebKey object.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li>
 <li>
@@ -230,18 +276,26 @@ Basically, this is a thin wrapper function of
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A public or private CryptoKey.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>Since key parameters for <a href="CipherSuite.html#createSenderContext" class="tsd-kind-method">createSenderContext</a> or <a href="CipherSuite.html#createRecipientContext" class="tsd-kind-method">createRecipientContext</a>
+are CryptoKey format, you have to use this function to convert provided keys
+to CryptoKey.</p>
+<p>Basically, this is a thin wrapper function of
+<a href="https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey">SubtleCrypto.importKey</a>.</p>
+<p>If the error occurred, throws <a href="DeserializeError.html" class="tsd-kind-class">DeserializeError</a>.</p>
+
+<h4>Deprecated</h4><p>Use <a href="../interfaces/KemInterface.html#generateKeyPair" class="tsd-kind-method">generateKeyPair</a> instead.</p>
+
 <h4>Throws</h4><p><a href="DeserializeError.html" class="tsd-kind-class">DeserializeError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.importKey</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L214">../src/cipherSuiteNative.ts:214</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L260">../src/cipherSuiteNative.ts:260</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="open" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>open</span><a href="#open" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="open.open-1"><span class="tsd-kind-call-signature">open</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span>, <span class="tsd-kind-parameter">ct</span>, <span class="tsd-kind-parameter">aad</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#open.open-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Decrypts a message from a sender.</p>
-<p>If the error occurred, throws <code>DecapError</code> | <code>DeserializeError</code> | <code>OpenError</code> | <code>ValidationError</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -264,18 +318,19 @@ Basically, this is a thin wrapper function of
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A decrypted plain text as bytes.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <code>DecapError</code> | <code>DeserializeError</code> | <code>OpenError</code> | <code>ValidationError</code>.</p>
+
 <h4>Throws</h4><p><a href="DecapError.html" class="tsd-kind-class">DecapError</a>, <a href="DeserializeError.html" class="tsd-kind-class">DeserializeError</a>, <a href="OpenError.html" class="tsd-kind-class">OpenError</a>, <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.open</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L311">../src/cipherSuiteNative.ts:311</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L366">../src/cipherSuiteNative.ts:366</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="seal" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>seal</span><a href="#seal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="seal.seal-1"><span class="tsd-kind-call-signature">seal</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">params</span>, <span class="tsd-kind-parameter">pt</span>, <span class="tsd-kind-parameter">aad</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/CipherSuiteSealResponse.html" class="tsd-signature-type tsd-kind-interface">CipherSuiteSealResponse</a><span class="tsd-signature-symbol">&gt;</span><a href="#seal.seal-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Encrypts a message to a recipient.</p>
-<p>If the error occurred, throws <code>EncapError</code> | <code>MessageLimitReachedError</code> | <code>SealError</code> | <code>ValidationError</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -298,11 +353,13 @@ Basically, this is a thin wrapper function of
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/CipherSuiteSealResponse.html" class="tsd-signature-type tsd-kind-interface">CipherSuiteSealResponse</a><span class="tsd-signature-symbol">&gt;</span></h4><p>A cipher text and an encapsulated key as bytes.</p>
 
 <div class="tsd-comment tsd-typography">
+<h4>Remarks</h4><p>If the error occurred, throws <code>EncapError</code> | <code>MessageLimitReachedError</code> | <code>SealError</code> | <code>ValidationError</code>.</p>
+
 <h4>Throws</h4><p><a href="EncapError.html" class="tsd-kind-class">EncapError</a>, <a href="MessageLimitReachedError.html" class="tsd-kind-class">MessageLimitReachedError</a>, <a href="SealError.html" class="tsd-kind-class">SealError</a>, <a href="ValidationError.html" class="tsd-kind-class">ValidationError</a></p>
 </div><aside class="tsd-sources">
 <p>Inherited from CipherSuiteNative.seal</p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a927010/src/cipherSuiteNative.ts#L288">../src/cipherSuiteNative.ts:288</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/837553e/src/cipherSuiteNative.ts#L341">../src/cipherSuiteNative.ts:341</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
