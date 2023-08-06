@@ -11,6 +11,7 @@ export async function loadCrypto(): Promise<Crypto> {
   }
 
   try {
+    // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto
     return (webcrypto as unknown as Crypto);
   } catch (_e: unknown) {
@@ -27,6 +28,7 @@ export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
   }
 
   try {
+    // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto
     return (webcrypto as unknown as Crypto).subtle;
   } catch (_e: unknown) {

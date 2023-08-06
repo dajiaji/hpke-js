@@ -1,3 +1,4 @@
+// @ts-ignore: for "npm:"
 import { ed25519, x25519 } from "npm:@noble/curves@1.1.0/ed25519";
 
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";

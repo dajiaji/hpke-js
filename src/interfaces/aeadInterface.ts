@@ -16,7 +16,7 @@ export interface AeadInterface {
   readonly tagSize: number;
 
   /**
-   * Initializes the key by setting the SubtleCrypto.
+   * Initializes the instance by setting a SubtleCrypto API.
    *
    * @param api A SubtleCrypto API.
    */
@@ -26,7 +26,6 @@ export interface AeadInterface {
    * Creates an AEAD encryption context which has seal/open operation.
    *
    * @param key A byte string of the raw key.
-   *
    * @returns An AEAD encryption context.
    */
   createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext;

@@ -1,3 +1,4 @@
+// @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.1.0/secp256k1";
 
 import type { KemPrimitives } from "../../../src/interfaces/kemPrimitives.ts";
