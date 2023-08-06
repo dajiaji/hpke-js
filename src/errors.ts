@@ -1,7 +1,7 @@
 /**
  * The base error class of hpke-js.
  */
-class HpkeError extends Error {
+export class HpkeError extends Error {
   public constructor(e: unknown) {
     let message: string;
 
@@ -15,11 +15,6 @@ class HpkeError extends Error {
     super(message);
 
     this.name = this.constructor.name;
-    if (this.message === "") {
-      this.message = this.name;
-    } else {
-      this.message = this.name + ": " + this.message;
-    }
   }
 }
 
