@@ -1,5 +1,5 @@
 /**
- * Supported HPKE modes.
+ * The supported HPKE modes.
  */
 export const Mode = {
   Base: 0x00,
@@ -9,12 +9,12 @@ export const Mode = {
 } as const;
 
 /**
- * The type of the Supported HPKE modes.
+ * The type alias of the supported HPKE modes.
  */
 export type Mode = typeof Mode[keyof typeof Mode];
 
 /**
- * Supported Key Encapsulation Mechanism (KEM) identifiers.
+ * The supported Key Encapsulation Mechanism (KEM) identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
@@ -28,24 +28,24 @@ export const Kem = {
 } as const;
 
 /**
- * The type of the supported KEM identifiers.
+ * The type alias of the supported KEM identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
 export type Kem = typeof Kem[keyof typeof Kem];
 
 /**
- * Supported Key Encapsulation Mechanism (KEM) identifiers.
+ * The supported Key Encapsulation Mechanism (KEM) identifiers.
  */
 export const KemId = Kem;
 
 /**
- * The type of the supported KEM identifiers.
+ * The type alias of the supported KEM identifiers.
  */
 export type KemId = typeof KemId[keyof typeof KemId];
 
 /**
- * Supported Key Derivation Function (KDF) identifiers.
+ * The supported Key Derivation Function (KDF) identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
@@ -56,24 +56,24 @@ export const Kdf = {
 } as const;
 
 /**
- * The type of the supported KDF identifiers.
+ * The type alias of the supported KDF identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
 export type Kdf = typeof Kdf[keyof typeof Kdf];
 
 /**
- * Supported Key Derivation Function (KDF) identifiers.
+ * The supported Key Derivation Function (KDF) identifiers.
  */
 export const KdfId = Kdf;
 
 /**
- * The type of the supported KDF identifiers.
+ * The type alias of the supported KDF identifiers.
  */
 export type KdfId = typeof KdfId[keyof typeof KdfId];
 
 /**
- * Supported Authenticated Encryption with Associated Data (AEAD) identifiers.
+ * The supported Authenticated Encryption with Associated Data (AEAD) identifiers.
  *
  * @deprecated Use {@link AeadId} instead.
  */
@@ -85,18 +85,18 @@ export const Aead = {
 } as const;
 
 /**
- * The type of the supported AEAD identifiers.
+ * The type alias of the supported AEAD identifiers.
  *
  * @deprecated Use {@link AeadId} instead.
  */
 export type Aead = typeof Aead[keyof typeof Aead];
 
 /**
- * Supported Authenticated Encryption with Associated Data (AEAD) identifiers.
+ * The supported Authenticated Encryption with Associated Data (AEAD) identifiers.
  */
 export const AeadId = Aead;
 
 /**
- * The type of the supported AEAD identifiers.
+ * The type alias of the supported AEAD identifiers.
  */
 export type AeadId = typeof AeadId[keyof typeof AeadId];

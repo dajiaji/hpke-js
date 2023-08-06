@@ -54,17 +54,17 @@ export class DecapError extends HpkeError {}
 export class ExportError extends HpkeError {}
 
 /**
- * Context AEAD seal() failure.
+ * seal() failure.
  */
 export class SealError extends HpkeError {}
 
 /**
- * Context AEAD open() failure.
+ * open() failure.
  */
 export class OpenError extends HpkeError {}
 
 /**
- * Context AEAD sequence number overflow.
+ * Sequence number overflow on the encryption context.
  */
 export class MessageLimitReachedError extends HpkeError {}
 
