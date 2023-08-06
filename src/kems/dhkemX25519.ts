@@ -6,8 +6,6 @@ import { X25519 } from "./dhkemPrimitives/x25519.ts";
 /**
  * The DHKEM(X25519, HKDF-SHA256).
  *
- * @remarks
- *
  * This class is implemented using
  * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
  *

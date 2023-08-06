@@ -21,8 +21,6 @@ import * as errors from "./errors.ts";
  * which supports all of the ciphersuites defined in
  * {@link https://datatracker.ietf.org/doc/html/rfc9180 | RFC9180}.
  *
- * @remarks
- *
  * The class consists of the {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
  * {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
  * {@link https://deno.land/x/hpke/x/chacha20Poly1305/mod.ts | @hpke/chcha20poly1305},

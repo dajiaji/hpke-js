@@ -66,8 +66,6 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
 /**
  * The ChaCha20Poly1305 AEAD.
  *
- * @remarks
- *
  * This class is implemented using
  * {@link https://github.com/paulmillr/noble-ciphers | @noble/ciphers}.
  *

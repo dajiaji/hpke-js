@@ -42,8 +42,6 @@ import * as errors from "./errors.ts";
  * which is implemented using only
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  *
- * @remarks
- *
  * This is the super class of {@link CipherSuite} and the same as
  * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuite | @hpke/core#CipherSuite },
  * which supports only the ciphersuites that can be implemented on the native
@@ -104,8 +102,6 @@ export class CipherSuiteNative {
 
   /**
    * @param params A set of parameters for building a cipher suite.
-   *
-   * @remarks
    *
    * If the error occurred, throws {@link InvalidParamError}.
    *
@@ -202,8 +198,6 @@ export class CipherSuiteNative {
   /**
    * Generates a key pair for the cipher suite.
    *
-   * @remarks
-   *
    * If the error occurred, throws {@link NotSupportedError}.
    *
    * @deprecated Use {@link KemInterface.generateKeyPair} instead.
@@ -219,8 +213,6 @@ export class CipherSuiteNative {
   /**
    * Derives a key pair for the cipher suite in the manner
    * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
-   *
-   * @remarks
    *
    * If the error occurred, throws {@link DeriveKeyPairError}.
    *
@@ -240,8 +232,6 @@ export class CipherSuiteNative {
 
   /**
    * Imports a public or private key and converts to a {@link CryptoKey}.
-   *
-   * @remarks
    *
    * Since key parameters for {@link createSenderContext} or {@link createRecipientContext}
    * are {@link CryptoKey} format, you have to use this function to convert provided keys
@@ -272,8 +262,6 @@ export class CipherSuiteNative {
   /**
    * Creates an encryption context for a sender.
    *
-   * @remarks
-   *
    * If the error occurred, throws {@link DecapError} | {@link ValidationError}.
    *
    * @param params A set of parameters for the sender encryption context.
@@ -300,8 +288,6 @@ export class CipherSuiteNative {
 
   /**
    * Creates an encryption context for a recipient.
-   *
-   * @remarks
    *
    * If the error occurred, throws {@link DecapError}
    * | {@link DeserializeError} | {@link ValidationError}.
@@ -331,8 +317,6 @@ export class CipherSuiteNative {
   /**
    * Encrypts a message to a recipient.
    *
-   * @remarks
-   *
    * If the error occurred, throws `EncapError` | `MessageLimitReachedError` | `SealError` | `ValidationError`.
    *
    * @param params A set of parameters for building a sender encryption context.
@@ -355,8 +339,6 @@ export class CipherSuiteNative {
 
   /**
    * Decrypts a message from a sender.
-   *
-   * @remarks
    *
    * If the error occurred, throws `DecapError` | `DeserializeError` | `OpenError` | `ValidationError`.
    *
