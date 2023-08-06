@@ -6,7 +6,7 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-[Documentation](https://doc.deno.land/https://deno.land/x/hpke/core/mod.ts)
+[Doc(deno.land)](https://doc.deno.land/https://deno.land/x/hpke/core/mod.ts)/[Doc(pages, only latest)](https://dajiaji.github.io/hpke-js/core/docs/)
 
 </div>
 
@@ -31,8 +31,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.0";
-  // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.0";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.1";
+  // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.1";
 </script>
 
 <!-- use the latest stable version -->
@@ -47,8 +47,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.0/esm/mod.js";
-  import { KemId, KdfId, AeadId, CipherSuite} from "https://unpkg.com/@hpke/core@1.0.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.1/esm/mod.js";
+  import { KemId, KdfId, AeadId, CipherSuite} from "https://unpkg.com/@hpke/core@1.0.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -73,7 +73,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -100,8 +100,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.0.0";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.0";
+      // import * as hpke from "https://esm.sh/hpke-js@1.0.1";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.1";
 
       globalThis.doHpke = async () => {
 
@@ -187,7 +187,7 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.0/core/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.1/core/mod.ts";
 
 async function doHpke() {
   // setup

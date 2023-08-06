@@ -6,6 +6,6 @@
   }, 
   "include": [
     "mod.ts",
-    "src/**/*"
+    "../../src/aeads/chacha20Poly1305.ts"
   ]
 }
