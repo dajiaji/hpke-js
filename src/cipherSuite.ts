@@ -17,18 +17,29 @@ import { CipherSuiteNative } from "./cipherSuiteNative.ts";
 import * as errors from "./errors.ts";
 
 /**
- * The class of Hybrid Public Key Encryption (HPKE) cipher suite.
- * The calling of the constructor of this class is the starting
- * point for HPKE operations for both senders and recipients.
+ * The Hybrid Public Key Encryption (HPKE) ciphersuite,
+ * which supports all of the ciphersuites defined in
+ * {@link https://datatracker.ietf.org/doc/html/rfc9180 | RFC9180}.
+ *
+ * @remarks
+ *
+ * The class consists of the {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
+ * {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
+ * {@link https://deno.land/x/hpke/x/chacha20Poly1305/mod.ts | @hpke/chcha20poly1305},
+ * {@link https://deno.land/x/hpke/x/dhkem-x25519/mod.ts | @hpke/dhkem-x25519} and
+ * {@link https://deno.land/x/hpke/x/dhkem-x448/mod.ts | @hpke/dhkem-x448} internally.
  *
  * This class provides following functions:
  *
- * - Generates a key pair for the cipher suite.
- * - Derives a key pair for the cipher suite.
- * - Imports and converts a key to a CryptoKey.
+ * - [DEPRECATED] Generates a key pair for the cipher suite.
+ * - [DEPRECATED] Derives a key pair for the cipher suite.
+ * - [DEPRECATED] Imports and converts a key to a CryptoKey.
  * - Creates an encryption context both for senders and recipients.
  * - Encrypts a message as a single-shot API.
  * - Decrypts an encrypted message as as single-shot API.
+ *
+ * The calling of the constructor of this class is the starting
+ * point for HPKE operations for both senders and recipients.
  */
 export class CipherSuite extends CipherSuiteNative {
   /**

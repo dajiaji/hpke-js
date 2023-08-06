@@ -8,10 +8,13 @@ export const Mode = {
   AuthPsk: 0x03,
 } as const;
 
+/**
+ * The type of the Supported HPKE modes.
+ */
 export type Mode = typeof Mode[keyof typeof Mode];
 
 /**
- * Supported Key Encapsulation Mechanisms (KEMs).
+ * Supported Key Encapsulation Mechanism (KEM) identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
@@ -24,16 +27,25 @@ export const Kem = {
   DhkemX448HkdfSha512: 0x0021,
 } as const;
 
+/**
+ * The type of the supported KEM identifiers.
+ *
+ * @deprecated Use {@link KdfId} instead.
+ */
 export type Kem = typeof Kem[keyof typeof Kem];
 
 /**
  * Supported Key Encapsulation Mechanism (KEM) identifiers.
  */
 export const KemId = Kem;
+
+/**
+ * The type of the supported KEM identifiers.
+ */
 export type KemId = typeof KemId[keyof typeof KemId];
 
 /**
- * Supported Key Derivation Functions (KDFs).
+ * Supported Key Derivation Function (KDF) identifiers.
  *
  * @deprecated Use {@link KdfId} instead.
  */
@@ -43,16 +55,25 @@ export const Kdf = {
   HkdfSha512: 0x0003,
 } as const;
 
+/**
+ * The type of the supported KDF identifiers.
+ *
+ * @deprecated Use {@link KdfId} instead.
+ */
 export type Kdf = typeof Kdf[keyof typeof Kdf];
 
 /**
  * Supported Key Derivation Function (KDF) identifiers.
  */
 export const KdfId = Kdf;
+
+/**
+ * The type of the supported KDF identifiers.
+ */
 export type KdfId = typeof KdfId[keyof typeof KdfId];
 
 /**
- * Supported Authenticated Encryption with Associated Data (AEAD) Functions.
+ * Supported Authenticated Encryption with Associated Data (AEAD) identifiers.
  *
  * @deprecated Use {@link AeadId} instead.
  */
@@ -64,7 +85,18 @@ export const Aead = {
 } as const;
 
 /**
- * Supported Authenticated Encryption with Associated Data (AEAD) function identifiers.
+ * The type of the supported AEAD identifiers.
+ *
+ * @deprecated Use {@link AeadId} instead.
+ */
+export type Aead = typeof Aead[keyof typeof Aead];
+
+/**
+ * Supported Authenticated Encryption with Associated Data (AEAD) identifiers.
  */
 export const AeadId = Aead;
+
+/**
+ * The type of the supported AEAD identifiers.
+ */
 export type AeadId = typeof AeadId[keyof typeof AeadId];

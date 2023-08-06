@@ -66,7 +66,7 @@ export interface KdfInterface {
   ): Promise<ArrayBuffer>;
 
   /**
-   * -
+   * Extracts a pseudorandom key and expand it to a specified length keying material.
    *
    * @param salt An additional random byte string.
    * @param ikm An input keying material

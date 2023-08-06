@@ -6,7 +6,9 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-[Doc(deno.land)](https://doc.deno.land/https://deno.land/x/hpke/core/mod.ts)/[Doc(pages, only latest)](https://dajiaji.github.io/hpke-js/core/docs/)
+Documentation:
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/core/mod.ts) |
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/core/docs/)
 
 </div>
 
