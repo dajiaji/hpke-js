@@ -3,11 +3,12 @@ import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { EMPTY } from "./consts.ts";
-import { EncryptionContext } from "./encryptionContext.ts";
+import { EncryptionContextImpl } from "./encryptionContext.ts";
 
 import * as errors from "./errors.ts";
 
-export class SenderContext extends EncryptionContext implements Encapsulator {
+export class SenderContextImpl extends EncryptionContextImpl
+  implements Encapsulator {
   public readonly enc: ArrayBuffer;
 
   constructor(

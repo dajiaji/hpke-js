@@ -3,12 +3,12 @@ import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
-import { ExporterContext } from "./exporterContext.ts";
+import { ExporterContextImpl } from "./exporterContext.ts";
 import { i2Osp, xor } from "./utils/misc.ts";
 
 import * as errors from "./errors.ts";
 
-export class EncryptionContext extends ExporterContext {
+export class EncryptionContextImpl extends ExporterContextImpl {
   // AEAD id.
   protected _aead: AeadInterface;
   // The length in bytes of a key for the algorithm.
