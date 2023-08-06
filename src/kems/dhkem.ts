@@ -123,7 +123,7 @@ export class Dhkem extends Algorithm implements KemInterface {
           new Uint8Array(pksm),
         );
       }
-      const sharedSecret = await this.generateSharedSecret(dh, kemContext);
+      const sharedSecret = await this._generateSharedSecret(dh, kemContext);
       return {
         enc: enc,
         sharedSecret: sharedSecret,
@@ -178,13 +178,13 @@ export class Dhkem extends Algorithm implements KemInterface {
           params.enc.byteLength + pkrm.byteLength,
         );
       }
-      return await this.generateSharedSecret(dh, kemContext);
+      return await this._generateSharedSecret(dh, kemContext);
     } catch (e: unknown) {
       throw new errors.DecapError(e);
     }
   }
 
-  private async generateSharedSecret(
+  private async _generateSharedSecret(
     dh: Uint8Array,
     kemContext: Uint8Array,
   ): Promise<ArrayBuffer> {
