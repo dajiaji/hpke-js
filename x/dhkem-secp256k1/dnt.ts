@@ -5,7 +5,7 @@ await emptyDir("./npm");
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
-  typeCheck: false,
+  typeCheck: "both",
   test: true,
   declaration: true,
   scriptModule: "umd",

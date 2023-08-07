@@ -2,13 +2,15 @@ import { build, emptyDir } from "dnt";
 
 await emptyDir("./npm");
 await emptyDir("./core/npm");
+await emptyDir("./x/chacha20poly1305/npm");
 await emptyDir("./x/dhkem-secp256k1/npm");
 await emptyDir("./x/dhkem-x25519/npm");
+await emptyDir("./x/dhkem-x448/npm");
 
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
-  typeCheck: false,
+  typeCheck: "both",
   test: true,
   declaration: true,
   scriptModule: "umd",
