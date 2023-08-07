@@ -11,7 +11,7 @@ await build({
   scriptModule: "umd",
   importMap: "./deno.json",
   compilerOptions: {
-    lib: ["es2021", "dom"],
+    lib: ["es2022", "dom"],
   },
   shims: {
     deno: "dev",
