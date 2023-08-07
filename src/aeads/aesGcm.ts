@@ -21,7 +21,7 @@ export class AesGcmContext implements AeadEncryptionContext {
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     if (this._key === undefined) {
-      this._key = await this.importKey(this._rawKey);
+      this._key = await this._importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
     }
     const alg = {
@@ -43,7 +43,7 @@ export class AesGcmContext implements AeadEncryptionContext {
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     if (this._key === undefined) {
-      this._key = await this.importKey(this._rawKey);
+      this._key = await this._importKey(this._rawKey);
       (new Uint8Array(this._rawKey)).fill(0);
     }
     const alg = {
@@ -59,7 +59,7 @@ export class AesGcmContext implements AeadEncryptionContext {
     return pt;
   }
 
-  private async importKey(key: ArrayBuffer): Promise<CryptoKey> {
+  private async _importKey(key: ArrayBuffer): Promise<CryptoKey> {
     return await this._api.importKey(
       "raw",
       key,
