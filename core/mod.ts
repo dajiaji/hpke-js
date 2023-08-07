@@ -13,7 +13,6 @@ export type { RecipientContextParams } from "../src/interfaces/recipientContextP
 export type { CipherSuiteSealResponse } from "../src/interfaces/responses.ts";
 export type { SenderContextParams } from "../src/interfaces/senderContextParams.ts";
 
-export { Aes128Gcm, Aes256Gcm } from "../src/aeads/aesGcm.ts";
 export { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 
 export { CipherSuite } from "./src/native.ts";
