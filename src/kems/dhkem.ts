@@ -8,8 +8,30 @@ import { Algorithm } from "../algorithm.ts";
 import { KemId } from "../identifiers.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
-import * as consts from "../consts.ts";
+import { EMPTY } from "../consts.ts";
 import * as errors from "../errors.ts";
+
+// b"KEM"
+const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
+
+// b"eae_prk"
+const LABEL_EAE_PRK = new Uint8Array([101, 97, 101, 95, 112, 114, 107]);
+// b"shared_secret"
+const LABEL_SHARED_SECRET = new Uint8Array([
+  115,
+  104,
+  97,
+  114,
+  101,
+  100,
+  95,
+  115,
+  101,
+  99,
+  114,
+  101,
+  116,
+]);
 
 export class Dhkem extends Algorithm implements KemInterface {
   public readonly id: KemId = KemId.DhkemP256HkdfSha256;
@@ -28,7 +50,7 @@ export class Dhkem extends Algorithm implements KemInterface {
 
   public init(api: SubtleCrypto): void {
     super.init(api);
-    const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_KEM);
+    const suiteId = new Uint8Array(SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(this.id, 2), 3);
     this._prim.init(api);
     this._kdf.init(api, suiteId);
@@ -188,14 +210,14 @@ export class Dhkem extends Algorithm implements KemInterface {
     dh: Uint8Array,
     kemContext: Uint8Array,
   ): Promise<ArrayBuffer> {
-    const labeledIkm = this._kdf.buildLabeledIkm(consts.LABEL_EAE_PRK, dh);
+    const labeledIkm = this._kdf.buildLabeledIkm(LABEL_EAE_PRK, dh);
     const labeledInfo = this._kdf.buildLabeledInfo(
-      consts.LABEL_SHARED_SECRET,
+      LABEL_SHARED_SECRET,
       kemContext,
       this.secretSize,
     );
     return await this._kdf.extractAndExpand(
-      consts.EMPTY,
+      EMPTY,
       labeledIkm,
       labeledInfo,
       this.secretSize,

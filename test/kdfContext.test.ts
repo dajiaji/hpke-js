@@ -9,7 +9,18 @@ import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { loadCrypto, loadSubtleCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 
-import * as consts from "../src/consts.ts";
+const SUITE_ID_HEADER_HPKE = new Uint8Array([
+  72,
+  80,
+  75,
+  69,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+]);
 
 describe("extract/expand", () => {
   describe("HKDF-SHA256 with valid parameters", () => {
@@ -18,7 +29,7 @@ describe("extract/expand", () => {
 
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -45,7 +56,7 @@ describe("extract/expand", () => {
 
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -72,7 +83,7 @@ describe("extract/expand", () => {
 
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -98,7 +109,7 @@ describe("extract/expand", () => {
       const te = new TextEncoder();
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP521HkdfSha512, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha512, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -125,7 +136,7 @@ describe("extract/expand", () => {
       const te = new TextEncoder();
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP384HkdfSha384, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha384, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
