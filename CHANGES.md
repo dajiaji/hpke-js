@@ -1,5 +1,14 @@
 # Changes
 
+## Version 1.0.3
+
+Released 2023-08-07
+
+- [(#237) Separate consts to minimize the size of submodules.](https://github.com/dajiaji/hpke-js/pull/237)
+- [(#236) Update dnt config.](https://github.com/dajiaji/hpke-js/pull/236)
+- [(#235) Fix unnecessary disclosure for AesGcm classes.](https://github.com/dajiaji/hpke-js/pull/235)
+- [(#232) Remove tsdoc remarks.](https://github.com/dajiaji/hpke-js/pull/232)
+
 ## Version 1.0.2
 
 Released 2023-08-06
