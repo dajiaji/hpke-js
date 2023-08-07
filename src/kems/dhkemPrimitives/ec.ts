@@ -3,11 +3,180 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
 import { KemId } from "../../identifiers.ts";
-
+import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
 import { i2Osp } from "../../utils/misc.ts";
 
-import * as consts from "../../consts.ts";
+import { EMPTY } from "../../consts.ts";
+
+// b"candidate"
+const LABEL_CANDIDATE = new Uint8Array([
+  99,
+  97,
+  110,
+  100,
+  105,
+  100,
+  97,
+  116,
+  101,
+]);
+
+// the order of the curve being used.
+const ORDER_P_256 = new Uint8Array([
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xbc,
+  0xe6,
+  0xfa,
+  0xad,
+  0xa7,
+  0x17,
+  0x9e,
+  0x84,
+  0xf3,
+  0xb9,
+  0xca,
+  0xc2,
+  0xfc,
+  0x63,
+  0x25,
+  0x51,
+]);
+
+const ORDER_P_384 = new Uint8Array([
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xc7,
+  0x63,
+  0x4d,
+  0x81,
+  0xf4,
+  0x37,
+  0x2d,
+  0xdf,
+  0x58,
+  0x1a,
+  0x0d,
+  0xb2,
+  0x48,
+  0xb0,
+  0xa7,
+  0x7a,
+  0xec,
+  0xec,
+  0x19,
+  0x6a,
+  0xcc,
+  0xc5,
+  0x29,
+  0x73,
+]);
+
+const ORDER_P_521 = new Uint8Array([
+  0x01,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xff,
+  0xfa,
+  0x51,
+  0x86,
+  0x87,
+  0x83,
+  0xbf,
+  0x2f,
+  0x96,
+  0x6b,
+  0x7f,
+  0xcc,
+  0x01,
+  0x48,
+  0xf7,
+  0x09,
+  0xa5,
+  0xd0,
+  0x3b,
+  0xb5,
+  0xc9,
+  0xb8,
+  0x89,
+  0x9c,
+  0x47,
+  0xae,
+  0xbb,
+  0x6f,
+  0xb7,
+  0x1e,
+  0x91,
+  0x38,
+  0x64,
+  0x09,
+]);
 
 const PKCS8_ALG_ID_P_256 = new Uint8Array([
   48,
@@ -138,7 +307,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         this._nPk = 65;
         this._nSk = 32;
         this._nDh = 32;
-        this._order = consts.ORDER_P_256;
+        this._order = ORDER_P_256;
         this._bitmask = 0xFF;
         this._pkcs8AlgId = PKCS8_ALG_ID_P_256;
         break;
@@ -147,7 +316,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         this._nPk = 97;
         this._nSk = 48;
         this._nDh = 48;
-        this._order = consts.ORDER_P_384;
+        this._order = ORDER_P_384;
         this._bitmask = 0xFF;
         this._pkcs8AlgId = PKCS8_ALG_ID_P_384;
         break;
@@ -157,7 +326,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         this._nPk = 133;
         this._nSk = 66;
         this._nDh = 66;
-        this._order = consts.ORDER_P_521;
+        this._order = ORDER_P_521;
         this._bitmask = 0x01;
         this._pkcs8AlgId = PKCS8_ALG_ID_P_521;
         break;
@@ -220,7 +389,6 @@ export class Ec extends Algorithm implements KemPrimitives {
     }
     try {
       if (isPublic) {
-        // return await this._api.importKey(format, key, this._alg, true, consts.KEM_USAGES);
         return await (this._api as SubtleCrypto).importKey(
           "raw",
           key,
@@ -238,7 +406,7 @@ export class Ec extends Algorithm implements KemPrimitives {
         pkcs8Key,
         this._alg,
         true,
-        consts.KEM_USAGES,
+        KEM_USAGES,
       );
     } catch (_e: unknown) {
       throw new Error("Invalid key for the ciphersuite");
@@ -272,7 +440,7 @@ export class Ec extends Algorithm implements KemPrimitives {
       key,
       this._alg,
       true,
-      consts.KEM_USAGES,
+      KEM_USAGES,
     );
   }
 
@@ -281,7 +449,7 @@ export class Ec extends Algorithm implements KemPrimitives {
     const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
     delete jwk["d"];
     delete jwk["key_ops"];
-    // return await this._api.importKey('jwk', jwk, this._alg, true, consts.KEM_USAGES);
+    // return await this._api.importKey('jwk', jwk, this._alg, true, KEM_USAGES);
     return await (this._api as SubtleCrypto).importKey(
       "jwk",
       jwk,
@@ -296,15 +464,15 @@ export class Ec extends Algorithm implements KemPrimitives {
     return await (this._api as SubtleCrypto).generateKey(
       this._alg,
       true,
-      consts.KEM_USAGES,
+      KEM_USAGES,
     );
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     this.checkInit();
     const dkpPrk = await this._hkdf.labeledExtract(
-      consts.EMPTY,
-      consts.LABEL_DKP_PRK,
+      EMPTY,
+      LABEL_DKP_PRK,
       new Uint8Array(ikm),
     );
     const bn = new Bignum(this._nSk);
@@ -315,7 +483,7 @@ export class Ec extends Algorithm implements KemPrimitives {
       const bytes = new Uint8Array(
         await this._hkdf.labeledExpand(
           dkpPrk,
-          consts.LABEL_CANDIDATE,
+          LABEL_CANDIDATE,
           i2Osp(counter, 1),
           this._nSk,
         ),
@@ -331,7 +499,7 @@ export class Ec extends Algorithm implements KemPrimitives {
       pkcs8Key,
       this._alg,
       true,
-      consts.KEM_USAGES,
+      KEM_USAGES,
     );
     bn.reset();
     return {

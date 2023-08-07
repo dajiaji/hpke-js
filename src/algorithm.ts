@@ -1,4 +1,4 @@
-import * as consts from "./consts.ts";
+import { EMPTY } from "./consts.ts";
 
 export class AlgorithmBase {
   protected _api: SubtleCrypto | undefined = undefined;
@@ -23,7 +23,7 @@ export class Algorithm extends AlgorithmBase {
 }
 
 export class KdfAlgorithm extends AlgorithmBase {
-  protected _suiteId: Uint8Array = consts.EMPTY;
+  protected _suiteId: Uint8Array = EMPTY;
 
   constructor() {
     super();

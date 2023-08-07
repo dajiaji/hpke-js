@@ -1,3 +1,6 @@
+// The key usages for AEAD.
+export const AEAD_USAGES: KeyUsage[] = ["encrypt", "decrypt"];
+
 /**
  * The AEAD encryption context interface.
  */

@@ -5,6 +5,9 @@ import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
+// b"sec"
+const LABEL_SEC = new Uint8Array([115, 101, 99]);
+
 export class ExporterContextImpl implements EncryptionContext {
   protected _api: SubtleCrypto;
   protected readonly exporterSecret: ArrayBuffer;
@@ -44,7 +47,7 @@ export class ExporterContextImpl implements EncryptionContext {
     try {
       return await this._kdf.labeledExpand(
         this.exporterSecret,
-        consts.LABEL_SEC,
+        LABEL_SEC,
         new Uint8Array(exporterContext),
         len,
       );

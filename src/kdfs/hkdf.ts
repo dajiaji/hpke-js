@@ -6,6 +6,9 @@ import { KdfAlgorithm } from "../algorithm.ts";
 import * as consts from "../consts.ts";
 import * as errors from "../errors.ts";
 
+// b"HPKE-v1"
+const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
+
 export class HkdfNative extends KdfAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
   public readonly hashSize: number = 0;
@@ -23,7 +26,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     const ret = new Uint8Array(
       7 + this._suiteId.byteLength + label.byteLength + ikm.byteLength,
     );
-    ret.set(consts.HPKE_VERSION, 0);
+    ret.set(HPKE_VERSION, 0);
     ret.set(this._suiteId, 7);
     ret.set(label, 7 + this._suiteId.byteLength);
     ret.set(ikm, 7 + this._suiteId.byteLength + label.byteLength);
@@ -39,7 +42,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
       9 + this._suiteId.byteLength + label.byteLength + info.byteLength,
     );
     ret.set(new Uint8Array([0, len]), 0);
-    ret.set(consts.HPKE_VERSION, 2);
+    ret.set(HPKE_VERSION, 2);
     ret.set(this._suiteId, 9);
     ret.set(label, 9 + this._suiteId.byteLength);
     ret.set(info, 9 + this._suiteId.byteLength + label.byteLength);
@@ -133,7 +136,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
       ikm,
       "HKDF",
       false,
-      consts.KEM_USAGES,
+      ["deriveBits"],
     );
     return await (this._api as SubtleCrypto).deriveBits(
       {

@@ -11,9 +11,20 @@ import { i2Osp } from "../src/utils/misc.ts";
 import { ExportOnly } from "../src/aeads/exportOnly.ts";
 import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 
-import * as consts from "../src/consts.ts";
 import * as errors from "../src/errors.ts";
 
+const SUITE_ID_HEADER_HPKE = new Uint8Array([
+  72,
+  80,
+  75,
+  69,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+]);
 const DUMMY_BYTES_12 = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 const DUMMY_BYTES_16 = new Uint8Array(
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -23,7 +34,7 @@ describe("constructor", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
       const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -57,7 +68,7 @@ describe("constructor", () => {
   describe("with invalid aead id", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
@@ -411,7 +422,7 @@ describe("createRecipientContext", () => {
   describe("without key info", () => {
     it("should throw Error", async () => {
       const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);

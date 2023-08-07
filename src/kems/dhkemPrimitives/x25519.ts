@@ -5,6 +5,11 @@ import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { Algorithm } from "../../algorithm.ts";
+import {
+  KEM_USAGES,
+  LABEL_DKP_PRK,
+  LABEL_SK,
+} from "../../interfaces/kemPrimitives.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 import * as consts from "../../consts.ts";
@@ -53,7 +58,7 @@ export class X25519 extends Algorithm implements KemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     const rawSk = ed25519.utils.randomPrivateKey();
-    const sk = new XCryptoKey(ALG_NAME, rawSk, "private");
+    const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
     const pk = await this.derivePublicKey(sk);
     return { publicKey: pk, privateKey: sk };
   }
@@ -61,16 +66,21 @@ export class X25519 extends Algorithm implements KemPrimitives {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     const dkpPrk = await this._hkdf.labeledExtract(
       consts.EMPTY,
-      consts.LABEL_DKP_PRK,
+      LABEL_DKP_PRK,
       new Uint8Array(ikm),
     );
     const rawSk = await this._hkdf.labeledExpand(
       dkpPrk,
-      consts.LABEL_SK,
+      LABEL_SK,
       consts.EMPTY,
       this._nSk,
     );
-    const sk = new XCryptoKey(ALG_NAME, new Uint8Array(rawSk), "private");
+    const sk = new XCryptoKey(
+      ALG_NAME,
+      new Uint8Array(rawSk),
+      "private",
+      KEM_USAGES,
+    );
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),
@@ -113,6 +123,7 @@ export class X25519 extends Algorithm implements KemPrimitives {
           ALG_NAME,
           new Uint8Array(key),
           isPublic ? "public" : "private",
+          isPublic ? [] : KEM_USAGES,
         ),
       );
     });
@@ -149,6 +160,7 @@ export class X25519 extends Algorithm implements KemPrimitives {
             ALG_NAME,
             base64UrlToBytes(key.d as string),
             "private",
+            KEM_USAGES,
           ),
         );
       }

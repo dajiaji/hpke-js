@@ -7,11 +7,16 @@ import type { KemInterface } from "../../../src/interfaces/kemInterface.ts";
 
 import { Algorithm } from "../../../src/algorithm.ts";
 import { KemId } from "../../../src/identifiers.ts";
+import {
+  KEM_USAGES,
+  LABEL_DKP_PRK,
+  LABEL_SK,
+} from "../../../src/interfaces/kemPrimitives.ts";
 import { XCryptoKey } from "../../../src/xCryptoKey.ts";
 import { HkdfSha256 } from "../../../src/kdfs/hkdfSha256.ts";
 import { Dhkem } from "../../../src/kems/dhkem.ts";
 
-import * as consts from "../../../src/consts.ts";
+import { EMPTY } from "../../../src/consts.ts";
 
 const ALG_NAME = "ECDH";
 
@@ -52,24 +57,29 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     const rawSk = secp256k1.utils.randomPrivateKey();
-    const sk = new XCryptoKey(ALG_NAME, rawSk, "private");
+    const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
     const pk = await this.derivePublicKey(sk);
     return { publicKey: pk, privateKey: sk };
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     const dkpPrk = await this._hkdf.labeledExtract(
-      consts.EMPTY,
-      consts.LABEL_DKP_PRK,
+      EMPTY,
+      LABEL_DKP_PRK,
       new Uint8Array(ikm),
     );
     const rawSk = await this._hkdf.labeledExpand(
       dkpPrk,
-      consts.LABEL_SK,
-      consts.EMPTY,
+      LABEL_SK,
+      EMPTY,
       this._nSk,
     );
-    const sk = new XCryptoKey(ALG_NAME, new Uint8Array(rawSk), "private");
+    const sk = new XCryptoKey(
+      ALG_NAME,
+      new Uint8Array(rawSk),
+      "private",
+      KEM_USAGES,
+    );
     return {
       privateKey: sk,
       publicKey: await this.derivePublicKey(sk),
@@ -109,6 +119,7 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
           ALG_NAME,
           new Uint8Array(key),
           isPublic ? "public" : "private",
+          isPublic ? [] : KEM_USAGES,
         ),
       );
     });

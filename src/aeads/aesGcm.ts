@@ -3,7 +3,7 @@ import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
 import { Algorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
-import * as consts from "../consts.ts";
+import { AEAD_USAGES } from "../interfaces/aeadEncryptionContext.ts";
 
 export class AesGcmContext implements AeadEncryptionContext {
   private _rawKey: ArrayBuffer;
@@ -65,7 +65,7 @@ export class AesGcmContext implements AeadEncryptionContext {
       key,
       { name: "AES-GCM" },
       true,
-      consts.AEAD_USAGES,
+      AEAD_USAGES,
     );
   }
 }

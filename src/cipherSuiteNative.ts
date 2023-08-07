@@ -37,6 +37,65 @@ import { i2Osp } from "./utils/misc.ts";
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
+// b"base_nonce"
+const LABEL_BASE_NONCE = new Uint8Array([
+  98,
+  97,
+  115,
+  101,
+  95,
+  110,
+  111,
+  110,
+  99,
+  101,
+]);
+// b"exp"
+const LABEL_EXP = new Uint8Array([101, 120, 112]);
+// b"info_hash"
+const LABEL_INFO_HASH = new Uint8Array([
+  105,
+  110,
+  102,
+  111,
+  95,
+  104,
+  97,
+  115,
+  104,
+]);
+// b"key"
+const LABEL_KEY = new Uint8Array([107, 101, 121]);
+// b"psk_id_hash"
+const LABEL_PSK_ID_HASH = new Uint8Array([
+  112,
+  115,
+  107,
+  95,
+  105,
+  100,
+  95,
+  104,
+  97,
+  115,
+  104,
+]);
+// b"secret"
+const LABEL_SECRET = new Uint8Array([115, 101, 99, 114, 101, 116]);
+// b"HPKE"
+const SUITE_ID_HEADER_HPKE = new Uint8Array([
+  72,
+  80,
+  75,
+  69,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+]);
+
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,
  * which is implemented using only
@@ -168,7 +227,7 @@ export class CipherSuiteNative {
       }
     }
 
-    this._suiteId = new Uint8Array(consts.SUITE_ID_HEADER_HPKE);
+    this._suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
     this._suiteId.set(i2Osp(this._kem.id, 2), 4);
     this._suiteId.set(i2Osp(this._kdf.id, 2), 6);
     this._suiteId.set(i2Osp(this._aead.id, 2), 8);
@@ -399,7 +458,7 @@ export class CipherSuiteNative {
       : new Uint8Array(params.psk.id);
     const pskIdHash = await this._kdf.labeledExtract(
       consts.EMPTY,
-      consts.LABEL_PSK_ID_HASH,
+      LABEL_PSK_ID_HASH,
       pskId,
     );
 
@@ -408,7 +467,7 @@ export class CipherSuiteNative {
       : new Uint8Array(params.info);
     const infoHash = await this._kdf.labeledExtract(
       consts.EMPTY,
-      consts.LABEL_INFO_HASH,
+      LABEL_INFO_HASH,
       info,
     );
 
@@ -422,10 +481,10 @@ export class CipherSuiteNative {
     const psk = params.psk === undefined
       ? consts.EMPTY
       : new Uint8Array(params.psk.key);
-    const ikm = this._kdf.buildLabeledIkm(consts.LABEL_SECRET, psk);
+    const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
 
     const exporterSecretInfo = this._kdf.buildLabeledInfo(
-      consts.LABEL_EXP,
+      LABEL_EXP,
       keyScheduleContext,
       this._kdf.hashSize,
     );
@@ -441,7 +500,7 @@ export class CipherSuiteNative {
     }
 
     const keyInfo = this._kdf.buildLabeledInfo(
-      consts.LABEL_KEY,
+      LABEL_KEY,
       keyScheduleContext,
       this._aead.keySize,
     );
@@ -453,7 +512,7 @@ export class CipherSuiteNative {
     );
 
     const baseNonceInfo = this._kdf.buildLabeledInfo(
-      consts.LABEL_BASE_NONCE,
+      LABEL_BASE_NONCE,
       keyScheduleContext,
       this._aead.nonceSize,
     );
