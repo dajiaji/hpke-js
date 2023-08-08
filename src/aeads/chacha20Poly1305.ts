@@ -1,5 +1,5 @@
 // @ts-ignore: for "npm:"
-import { chacha20_poly1305 } from "npm:@noble/ciphers@0.1.4/chacha";
+import { chacha20poly1305 } from "npm:@noble/ciphers@0.2.0/chacha";
 
 import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
@@ -38,7 +38,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
-      const ret = chacha20_poly1305(
+      const ret = chacha20poly1305(
         this._key,
         new Uint8Array(iv),
         new Uint8Array(aad),
@@ -53,7 +53,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
-      const ret = chacha20_poly1305(
+      const ret = chacha20poly1305(
         this._key,
         new Uint8Array(iv),
         new Uint8Array(aad),
