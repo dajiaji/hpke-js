@@ -1,26 +1,22 @@
 // @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.1.0/secp256k1";
 
-import type { KemPrimitives } from "../../../src/interfaces/kemPrimitives.ts";
-import type { KdfInterface } from "../../../src/interfaces/kdfInterface.ts";
-import type { KemInterface } from "../../../src/interfaces/kemInterface.ts";
+import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
+import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
-import { Algorithm } from "../../../src/algorithm.ts";
-import { KemId } from "../../../src/identifiers.ts";
+import { Algorithm } from "../../algorithm.ts";
 import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../../src/interfaces/kemPrimitives.ts";
-import { XCryptoKey } from "../../../src/xCryptoKey.ts";
-import { HkdfSha256 } from "../../../src/kdfs/hkdfSha256.ts";
-import { Dhkem } from "../../../src/kems/dhkem.ts";
+} from "../../interfaces/kemPrimitives.ts";
+import { XCryptoKey } from "../../xCryptoKey.ts";
 
-import { EMPTY } from "../../../src/consts.ts";
+import { EMPTY } from "../../consts.ts";
 
 const ALG_NAME = "ECDH";
 
-class Secp256k1 extends Algorithm implements KemPrimitives {
+export class Secp256k1 extends Algorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
@@ -140,45 +136,5 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
         reject(e);
       }
     });
-  }
-}
-
-/**
- * The DHKEM(secp256k1, HKDF-SHA256).
- *
- * @remarks
- *
- * This class is implemented using
- * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
- *
- * The public keys are assumed to be compressed.
- *
- * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
- *
- * @example
- * ```ts
- * import { KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
- * import { DhkemSecp256k1HkdfSha256} from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
- * const suite = new CipherSuite({
- *   kem: new DhkemSecp256k1HkdfSha256(),
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
- * });
- * ```
- *
- * @experimental Note that it is experimental and not standardized.
- */
-export class DhkemSecp256k1HkdfSha256 extends Dhkem implements KemInterface {
-  public readonly id: KemId = KemId.DhkemSecp256k1HkdfSha256;
-  public readonly secretSize: number = 32;
-  public readonly encSize: number = 33;
-  public readonly publicKeySize: number = 33;
-  public readonly privateKeySize: number = 32;
-
-  constructor() {
-    const kdf = new HkdfSha256();
-    const prim = new Secp256k1(kdf);
-    super(prim, kdf);
   }
 }

@@ -19,7 +19,7 @@
     ]
   },
   "lint": {
-    "include": ["mod.ts", "src/", "test/"],
+    "include": ["mod.ts", "test/"],
     "exclude": [
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",

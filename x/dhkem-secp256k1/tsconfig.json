@@ -6,6 +6,6 @@
   }, 
   "include": [
     "mod.ts",
-    "src/**/*"
+    "../../src/kems/dhkemSecp256k1.ts"
   ]
 }
