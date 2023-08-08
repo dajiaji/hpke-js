@@ -146,8 +146,6 @@ class Secp256k1 extends Algorithm implements KemPrimitives {
 /**
  * The DHKEM(secp256k1, HKDF-SHA256).
  *
- * @remarks
- *
  * This class is implemented using
  * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
  *
