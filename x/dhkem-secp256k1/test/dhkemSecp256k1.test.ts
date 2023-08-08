@@ -4,7 +4,7 @@ import { describe, it } from "testing/bdd.ts";
 import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
 // } from "https://deno.land/x/hpke/mod.ts";
 
-import { DhkemSecp256k1HkdfSha256 } from "../src/dhkem-secp256k1.ts";
+import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
 import { hexStringToBytes, loadCrypto, loadSubtleCrypto } from "./utils.ts";
 
 describe("DhkemSecp256k1Hkdf256", () => {
