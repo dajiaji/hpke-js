@@ -14,7 +14,7 @@
     ],
     "exclude": [
       "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
+      "test/runtimes/browsers/node_module",
       "test/runtimes/cloudflare"
     ]
   },
@@ -22,7 +22,7 @@
     "include": ["mod.ts", "test/"],
     "exclude": [
       "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
+      "test/runtimes/browsers/node_module",
       "test/runtimes/cloudflare"
     ]
   },
