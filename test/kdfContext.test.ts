@@ -1,4 +1,4 @@
-import { assertEquals } from "testing/asserts.ts";
+import { assertEquals, assertRejects } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
@@ -29,18 +29,21 @@ describe("extract/expand", () => {
 
       const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
+      const salt = new Uint8Array(32);
+      cryptoApi.getRandomValues(salt);
+      const ikm = new Uint8Array(32);
+      cryptoApi.getRandomValues(ikm);
       const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha256();
+      await assertRejects(
+        () => kdf.extract(salt, ikm),
+        Error,
+      );
+
       kdf.init(api, suiteId);
-
-      const salt = new Uint8Array(32);
-      cryptoApi.getRandomValues(salt);
-
-      const ikm = new Uint8Array(32);
-      cryptoApi.getRandomValues(ikm);
 
       const prk = await kdf.extract(salt, ikm);
       assertEquals(
