@@ -6,9 +6,10 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 
 import { Algorithm } from "../algorithm.ts";
 import { KemId } from "../identifiers.ts";
+import { loadSubtleCrypto } from "../webCrypto.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
-import { EMPTY } from "../consts.ts";
+import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
 import * as errors from "../errors.ts";
 
 // b"KEM"
@@ -58,6 +59,7 @@ export class Dhkem extends Algorithm implements KemInterface {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
+    await this._setup();
     try {
       return await this._prim.generateKeyPair();
     } catch (e: unknown) {
@@ -66,6 +68,10 @@ export class Dhkem extends Algorithm implements KemInterface {
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
+      throw new errors.InvalidParamError("Too long ikm");
+    }
+    await this._setup();
     try {
       return await this._prim.deriveKeyPair(ikm);
     } catch (e: unknown) {
@@ -74,6 +80,7 @@ export class Dhkem extends Algorithm implements KemInterface {
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
+    await this._setup();
     try {
       return await this._prim.serializePublicKey(key);
     } catch (e: unknown) {
@@ -82,6 +89,7 @@ export class Dhkem extends Algorithm implements KemInterface {
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+    await this._setup();
     try {
       return await this._prim.deserializePublicKey(key);
     } catch (e: unknown) {
@@ -92,8 +100,9 @@ export class Dhkem extends Algorithm implements KemInterface {
   public async importKey(
     format: "raw" | "jwk",
     key: ArrayBuffer | JsonWebKey,
-    isPublic: boolean,
+    isPublic = true,
   ): Promise<CryptoKey> {
+    await this._setup();
     try {
       return await this._prim.importKey(format, key, isPublic);
     } catch (e: unknown) {
@@ -104,6 +113,7 @@ export class Dhkem extends Algorithm implements KemInterface {
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    await this._setup();
     try {
       const ke = params.nonEphemeralKeyPair === undefined
         ? await this.generateKeyPair()
@@ -157,6 +167,7 @@ export class Dhkem extends Algorithm implements KemInterface {
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
     let pke: CryptoKey;
+    await this._setup();
     try {
       pke = await this._prim.deserializePublicKey(params.enc);
     } catch (e: unknown) {
@@ -204,6 +215,18 @@ export class Dhkem extends Algorithm implements KemInterface {
     } catch (e: unknown) {
       throw new errors.DecapError(e);
     }
+  }
+
+  private async _setup() {
+    if (this._api !== undefined) {
+      return;
+    }
+    const api = await loadSubtleCrypto();
+    const suiteId = new Uint8Array(SUITE_ID_HEADER_KEM);
+    suiteId.set(i2Osp(this.id, 2), 3);
+    this._prim.init(api);
+    this._kdf.init(api, suiteId);
+    super.init(api);
   }
 
   private async _generateSharedSecret(

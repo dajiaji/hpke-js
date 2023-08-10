@@ -282,9 +282,6 @@ export class CipherSuiteNative {
    * @throws {@link DeriveKeyPairError}
    */
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    if (ikm.byteLength > consts.INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError("Too long ikm");
-    }
     await this._setup();
     return await (this._kem as KemInterface).deriveKeyPair(ikm);
   }

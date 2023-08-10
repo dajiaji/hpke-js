@@ -21,7 +21,7 @@ export async function testServer(request) {
 
   try {
     const suite = new hpke.CipherSuite({ kem: kem, kdf: kdf, aead: aead });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
     const sender = await suite.createSenderContext({
       recipientPublicKey: rkp.publicKey,
     });

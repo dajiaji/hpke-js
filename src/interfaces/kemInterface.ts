@@ -92,7 +92,7 @@ export interface KemInterface {
   importKey(
     format: "raw" | "jwk",
     key: ArrayBuffer | JsonWebKey,
-    isPublic: boolean,
+    isPublic?: boolean,
   ): Promise<CryptoKey>;
 
   /**

@@ -20,11 +20,6 @@ describe("constructor", () => {
 
       // assert
       const dhkemP256 = new DhkemP256HkdfSha256();
-      await assertRejects(
-        () => dhkemP256.generateKeyPair(),
-        errors.NotSupportedError,
-      );
-      dhkemP256.init(api);
       assertEquals(typeof dhkemP256, "object");
       assertEquals(dhkemP256.id, KemId.DhkemP256HkdfSha256);
       assertEquals(dhkemP256.secretSize, 32);
