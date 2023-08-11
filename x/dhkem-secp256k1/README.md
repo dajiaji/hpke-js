@@ -34,8 +34,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.3";
-  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@1.0.3";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.4";
+  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@1.0.4";
   // ...
 </script>
 
@@ -52,8 +52,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.3/esm/mod.js";
-  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@1.0.3/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.4/esm/mod.js";
+  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@1.0.4/esm/mod.js";
   // ...
 </script>
 ```
@@ -78,8 +78,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
-import * as secp256k1 from "https://deno.land/x/hpke@1.0.3/x/dhkem-secp256k1/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
+import * as secp256k1 from "https://deno.land/x/hpke@1.0.4/x/dhkem-secp256k1/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -107,8 +107,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.3";
-      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@1.0.3";
+      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.4";
+      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@1.0.4";
 
       globalThis.doHpke = async () => {
 
@@ -195,8 +195,8 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
-import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@1.0.3/x/dhkem-secp256k1/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
+import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@1.0.4/x/dhkem-secp256k1/mod.ts";
 
 async function doHpke() {
   // setup

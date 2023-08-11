@@ -33,8 +33,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.3";
-  // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.3";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.4";
+  // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.4";
 </script>
 
 <!-- use the latest stable version -->
@@ -49,8 +49,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.3/esm/mod.js";
-  import { KemId, KdfId, AeadId, CipherSuite} from "https://unpkg.com/@hpke/core@1.0.3/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.4/esm/mod.js";
+  import { KemId, KdfId, AeadId, CipherSuite} from "https://unpkg.com/@hpke/core@1.0.4/esm/mod.js";
   // ...
 </script>
 ```
@@ -75,7 +75,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -102,8 +102,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.0.3";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.3";
+      // import * as hpke from "https://esm.sh/hpke-js@1.0.4";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.4";
 
       globalThis.doHpke = async () => {
 
@@ -189,7 +189,7 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
 
 async function doHpke() {
   // setup

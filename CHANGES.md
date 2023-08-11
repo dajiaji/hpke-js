@@ -1,5 +1,15 @@
 # Changes
 
+## Version 1.0.4
+
+Released 2023-08-11
+
+- [(#246) Remove api parameter from KdfInterface.init().](https://github.com/dajiaji/hpke-js/pull/246)
+- [(#245) Remove init() from AeadInterface.](https://github.com/dajiaji/hpke-js/pull/245)
+- [(#244) Remove init() from KemInterface.](https://github.com/dajiaji/hpke-js/pull/244)
+- [(#240) Refactor DhkemSecp256k1HkdfSha256.](https://github.com/dajiaji/hpke-js/pull/240)
+- [(#239) Bump noble/ciphers to 0.2.0.](https://github.com/dajiaji/hpke-js/pull/239)
+
 ## Version 1.0.3
 
 Released 2023-08-07
