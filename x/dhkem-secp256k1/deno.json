@@ -13,6 +13,7 @@
       "test/"
     ],
     "exclude": [
+      "**/*/hpke*.js",
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",
       "test/runtimes/cloudflare"
@@ -21,6 +22,7 @@
   "lint": {
     "include": ["mod.ts", "test/"],
     "exclude": [
+      "**/*/hpke*.js",
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",
       "test/runtimes/cloudflare"

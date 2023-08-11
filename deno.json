@@ -17,6 +17,7 @@
     "exclude": [
       "core",
       "x",
+      "**/*/hpke*.js",
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
       "test/runtimes/bun",
@@ -29,6 +30,7 @@
     "exclude": [
       "core",
       "x",
+      "**/*/hpke*.js",
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
       "test/runtimes/bun",
