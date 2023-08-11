@@ -183,8 +183,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.0.3";
-  // import * as hpke from "https://esm.sh/hpke-js@1.0.3";
+  import * as hpke from "https://esm.sh/@hpke/core@1.0.4";
+  // import * as hpke from "https://esm.sh/hpke-js@1.0.4";
   // ...
 </script>
 
@@ -201,8 +201,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.0.3/esm/mod.js";
-  // import * as hpke from "https://unpkg.com/hpke-js@1.0.3/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.0.4/esm/mod.js";
+  // import * as hpke from "https://unpkg.com/hpke-js@1.0.4/esm/mod.js";
   // ...
 </script>
 ```
@@ -239,9 +239,9 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.0.3/x/dhkem-x25519/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.0.3/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.0.4/x/dhkem-x25519/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.0.4/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -285,8 +285,8 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.3";
-      // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@1.0.3";
+      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.0.4";
+      // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js@1.0.4";
 
       globalThis.doHpke = async () => {
 
@@ -400,15 +400,15 @@ doHpke();
 Deno:
 
 ```js
-import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.3/core/mod.ts";
-import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.0.3/x/dhkem-x25519/mod.ts";
-// import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.3/mod.ts";
+import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.4/core/mod.ts";
+import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.0.4/x/dhkem-x25519/mod.ts";
+// import { KemId, KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.0.4/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemX25519HkdfSha256(),
-    // If you use "https://deno.land/x/hpke@1.0.3/mod.ts", you can specify it with id as follows:
+    // If you use "https://deno.land/x/hpke@1.0.4/mod.ts", you can specify it with id as follows:
     // kem: KemId.DhkemX25519HkdfSha256, 
     kdf: KdfId.HkdfSha256,
     aead: AeadId.Aes128Gcm,
