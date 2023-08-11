@@ -1,17 +1,17 @@
 import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
-import { Algorithm } from "../algorithm.ts";
+import { AlgorithmBase } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
+import { loadSubtleCrypto } from "../webCrypto.ts";
 import { AEAD_USAGES } from "../interfaces/aeadEncryptionContext.ts";
 
 export class AesGcmContext implements AeadEncryptionContext {
   private _rawKey: ArrayBuffer;
   private _key: CryptoKey | undefined = undefined;
-  private _api: SubtleCrypto;
+  private _api: SubtleCrypto | undefined = undefined;
 
-  public constructor(api: SubtleCrypto, key: ArrayBuffer) {
-    this._api = api;
+  public constructor(key: ArrayBuffer) {
     this._rawKey = key;
   }
 
@@ -20,18 +20,15 @@ export class AesGcmContext implements AeadEncryptionContext {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    if (this._key === undefined) {
-      this._key = await this._importKey(this._rawKey);
-      (new Uint8Array(this._rawKey)).fill(0);
-    }
+    await this._setup();
     const alg = {
       name: "AES-GCM",
       iv: iv,
       additionalData: aad,
     };
-    const ct: ArrayBuffer = await this._api.encrypt(
+    const ct: ArrayBuffer = await (this._api as SubtleCrypto).encrypt(
       alg,
-      this._key,
+      this._key as CryptoKey,
       data,
     );
     return ct;
@@ -42,25 +39,33 @@ export class AesGcmContext implements AeadEncryptionContext {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    if (this._key === undefined) {
-      this._key = await this._importKey(this._rawKey);
-      (new Uint8Array(this._rawKey)).fill(0);
-    }
+    await this._setup();
     const alg = {
       name: "AES-GCM",
       iv: iv,
       additionalData: aad,
     };
-    const pt: ArrayBuffer = await this._api.decrypt(
+    const pt: ArrayBuffer = await (this._api as SubtleCrypto).decrypt(
       alg,
-      this._key,
+      this._key as CryptoKey,
       data,
     );
     return pt;
   }
 
+  private async _setup() {
+    if (this._key !== undefined) {
+      return;
+    }
+    this._api = await loadSubtleCrypto();
+    const key = await this._importKey(this._rawKey);
+    (new Uint8Array(this._rawKey)).fill(0);
+    this._key = key;
+    return;
+  }
+
   private async _importKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._api.importKey(
+    return await (this._api as SubtleCrypto).importKey(
       "raw",
       key,
       { name: "AES-GCM" },
@@ -70,26 +75,20 @@ export class AesGcmContext implements AeadEncryptionContext {
   }
 }
 
-export class Aes128Gcm extends Algorithm implements AeadInterface {
+export class Aes128Gcm extends AlgorithmBase implements AeadInterface {
   public readonly id: AeadId = AeadId.Aes128Gcm;
   public readonly keySize: number = 16;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
 
   public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
-    this.checkInit();
-    return new AesGcmContext(this._api as SubtleCrypto, key);
+    return new AesGcmContext(key);
   }
 }
 
-export class Aes256Gcm extends Algorithm implements AeadInterface {
+export class Aes256Gcm extends Aes128Gcm {
   public readonly id: AeadId = AeadId.Aes256Gcm;
   public readonly keySize: number = 32;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
-
-  public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
-    this.checkInit();
-    return new AesGcmContext(this._api as SubtleCrypto, key);
-  }
 }
