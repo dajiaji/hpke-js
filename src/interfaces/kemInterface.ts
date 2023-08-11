@@ -19,16 +19,6 @@ export interface KemInterface {
   readonly privateKeySize: number;
 
   /**
-   * Initializes the instance by setting a SubtleCrypto API.
-   *
-   * Basically, you don't need to call this function directly.
-   * This function is called by{@link CipherSuite} internally.
-   *
-   * @param api A SubtleCrypto API.
-   */
-  init(api: SubtleCrypto): void;
-
-  /**
    * Generates a key pair.
    *
    * If the error occurred, throws {@link NotSupportedError}.

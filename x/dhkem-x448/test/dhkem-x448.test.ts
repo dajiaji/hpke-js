@@ -5,16 +5,13 @@ import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
 // } from "https://deno.land/x/hpke/mod.ts";
 
 import { DhkemX448HkdfSha512 } from "../mod.ts";
-import { loadCrypto, loadSubtleCrypto } from "./utils.ts";
+import { loadCrypto } from "./utils.ts";
 
 describe("DhkemX448HkdfSha512", () => {
   describe("with valid parameters", () => {
-    it("should have a correct KEM object", async () => {
-      const api = await loadSubtleCrypto();
-
+    it("should have a correct KEM object", () => {
       // assert
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
       assertEquals(typeof kem, "object");
       assertEquals(kem.id, KemId.DhkemX448HkdfSha512);
       assertEquals(kem.secretSize, 64);
@@ -28,11 +25,8 @@ describe("DhkemX448HkdfSha512", () => {
 describe("generateKeyPair", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
-      const api = await loadSubtleCrypto();
-
       // assert
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
       const kp = await kem.generateKeyPair();
       assertEquals(kp.publicKey.type, "public");
       assertEquals(kp.publicKey.extractable, true);
@@ -53,12 +47,10 @@ describe("generateKeyPair", () => {
 describe("deriveKeyPair", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
-      const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
 
       // assert
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
       const ikm = new Uint8Array(56);
       cryptoApi.getRandomValues(ikm);
       const kp = await kem.deriveKeyPair(ikm.buffer);
@@ -81,11 +73,8 @@ describe("deriveKeyPair", () => {
 describe("serialize/deserializePublicKey", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance with DhkemX448HkdfSha512", async () => {
-      const api = await loadSubtleCrypto();
-
       // assert
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
       const kp = await kem.generateKeyPair();
       const bPubKey = await kem.serializePublicKey(kp.publicKey);
       const pubKey = await kem.deserializePublicKey(bPubKey);
@@ -102,9 +91,7 @@ describe("serialize/deserializePublicKey", () => {
 describe("importKey", () => {
   describe("with valid parameters", () => {
     it("should return a valid private key for DhkemX448HkdfSha512 from raw key", async () => {
-      const api = await loadSubtleCrypto();
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(56);
@@ -117,9 +104,7 @@ describe("importKey", () => {
     });
 
     it("should return a valid public key for DhkemX448HkdfSha512 from raw key", async () => {
-      const api = await loadSubtleCrypto();
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(56);
@@ -134,9 +119,7 @@ describe("importKey", () => {
 
   describe("with invalid parameters", () => {
     it("should throw DeserializeError with invalid DhkemX448HkdfSha512 private key", async () => {
-      const api = await loadSubtleCrypto();
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
@@ -150,9 +133,7 @@ describe("importKey", () => {
     });
 
     it("should throw DeserializeError with invalid DhkemX448HkdfSha512 public key", async () => {
-      const api = await loadSubtleCrypto();
       const kem = new DhkemX448HkdfSha512();
-      kem.init(api);
 
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
