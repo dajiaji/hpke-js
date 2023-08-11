@@ -19,7 +19,7 @@ jobs:
           deno-version: v1.x
       - uses: actions/setup-node@v3
         with:
-          node-version: v18.x
+          node-version: v20.x
       - run: |
           npm install -g esbuild
           deno task dnt
