@@ -406,6 +406,114 @@ describe("serialize/deserializePublicKey", () => {
   });
 });
 
+describe("serialize/deserializePrivateKey", () => {
+  describe("with valid parameters", () => {
+    it("should return a proper instance with DhkemP256HkdfSha256", async () => {
+      if (isDeno()) {
+        return;
+      }
+
+      // assert
+      const kemContext = new DhkemP256HkdfSha256();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "ECDH");
+      // assertEquals(pubKey.algorithm.namedCurve, "P-256");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a proper instance with DhkemP384HkdfSha384", async () => {
+      if (isDeno()) {
+        return;
+      }
+
+      // assert
+      const kemContext = new DhkemP384HkdfSha384();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "ECDH");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a proper instance with DhkemP521HkdfSha512", async () => {
+      if (isDeno()) {
+        return;
+      }
+
+      // assert
+      const kemContext = new DhkemP521HkdfSha512();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "ECDH");
+      // assertEquals(pubKey.algorithm.namedCurve, "P-256");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a proper instance with DhkemX25519HkdfSha256", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "X25519");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "X448");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+  });
+
+  describe("with invalid parameters", () => {
+    it("should throw SerializeError on serializePrivateKey with a public key for X25519", async () => {
+      // assert
+      const ctx = new DhkemX25519HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemP256HkdfSha256();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw DeserializeError on deserializePrivateKey with DhkemP256HkdfSha256", async () => {
+      // assert
+      const kemContext = new DhkemP256HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(65);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        errors.DeserializeError,
+      );
+    });
+  });
+});
+
 describe("importKey", () => {
   describe("with valid parameters", () => {
     it("should return a valid private key for DhkemP256HkdfSha256 from JWK", async () => {

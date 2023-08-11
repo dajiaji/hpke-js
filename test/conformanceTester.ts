@@ -51,6 +51,14 @@ export class ConformanceTester {
       privateKey: await suite.kem.importKey("raw", skRm, false),
       publicKey: await suite.kem.importKey("raw", pkRm, true),
     };
+
+    const dSkR = await suite.kem.deserializePrivateKey(skRm);
+    const dPkR = await suite.kem.deserializePublicKey(pkRm);
+    const skRm2 = await suite.kem.serializePrivateKey(dSkR);
+    const pkRm2 = await suite.kem.serializePublicKey(dPkR);
+    assertEquals(skRm, new Uint8Array(skRm2));
+    assertEquals(pkRm, new Uint8Array(pkRm2));
+
     const ekp = {
       privateKey: await suite.kem.importKey("raw", skEm, false),
       publicKey: await suite.kem.importKey("raw", pkEm), // true can be omitted

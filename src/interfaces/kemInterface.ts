@@ -62,6 +62,28 @@ export interface KemInterface {
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
   /**
+   * Serializes a private key as CryptoKey to a byte string of length `Nsk`.
+   *
+   * If the error occurred, throws {@link SerializeError}.
+   *
+   * @param key A CryptoKey.
+   * @returns A key as bytes.
+   * @throws {@link SerializeError}
+   */
+  serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer>;
+
+  /**
+   * Deserializes a private key as a byte string of length `Nsk` to CryptoKey.
+   *
+   * If the error occurred, throws {@link DeserializeError}.
+   *
+   * @param key A key as bytes.
+   * @returns A CryptoKey.
+   * @throws {@link DeserializeError}
+   */
+  deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey>;
+
+  /**
    * Imports a public or private key and converts to a {@link CryptoKey}.
    *
    * Since key parameters for {@link createSenderContext} or {@link createRecipientContext}

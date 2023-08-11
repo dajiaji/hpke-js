@@ -14,7 +14,6 @@ import * as errors from "../errors.ts";
 
 // b"KEM"
 const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
-
 // b"eae_prk"
 const LABEL_EAE_PRK = new Uint8Array([101, 97, 101, 95, 112, 114, 107]);
 // b"shared_secret"
@@ -83,6 +82,24 @@ export class Dhkem extends Algorithm implements KemInterface {
     await this._setup();
     try {
       return await this._prim.deserializePublicKey(key);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
+  }
+
+  public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
+    await this._setup();
+    try {
+      return await this._prim.serializePrivateKey(key);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
+  }
+
+  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+    await this._setup();
+    try {
+      return await this._prim.deserializePrivateKey(key);
     } catch (e: unknown) {
       throw new errors.DeserializeError(e);
     }
