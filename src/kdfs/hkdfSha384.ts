@@ -10,7 +10,7 @@ export class HkdfSha384 extends HkdfSha384Native {
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this.setup();
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this.hashSize);
     }

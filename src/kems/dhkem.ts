@@ -216,7 +216,7 @@ export class Dhkem extends Algorithm implements KemInterface {
     const suiteId = new Uint8Array(SUITE_ID_HEADER_KEM);
     suiteId.set(i2Osp(this.id, 2), 3);
     this._prim.init(api);
-    this._kdf.init(api, suiteId);
+    this._kdf.init(suiteId);
     super.init(api);
   }
 

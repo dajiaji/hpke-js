@@ -1,13 +1,32 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
+import { AlgorithmBase } from "../algorithm.ts";
 import { KdfId } from "../identifiers.ts";
-import { KdfAlgorithm } from "../algorithm.ts";
+import { loadSubtleCrypto } from "../webCrypto.ts";
 
 import * as consts from "../consts.ts";
 import * as errors from "../errors.ts";
 
 // b"HPKE-v1"
 const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
+
+export class KdfAlgorithm extends AlgorithmBase {
+  protected _suiteId: Uint8Array = consts.EMPTY;
+
+  constructor() {
+    super();
+  }
+
+  public init(suiteId: Uint8Array): void {
+    this._suiteId = suiteId;
+  }
+
+  protected checkInit(): void {
+    if (this._suiteId === consts.EMPTY) {
+      throw new Error("Not initialized. Call init()");
+    }
+  }
+}
 
 export class HkdfNative extends KdfAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
@@ -23,6 +42,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
   }
 
   public buildLabeledIkm(label: Uint8Array, ikm: Uint8Array): Uint8Array {
+    this.checkInit();
     const ret = new Uint8Array(
       7 + this._suiteId.byteLength + label.byteLength + ikm.byteLength,
     );
@@ -38,6 +58,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     info: Uint8Array,
     len: number,
   ): Uint8Array {
+    this.checkInit();
     const ret = new Uint8Array(
       9 + this._suiteId.byteLength + label.byteLength + info.byteLength,
     );
@@ -53,7 +74,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this.setup();
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this.hashSize);
     }
@@ -79,7 +100,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     info: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this.setup();
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
       prk,
@@ -130,7 +151,7 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     info: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this.setup();
     const baseKey = await (this._api as SubtleCrypto).importKey(
       "raw",
       ikm,
@@ -165,6 +186,13 @@ export class HkdfNative extends KdfAlgorithm implements KdfInterface {
     len: number,
   ): Promise<ArrayBuffer> {
     return await this.expand(prk, this.buildLabeledInfo(label, info, len), len);
+  }
+
+  protected async setup() {
+    if (this._api !== undefined) {
+      return;
+    }
+    this._api = await loadSubtleCrypto();
   }
 }
 
