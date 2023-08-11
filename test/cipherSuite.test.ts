@@ -187,7 +187,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -220,7 +220,7 @@ describe("CipherSuite", () => {
         aead: new Aes128Gcm(),
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -261,7 +261,7 @@ describe("CipherSuite", () => {
         y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
         key_ops: [],
       };
-      const pkR = await suite.importKey("jwk", jwkPkR, true);
+      const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: pkR,
@@ -276,7 +276,7 @@ describe("CipherSuite", () => {
         d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
         key_ops: ["deriveBits"],
       };
-      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const skR = await suite.kem.importKey("jwk", jwkSkR, false);
       const recipient = await suite.createRecipientContext({
         recipientKey: skR,
         enc: sender.enc,
@@ -306,7 +306,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -337,7 +337,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -376,7 +376,7 @@ describe("CipherSuite", () => {
         y: "GCNfc32p9sRotx7u2oDGJ3Eqz6q5zPHLdizNn83oRsUTN31eCWfGLHWRury3xF50",
         key_ops: [],
       };
-      const pkR = await suite.importKey("jwk", jwkPkR, true);
+      const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: pkR,
@@ -391,7 +391,7 @@ describe("CipherSuite", () => {
         d: "1pImEKbrr771-RKi8Tb7tou_WjiR7kwui_nMu16449rk3lzAqf9buUhTkJ-pogkb",
         key_ops: ["deriveBits"],
       };
-      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const skR = await suite.kem.importKey("jwk", jwkSkR, false);
       const recipient = await suite.createRecipientContext({
         recipientKey: skR,
         enc: sender.enc,
@@ -425,7 +425,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -460,7 +460,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -503,7 +503,7 @@ describe("CipherSuite", () => {
         y: "ASx-Cb--149HJ-e1KlSaY-1BOhwOdcTkxSt8BGbW7_hnGfzHsoXM3ywwNcp1Yad-FHUKwmCyMelMQEn2Rh4V2l3I",
         key_ops: [],
       };
-      const pkR = await suite.importKey("jwk", jwkPkR, true);
+      const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: pkR,
@@ -518,7 +518,7 @@ describe("CipherSuite", () => {
         d: "ADYyo73ZKicOjwGDYQ_ybZKnVzdAcxGm9OVAxQjzgVM4jaS-Iwtkz90oLdDz3shgKlDgtRK2Aa9lMhqR94hBo4IE",
         key_ops: ["deriveBits"],
       };
-      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const skR = await suite.kem.importKey("jwk", jwkSkR, false);
       const recipient = await suite.createRecipientContext({
         recipientKey: skR,
         enc: sender.enc,
@@ -548,7 +548,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -579,7 +579,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -617,7 +617,7 @@ describe("CipherSuite", () => {
         x: "y3wJq3uXPHeoCO4FubvTc7VcBuqpvUrSvU6ZMbHDTCI",
         key_ops: [],
       };
-      const pkR = await suite.importKey("jwk", jwkPkR, true);
+      const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: pkR,
@@ -631,7 +631,7 @@ describe("CipherSuite", () => {
         d: "vsJ1oX5NNi0IGdwGldiac75r-Utmq3Jq4LGv48Q_Qc4",
         key_ops: ["deriveBits"],
       };
-      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const skR = await suite.kem.importKey("jwk", jwkSkR, false);
       const recipient = await suite.createRecipientContext({
         recipientKey: skR,
         enc: sender.enc,
@@ -661,7 +661,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes256Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -692,7 +692,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes256Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -730,7 +730,7 @@ describe("CipherSuite", () => {
         x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
         key_ops: [],
       };
-      const pkR = await suite.importKey("jwk", jwkPkR, true);
+      const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: pkR,
@@ -744,7 +744,7 @@ describe("CipherSuite", () => {
         d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
         key_ops: ["deriveBits"],
       };
-      const skR = await suite.importKey("jwk", jwkSkR, false);
+      const skR = await suite.kem.importKey("jwk", jwkSkR, false);
       const recipient = await suite.createRecipientContext({
         recipientKey: skR,
         enc: sender.enc,
@@ -774,7 +774,7 @@ describe("CipherSuite", () => {
         aead: AeadId.ExportOnly,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -813,7 +813,7 @@ describe("CipherSuite", () => {
         aead: AeadId.ExportOnly,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -852,7 +852,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -893,8 +893,8 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
-      const skp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
+      const skp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -929,8 +929,8 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
-      const skp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
+      const skp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -973,8 +973,8 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
-      const skp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
+      const skp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -1017,8 +1017,8 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
-      const skp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
+      const skp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -1061,7 +1061,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -1094,8 +1094,8 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
-      const skp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
+      const skp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -1130,7 +1130,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       // encrypt
       const { ct, enc } = await suite.seal(
@@ -1161,7 +1161,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       // encrypt
       const { ct, enc } = await suite.seal(
@@ -1194,7 +1194,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -1226,7 +1226,7 @@ describe("CipherSuite", () => {
       });
 
       await assertRejects(
-        () => suite.deriveKeyPair((new Uint8Array(8193)).buffer),
+        () => suite.kem.deriveKeyPair((new Uint8Array(8193)).buffer),
         errors.InvalidParamError,
         "Too long ikm",
       );
@@ -1242,7 +1242,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -1265,7 +1265,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -1291,7 +1291,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -1317,7 +1317,7 @@ describe("CipherSuite", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -1348,7 +1348,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k),
+        () => suite.kem.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -1368,7 +1368,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k, false),
+        () => suite.kem.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });
@@ -1388,7 +1388,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k),
+        () => suite.kem.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -1408,7 +1408,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k, false),
+        () => suite.kem.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });
@@ -1428,7 +1428,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k),
+        () => suite.kem.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -1448,7 +1448,7 @@ describe("CipherSuite", () => {
 
       // assert
       await assertRejects(
-        () => suite.importKey("raw", k, false),
+        () => suite.kem.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });
@@ -1464,7 +1464,7 @@ describe("CipherSuite", () => {
         kdf: KdfId.HkdfSha256,
         aead: AeadId.Aes128Gcm,
       });
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
       const response = te.encode("This is the response.");
@@ -1553,7 +1553,7 @@ describe("CipherSuite", () => {
         kdf: KdfId.HkdfSha384,
         aead: AeadId.Aes256Gcm,
       });
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
       const response = te.encode("This is the response.");
@@ -1642,7 +1642,7 @@ describe("CipherSuite", () => {
         kdf: KdfId.HkdfSha512,
         aead: AeadId.Aes256Gcm,
       });
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
       const response = te.encode("This is the response.");

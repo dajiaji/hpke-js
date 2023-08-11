@@ -116,7 +116,7 @@ This section shows some typical usage examples.
           aead: new Chacha20Poly1305()
         });
  
-        const rkp = await suite.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
       
         const sender = await suite.createSenderContext({
           recipientPublicKey: rkp.publicKey
@@ -162,7 +162,7 @@ async function doHpke() {
     aead: new Chacha20Poly1305(),
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
@@ -204,7 +204,7 @@ async function doHpke() {
     aead: new Chacha20Poly1305(),
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,

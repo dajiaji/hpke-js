@@ -80,7 +80,7 @@ describe("CipherSuite", () => {
         aead: new Chacha20Poly1305(),
       });
 
-      const rkp = await suite.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,

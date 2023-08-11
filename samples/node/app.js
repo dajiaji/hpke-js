@@ -9,7 +9,7 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   // A sender encrypts a message.
   const sender = await suite.createSenderContext({

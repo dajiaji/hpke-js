@@ -29,7 +29,7 @@
             try {
               const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
       
-              const rkp = await suite.generateKeyPair();
+              const rkp = await suite.kem.generateKeyPair();
       
               const sender = await suite.createSenderContext({
                 recipientPublicKey: rkp.publicKey

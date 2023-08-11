@@ -42,30 +42,30 @@ export class ConformanceTester {
       const skSm = hexStringToBytes(v.skSm);
       const pkSm = hexStringToBytes(v.pkSm);
       skp = {
-        privateKey: await suite.importKey("raw", skSm, false),
-        publicKey: await suite.importKey("raw", pkSm, true),
+        privateKey: await suite.kem.importKey("raw", skSm, false),
+        publicKey: await suite.kem.importKey("raw", pkSm, true),
       };
       pks = skp.publicKey;
     }
     const rkp = {
-      privateKey: await suite.importKey("raw", skRm, false),
-      publicKey: await suite.importKey("raw", pkRm, true),
+      privateKey: await suite.kem.importKey("raw", skRm, false),
+      publicKey: await suite.kem.importKey("raw", pkRm, true),
     };
     const ekp = {
-      privateKey: await suite.importKey("raw", skEm, false),
-      publicKey: await suite.importKey("raw", pkEm), // true can be omitted
+      privateKey: await suite.kem.importKey("raw", skEm, false),
+      publicKey: await suite.kem.importKey("raw", pkEm), // true can be omitted
     };
 
     // deriveKeyPair
     const ikmE = hexStringToBytes(v.ikmE);
     const ikmR = hexStringToBytes(v.ikmR);
-    const derivedR = await suite.deriveKeyPair(ikmR.buffer);
+    const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer);
     const derivedPkRm = await this.cryptoKeyToBytes(
       derivedR.publicKey,
       kemToKeyGenAlgorithm(v.kem_id),
     );
     assertEquals(derivedPkRm, pkRm);
-    const derivedE = await suite.deriveKeyPair(ikmE.buffer);
+    const derivedE = await suite.kem.deriveKeyPair(ikmE.buffer);
     const derivedPkEm = await this.cryptoKeyToBytes(
       derivedE.publicKey,
       kemToKeyGenAlgorithm(v.kem_id),
@@ -153,7 +153,7 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
     const alg = kemToKeyGenAlgorithm(kemId);
@@ -205,17 +205,17 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
     // assert
     await assertRejects(
-      () => suite.importKey("raw", pkb),
+      () => suite.kem.importKey("raw", pkb),
       errors.DeserializeError,
     );
     await assertRejects(
-      () => suite.importKey("raw", pkb),
+      () => suite.kem.importKey("raw", pkb),
       "Invalid key for the ciphersuite",
     );
     await assertRejects(() =>
@@ -237,7 +237,7 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
@@ -260,7 +260,7 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
@@ -279,7 +279,7 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 
@@ -302,7 +302,7 @@ export class ConformanceTester {
       kdf: KdfId.HkdfSha256,
       aead: AeadId.Aes128Gcm,
     });
-    const rkp = await suite.generateKeyPair();
+    const rkp = await suite.kem.generateKeyPair();
 
     const pkb = hexStringToBytes(pk);
 

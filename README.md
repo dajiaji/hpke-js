@@ -55,7 +55,7 @@ async function doHpke() {
   });
 
   // A recipient generates a key pair.
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   // A sender encrypts a message with the recipient public key.
   const sender = await suite.createSenderContext({
@@ -296,7 +296,7 @@ Browsers:
           aead: AeadId.Aes128Gcm
         });
  
-        const rkp = await suite.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
       
         const sender = await suite.createSenderContext({
           recipientPublicKey: rkp.publicKey
@@ -311,7 +311,7 @@ Browsers:
         //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
         //   key_ops: [],
         // };
-        // const pkR = await suite.importKey("jwk", jwkPkR, true);
+        // const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
         // const sender = await suite.createSenderContext({
         //   recipientPublicKey: pkR,
         // });
@@ -331,7 +331,7 @@ Browsers:
         //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
         //   key_ops: ["deriveBits"],
         // };
-        // const skR = await suite.importKey("jwk", jwkSkR, false);
+        // const skR = await suite.kem.importKey("jwk", jwkSkR, false);
         // const recipient = await suite.createRecipientContext({
         //   recipientKey: skR,
         //   enc: sender.enc,
@@ -373,7 +373,7 @@ async function doHpke() {
   });
 
   // A recipient generates a key pair.
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   // A sender encrypts a message with the recipient public key.
   const sender = await suite.createSenderContext({
@@ -414,7 +414,7 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
@@ -460,7 +460,7 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
   const pt = new TextEncoder().encode('my-secret-message'),
 
   // encrypt
@@ -497,7 +497,7 @@ async function doHpke() {
     aead: AeadId.ExportOnly,
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
@@ -536,7 +536,7 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
@@ -591,8 +591,8 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
-  const skp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
+  const skp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
@@ -639,8 +639,8 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
-  const skp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
+  const skp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,

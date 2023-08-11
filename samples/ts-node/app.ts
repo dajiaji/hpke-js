@@ -9,7 +9,7 @@ async function doHpke() {
     aead: AeadId.Aes128Gcm,
   });
 
-  const rkp = await suite.generateKeyPair();
+  const rkp = await suite.kem.generateKeyPair();
 
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,

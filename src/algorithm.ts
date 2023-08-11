@@ -6,7 +6,7 @@ export class AlgorithmBase {
   constructor() {}
 
   protected checkInit(): void {
-    if (typeof this._api === "undefined") {
+    if (this._api === undefined) {
       throw new Error("Not initialized. Call init()");
     }
   }
