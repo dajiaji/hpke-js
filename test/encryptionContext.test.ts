@@ -57,7 +57,6 @@ describe("constructor", () => {
       };
 
       // assert
-      params.aead.init(api);
       assertEquals(
         typeof new EncryptionContextImpl(api, kdf, params),
         "object",
@@ -91,7 +90,6 @@ describe("constructor", () => {
       };
 
       // assert
-      params.aead.init(api);
       assertThrows(
         () => {
           new EncryptionContextImpl(api, kdf, params);
