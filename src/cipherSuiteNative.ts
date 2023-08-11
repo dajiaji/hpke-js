@@ -418,7 +418,7 @@ export class CipherSuiteNative {
       return;
     }
     const api = await loadSubtleCrypto();
-    this._kdf.init(api as SubtleCrypto, this._suiteId);
+    this._kdf.init(this._suiteId);
     this._api = api;
     return;
   }

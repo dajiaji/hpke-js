@@ -39,7 +39,7 @@ describe("constructor", () => {
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha256();
-      kdf.init(api, suiteId);
+      kdf.init(suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -72,7 +72,7 @@ describe("constructor", () => {
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha256();
-      kdf.init(api, suiteId);
+      kdf.init(suiteId);
 
       const key = DUMMY_BYTES_16.buffer;
       const baseNonce = DUMMY_BYTES_12;
@@ -425,7 +425,7 @@ describe("createRecipientContext", () => {
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
       suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
       const kdf = new HkdfSha256();
-      kdf.init(api, suiteId);
+      kdf.init(suiteId);
       const params = {
         aead: new Aes128Gcm(),
         nK: 16,

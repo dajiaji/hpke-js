@@ -10,11 +10,11 @@ export interface KdfInterface {
   readonly hashSize: number;
 
   /**
-   * Initializes the instance by setting a SubtleCrypto API.
+   * Initializes the instance by setting a `suite_id` defined in RFC9180.
    *
-   * @param api A SubtleCrypto API.
+   * @param suiteId A `suite_id` defined in RFC9180.
    */
-  init(api: SubtleCrypto, suiteId: Uint8Array): void;
+  init(suiteId: Uint8Array): void;
 
   /**
    * Builds a labeled input keying material.
