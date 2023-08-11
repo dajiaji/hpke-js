@@ -2,6 +2,8 @@ import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
+import { emitNotSupported } from "./utils/emitNotSupported.ts";
+
 import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
@@ -27,14 +29,14 @@ export class ExporterContextImpl implements EncryptionContext {
     _data: ArrayBuffer,
     _aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._emitError();
+    return await emitNotSupported<ArrayBuffer>();
   }
 
   public async open(
     _data: ArrayBuffer,
     _aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    return await this._emitError();
+    return await emitNotSupported<ArrayBuffer>();
   }
 
   public async export(
@@ -54,12 +56,6 @@ export class ExporterContextImpl implements EncryptionContext {
     } catch (e: unknown) {
       throw new errors.ExportError(e);
     }
-  }
-
-  private _emitError(): Promise<ArrayBuffer> {
-    return new Promise((_resolve, reject) => {
-      reject(new errors.NotSupportedError("Not available"));
-    });
   }
 }
 
