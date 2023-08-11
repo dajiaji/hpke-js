@@ -5,16 +5,13 @@ import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
 
 import { Chacha20Poly1305 } from "../mod.ts";
 
-import { loadCrypto, loadSubtleCrypto } from "./utils.ts";
+import { loadCrypto } from "./utils.ts";
 
 describe("Chacha20Poly1305", () => {
   describe("with valid parameters", () => {
-    it("should have a correct AEAD object", async () => {
-      const api = await loadSubtleCrypto();
-
+    it("should have a correct AEAD object", () => {
       // assert
       const aead = new Chacha20Poly1305();
-      aead.init(api);
       assertEquals(typeof aead, "object");
       assertEquals(aead.id, AeadId.Chacha20Poly1305);
       assertEquals(aead.keySize, 32);
@@ -27,11 +24,9 @@ describe("Chacha20Poly1305", () => {
 describe("createEncryptionContext", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
-      const api = await loadSubtleCrypto();
       const cryptoApi = await loadCrypto();
 
       const aead = new Chacha20Poly1305();
-      aead.init(api);
 
       const iv = new Uint8Array(aead.nonceSize);
       const key = new Uint8Array(aead.keySize);
