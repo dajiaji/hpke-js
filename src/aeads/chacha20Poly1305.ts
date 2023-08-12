@@ -4,15 +4,12 @@ import { chacha20poly1305 } from "npm:@noble/ciphers@0.2.0/chacha";
 import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
-import { Algorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;
-  private _api: SubtleCrypto;
 
-  public constructor(api: SubtleCrypto, key: ArrayBuffer) {
-    this._api = api;
+  public constructor(key: ArrayBuffer) {
     this._key = new Uint8Array(key);
   }
 
@@ -83,13 +80,13 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
  * });
  * ```
  */
-export class Chacha20Poly1305 extends Algorithm implements AeadInterface {
+export class Chacha20Poly1305 implements AeadInterface {
   public readonly id: AeadId = AeadId.Chacha20Poly1305;
   public readonly keySize: number = 32;
   public readonly nonceSize: number = 12;
   public readonly tagSize: number = 16;
 
   public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
-    return new Chacha20Poly1305Context(this._api as SubtleCrypto, key);
+    return new Chacha20Poly1305Context(key);
   }
 }
