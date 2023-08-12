@@ -374,10 +374,6 @@ describe("serialize/deserializePublicKey", () => {
 
   describe("with invalid parameters", () => {
     it("should throw SerializeError on serializePublicKey with a public key for X25519", async () => {
-      if (!isDeno()) {
-        return;
-      }
-
       // assert
       const ctx = new DhkemX25519HkdfSha256();
       const kp = await ctx.generateKeyPair();
@@ -389,10 +385,6 @@ describe("serialize/deserializePublicKey", () => {
     });
 
     it("should throw DeserializeError on deserializePublicKey with DhkemP256HkdfSha256", async () => {
-      if (!isDeno()) {
-        return;
-      }
-
       // assert
       const kemContext = new DhkemP256HkdfSha256();
       const cryptoApi = await loadCrypto();
