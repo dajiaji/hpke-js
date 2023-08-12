@@ -19,6 +19,7 @@ export type Mode = typeof Mode[keyof typeof Mode];
  * @deprecated Use {@link KdfId} instead.
  */
 export const Kem = {
+  NotAssigned: 0x0000,
   DhkemP256HkdfSha256: 0x0010,
   DhkemP384HkdfSha384: 0x0011,
   DhkemP521HkdfSha512: 0x0012,

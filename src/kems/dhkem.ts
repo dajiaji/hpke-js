@@ -24,7 +24,7 @@ const LABEL_SHARED_SECRET = new Uint8Array([
 ]);
 
 export class Dhkem extends Algorithm implements KemInterface {
-  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
+  public readonly id: KemId = KemId.NotAssigned;
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;
