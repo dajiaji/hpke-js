@@ -17,20 +17,10 @@ const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
 // b"eae_prk"
 const LABEL_EAE_PRK = new Uint8Array([101, 97, 101, 95, 112, 114, 107]);
 // b"shared_secret"
+// deno-fmt-ignore
 const LABEL_SHARED_SECRET = new Uint8Array([
-  115,
-  104,
-  97,
-  114,
-  101,
-  100,
-  95,
-  115,
-  101,
-  99,
-  114,
-  101,
-  116,
+  115, 104, 97, 114, 101, 100, 95, 115, 101, 99,
+  114, 101, 116,
 ]);
 
 export class Dhkem extends Algorithm implements KemInterface {
