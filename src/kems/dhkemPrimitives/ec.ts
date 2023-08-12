@@ -1,12 +1,12 @@
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
+import { NativeAlgorithm } from "../../algorithm.ts";
 import { EMPTY } from "../../consts.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
 import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
-import { loadSubtleCrypto } from "../../webCrypto.ts";
 
 // b"candidate"
 // deno-fmt-ignore
@@ -70,8 +70,7 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
   4, 66,
 ]);
 
-export class Ec implements KemPrimitives {
-  private _api: SubtleCrypto | undefined = undefined;
+export class Ec extends NativeAlgorithm implements KemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: EcKeyGenParams;
   private _nPk: number;
@@ -84,6 +83,7 @@ export class Ec implements KemPrimitives {
   private _pkcs8AlgId: Uint8Array;
 
   constructor(kem: KemId, hkdf: KdfInterface) {
+    super();
     this._hkdf = hkdf;
     switch (kem) {
       case KemId.DhkemP256HkdfSha256:
@@ -322,12 +322,5 @@ export class Ec implements KemPrimitives {
       this._nDh * 8,
     );
     return bits;
-  }
-
-  protected async _setup() {
-    if (this._api !== undefined) {
-      return;
-    }
-    this._api = await loadSubtleCrypto();
   }
 }
