@@ -13,6 +13,6 @@ export class DhkemP256HkdfSha256 extends Dhkem {
   constructor() {
     const kdf = new HkdfSha256();
     const prim = new Ec(KemId.DhkemP256HkdfSha256, kdf);
-    super(prim, kdf);
+    super(KemId.DhkemP256HkdfSha256, prim, kdf);
   }
 }

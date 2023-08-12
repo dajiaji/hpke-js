@@ -1,13 +1,12 @@
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
-import { Algorithm } from "../../algorithm.ts";
+import { EMPTY } from "../../consts.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
 import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
-
-import { EMPTY } from "../../consts.ts";
+import { loadSubtleCrypto } from "../../webCrypto.ts";
 
 // b"candidate"
 // deno-fmt-ignore
@@ -71,7 +70,8 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
   4, 66,
 ]);
 
-export class Ec extends Algorithm implements KemPrimitives {
+export class Ec implements KemPrimitives {
+  private _api: SubtleCrypto | undefined = undefined;
   private _hkdf: KdfInterface;
   private _alg: EcKeyGenParams;
   private _nPk: number;
@@ -84,7 +84,6 @@ export class Ec extends Algorithm implements KemPrimitives {
   private _pkcs8AlgId: Uint8Array;
 
   constructor(kem: KemId, hkdf: KdfInterface) {
-    super();
     this._hkdf = hkdf;
     switch (kem) {
       case KemId.DhkemP256HkdfSha256:
@@ -119,9 +118,8 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this._setup();
     const ret = await (this._api as SubtleCrypto).exportKey("raw", key);
-    // const ret = (await this._api.exportKey('spki', key)).slice(24);
     if (ret.byteLength !== this._nPk) {
       throw new Error("Invalid public key for the ciphersuite");
     }
@@ -129,7 +127,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
-    this.checkInit();
+    await this._setup();
     if (key.byteLength !== this._nPk) {
       throw new Error("Invalid public key for the ciphersuite");
     }
@@ -147,13 +145,12 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this._setup();
     const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
     if (!("d" in jwk)) {
       throw new Error("Not private key");
     }
     const ret = base64UrlToBytes(jwk["d"] as string);
-    // const ret = (await this._api.exportKey('spki', key)).slice(24);
     if (ret.byteLength !== this._nSk) {
       throw new Error("Invalid length of the key");
     }
@@ -161,7 +158,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    this.checkInit();
+    await this._setup();
     if (key.byteLength !== this._nSk) {
       throw new Error("Invalid length of the key");
     }
@@ -173,7 +170,7 @@ export class Ec extends Algorithm implements KemPrimitives {
     key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey> {
-    this.checkInit();
+    await this._setup();
     if (format === "raw") {
       return await this._importRawKey(key as ArrayBuffer, isPublic);
     }
@@ -252,7 +249,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
-    this.checkInit();
+    await this._setup();
     const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
     delete jwk["d"];
     delete jwk["key_ops"];
@@ -266,7 +263,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    this.checkInit();
+    await this._setup();
     return await (this._api as SubtleCrypto).generateKey(
       this._alg,
       true,
@@ -275,7 +272,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    this.checkInit();
+    await this._setup();
     const dkpPrk = await this._hkdf.labeledExtract(
       EMPTY,
       LABEL_DKP_PRK,
@@ -315,7 +312,7 @@ export class Ec extends Algorithm implements KemPrimitives {
   }
 
   public async dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer> {
-    this.checkInit();
+    await this._setup();
     const bits = await (this._api as SubtleCrypto).deriveBits(
       {
         name: "ECDH",
@@ -325,5 +322,12 @@ export class Ec extends Algorithm implements KemPrimitives {
       this._nDh * 8,
     );
     return bits;
+  }
+
+  protected async _setup() {
+    if (this._api !== undefined) {
+      return;
+    }
+    this._api = await loadSubtleCrypto();
   }
 }

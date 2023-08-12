@@ -8,8 +8,6 @@ export const LABEL_DKP_PRK = new Uint8Array([100, 107, 112, 95, 112, 114, 107]);
 export const LABEL_SK = new Uint8Array([115, 107]);
 
 export interface KemPrimitives {
-  init(api: SubtleCrypto): void;
-
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;

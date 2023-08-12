@@ -32,7 +32,6 @@ export class DhkemX448HkdfSha512 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha512();
-    const prim = new X448(kdf);
-    super(prim, kdf);
+    super(KemId.DhkemX448HkdfSha512, new X448(kdf), kdf);
   }
 }
