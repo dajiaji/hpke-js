@@ -37,7 +37,7 @@ export class X448 implements KemPrimitives {
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
     try {
-      return await this._deserializePublicKey(key);
+      return await this._importRawKey(key, true);
     } catch (e: unknown) {
       throw new errors.DeserializeError(e);
     }
@@ -53,7 +53,7 @@ export class X448 implements KemPrimitives {
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
     try {
-      return await this._deserializePrivateKey(key);
+      return await this._importRawKey(key, false);
     } catch (e: unknown) {
       throw new errors.DeserializeError(e);
     }
@@ -139,31 +139,9 @@ export class X448 implements KemPrimitives {
     });
   }
 
-  private _deserializePublicKey(k: ArrayBuffer): Promise<CryptoKey> {
-    return new Promise((resolve, reject) => {
-      if (k.byteLength !== this._nPk) {
-        reject(new Error("Invalid public key for the ciphersuite"));
-      } else {
-        resolve(new XCryptoKey(ALG_NAME, new Uint8Array(k), "public"));
-      }
-    });
-  }
-
   private _serializePrivateKey(k: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
       resolve(k.key.buffer);
-    });
-  }
-
-  private _deserializePrivateKey(k: ArrayBuffer): Promise<CryptoKey> {
-    return new Promise((resolve, reject) => {
-      if (k.byteLength !== this._nSk && k.byteLength !== this._nSk + 1) {
-        reject(new Error(`Invalid length of the key: ${new Uint8Array(k)}`));
-      } else {
-        resolve(
-          new XCryptoKey(ALG_NAME, new Uint8Array(k), "private", KEM_USAGES),
-        );
-      }
     });
   }
 
@@ -173,13 +151,13 @@ export class X448 implements KemPrimitives {
   ): Promise<CryptoKey> {
     return new Promise((resolve, reject) => {
       if (isPublic && key.byteLength !== this._nPk) {
-        reject(new Error("Invalid public key for the ciphersuite"));
+        reject(new Error("Invalid length of the key"));
       }
       if (
         !isPublic &&
         (key.byteLength !== this._nSk && key.byteLength !== this._nSk + 1)
       ) {
-        reject(new Error("Invalid private key for the ciphersuite"));
+        reject(new Error("Invalid length of the key"));
       }
       resolve(
         new XCryptoKey(
