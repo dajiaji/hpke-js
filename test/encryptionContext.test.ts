@@ -87,7 +87,7 @@ describe("constructor", () => {
           new EncryptionContextImpl(api, kdf, params);
         },
         Error,
-        "createEncryptionContext() is not supported on ExportOnly",
+        "Export only",
       );
     });
   });
