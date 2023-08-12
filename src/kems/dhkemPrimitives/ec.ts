@@ -3,6 +3,7 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../../algorithm.ts";
 import { EMPTY } from "../../consts.ts";
+import * as errors from "../../errors.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
@@ -119,18 +120,15 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
     await this._setup();
-    const ret = await (this._api as SubtleCrypto).exportKey("raw", key);
-    if (ret.byteLength !== this._nPk) {
-      throw new Error("Invalid public key for the ciphersuite");
+    try {
+      return await (this._api as SubtleCrypto).exportKey("raw", key);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
     }
-    return ret;
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
     await this._setup();
-    if (key.byteLength !== this._nPk) {
-      throw new Error("Invalid public key for the ciphersuite");
-    }
     try {
       return await (this._api as SubtleCrypto).importKey(
         "raw",
@@ -139,30 +137,38 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
         true,
         [],
       );
-    } catch (_e: unknown) {
-      throw new Error("Invalid public key for the ciphersuite");
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
     await this._setup();
-    const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
-    if (!("d" in jwk)) {
-      throw new Error("Not private key");
+    try {
+      const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
+      if (!("d" in jwk)) {
+        throw new Error("Not private key");
+      }
+      const ret = base64UrlToBytes(jwk["d"] as string);
+      if (ret.byteLength !== this._nSk) {
+        throw new Error("Invalid length of the key");
+      }
+      return ret;
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
     }
-    const ret = base64UrlToBytes(jwk["d"] as string);
-    if (ret.byteLength !== this._nSk) {
-      throw new Error("Invalid length of the key");
-    }
-    return ret;
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    await this._setup();
-    if (key.byteLength !== this._nSk) {
-      throw new Error("Invalid length of the key");
+    try {
+      await this._setup();
+      if (key.byteLength !== this._nSk) {
+        throw new Error("Invalid length of the key");
+      }
+      return await this._importRawKey(key, false);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
-    return await this._importRawKey(key, false);
   }
 
   public async importKey(
@@ -171,14 +177,18 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
     isPublic: boolean,
   ): Promise<CryptoKey> {
     await this._setup();
-    if (format === "raw") {
-      return await this._importRawKey(key as ArrayBuffer, isPublic);
+    try {
+      if (format === "raw") {
+        return await this._importRawKey(key as ArrayBuffer, isPublic);
+      }
+      // jwk
+      if (key instanceof ArrayBuffer) {
+        throw new Error("Invalid jwk key format");
+      }
+      return await this._importJWK(key as JsonWebKey, isPublic);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
-    // jwk
-    if (key instanceof ArrayBuffer) {
-      throw new Error("Invalid jwk key format");
-    }
-    return await this._importJWK(key as JsonWebKey, isPublic);
   }
 
   private async _importRawKey(
@@ -191,30 +201,26 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
     if (!isPublic && key.byteLength !== this._nSk) {
       throw new Error("Invalid private key for the ciphersuite");
     }
-    try {
-      if (isPublic) {
-        return await (this._api as SubtleCrypto).importKey(
-          "raw",
-          key,
-          this._alg,
-          true,
-          [],
-        );
-      }
-      const k = new Uint8Array(key);
-      const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
-      pkcs8Key.set(this._pkcs8AlgId, 0);
-      pkcs8Key.set(k, this._pkcs8AlgId.length);
+    if (isPublic) {
       return await (this._api as SubtleCrypto).importKey(
-        "pkcs8",
-        pkcs8Key,
+        "raw",
+        key,
         this._alg,
         true,
-        KEM_USAGES,
+        [],
       );
-    } catch (_e: unknown) {
-      throw new Error("Invalid key for the ciphersuite");
     }
+    const k = new Uint8Array(key);
+    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
+    pkcs8Key.set(this._pkcs8AlgId, 0);
+    pkcs8Key.set(k, this._pkcs8AlgId.length);
+    return await (this._api as SubtleCrypto).importKey(
+      "pkcs8",
+      pkcs8Key,
+      this._alg,
+      true,
+      KEM_USAGES,
+    );
   }
 
   private async _importJWK(
@@ -250,77 +256,99 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
     await this._setup();
-    const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
-    delete jwk["d"];
-    delete jwk["key_ops"];
-    return await (this._api as SubtleCrypto).importKey(
-      "jwk",
-      jwk,
-      this._alg,
-      true,
-      [],
-    );
+    try {
+      const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
+      delete jwk["d"];
+      delete jwk["key_ops"];
+      return await (this._api as SubtleCrypto).importKey(
+        "jwk",
+        jwk,
+        this._alg,
+        true,
+        [],
+      );
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     await this._setup();
-    return await (this._api as SubtleCrypto).generateKey(
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
+    try {
+      return await (this._api as SubtleCrypto).generateKey(
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+    } catch (e: unknown) {
+      throw new errors.NotSupportedError(e);
+    }
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     await this._setup();
-    const dkpPrk = await this._hkdf.labeledExtract(
-      EMPTY,
-      LABEL_DKP_PRK,
-      new Uint8Array(ikm),
-    );
-    const bn = new Bignum(this._nSk);
-    for (let counter = 0; bn.isZero() || !bn.lessThan(this._order); counter++) {
-      if (counter > 255) {
-        throw new Error("Faild to derive a key pair");
-      }
-      const bytes = new Uint8Array(
-        await this._hkdf.labeledExpand(
-          dkpPrk,
-          LABEL_CANDIDATE,
-          i2Osp(counter, 1),
-          this._nSk,
-        ),
+    try {
+      const dkpPrk = await this._hkdf.labeledExtract(
+        EMPTY,
+        LABEL_DKP_PRK,
+        new Uint8Array(ikm),
       );
-      bytes[0] = bytes[0] & this._bitmask;
-      bn.set(bytes);
+      const bn = new Bignum(this._nSk);
+      for (
+        let counter = 0;
+        bn.isZero() || !bn.lessThan(this._order);
+        counter++
+      ) {
+        if (counter > 255) {
+          throw new Error("Faild to derive a key pair");
+        }
+        const bytes = new Uint8Array(
+          await this._hkdf.labeledExpand(
+            dkpPrk,
+            LABEL_CANDIDATE,
+            i2Osp(counter, 1),
+            this._nSk,
+          ),
+        );
+        bytes[0] = bytes[0] & this._bitmask;
+        bn.set(bytes);
+      }
+      const pkcs8Key = new Uint8Array(
+        this._pkcs8AlgId.length + bn.val().length,
+      );
+      pkcs8Key.set(this._pkcs8AlgId, 0);
+      pkcs8Key.set(bn.val(), this._pkcs8AlgId.length);
+      const sk = await (this._api as SubtleCrypto).importKey(
+        "pkcs8",
+        pkcs8Key,
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+      bn.reset();
+      return {
+        privateKey: sk,
+        publicKey: await this.derivePublicKey(sk),
+      };
+    } catch (e: unknown) {
+      throw new errors.DeriveKeyPairError(e);
     }
-    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + bn.val().length);
-    pkcs8Key.set(this._pkcs8AlgId, 0);
-    pkcs8Key.set(bn.val(), this._pkcs8AlgId.length);
-    const sk = await (this._api as SubtleCrypto).importKey(
-      "pkcs8",
-      pkcs8Key,
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
-    bn.reset();
-    return {
-      privateKey: sk,
-      publicKey: await this.derivePublicKey(sk),
-    };
   }
 
   public async dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer> {
-    await this._setup();
-    const bits = await (this._api as SubtleCrypto).deriveBits(
-      {
-        name: "ECDH",
-        public: pk,
-      },
-      sk,
-      this._nDh * 8,
-    );
-    return bits;
+    try {
+      await this._setup();
+      const bits = await (this._api as SubtleCrypto).deriveBits(
+        {
+          name: "ECDH",
+          public: pk,
+        },
+        sk,
+        this._nDh * 8,
+      );
+      return bits;
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
   }
 }

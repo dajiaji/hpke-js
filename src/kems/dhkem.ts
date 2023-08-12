@@ -40,54 +40,30 @@ export class Dhkem implements KemInterface {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    try {
-      return await this._prim.generateKeyPair();
-    } catch (e: unknown) {
-      throw new errors.NotSupportedError(e);
-    }
+    return await this._prim.generateKeyPair();
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
       throw new errors.InvalidParamError("Too long ikm");
     }
-    try {
-      return await this._prim.deriveKeyPair(ikm);
-    } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
-    }
+    return await this._prim.deriveKeyPair(ikm);
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
-    try {
-      return await this._prim.serializePublicKey(key);
-    } catch (e: unknown) {
-      throw new errors.SerializeError(e);
-    }
+    return await this._prim.serializePublicKey(key);
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
-    try {
-      return await this._prim.deserializePublicKey(key);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.deserializePublicKey(key);
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
-    try {
-      return await this._prim.serializePrivateKey(key);
-    } catch (e: unknown) {
-      throw new errors.SerializeError(e);
-    }
+    return await this._prim.serializePrivateKey(key);
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    try {
-      return await this._prim.deserializePrivateKey(key);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.deserializePrivateKey(key);
   }
 
   public async importKey(
@@ -95,25 +71,21 @@ export class Dhkem implements KemInterface {
     key: ArrayBuffer | JsonWebKey,
     isPublic = true,
   ): Promise<CryptoKey> {
-    try {
-      return await this._prim.importKey(format, key, isPublic);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.importKey(format, key, isPublic);
   }
 
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
-    try {
-      const ke = params.nonEphemeralKeyPair === undefined
-        ? await this.generateKeyPair()
-        : params.nonEphemeralKeyPair;
-      const enc = await this._prim.serializePublicKey(ke.publicKey);
-      const pkrm = await this._prim.serializePublicKey(
-        params.recipientPublicKey,
-      );
+    const ke = params.nonEphemeralKeyPair === undefined
+      ? await this.generateKeyPair()
+      : params.nonEphemeralKeyPair;
+    const enc = await this._prim.serializePublicKey(ke.publicKey);
+    const pkrm = await this._prim.serializePublicKey(
+      params.recipientPublicKey,
+    );
 
+    try {
       let dh: Uint8Array;
       if (params.senderKey === undefined) {
         dh = new Uint8Array(
@@ -157,22 +129,16 @@ export class Dhkem implements KemInterface {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    let pke: CryptoKey;
-    try {
-      pke = await this._prim.deserializePublicKey(params.enc);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    const pke = await this._prim.deserializePublicKey(params.enc);
+    const skr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.privateKey
+      : params.recipientKey;
+    const pkr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.publicKey
+      : await this._prim.derivePublicKey(params.recipientKey);
+    const pkrm = await this._prim.serializePublicKey(pkr);
 
     try {
-      const skr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.privateKey
-        : params.recipientKey;
-      const pkr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.publicKey
-        : await this._prim.derivePublicKey(params.recipientKey);
-      const pkrm = await this._prim.serializePublicKey(pkr);
-
       let dh: Uint8Array;
       if (params.senderPublicKey === undefined) {
         dh = new Uint8Array(await this._prim.dh(skr, pke));

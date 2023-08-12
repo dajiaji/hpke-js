@@ -4,15 +4,15 @@ import { ed25519, x25519 } from "npm:@noble/curves@1.1.0/ed25519";
 import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
+import * as consts from "../../consts.ts";
+import * as errors from "../../errors.ts";
 import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
 } from "../../interfaces/kemPrimitives.ts";
-import { XCryptoKey } from "../../xCryptoKey.ts";
-
-import * as consts from "../../consts.ts";
 import { base64UrlToBytes } from "../../utils/misc.ts";
+import { XCryptoKey } from "../../xCryptoKey.ts";
 
 const ALG_NAME = "X25519";
 
@@ -28,19 +28,35 @@ export class X25519 implements KemPrimitives {
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
-    return await this._serializePublicKey(key as XCryptoKey);
+    try {
+      return await this._serializePublicKey(key as XCryptoKey);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._deserializePublicKey(key);
+    try {
+      return await this._deserializePublicKey(key);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
-    return await this._serializePrivateKey(key as XCryptoKey);
+    try {
+      return await this._serializePrivateKey(key as XCryptoKey);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._deserializePrivateKey(key);
+    try {
+      return await this._deserializePrivateKey(key);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
   }
 
   public async importKey(
@@ -48,53 +64,73 @@ export class X25519 implements KemPrimitives {
     key: ArrayBuffer | JsonWebKey,
     isPublic: boolean,
   ): Promise<CryptoKey> {
-    if (format === "raw") {
-      return await this._importRawKey(key as ArrayBuffer, isPublic);
+    try {
+      if (format === "raw") {
+        return await this._importRawKey(key as ArrayBuffer, isPublic);
+      }
+      // jwk
+      if (key instanceof ArrayBuffer) {
+        throw new Error("Invalid jwk key format");
+      }
+      return await this._importJWK(key as JsonWebKey, isPublic);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
-    // jwk
-    if (key instanceof ArrayBuffer) {
-      throw new Error("Invalid jwk key format");
-    }
-    return await this._importJWK(key as JsonWebKey, isPublic);
   }
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
-    return await this._derivePublicKey(key as XCryptoKey);
+    try {
+      return await this._derivePublicKey(key as XCryptoKey);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    const rawSk = ed25519.utils.randomPrivateKey();
-    const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
-    const pk = await this.derivePublicKey(sk);
-    return { publicKey: pk, privateKey: sk };
+    try {
+      const rawSk = ed25519.utils.randomPrivateKey();
+      const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
+      const pk = await this.derivePublicKey(sk);
+      return { publicKey: pk, privateKey: sk };
+    } catch (e: unknown) {
+      throw new errors.NotSupportedError(e);
+    }
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    const dkpPrk = await this._hkdf.labeledExtract(
-      consts.EMPTY,
-      LABEL_DKP_PRK,
-      new Uint8Array(ikm),
-    );
-    const rawSk = await this._hkdf.labeledExpand(
-      dkpPrk,
-      LABEL_SK,
-      consts.EMPTY,
-      this._nSk,
-    );
-    const sk = new XCryptoKey(
-      ALG_NAME,
-      new Uint8Array(rawSk),
-      "private",
-      KEM_USAGES,
-    );
-    return {
-      privateKey: sk,
-      publicKey: await this.derivePublicKey(sk),
-    };
+    try {
+      const dkpPrk = await this._hkdf.labeledExtract(
+        consts.EMPTY,
+        LABEL_DKP_PRK,
+        new Uint8Array(ikm),
+      );
+      const rawSk = await this._hkdf.labeledExpand(
+        dkpPrk,
+        LABEL_SK,
+        consts.EMPTY,
+        this._nSk,
+      );
+      const sk = new XCryptoKey(
+        ALG_NAME,
+        new Uint8Array(rawSk),
+        "private",
+        KEM_USAGES,
+      );
+      return {
+        privateKey: sk,
+        publicKey: await this.derivePublicKey(sk),
+      };
+    } catch (e: unknown) {
+      throw new errors.DeriveKeyPairError(e);
+    }
   }
 
   public async dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer> {
-    return await this._dh(sk as XCryptoKey, pk as XCryptoKey);
+    try {
+      return await this._dh(sk as XCryptoKey, pk as XCryptoKey);
+    } catch (e: unknown) {
+      throw new errors.SerializeError(e);
+    }
   }
 
   private _serializePublicKey(k: XCryptoKey): Promise<ArrayBuffer> {
