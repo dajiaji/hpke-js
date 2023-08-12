@@ -130,13 +130,7 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
     await this._setup();
     try {
-      return await (this._api as SubtleCrypto).importKey(
-        "raw",
-        key,
-        this._alg,
-        true,
-        [],
-      );
+      return await this._importRawKey(key, true);
     } catch (e: unknown) {
       throw new errors.DeserializeError(e);
     }
@@ -149,22 +143,15 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
       if (!("d" in jwk)) {
         throw new Error("Not private key");
       }
-      const ret = base64UrlToBytes(jwk["d"] as string);
-      if (ret.byteLength !== this._nSk) {
-        throw new Error("Invalid length of the key");
-      }
-      return ret;
+      return base64UrlToBytes(jwk["d"] as string);
     } catch (e: unknown) {
       throw new errors.SerializeError(e);
     }
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+    await this._setup();
     try {
-      await this._setup();
-      if (key.byteLength !== this._nSk) {
-        throw new Error("Invalid length of the key");
-      }
       return await this._importRawKey(key, false);
     } catch (e: unknown) {
       throw new errors.DeserializeError(e);
@@ -210,17 +197,7 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
         [],
       );
     }
-    const k = new Uint8Array(key);
-    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
-    pkcs8Key.set(this._pkcs8AlgId, 0);
-    pkcs8Key.set(k, this._pkcs8AlgId.length);
-    return await (this._api as SubtleCrypto).importKey(
-      "pkcs8",
-      pkcs8Key,
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
+    return await this._deserializePkcs8Key(new Uint8Array(key));
   }
 
   private async _importJWK(
@@ -313,18 +290,7 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
         bytes[0] = bytes[0] & this._bitmask;
         bn.set(bytes);
       }
-      const pkcs8Key = new Uint8Array(
-        this._pkcs8AlgId.length + bn.val().length,
-      );
-      pkcs8Key.set(this._pkcs8AlgId, 0);
-      pkcs8Key.set(bn.val(), this._pkcs8AlgId.length);
-      const sk = await (this._api as SubtleCrypto).importKey(
-        "pkcs8",
-        pkcs8Key,
-        this._alg,
-        true,
-        KEM_USAGES,
-      );
+      const sk = await this._deserializePkcs8Key(bn.val());
       bn.reset();
       return {
         privateKey: sk,
@@ -350,5 +316,20 @@ export class Ec extends NativeAlgorithm implements KemPrimitives {
     } catch (e: unknown) {
       throw new errors.SerializeError(e);
     }
+  }
+
+  private async _deserializePkcs8Key(k: Uint8Array): Promise<CryptoKey> {
+    const pkcs8Key = new Uint8Array(
+      this._pkcs8AlgId.length + k.length,
+    );
+    pkcs8Key.set(this._pkcs8AlgId, 0);
+    pkcs8Key.set(k, this._pkcs8AlgId.length);
+    return await (this._api as SubtleCrypto).importKey(
+      "pkcs8",
+      pkcs8Key,
+      this._alg,
+      true,
+      KEM_USAGES,
+    );
   }
 }
