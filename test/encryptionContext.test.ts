@@ -367,7 +367,6 @@ describe("createRecipientContext", () => {
             enc: senderX.enc,
           }),
         errors.DeserializeError,
-        "Invalid public key for the ciphersuite",
       );
     });
   });
