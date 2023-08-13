@@ -44,20 +44,6 @@ export function i2Osp(n: number, w: number): Uint8Array {
 }
 
 /**
- * Executes XOR of two byte strings.
- */
-export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
-  if (a.byteLength !== b.byteLength) {
-    throw new Error("xor: different length inputs");
-  }
-  const buf = new Uint8Array(a.byteLength);
-  for (let i = 0; i < a.byteLength; i++) {
-    buf[i] = a[i] ^ b[i];
-  }
-  return buf;
-}
-
-/**
  * Decodes Base64Url-encoded data.
  */
 export function base64UrlToBytes(v: string): Uint8Array {
