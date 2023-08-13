@@ -3,9 +3,8 @@ import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { EMPTY } from "./consts.ts";
+import { SealError } from "./errors.ts";
 import { EncryptionContextImpl } from "./encryptionContext.ts";
-
-import * as errors from "./errors.ts";
 
 export class SenderContextImpl extends EncryptionContextImpl
   implements Encapsulator {
@@ -29,7 +28,7 @@ export class SenderContextImpl extends EncryptionContextImpl
     try {
       ct = await this._ctx.key.seal(this.computeNonce(this._ctx), data, aad);
     } catch (e: unknown) {
-      throw new errors.SealError(e);
+      throw new SealError(e);
     }
     this.incrementSeq(this._ctx);
     return ct;

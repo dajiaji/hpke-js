@@ -1,10 +1,9 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../algorithm.ts";
-import { KdfId } from "../identifiers.ts";
-
 import * as consts from "../consts.ts";
-import * as errors from "../errors.ts";
+import { InvalidParamError } from "../errors.ts";
+import { KdfId } from "../identifiers.ts";
 
 // b"HPKE-v1"
 const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
@@ -65,7 +64,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
       salt = new ArrayBuffer(this.hashSize);
     }
     if (salt.byteLength !== this.hashSize) {
-      throw new errors.InvalidParamError(
+      throw new InvalidParamError(
         "The salt length must be the same as the hashSize",
       );
     }

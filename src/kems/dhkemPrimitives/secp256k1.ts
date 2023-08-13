@@ -5,7 +5,12 @@ import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { EMPTY } from "../../consts.ts";
-import * as errors from "../../errors.ts";
+import {
+  DeriveKeyPairError,
+  DeserializeError,
+  NotSupportedError,
+  SerializeError,
+} from "../../errors.ts";
 import {
   KEM_USAGES,
   LABEL_DKP_PRK,
@@ -30,7 +35,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._serializePublicKey(key as XCryptoKey);
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 
@@ -38,7 +43,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._importRawKey(key, true);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -46,7 +51,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._serializePrivateKey(key as XCryptoKey);
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 
@@ -54,7 +59,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._importRawKey(key, false);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -69,7 +74,7 @@ export class Secp256k1 implements DhkemPrimitives {
       }
       return await this._importRawKey(key, isPublic);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -80,7 +85,7 @@ export class Secp256k1 implements DhkemPrimitives {
       const pk = await this.derivePublicKey(sk);
       return { publicKey: pk, privateKey: sk };
     } catch (e: unknown) {
-      throw new errors.NotSupportedError(e);
+      throw new NotSupportedError(e);
     }
   }
 
@@ -108,7 +113,7 @@ export class Secp256k1 implements DhkemPrimitives {
         publicKey: await this.derivePublicKey(sk),
       };
     } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
+      throw new DeriveKeyPairError(e);
     }
   }
 
@@ -116,7 +121,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._derivePublicKey(key as XCryptoKey);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -124,7 +129,7 @@ export class Secp256k1 implements DhkemPrimitives {
     try {
       return await this._dh(sk as XCryptoKey, pk as XCryptoKey);
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 

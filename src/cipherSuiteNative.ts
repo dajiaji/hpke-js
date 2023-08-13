@@ -16,7 +16,7 @@ import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
 import { ExportOnly } from "./aeads/exportOnly.ts";
 import { NativeAlgorithm } from "./algorithm.ts";
 import * as consts from "./consts.ts";
-import * as errors from "./errors.ts";
+import { InvalidParamError } from "./errors.ts";
 import {
   RecipientExporterContextImpl,
   SenderExporterContextImpl,
@@ -150,7 +150,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
           this._kem = new DhkemP521HkdfSha512Native();
           break;
         default:
-          throw new errors.InvalidParamError(
+          throw new InvalidParamError(
             `The KEM (${params.kem}) cannot be specified by KemId. Use submodule for the KEM`,
           );
       }
@@ -189,7 +189,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
           this._aead = new ExportOnly();
           break;
         default:
-          throw new errors.InvalidParamError(
+          throw new InvalidParamError(
             `The AEAD (${params.aead}) cannot be specified by AeadId. Use submodule for the AEAD`,
           );
       }
@@ -530,19 +530,19 @@ export class CipherSuiteNative extends NativeAlgorithm {
       params.info !== undefined &&
       params.info.byteLength > consts.INPUT_LENGTH_LIMIT
     ) {
-      throw new errors.InvalidParamError("Too long info");
+      throw new InvalidParamError("Too long info");
     }
     if (params.psk !== undefined) {
       if (params.psk.key.byteLength < consts.MINIMUM_PSK_LENGTH) {
-        throw new errors.InvalidParamError(
+        throw new InvalidParamError(
           `PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`,
         );
       }
       if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError("Too long psk.key");
+        throw new InvalidParamError("Too long psk.key");
       }
       if (params.psk.id.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError("Too long psk.id");
+        throw new InvalidParamError("Too long psk.id");
       }
     }
     return;
