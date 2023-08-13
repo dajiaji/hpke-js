@@ -1,5 +1,16 @@
 # Changes
 
+## Version 1.1.0
+
+Released 2023-08-15
+
+- [(#256) Remove unused utilities.](https://github.com/dajiaji/hpke-js/pull/256)
+- [(#251) Refactor KEM implementation.](https://github.com/dajiaji/hpke-js/pull/251)
+- [(#251) Add NativeAlgorithm as base class for cryptographic algorithms using Web Cryptography API.](https://github.com/dajiaji/hpke-js/pull/251)
+- [(#251) Add KemId.NotAssigned.](https://github.com/dajiaji/hpke-js/pull/251)
+- [(#250) Use deno-fmt-ignore for const byte string.](https://github.com/dajiaji/hpke-js/pull/250)
+- [(#249) Add serialize/deserializePrivatekey to KemInterface.](https://github.com/dajiaji/hpke-js/pull/249)
+
 ## Version 1.0.4
 
 Released 2023-08-11
