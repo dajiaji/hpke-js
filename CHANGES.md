@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.1.1
+
+Released 2023-08-15
+
+- [(#259) Remove imports with asterisk.](https://github.com/dajiaji/hpke-js/pull/259)
+- [(#258) Add sideEffects:false to dnt.ts.](https://github.com/dajiaji/hpke-js/pull/258)
+
 ## Version 1.1.0
 
 Released 2023-08-15
