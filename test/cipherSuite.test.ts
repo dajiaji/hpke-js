@@ -175,7 +175,7 @@ describe("createRecipientContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -208,7 +208,7 @@ describe("createRecipientContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -233,8 +233,8 @@ describe("createSenderContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
-      const skp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
+      const skp = await suite.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -269,7 +269,7 @@ describe("createSenderContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -295,7 +295,7 @@ describe("createSenderContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -321,7 +321,7 @@ describe("createSenderContext", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       await assertRejects(
         () =>
@@ -349,7 +349,7 @@ describe("seal/open", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       // encrypt
       const { ct, enc } = await suite.seal(
@@ -382,7 +382,7 @@ describe("seal/open", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       // encrypt
       const { ct, enc } = await suite.seal(
@@ -415,7 +415,7 @@ describe("seal/open", () => {
         aead: AeadId.Aes128Gcm,
       });
 
-      const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.generateKeyPair();
 
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
@@ -495,12 +495,12 @@ describe("deriveKeyPair", () => {
         kdf: KdfId.HkdfSha256,
         aead: AeadId.Aes128Gcm,
       });
-      const derivedR = await suite.kem.deriveKeyPair(ikmR);
+      const derivedR = await suite.deriveKeyPair(ikmR);
       const derivedPkRm = await suite.kem.serializePublicKey(
         derivedR.publicKey,
       );
       assertEquals(new Uint8Array(derivedPkRm), pkRm);
-      const derivedE = await suite.kem.deriveKeyPair(ikmE);
+      const derivedE = await suite.deriveKeyPair(ikmE);
       const derivedPkEm = await suite.kem.serializePublicKey(
         derivedE.publicKey,
       );
@@ -518,7 +518,7 @@ describe("deriveKeyPair", () => {
       });
 
       await assertRejects(
-        () => suite.kem.deriveKeyPair((new Uint8Array(8193)).buffer),
+        () => suite.deriveKeyPair((new Uint8Array(8193)).buffer),
         errors.InvalidParamError,
         "Too long ikm",
       );
@@ -541,7 +541,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k),
+        () => suite.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -561,7 +561,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k, false),
+        () => suite.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });
@@ -581,7 +581,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k),
+        () => suite.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -601,7 +601,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k, false),
+        () => suite.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });
@@ -621,7 +621,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k),
+        () => suite.importKey("raw", k),
         errors.DeserializeError,
       );
     });
@@ -641,7 +641,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => suite.kem.importKey("raw", k, false),
+        () => suite.importKey("raw", k, false),
         errors.DeserializeError,
       );
     });

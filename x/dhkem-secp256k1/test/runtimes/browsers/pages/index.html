@@ -2,19 +2,35 @@
   <head><title>@hpke/dhkem-secp256k1 test</title></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from './src/hpke-core.js';
+      import {
+        Aes128Gcm,
+        Aes256Gcm,
+        CipherSuite,
+        // DhkemP256HkdfSha256,
+        // DhkemP384HkdfSha384,
+        // DhkemP521HkdfSha512,
+        // ExportOnly,
+        HkdfSha256,
+        HkdfSha384,
+        HkdfSha512,
+      } from "./src/hpke-core.js";
       import { DhkemSecp256k1HkdfSha256 } from './src/hpke-dhkem-secp256k1.js';
 
+      // const kems = [
+      //   new DhkemP256HkdfSha256(),
+      //   new DhkemP384HkdfSha384(),
+      //   new DhkemP521HkdfSha512(),
+      // ];
+
       const kdfs = [
-        KdfId.HkdfSha256,
-        KdfId.HkdfSha384,
-        KdfId.HkdfSha512,
+        new HkdfSha256(),
+        new HkdfSha384(),
+        new HkdfSha512(),
       ];
 
       const aeads = [
-        AeadId.Aes128Gcm,
-        AeadId.Aes256Gcm,
-        // AeadId.Chacha20Poly1305,
+        new Aes128Gcm(),
+        new Aes256Gcm(),
       ];
 
       globalThis.run = async () => {

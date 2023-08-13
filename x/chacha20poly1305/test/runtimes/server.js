@@ -1,5 +1,48 @@
-import * as hpke from "./hpke-core.js";
+import {
+  // AeadId,
+  // Aes128Gcm,
+  // Aes256Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  // ExportOnly,
+  HkdfSha256,
+  HkdfSha384,
+  HkdfSha512,
+  KdfId,
+  KemId,
+} from "./hpke-core.js";
+
 import { Chacha20Poly1305 } from "./hpke-chacha20poly1305.js";
+
+function createKem(id) {
+  switch (id) {
+    case KemId.DhkemP256HkdfSha256:
+      return new DhkemP256HkdfSha256();
+    case KemId.DhkemP384HkdfSha384:
+      return new DhkemP384HkdfSha384();
+    case KemId.DhkemP521HkdfSha512:
+      return new DhkemP521HkdfSha512();
+    default:
+      break;
+  }
+  throw new Error("ng: invalid kem");
+}
+
+function createKdf(id) {
+  switch (id) {
+    case KdfId.HkdfSha256:
+      return new HkdfSha256();
+    case KdfId.HkdfSha384:
+      return new HkdfSha384();
+    case KdfId.HkdfSha512:
+      return new HkdfSha512();
+    default:
+      break;
+  }
+  throw new Error("ng: invalid kdf");
+}
 
 export async function testServer(request) {
   const url = new URL(request.url);
@@ -20,7 +63,11 @@ export async function testServer(request) {
   }
 
   try {
-    const suite = new hpke.CipherSuite({ kem: kem, kdf: kdf, aead: aead });
+    const suite = new CipherSuite({
+      kem: createKem(kem),
+      kdf: createKdf(kdf),
+      aead: aead,
+    });
     const rkp = await suite.kem.generateKeyPair();
     const sender = await suite.createSenderContext({
       recipientPublicKey: rkp.publicKey,
