@@ -1,16 +1,17 @@
 import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
+import { NativeAlgorithm } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
-import { loadSubtleCrypto } from "../webCrypto.ts";
 import { AEAD_USAGES } from "../interfaces/aeadEncryptionContext.ts";
 
-export class AesGcmContext implements AeadEncryptionContext {
+export class AesGcmContext extends NativeAlgorithm
+  implements AeadEncryptionContext {
   private _rawKey: ArrayBuffer;
   private _key: CryptoKey | undefined = undefined;
-  private _api: SubtleCrypto | undefined = undefined;
 
   public constructor(key: ArrayBuffer) {
+    super();
     this._rawKey = key;
   }
 
@@ -19,7 +20,7 @@ export class AesGcmContext implements AeadEncryptionContext {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    await this._setup();
+    await this._setupKey();
     const alg = {
       name: "AES-GCM",
       iv: iv,
@@ -38,7 +39,7 @@ export class AesGcmContext implements AeadEncryptionContext {
     data: ArrayBuffer,
     aad: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    await this._setup();
+    await this._setupKey();
     const alg = {
       name: "AES-GCM",
       iv: iv,
@@ -52,11 +53,11 @@ export class AesGcmContext implements AeadEncryptionContext {
     return pt;
   }
 
-  private async _setup() {
+  protected async _setupKey() {
     if (this._key !== undefined) {
       return;
     }
-    this._api = await loadSubtleCrypto();
+    await this._setup();
     const key = await this._importKey(this._rawKey);
     (new Uint8Array(this._rawKey)).fill(0);
     this._key = key;
