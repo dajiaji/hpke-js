@@ -2,7 +2,7 @@ import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
-import * as consts from "./consts.ts";
+import { INPUT_LENGTH_LIMIT } from "./consts.ts";
 import { ExportError, InvalidParamError } from "./errors.ts";
 import { emitNotSupported } from "./utils/emitNotSupported.ts";
 
@@ -42,7 +42,7 @@ export class ExporterContextImpl implements EncryptionContext {
     exporterContext: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    if (exporterContext.byteLength > consts.INPUT_LENGTH_LIMIT) {
+    if (exporterContext.byteLength > INPUT_LENGTH_LIMIT) {
       throw new InvalidParamError("Too long exporter context");
     }
     try {

@@ -4,7 +4,7 @@ import { ed25519, x25519 } from "npm:@noble/curves@1.1.0/ed25519";
 import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
-import * as consts from "../../consts.ts";
+import { EMPTY } from "../../consts.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
@@ -97,14 +97,14 @@ export class X25519 implements DhkemPrimitives {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     try {
       const dkpPrk = await this._hkdf.labeledExtract(
-        consts.EMPTY,
+        EMPTY,
         LABEL_DKP_PRK,
         new Uint8Array(ikm),
       );
       const rawSk = await this._hkdf.labeledExpand(
         dkpPrk,
         LABEL_SK,
-        consts.EMPTY,
+        EMPTY,
         this._nSk,
       );
       const sk = new XCryptoKey(
