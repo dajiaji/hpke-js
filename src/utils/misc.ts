@@ -58,31 +58,6 @@ export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
 }
 
 /**
- * Concatenates two Uint8Arrays.
- */
-export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  return ret;
-}
-
-/**
- * Concatenates three Uint8Arrays.
- */
-export function concat3(
-  a: Uint8Array,
-  b: Uint8Array,
-  c: Uint8Array,
-): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length + c.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  ret.set(c, a.length + b.length);
-  return ret;
-}
-
-/**
  * Converts hex string to bytes.
  */
 export function hexToBytes(v: string): Uint8Array {

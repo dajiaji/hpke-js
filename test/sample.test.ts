@@ -14,9 +14,8 @@ import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
 import { isDeno } from "../src/utils/misc.ts";
-import { concat } from "../src/utils/misc.ts";
 
-import { loadCrypto } from "./utils.ts";
+import { concat, loadCrypto } from "./utils.ts";
 
 describe("README examples", () => {
   describe("Base mode with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {

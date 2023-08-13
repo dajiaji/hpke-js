@@ -5,11 +5,10 @@ import { describe, it } from "testing/bdd.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts"; // deprecated identifiers as the test target.
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
-import { concat } from "../src/utils/misc.ts";
 
 import * as errors from "../src/errors.ts";
 
-import { hexStringToBytes, loadCrypto } from "./utils.ts";
+import { concat, hexStringToBytes, loadCrypto } from "./utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.

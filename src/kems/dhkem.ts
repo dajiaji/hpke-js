@@ -5,7 +5,7 @@ import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
 import { KemId } from "../identifiers.ts";
-import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
+import { i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
 import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
 import * as errors from "../errors.ts";
@@ -20,6 +20,25 @@ const LABEL_SHARED_SECRET = new Uint8Array([
   115, 104, 97, 114, 101, 100, 95, 115, 101, 99,
   114, 101, 116,
 ]);
+
+function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const ret = new Uint8Array(a.length + b.length);
+  ret.set(a, 0);
+  ret.set(b, a.length);
+  return ret;
+}
+
+function concat3(
+  a: Uint8Array,
+  b: Uint8Array,
+  c: Uint8Array,
+): Uint8Array {
+  const ret = new Uint8Array(a.length + b.length + c.length);
+  ret.set(a, 0);
+  ret.set(b, a.length);
+  ret.set(c, a.length + b.length);
+  return ret;
+}
 
 export class Dhkem implements KemInterface {
   public readonly id: KemId;
