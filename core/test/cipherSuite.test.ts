@@ -22,7 +22,7 @@ import { HkdfSha384 } from "../../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../../src/kdfs/hkdfSha512.ts";
 import { Aes128Gcm } from "../../src/aeads/aesGcm.ts";
 
-import { concat, hexStringToBytes, loadCrypto } from "../../test/utils.ts";
+import { concat, hexToBytes, loadCrypto } from "../../test/utils.ts";
 
 describe("CipherSuite", () => {
   // RFC9180 A.1.
@@ -1417,7 +1417,7 @@ describe("CipherSuite", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1437,7 +1437,7 @@ describe("CipherSuite", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1469,7 +1469,7 @@ describe("CipherSuite", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1501,7 +1501,7 @@ describe("CipherSuite", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1533,7 +1533,7 @@ describe("CipherSuite", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1565,7 +1565,7 @@ describe("CipherSuite", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(

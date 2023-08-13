@@ -22,7 +22,7 @@ import {
   DhkemP521HkdfSha512Native,
 } from "../src/kems/dhkemNative.ts";
 import { isDeno } from "../src/utils/misc.ts";
-import { concat, hexStringToBytes, loadCrypto } from "./utils.ts";
+import { concat, hexToBytes, loadCrypto } from "./utils.ts";
 
 describe("CipherSuiteNative", () => {
   // RFC9180 A.1.
@@ -1417,7 +1417,7 @@ describe("CipherSuiteNative", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1437,7 +1437,7 @@ describe("CipherSuiteNative", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1469,7 +1469,7 @@ describe("CipherSuiteNative", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1501,7 +1501,7 @@ describe("CipherSuiteNative", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1533,7 +1533,7 @@ describe("CipherSuiteNative", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(
@@ -1565,7 +1565,7 @@ describe("CipherSuiteNative", () => {
       // });
 
       // const kStr = "aabbccddeeff";
-      // const k = hexStringToBytes(kStr);
+      // const k = hexToBytes(kStr);
 
       // // assert
       // await assertRejects(

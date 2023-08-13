@@ -15,7 +15,7 @@ export function testVectorPath(): string {
   return "../../test/vectors";
 }
 
-export function hexStringToBytes(v: string): Uint8Array {
+export function hexToBytes(v: string): Uint8Array {
   if (v.length === 0) {
     return new Uint8Array([]);
   }
@@ -26,6 +26,10 @@ export function hexStringToBytes(v: string): Uint8Array {
   return new Uint8Array(res.map(function (h) {
     return parseInt(h, 16);
   }));
+}
+
+export function bytesToHex(v: Uint8Array): string {
+  return [...v].map((x) => x.toString(16).padStart(2, "0")).join("");
 }
 
 export function bytesToBase64Url(v: Uint8Array): string {

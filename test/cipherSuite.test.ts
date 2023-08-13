@@ -4,7 +4,7 @@ import { describe, it } from "testing/bdd.ts";
 import * as errors from "../src/errors.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { hexStringToBytes } from "./utils.ts";
+import { hexToBytes } from "./utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.
@@ -467,7 +467,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -487,7 +487,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -507,7 +507,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -527,7 +527,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -547,7 +547,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -567,7 +567,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(

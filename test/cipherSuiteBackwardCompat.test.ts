@@ -8,7 +8,7 @@ import { isDeno } from "../src/utils/misc.ts";
 
 import * as errors from "../src/errors.ts";
 
-import { concat, hexStringToBytes, loadCrypto } from "./utils.ts";
+import { concat, hexToBytes, loadCrypto } from "./utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
@@ -1169,7 +1169,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1189,7 +1189,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1209,7 +1209,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1229,7 +1229,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1249,7 +1249,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1269,7 +1269,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(

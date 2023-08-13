@@ -2,7 +2,7 @@ import { assertEquals, assertThrows } from "testing/asserts.ts";
 
 import { describe, it } from "testing/bdd.ts";
 
-import { hexToBytes, i2Osp, xor } from "../src/utils/misc.ts";
+import { i2Osp, xor } from "../src/utils/misc.ts";
 
 describe("i2Osp", () => {
   describe("with valid params (5, 1)", () => {
@@ -56,24 +56,6 @@ describe("xor", () => {
       const a = new Uint8Array([0, 1, 1]);
       const b = new Uint8Array([1, 1]);
       assertThrows(() => xor(a, b), Error, "xor: different length inputs");
-    });
-  });
-});
-
-describe("hexToBytes", () => {
-  describe("with empty string", () => {
-    it("return empty Uint8Array", () => {
-      assertEquals(hexToBytes(""), new Uint8Array([]));
-    });
-  });
-
-  describe("with invalid hex string", () => {
-    it("should throw Error", () => {
-      assertThrows(
-        () => hexToBytes("@@@@"),
-        Error,
-        "hexToBytes: not hex string",
-      );
     });
   });
 });
