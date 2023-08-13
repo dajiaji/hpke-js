@@ -37,6 +37,14 @@ export class X448 extends Algorithm implements KemPrimitives {
     return await this._deserializePublicKey(key);
   }
 
+  public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
+    return await this._serializePrivateKey(key as XCryptoKey);
+  }
+
+  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+    return await this._deserializePrivateKey(key);
+  }
+
   public async importKey(
     format: "raw" | "jwk",
     key: ArrayBuffer | JsonWebKey,
@@ -107,6 +115,24 @@ export class X448 extends Algorithm implements KemPrimitives {
     });
   }
 
+  private _serializePrivateKey(k: XCryptoKey): Promise<ArrayBuffer> {
+    return new Promise((resolve) => {
+      resolve(k.key.buffer);
+    });
+  }
+
+  private _deserializePrivateKey(k: ArrayBuffer): Promise<CryptoKey> {
+    return new Promise((resolve, reject) => {
+      if (k.byteLength !== this._nSk && k.byteLength !== this._nSk + 1) {
+        reject(new Error(`Invalid length of the key: ${new Uint8Array(k)}`));
+      } else {
+        resolve(
+          new XCryptoKey(ALG_NAME, new Uint8Array(k), "private", KEM_USAGES),
+        );
+      }
+    });
+  }
+
   private _importRawKey(
     key: ArrayBuffer,
     isPublic: boolean,
@@ -115,7 +141,10 @@ export class X448 extends Algorithm implements KemPrimitives {
       if (isPublic && key.byteLength !== this._nPk) {
         reject(new Error("Invalid public key for the ciphersuite"));
       }
-      if (!isPublic && key.byteLength !== this._nSk) {
+      if (
+        !isPublic &&
+        (key.byteLength !== this._nSk && key.byteLength !== this._nSk + 1)
+      ) {
         reject(new Error("Invalid private key for the ciphersuite"));
       }
       resolve(

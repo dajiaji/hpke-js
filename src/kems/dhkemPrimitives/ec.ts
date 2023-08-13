@@ -5,7 +5,7 @@ import { Algorithm } from "../../algorithm.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
-import { i2Osp } from "../../utils/misc.ts";
+import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
 
 import { EMPTY } from "../../consts.ts";
 
@@ -361,6 +361,28 @@ export class Ec extends Algorithm implements KemPrimitives {
     }
   }
 
+  public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
+    this.checkInit();
+    const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
+    if (!("d" in jwk)) {
+      throw new Error("Not private key");
+    }
+    const ret = base64UrlToBytes(jwk["d"] as string);
+    // const ret = (await this._api.exportKey('spki', key)).slice(24);
+    if (ret.byteLength !== this._nSk) {
+      throw new Error("Invalid length of the key");
+    }
+    return ret;
+  }
+
+  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+    this.checkInit();
+    if (key.byteLength !== this._nSk) {
+      throw new Error("Invalid length of the key");
+    }
+    return await this._importRawKey(key, false);
+  }
+
   public async importKey(
     format: "raw" | "jwk",
     key: ArrayBuffer | JsonWebKey,
@@ -449,7 +471,6 @@ export class Ec extends Algorithm implements KemPrimitives {
     const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
     delete jwk["d"];
     delete jwk["key_ops"];
-    // return await this._api.importKey('jwk', jwk, this._alg, true, KEM_USAGES);
     return await (this._api as SubtleCrypto).importKey(
       "jwk",
       jwk,

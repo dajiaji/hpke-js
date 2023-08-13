@@ -14,6 +14,10 @@ export interface KemPrimitives {
 
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
 
+  serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer>;
+
+  deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey>;
+
   importKey(
     format: "raw" | "jwk",
     key: ArrayBuffer | JsonWebKey,
