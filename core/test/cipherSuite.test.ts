@@ -3,7 +3,6 @@ import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { isDeno } from "../../src/utils/misc.ts";
-import { loadCrypto } from "../../src/webCrypto.ts";
 import { concat } from "../../src/utils/misc.ts";
 
 import {
@@ -24,7 +23,7 @@ import { HkdfSha384 } from "../../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../../src/kdfs/hkdfSha512.ts";
 import { Aes128Gcm } from "../../src/aeads/aesGcm.ts";
 
-import { hexStringToBytes } from "../../test/utils.ts";
+import { hexStringToBytes, loadCrypto } from "../../test/utils.ts";
 
 describe("CipherSuite", () => {
   // RFC9180 A.1.

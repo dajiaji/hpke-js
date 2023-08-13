@@ -1,5 +1,5 @@
 import { KemId } from "../src/identifiers.ts";
-import { isDeno } from "../src/utils/misc.ts";
+import { isBrowser, isCloudflareWorkers, isDeno } from "../src/utils/misc.ts";
 
 export function testVectorPath(): string {
   if (isDeno()) {
@@ -50,5 +50,22 @@ export function kemToKeyGenAlgorithm(kem: KemId): KeyAlgorithm {
       return {
         name: "X25519",
       };
+  }
+}
+
+export async function loadCrypto(): Promise<Crypto> {
+  if (isBrowser() || isCloudflareWorkers()) {
+    if (globalThis.crypto !== undefined) {
+      return globalThis.crypto;
+    }
+    // jsdom
+  }
+
+  try {
+    // @ts-ignore: to ignore "crypto"
+    const { webcrypto } = await import("crypto"); // node:crypto
+    return (webcrypto as unknown as Crypto);
+  } catch (_e: unknown) {
+    throw new Error("Web Cryptograph API not supported");
   }
 }

@@ -22,8 +22,7 @@ import {
   DhkemP521HkdfSha512Native,
 } from "../src/kems/dhkemNative.ts";
 import { concat, isDeno } from "../src/utils/misc.ts";
-import { loadCrypto } from "../src/webCrypto.ts";
-import { hexStringToBytes } from "../test/utils.ts";
+import { hexStringToBytes, loadCrypto } from "./utils.ts";
 
 describe("CipherSuiteNative", () => {
   // RFC9180 A.1.
