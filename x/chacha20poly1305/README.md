@@ -105,14 +105,16 @@ This section shows some typical usage examples.
   <body>
     <script type="module">
       // import * as hpke from "https://esm.sh/hpke-js@1.1.1";
-      import { KemId, KdfId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+      import {
+        CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+      } from "https://esm.sh/@hpke/core@1.1.1";
       import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.1.1";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
-          kem: KemId.DhkemP256HkdfSha256,
-          kdf: KdfId.HkdfSha256,
+          kem: new DhkemP256HkdfSha256(),
+          kdf: new HkdfSha256(),
           aead: new Chacha20Poly1305()
         });
  
@@ -150,15 +152,17 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { KemId, KdfId, CipherSuite } from "@hpke/core";
+import {
+  CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+} from "@hpke/core";
 import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 // const { Chacha20Poly1305 } = require("@hpke/chacha20poly1305");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: KemId.DhkemP256HkdfSha256,
-    kdf: KdfId.HkdfSha256,
+    kem: new DhkemP256HkdfSha256(),
+    kdf: new HkdfSha256(),
     aead: new Chacha20Poly1305(),
   });
 
@@ -193,14 +197,16 @@ doHpke();
 ### Deno
 
 ```js
-import { KemId, KdfId, CipherSuite } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
+import {
+  CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+} from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
 import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.1.1/x/chacha20poly1305/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: KemId.DhkemP256HkdfSha256,
-    kdf: KdfId.HkdfSha256,
+    kem: new DhkemP256HkdfSha256(),
+    kdf: new HkdfSha256(),
     aead: new Chacha20Poly1305(),
   });
 

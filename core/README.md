@@ -34,7 +34,7 @@ Using esm.sh:
 <!-- use a specific version -->
 <script type="module">
   import * as hpke from "https://esm.sh/@hpke/core@1.1.1";
-  // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+  // ...
 </script>
 
 <!-- use the latest stable version -->
@@ -50,7 +50,6 @@ Using unpkg:
 <!-- use a specific version -->
 <script type="module">
   import * as hpke from "https://unpkg.com/@hpke/core@1.1.1/esm/mod.js";
-  import { KemId, KdfId, AeadId, CipherSuite} from "https://unpkg.com/@hpke/core@1.1.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -103,14 +102,16 @@ This section shows some typical usage examples.
   <body>
     <script type="module">
       // import * as hpke from "https://esm.sh/hpke-js@1.1.1";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+      import {
+        Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+      } from "https://esm.sh/@hpke/core@1.1.1";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
-          kem: KemId.DhkemP256HkdfSha256,
-          kdf: KdfId.HkdfSha256,
-          aead: AeadId.Aes128Gcm
+          kem: new DhkemP256HkdfSha256(),
+          kdf: new HkdfSha256(),
+          aead: new Aes128Gcm(),
         });
  
         const rkp = await suite.kem.generateKeyPair();
@@ -147,15 +148,22 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/core";
-// const { KemId, KdfId, AeadId, CipherSuite } = require("@hpke/core");
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "@hpke/core";
+// const {
+//   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+// } = require("@hpke/core");
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: KemId.DhkemP256HkdfSha256,
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kem: new DhkemP256HkdfSha256(),
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
@@ -189,14 +197,16 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
+import {
+  Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+} from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: KemId.DhkemP256HkdfSha256,
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kem: new DhkemP256HkdfSha256(),
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
