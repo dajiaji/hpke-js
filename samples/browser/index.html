@@ -3,14 +3,16 @@
   <body>
     <script type="module">
       // import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/hpke-js";
-      import { KemId, KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core";
+      import {
+        Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+      } from "https://esm.sh/@hpke/core";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
-          kem: KemId.DhkemP256HkdfSha256,
-          kdf: KdfId.HkdfSha256,
-          aead: AeadId.Aes128Gcm
+          kem: new DhkemP256HkdfSha256(),
+          kdf: new HkdfSha256(),
+          aead: new Aes128Gcm(),
         });
  
         const rkp = await suite.kem.generateKeyPair();
