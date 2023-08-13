@@ -1,6 +1,6 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 import type { KemInterface } from "../interfaces/kemInterface.ts";
-import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
+import type { DhkemPrimitives } from "../interfaces/dhkemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
@@ -27,10 +27,10 @@ export class Dhkem implements KemInterface {
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;
   public readonly privateKeySize: number = 0;
-  protected _prim: KemPrimitives;
+  protected _prim: DhkemPrimitives;
   protected _kdf: KdfInterface;
 
-  constructor(id: KemId, prim: KemPrimitives, kdf: KdfInterface) {
+  constructor(id: KemId, prim: DhkemPrimitives, kdf: KdfInterface) {
     this.id = id;
     this._prim = prim;
     this._kdf = kdf;

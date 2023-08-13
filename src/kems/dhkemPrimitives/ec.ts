@@ -1,11 +1,11 @@
-import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
+import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../../algorithm.ts";
 import { EMPTY } from "../../consts.ts";
 import * as errors from "../../errors.ts";
 import { KemId } from "../../identifiers.ts";
-import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/kemPrimitives.ts";
+import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/dhkemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
 import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
 
@@ -71,7 +71,7 @@ const PKCS8_ALG_ID_P_521 = new Uint8Array([
   4, 66,
 ]);
 
-export class Ec extends NativeAlgorithm implements KemPrimitives {
+export class Ec extends NativeAlgorithm implements DhkemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: EcKeyGenParams;
   private _nPk: number;
