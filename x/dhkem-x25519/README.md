@@ -34,8 +34,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.1.1";
-  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@1.1.1";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.0";
+  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@1.2.0";
   // ...
 </script>
 
@@ -52,8 +52,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.1.1/esm/mod.js";
-  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@1.1.1/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.0/esm/mod.js";
+  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@1.2.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -78,8 +78,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
-import * as x25519 from "https://deno.land/x/hpke@1.1.1/x/dhkem-x25519/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
+import * as x25519 from "https://deno.land/x/hpke@1.2.0/x/dhkem-x25519/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -107,8 +107,8 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.1.1";
-      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.1.1";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.0";
+      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.2.0";
 
       globalThis.doHpke = async () => {
 
@@ -195,8 +195,8 @@ doHpke();
 ### Deno
 
 ```js
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
-import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.1.1/x/dhkem-x25519/mod.ts";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
+import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.0/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {
   // setup

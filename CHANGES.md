@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.2.0
+
+Released 2023-08-16
+
+- [(#261) BREAKING CHANGE on hpke/core: Drop KemId/KdfId/AeadId support from CipherSuiteNative.](https://github.com/dajiaji/hpke-js/pull/261)
+
 ## Version 1.1.1
 
 Released 2023-08-15
