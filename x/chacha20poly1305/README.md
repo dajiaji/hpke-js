@@ -6,7 +6,10 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation: [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/chacha20poly1305/mod.ts) | [pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/chacha20poly1305/docs/)
+Documentation:
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/chacha20poly1305/mod.ts)
+|
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/chacha20poly1305/docs/)
 
 </div>
 
@@ -152,9 +155,7 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import {
-  CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-} from "@hpke/core";
+import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "@hpke/core";
 import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 // const { Chacha20Poly1305 } = require("@hpke/chacha20poly1305");
 

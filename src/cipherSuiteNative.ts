@@ -89,14 +89,14 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  * ```ts
  * import {
  *   Aes128Gcm,
- *   DhkemP256HkdfSha256Native,
- *   HkdfSha256Native,
- *   CipherSuiteNative,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ *   CipherSuite,
  * } from "http://deno.land/x/hpke/mod.ts";
  *
- * const suite = new CipherSuiteNative({
- *   kem: new DhkemP256HkdfSha256Native(),
- *   kdf: new HkdfSha256Native(),
+ * const suite = new CipherSuite({
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
  *   aead: new Aes128Gcm(),
  * });
  * ```
@@ -104,9 +104,11 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
  *
  * ```ts
- * import { Aes128Gcm, HkdfSha256, CipherSuiteNative } from "http://deno.land/x/hpke/mod.ts";
+ * import { Aes128Gcm, HkdfSha256, CipherSuite } from "http://deno.land/x/hpke/mod.ts";
+ * // Use an extension module.
  * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
- * const suite = new CipherSuiteNative({
+ *
+ * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
  *   kdf: new HkdfSha256(),
  *   aead: new Aes128Gcm(),

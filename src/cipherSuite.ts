@@ -32,12 +32,43 @@ import { CipherSuiteNative } from "./cipherSuiteNative.ts";
  * - [DEPRECATED] Generates a key pair for the cipher suite.
  * - [DEPRECATED] Derives a key pair for the cipher suite.
  * - [DEPRECATED] Imports and converts a key to a CryptoKey.
- * - Creates an encryption context both for senders and recipients.
- * - Encrypts a message as a single-shot API.
- * - Decrypts an encrypted message as as single-shot API.
+ * - Creates encryption contexts both for senders and recipients.
+ *   - {@link createSenderContext}
+ *   - {@link createRecipientContext}
+ * - Provides single-shot encryption API.
+ *   - {@link seal}
+ *   - {@link open}
  *
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.
+ *
+ * @example Use only ciphersuites supported internally.
+ *
+ * ```ts
+ * import { AeadId, CipherSuite, KdfId, KemId } from "http://deno.land/x/hpke/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: KemId.DhkemP256HkdfSha256,
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
+ *
+ * @example Use a ciphersuite consisting of an external module.
+ *
+ * ```ts
+ * import { AeadId, CipherSuite, KdfId } from "http://deno.land/x/hpke/mod.ts";
+ * // Use an extension module.
+ * import {
+ *   HybridkemX25519Kyber768,
+ * } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new HybridkemX25519Kyber768(),
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
  */
 export class CipherSuite extends CipherSuiteNative {
   /**
