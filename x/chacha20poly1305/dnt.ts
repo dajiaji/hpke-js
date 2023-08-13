@@ -27,8 +27,10 @@ await build({
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
+    module: "./esm/x/chacha20poly1305/mod.js",
     main: "./script/x/chacha20poly1305/mod.js",
-    types: "./script/x/chacha20poly1305/mod.d.ts",
+    types: "./esm/x/chacha20poly1305/mod.d.ts",
+    sideEffects: false,
     exports: {
       ".": {
         "import": "./esm/x/chacha20poly1305/mod.js",

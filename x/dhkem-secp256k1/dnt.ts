@@ -27,8 +27,10 @@ await build({
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
+    module: "./esm/x/dhkem-secp256k1/mod.js",
     main: "./script/x/dhkem-secp256k1/mod.js",
-    types: "./script/x/dhkem-secp256k1/mod.d.ts",
+    types: "./esm/x/dhkem-secp256k1/mod.d.ts",
+    sideEffects: false,
     exports: {
       ".": {
         "import": "./esm/x/dhkem-secp256k1/mod.js",
