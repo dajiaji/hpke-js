@@ -39,17 +39,6 @@ export class Dhkem implements KemInterface {
     this._kdf.init(suiteId);
   }
 
-  public async generateKeyPair(): Promise<CryptoKeyPair> {
-    return await this._prim.generateKeyPair();
-  }
-
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError("Too long ikm");
-    }
-    return await this._prim.deriveKeyPair(ikm);
-  }
-
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
     return await this._prim.serializePublicKey(key);
   }
@@ -72,6 +61,17 @@ export class Dhkem implements KemInterface {
     isPublic = true,
   ): Promise<CryptoKey> {
     return await this._prim.importKey(format, key, isPublic);
+  }
+
+  public async generateKeyPair(): Promise<CryptoKeyPair> {
+    return await this._prim.generateKeyPair();
+  }
+
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
+      throw new errors.InvalidParamError("Too long ikm");
+    }
+    return await this._prim.deriveKeyPair(ikm);
   }
 
   public async encap(
