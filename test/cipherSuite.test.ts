@@ -4,6 +4,7 @@ import { describe, it } from "testing/bdd.ts";
 import * as errors from "../src/errors.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
+import { isDeno } from "../src/utils/misc.ts";
 import { hexToBytes } from "./utils.ts";
 
 describe("constructor", () => {
@@ -438,6 +439,75 @@ describe("seal/open", () => {
 });
 
 describe("deriveKeyPair", () => {
+  describe("with official test-vector for DhkemX25519HkdfSha256.", () => {
+    it("should derive a proper key pair.", async () => {
+      const ikmR = hexToBytes(
+        "6db9df30aa07dd42ee5e8181afdb977e538f5e1fec8a06223f33f7013e525037",
+      );
+      const ikmE = hexToBytes(
+        "7268600d403fce431561aef583ee1613527cff655c1343f29812e66706df3234",
+      );
+      const pkRm = hexToBytes(
+        "3948cfe0ad1ddb695d780e59077195da6c56506b027329794ab02bca80815c4d",
+      );
+      const pkEm = hexToBytes(
+        "37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431",
+      );
+
+      const suite = new CipherSuite({
+        kem: KemId.DhkemX25519HkdfSha256,
+        kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+      const derivedR = await suite.kem.deriveKeyPair(ikmR);
+      const derivedPkRm = await suite.kem.serializePublicKey(
+        derivedR.publicKey,
+      );
+      assertEquals(new Uint8Array(derivedPkRm), pkRm);
+      const derivedE = await suite.kem.deriveKeyPair(ikmE);
+      const derivedPkEm = await suite.kem.serializePublicKey(
+        derivedE.publicKey,
+      );
+      assertEquals(new Uint8Array(derivedPkEm), pkEm);
+    });
+  });
+
+  describe("with official test-vector for DhkemP256HkdfSha256.", () => {
+    it("should derive a proper key pair.", async () => {
+      if (isDeno()) {
+        return;
+      }
+      const ikmR = hexToBytes(
+        "d42ef874c1913d9568c9405407c805baddaffd0898a00f1e84e154fa787b2429",
+      );
+      const ikmE = hexToBytes(
+        "2afa611d8b1a7b321c761b483b6a053579afa4f767450d3ad0f84a39fda587a6",
+      );
+      const pkRm = hexToBytes(
+        "040d97419ae99f13007a93996648b2674e5260a8ebd2b822e84899cd52d87446ea394ca76223b76639eccdf00e1967db10ade37db4e7db476261fcc8df97c5ffd1",
+      );
+      const pkEm = hexToBytes(
+        "04305d35563527bce037773d79a13deabed0e8e7cde61eecee403496959e89e4d0ca701726696d1485137ccb5341b3c1c7aaee90a4a02449725e744b1193b53b5f",
+      );
+
+      const suite = new CipherSuite({
+        kem: KemId.DhkemP256HkdfSha256,
+        kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+      const derivedR = await suite.kem.deriveKeyPair(ikmR);
+      const derivedPkRm = await suite.kem.serializePublicKey(
+        derivedR.publicKey,
+      );
+      assertEquals(new Uint8Array(derivedPkRm), pkRm);
+      const derivedE = await suite.kem.deriveKeyPair(ikmE);
+      const derivedPkEm = await suite.kem.serializePublicKey(
+        derivedE.publicKey,
+      );
+      assertEquals(new Uint8Array(derivedPkEm), pkEm);
+    });
+  });
+
   describe("with too long ikm", () => {
     it("should throw InvalidParamError", async () => {
       // setup
