@@ -9,17 +9,9 @@ import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { loadCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
 
+// deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([
-  72,
-  80,
-  75,
-  69,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
+  72, 80, 75, 69, 0, 0, 0, 0, 0, 0,
 ]);
 
 describe("extract/expand", () => {

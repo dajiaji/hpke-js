@@ -13,17 +13,9 @@ import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 
 import * as errors from "../src/errors.ts";
 
+// deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([
-  72,
-  80,
-  75,
-  69,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
+  72, 80, 75, 69, 0, 0, 0, 0, 0, 0,
 ]);
 const DUMMY_BYTES_12 = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
 const DUMMY_BYTES_16 = new Uint8Array(

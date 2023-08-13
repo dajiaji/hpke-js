@@ -38,62 +38,30 @@ import * as consts from "./consts.ts";
 import * as errors from "./errors.ts";
 
 // b"base_nonce"
+// deno-fmt-ignore
 const LABEL_BASE_NONCE = new Uint8Array([
-  98,
-  97,
-  115,
-  101,
-  95,
-  110,
-  111,
-  110,
-  99,
-  101,
+  98, 97, 115, 101, 95, 110, 111, 110, 99, 101,
 ]);
 // b"exp"
 const LABEL_EXP = new Uint8Array([101, 120, 112]);
 // b"info_hash"
+// deno-fmt-ignore
 const LABEL_INFO_HASH = new Uint8Array([
-  105,
-  110,
-  102,
-  111,
-  95,
-  104,
-  97,
-  115,
-  104,
+  105, 110, 102, 111, 95, 104, 97, 115, 104,
 ]);
 // b"key"
 const LABEL_KEY = new Uint8Array([107, 101, 121]);
 // b"psk_id_hash"
+// deno-fmt-ignore
 const LABEL_PSK_ID_HASH = new Uint8Array([
-  112,
-  115,
-  107,
-  95,
-  105,
-  100,
-  95,
-  104,
-  97,
-  115,
-  104,
+  112, 115, 107, 95, 105, 100, 95, 104, 97, 115, 104,
 ]);
 // b"secret"
 const LABEL_SECRET = new Uint8Array([115, 101, 99, 114, 101, 116]);
 // b"HPKE"
+// deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([
-  72,
-  80,
-  75,
-  69,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
+  72, 80, 75, 69, 0, 0, 0, 0, 0, 0,
 ]);
 
 /**
