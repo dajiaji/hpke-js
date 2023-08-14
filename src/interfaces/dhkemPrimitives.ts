@@ -7,7 +7,7 @@ export const LABEL_DKP_PRK = new Uint8Array([100, 107, 112, 95, 112, 114, 107]);
 // b"sk"
 export const LABEL_SK = new Uint8Array([115, 107]);
 
-export interface KemPrimitives {
+export interface DhkemPrimitives {
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
   deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
@@ -22,11 +22,13 @@ export interface KemPrimitives {
     isPublic: boolean,
   ): Promise<CryptoKey>;
 
-  derivePublicKey(key: CryptoKey): Promise<CryptoKey>;
-
   generateKeyPair(): Promise<CryptoKeyPair>;
 
   deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
 
+  // DHKEM-specific function.
+  derivePublicKey(key: CryptoKey): Promise<CryptoKey>;
+
+  // DHKEM-specific function.
   dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer>;
 }

@@ -1,7 +1,7 @@
 // @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.1.0/secp256k1";
 
-import type { KemPrimitives } from "../../interfaces/kemPrimitives.ts";
+import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { EMPTY } from "../../consts.ts";
@@ -10,12 +10,12 @@ import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../interfaces/kemPrimitives.ts";
+} from "../../interfaces/dhkemPrimitives.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 const ALG_NAME = "ECDH";
 
-export class Secp256k1 implements KemPrimitives {
+export class Secp256k1 implements DhkemPrimitives {
   private _hkdf: KdfInterface;
   private _nPk: number;
   private _nSk: number;
