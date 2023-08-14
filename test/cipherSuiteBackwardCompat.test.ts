@@ -5,12 +5,10 @@ import { describe, it } from "testing/bdd.ts";
 import { Aead, Kdf, Kem } from "../src/identifiers.ts"; // deprecated identifiers as the test target.
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { isDeno } from "../src/utils/misc.ts";
-import { loadCrypto } from "../src/webCrypto.ts";
-import { concat } from "../src/utils/misc.ts";
 
 import * as errors from "../src/errors.ts";
 
-import { hexStringToBytes } from "./utils.ts";
+import { concat, hexToBytes, loadCrypto } from "./utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
@@ -1171,7 +1169,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1191,7 +1189,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1211,7 +1209,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1231,7 +1229,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1251,7 +1249,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(
@@ -1271,7 +1269,7 @@ describe("CipherSuite(backward-compat)", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexStringToBytes(kStr);
+      const k = hexToBytes(kStr);
 
       // assert
       await assertRejects(

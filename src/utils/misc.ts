@@ -44,68 +44,6 @@ export function i2Osp(n: number, w: number): Uint8Array {
 }
 
 /**
- * Executes XOR of two byte strings.
- */
-export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
-  if (a.byteLength !== b.byteLength) {
-    throw new Error("xor: different length inputs");
-  }
-  const buf = new Uint8Array(a.byteLength);
-  for (let i = 0; i < a.byteLength; i++) {
-    buf[i] = a[i] ^ b[i];
-  }
-  return buf;
-}
-
-/**
- * Concatenates two Uint8Arrays.
- */
-export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  return ret;
-}
-
-/**
- * Concatenates three Uint8Arrays.
- */
-export function concat3(
-  a: Uint8Array,
-  b: Uint8Array,
-  c: Uint8Array,
-): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length + c.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  ret.set(c, a.length + b.length);
-  return ret;
-}
-
-/**
- * Converts hex string to bytes.
- */
-export function hexToBytes(v: string): Uint8Array {
-  if (v.length === 0) {
-    return new Uint8Array([]);
-  }
-  const res = v.match(/[\da-f]{2}/gi);
-  if (res == null) {
-    throw new Error("hexToBytes: not hex string");
-  }
-  return new Uint8Array(res.map(function (h) {
-    return parseInt(h, 16);
-  }));
-}
-
-/**
- * Converts bytes to hex string.
- */
-export function bytesToHex(v: Uint8Array): string {
-  return [...v].map((x) => x.toString(16).padStart(2, "0")).join("");
-}
-
-/**
  * Decodes Base64Url-encoded data.
  */
 export function base64UrlToBytes(v: string): Uint8Array {

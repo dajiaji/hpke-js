@@ -1,16 +1,13 @@
 import { assertEquals, assertRejects } from "testing/asserts.ts";
 
-import type { XCryptoKey } from "../src/xCryptoKey.ts";
 import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";
+import type { XCryptoKey } from "../src/xCryptoKey.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
-import { loadSubtleCrypto } from "../src/webCrypto.ts";
-
 import * as errors from "../src/errors.ts";
-
-import { hexStringToBytes, kemToKeyGenAlgorithm } from "./utils.ts";
+import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
+import { hexToBytes, kemToKeyGenAlgorithm, loadSubtleCrypto } from "./utils.ts";
 
 export class ConformanceTester {
   protected _api: SubtleCrypto;
@@ -32,15 +29,15 @@ export class ConformanceTester {
     });
 
     // importKey
-    const pkEm = hexStringToBytes(v.pkEm);
-    const skEm = hexStringToBytes(v.skEm);
-    const pkRm = hexStringToBytes(v.pkRm);
-    const skRm = hexStringToBytes(v.skRm);
+    const pkEm = hexToBytes(v.pkEm);
+    const skEm = hexToBytes(v.skEm);
+    const pkRm = hexToBytes(v.pkRm);
+    const skRm = hexToBytes(v.skRm);
     let skp: CryptoKeyPair | undefined = undefined;
     let pks: CryptoKey | undefined = undefined;
     if (v.skSm !== undefined && v.pkSm !== undefined) {
-      const skSm = hexStringToBytes(v.skSm);
-      const pkSm = hexStringToBytes(v.pkSm);
+      const skSm = hexToBytes(v.skSm);
+      const pkSm = hexToBytes(v.pkSm);
       skp = {
         privateKey: await suite.kem.importKey("raw", skSm, false),
         publicKey: await suite.kem.importKey("raw", pkSm, true),
@@ -65,8 +62,8 @@ export class ConformanceTester {
     };
 
     // deriveKeyPair
-    const ikmE = hexStringToBytes(v.ikmE);
-    const ikmR = hexStringToBytes(v.ikmR);
+    const ikmE = hexToBytes(v.ikmE);
+    const ikmR = hexToBytes(v.ikmR);
     const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer);
     const derivedPkRm = await this.cryptoKeyToBytes(
       derivedR.publicKey,
@@ -81,14 +78,14 @@ export class ConformanceTester {
     assertEquals(derivedPkEm, pkEm);
 
     // create EncryptionContext
-    const info = hexStringToBytes(v.info);
+    const info = hexToBytes(v.info);
     let psk: PreSharedKey | undefined = undefined;
     if (v.psk !== undefined && v.psk_id !== undefined) {
       psk = { id: new ArrayBuffer(0), key: new ArrayBuffer(0) };
-      psk.key = hexStringToBytes(v.psk);
-      psk.id = hexStringToBytes(v.psk_id);
+      psk.key = hexToBytes(v.psk);
+      psk.id = hexToBytes(v.psk_id);
     }
-    const enc = hexStringToBytes(v.enc);
+    const enc = hexToBytes(v.enc);
 
     const sender = await suite.createSenderContext({
       info: info,
@@ -110,9 +107,9 @@ export class ConformanceTester {
     // seal and open
     if (v.aead_id !== 0xFFFF) {
       for (const ve of v.encryptions) {
-        const pt = hexStringToBytes(ve.pt);
-        const aad = hexStringToBytes(ve.aad);
-        const ct = hexStringToBytes(ve.ct);
+        const pt = hexToBytes(ve.pt);
+        const aad = hexToBytes(ve.aad);
+        const ct = hexToBytes(ve.ct);
 
         const sealed = await sender.seal(pt, aad);
         const opened = await recipient.open(sealed, aad);
@@ -125,8 +122,8 @@ export class ConformanceTester {
     for (const ve of v.exports) {
       const ec = ve.exporter_context.length === 0
         ? new ArrayBuffer(0)
-        : hexStringToBytes(ve.exporter_context);
-      const ev = hexStringToBytes(ve.exported_value);
+        : hexToBytes(ve.exporter_context);
+      const ev = hexToBytes(ve.exported_value);
 
       let exported = await sender.export(ec, ve.L);
       assertEquals(new Uint8Array(exported), ev);
@@ -163,7 +160,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
     const alg = kemToKeyGenAlgorithm(kemId);
 
     const cpk = await this._api.importKey("raw", pkb, alg, true, []);
@@ -215,7 +212,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
 
     // assert
     await assertRejects(
@@ -247,7 +244,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
 
     const recipient = await suite.createRecipientContext({
       recipientKey: rkp,
@@ -270,7 +267,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
 
     // assert
     await assertRejects(() =>
@@ -289,7 +286,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
 
     const recipient = await suite.createRecipientContext({
       recipientKey: rkp,
@@ -312,7 +309,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexStringToBytes(pk);
+    const pkb = hexToBytes(pk);
 
     // assert
     if (pkb.length !== 56) {

@@ -6,8 +6,8 @@ import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
-import { loadCrypto } from "../src/webCrypto.ts";
 import { i2Osp } from "../src/utils/misc.ts";
+import { loadCrypto } from "./utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

@@ -4,9 +4,20 @@ import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
 import { ExporterContextImpl } from "./exporterContext.ts";
-import { i2Osp, xor } from "./utils/misc.ts";
+import { i2Osp } from "./utils/misc.ts";
 
 import * as errors from "./errors.ts";
+
+export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
+  if (a.byteLength !== b.byteLength) {
+    throw new Error("xor: different length inputs");
+  }
+  const buf = new Uint8Array(a.byteLength);
+  for (let i = 0; i < a.byteLength; i++) {
+    buf[i] = a[i] ^ b[i];
+  }
+  return buf;
+}
 
 export class EncryptionContextImpl extends ExporterContextImpl {
   // AEAD id.

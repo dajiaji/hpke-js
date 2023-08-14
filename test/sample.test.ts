@@ -1,11 +1,10 @@
 import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
+import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
 import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { isDeno } from "../src/utils/misc.ts";
-import { loadCrypto } from "../src/webCrypto.ts";
-import { concat } from "../src/utils/misc.ts";
+import * as errors from "../src/errors.ts";
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
@@ -14,9 +13,9 @@ import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
-import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
+import { isDeno } from "../src/utils/misc.ts";
 
-import * as errors from "../src/errors.ts";
+import { concat, loadCrypto } from "./utils.ts";
 
 describe("README examples", () => {
   describe("Base mode with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
