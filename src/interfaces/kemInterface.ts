@@ -19,27 +19,6 @@ export interface KemInterface {
   readonly privateKeySize: number;
 
   /**
-   * Generates a key pair.
-   *
-   * If the error occurred, throws {@link NotSupportedError}.
-   *
-   * @returns A key pair generated.
-   * @throws {@link NotSupportedError}
-   */
-  generateKeyPair(): Promise<CryptoKeyPair>;
-
-  /**
-   * Derives a key pair from the byte string ikm.
-   *
-   * If the error occurred, throws {@link DeriveKeyPairError}.
-   *
-   * @param ikm An input keying material.
-   * @returns A key pair derived.
-   * @throws {@link DeriveKeyPairError}
-   */
-  deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
-
-  /**
    * Serializes a public key as CryptoKey to a byte string of length `Npk`.
    *
    * If the error occurred, throws {@link SerializeError}.
@@ -106,6 +85,27 @@ export interface KemInterface {
     key: ArrayBuffer | JsonWebKey,
     isPublic?: boolean,
   ): Promise<CryptoKey>;
+
+  /**
+   * Generates a key pair.
+   *
+   * If the error occurred, throws {@link NotSupportedError}.
+   *
+   * @returns A key pair generated.
+   * @throws {@link NotSupportedError}
+   */
+  generateKeyPair(): Promise<CryptoKeyPair>;
+
+  /**
+   * Derives a key pair from the byte string ikm.
+   *
+   * If the error occurred, throws {@link DeriveKeyPairError}.
+   *
+   * @param ikm An input keying material.
+   * @returns A key pair derived.
+   * @throws {@link DeriveKeyPairError}
+   */
+  deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
 
   /**
    * Generates an ephemeral, fixed-length symmetric key and

@@ -178,77 +178,6 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     }
   }
 
-  private async _importRawKey(
-    key: ArrayBuffer,
-    isPublic: boolean,
-  ): Promise<CryptoKey> {
-    if (isPublic && key.byteLength !== this._nPk) {
-      throw new Error("Invalid public key for the ciphersuite");
-    }
-    if (!isPublic && key.byteLength !== this._nSk) {
-      throw new Error("Invalid private key for the ciphersuite");
-    }
-    if (isPublic) {
-      return await (this._api as SubtleCrypto).importKey(
-        "raw",
-        key,
-        this._alg,
-        true,
-        [],
-      );
-    }
-    return await this._deserializePkcs8Key(new Uint8Array(key));
-  }
-
-  private async _importJWK(
-    key: JsonWebKey,
-    isPublic: boolean,
-  ): Promise<CryptoKey> {
-    if (typeof key.crv === "undefined" || key.crv !== this._alg.namedCurve) {
-      throw new Error(`Invalid crv: ${key.crv}`);
-    }
-    if (isPublic) {
-      if (typeof key.d !== "undefined") {
-        throw new Error("Invalid key: `d` should not be set");
-      }
-      return await (this._api as SubtleCrypto).importKey(
-        "jwk",
-        key,
-        this._alg,
-        true,
-        [],
-      );
-    }
-    if (typeof key.d === "undefined") {
-      throw new Error("Invalid key: `d` not found");
-    }
-    return await (this._api as SubtleCrypto).importKey(
-      "jwk",
-      key,
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
-  }
-
-  public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
-    await this._setup();
-    try {
-      const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
-      delete jwk["d"];
-      delete jwk["key_ops"];
-      return await (this._api as SubtleCrypto).importKey(
-        "jwk",
-        jwk,
-        this._alg,
-        true,
-        [],
-      );
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
-  }
-
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     await this._setup();
     try {
@@ -301,6 +230,24 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     }
   }
 
+  public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
+    await this._setup();
+    try {
+      const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
+      delete jwk["d"];
+      delete jwk["key_ops"];
+      return await (this._api as SubtleCrypto).importKey(
+        "jwk",
+        jwk,
+        this._alg,
+        true,
+        [],
+      );
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
+    }
+  }
+
   public async dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer> {
     try {
       await this._setup();
@@ -316,6 +263,59 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     } catch (e: unknown) {
       throw new errors.SerializeError(e);
     }
+  }
+
+  private async _importRawKey(
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    if (isPublic && key.byteLength !== this._nPk) {
+      throw new Error("Invalid public key for the ciphersuite");
+    }
+    if (!isPublic && key.byteLength !== this._nSk) {
+      throw new Error("Invalid private key for the ciphersuite");
+    }
+    if (isPublic) {
+      return await (this._api as SubtleCrypto).importKey(
+        "raw",
+        key,
+        this._alg,
+        true,
+        [],
+      );
+    }
+    return await this._deserializePkcs8Key(new Uint8Array(key));
+  }
+
+  private async _importJWK(
+    key: JsonWebKey,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    if (typeof key.crv === "undefined" || key.crv !== this._alg.namedCurve) {
+      throw new Error(`Invalid crv: ${key.crv}`);
+    }
+    if (isPublic) {
+      if (typeof key.d !== "undefined") {
+        throw new Error("Invalid key: `d` should not be set");
+      }
+      return await (this._api as SubtleCrypto).importKey(
+        "jwk",
+        key,
+        this._alg,
+        true,
+        [],
+      );
+    }
+    if (typeof key.d === "undefined") {
+      throw new Error("Invalid key: `d` not found");
+    }
+    return await (this._api as SubtleCrypto).importKey(
+      "jwk",
+      key,
+      this._alg,
+      true,
+      KEM_USAGES,
+    );
   }
 
   private async _deserializePkcs8Key(k: Uint8Array): Promise<CryptoKey> {

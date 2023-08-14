@@ -78,14 +78,6 @@ export class X448 implements DhkemPrimitives {
     }
   }
 
-  public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
-    try {
-      return await this._derivePublicKey(key as XCryptoKey);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
-  }
-
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
       const rawSk = ed448.utils.randomPrivateKey();
@@ -122,6 +114,14 @@ export class X448 implements DhkemPrimitives {
       };
     } catch (e: unknown) {
       throw new errors.DeriveKeyPairError(e);
+    }
+  }
+
+  public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
+    try {
+      return await this._derivePublicKey(key as XCryptoKey);
+    } catch (e: unknown) {
+      throw new errors.DeserializeError(e);
     }
   }
 
