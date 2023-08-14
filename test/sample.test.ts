@@ -1,9 +1,8 @@
 import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
+import { AeadId, CipherSuite, KdfId, KemId } from "../mod.ts";
 import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
-import { CipherSuite } from "../src/cipherSuite.ts";
 import * as errors from "../src/errors.ts";
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
