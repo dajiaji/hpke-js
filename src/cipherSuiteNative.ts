@@ -1,24 +1,27 @@
 import type { AeadInterface } from "./interfaces/aeadInterface.ts";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
-import type { KdfInterface } from "./interfaces/kdfInterface.ts";
-import type { KemInterface } from "./interfaces/kemInterface.ts";
-import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
-import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
-import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
-import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 import type {
   RecipientContext,
   SenderContext,
 } from "./interfaces/encryptionContext.ts";
+import type { KdfInterface } from "./interfaces/kdfInterface.ts";
+import type { KemInterface } from "./interfaces/kemInterface.ts";
+import type { KeyScheduleParams } from "./interfaces/keyScheduleParams.ts";
+import type { RecipientContextParams } from "./interfaces/recipientContextParams.ts";
+import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
+import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 
+import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
+import { ExportOnly } from "./aeads/exportOnly.ts";
+import { NativeAlgorithm } from "./algorithm.ts";
+import * as consts from "./consts.ts";
+import * as errors from "./errors.ts";
 import {
   RecipientExporterContextImpl,
   SenderExporterContextImpl,
 } from "./exporterContext.ts";
 import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
-import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
-import { ExportOnly } from "./aeads/exportOnly.ts";
 import {
   HkdfSha256Native,
   HkdfSha384Native,
@@ -26,16 +29,12 @@ import {
 } from "./kdfs/hkdf.ts";
 import { RecipientContextImpl } from "./recipientContext.ts";
 import { SenderContextImpl } from "./senderContext.ts";
-import { loadSubtleCrypto } from "./webCrypto.ts";
 import {
   DhkemP256HkdfSha256Native,
   DhkemP384HkdfSha384Native,
   DhkemP521HkdfSha512Native,
 } from "./kems/dhkemNative.ts";
 import { i2Osp } from "./utils/misc.ts";
-
-import * as consts from "./consts.ts";
-import * as errors from "./errors.ts";
 
 // b"base_nonce"
 // deno-fmt-ignore
@@ -120,8 +119,7 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  * });
  * ```
  */
-export class CipherSuiteNative {
-  private _api: SubtleCrypto | undefined = undefined;
+export class CipherSuiteNative extends NativeAlgorithm {
   private _kem: KemInterface;
   private _kdf: KdfInterface;
   private _aead: AeadInterface;
@@ -135,6 +133,8 @@ export class CipherSuiteNative {
    * @throws {@link InvalidParamError}
    */
   constructor(params: CipherSuiteParams) {
+    super();
+
     // KEM
     if (typeof params.kem !== "number") {
       this._kem = params.kem;
@@ -199,6 +199,7 @@ export class CipherSuiteNative {
     this._suiteId.set(i2Osp(this._kem.id, 2), 4);
     this._suiteId.set(i2Osp(this._kdf.id, 2), 6);
     this._suiteId.set(i2Osp(this._aead.id, 2), 8);
+    this._kdf.init(this._suiteId);
   }
 
   /**
@@ -379,16 +380,6 @@ export class CipherSuiteNative {
   ): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
-  }
-
-  private async _setup() {
-    if (this._api !== undefined) {
-      return;
-    }
-    const api = await loadSubtleCrypto();
-    this._kdf.init(this._suiteId);
-    this._api = api;
-    return;
   }
 
   // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
