@@ -87,7 +87,7 @@ describe("constructor", () => {
           new EncryptionContextImpl(api, kdf, params);
         },
         Error,
-        "createEncryptionContext() is not supported on ExportOnly",
+        "Export only",
       );
     });
   });
@@ -299,7 +299,6 @@ describe("createSenderContext", () => {
             recipientPublicKey: rkpX.publicKey,
           }),
         errors.EncapError,
-        "Invalid public key for the ciphersuite",
       );
     });
   });
@@ -335,7 +334,6 @@ describe("createRecipientContext", () => {
             enc: senderX.enc,
           }),
         errors.DeserializeError,
-        "Invalid public key for the ciphersuite",
       );
     });
   });
@@ -369,7 +367,6 @@ describe("createRecipientContext", () => {
             enc: senderX.enc,
           }),
         errors.DeserializeError,
-        "Invalid public key for the ciphersuite",
       );
     });
   });
@@ -404,7 +401,6 @@ describe("createRecipientContext", () => {
             enc: sender.enc,
           }),
         errors.DecapError,
-        "Invalid public key for the ciphersuite",
       );
     });
   });

@@ -252,7 +252,6 @@ describe("deriveKeyPair", () => {
       assertEquals(kp.publicKey.extractable, true);
       assertEquals(kp.publicKey.algorithm.name, "X25519");
       assertEquals(kp.publicKey.usages.length, 0);
-      // assertEquals(kp.publicKey.usages[0], "deriveBits");
       assertEquals(kp.privateKey.type, "private");
       assertEquals(kp.privateKey.extractable, true);
       assertEquals(kp.privateKey.algorithm.name, "X25519");
@@ -272,10 +271,25 @@ describe("deriveKeyPair", () => {
       assertEquals(kp.publicKey.extractable, true);
       assertEquals(kp.publicKey.algorithm.name, "X448");
       assertEquals(kp.publicKey.usages.length, 0);
-      // assertEquals(kp.publicKey.usages[0], "deriveBits");
       assertEquals(kp.privateKey.type, "private");
       assertEquals(kp.privateKey.extractable, true);
       assertEquals(kp.privateKey.algorithm.name, "X448");
+      assertEquals(kp.privateKey.usages.length, 1);
+      assertEquals(kp.privateKey.usages[0], "deriveBits");
+    });
+
+    it("should return a proper instance with DhkemX25519HkdfSha256 and zero-length ikm", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const ikm = new Uint8Array(0);
+      const kp = await kemContext.deriveKeyPair(ikm.buffer);
+      assertEquals(kp.publicKey.type, "public");
+      assertEquals(kp.publicKey.extractable, true);
+      assertEquals(kp.publicKey.algorithm.name, "X25519");
+      assertEquals(kp.publicKey.usages.length, 0);
+      assertEquals(kp.privateKey.type, "private");
+      assertEquals(kp.privateKey.extractable, true);
+      assertEquals(kp.privateKey.algorithm.name, "X25519");
       assertEquals(kp.privateKey.usages.length, 1);
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
@@ -373,7 +387,7 @@ describe("serialize/deserializePublicKey", () => {
   });
 
   describe("with invalid parameters", () => {
-    it("should throw SerializeError on serializePublicKey with a public key for X25519", async () => {
+    it("should throw SerializeError on DhkemP256HkdfSha256.serializePublicKey with a public key for DhkemX25519HkdfSha256", async () => {
       // assert
       const ctx = new DhkemX25519HkdfSha256();
       const kp = await ctx.generateKeyPair();
@@ -384,11 +398,103 @@ describe("serialize/deserializePublicKey", () => {
       );
     });
 
-    it("should throw DeserializeError on deserializePublicKey with DhkemP256HkdfSha256", async () => {
+    it("should throw SerializeError on DhkemP384HkdfSha384.serializePublicKey with a public key for DhkemX25519HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemX25519HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemP384HkdfSha384();
+      await assertRejects(
+        () => kemContext.serializePublicKey(kp.publicKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemP256HkdfSha256.serializePublicKey with a public key for DhkemX25519HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemX25519HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemP521HkdfSha512();
+      await assertRejects(
+        () => kemContext.serializePublicKey(kp.publicKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemX25519HkdfSha256.serializePublicKey with a public key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemX25519HkdfSha256();
+      await assertRejects(
+        () => kemContext.serializePublicKey(kp.publicKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemX448HkdfSha512.serializePublicKey with a public key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemX448HkdfSha512();
+      await assertRejects(
+        () => kemContext.serializePublicKey(kp.publicKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP256HkdfSha256.deserializePublicKey with invalid length key", async () => {
       // assert
       const kemContext = new DhkemP256HkdfSha256();
       const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(32);
+      const rawKey = new Uint8Array(65 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP384HkdfSha384.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemP384HkdfSha384();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(97 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP521HkdfSha512.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemP521HkdfSha512();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(133 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemX25519HkdfSha256.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(32 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(56 - 1);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
@@ -481,7 +587,7 @@ describe("serialize/deserializePrivateKey", () => {
   });
 
   describe("with invalid parameters", () => {
-    it("should throw SerializeError on serializePrivateKey with a public key for X25519", async () => {
+    it("should throw SerializeError on DhkemP256HkdfSha256.serializePrivateKey with a private key for DhkemX25519HkdfSha256", async () => {
       // assert
       const ctx = new DhkemX25519HkdfSha256();
       const kp = await ctx.generateKeyPair();
@@ -492,11 +598,103 @@ describe("serialize/deserializePrivateKey", () => {
       );
     });
 
-    it("should throw DeserializeError on deserializePrivateKey with DhkemP256HkdfSha256", async () => {
+    it("should throw SerializeError on DhkemP384HkdfSha384.serializePrivateKey with a private key for DhkemX25519HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemX25519HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemP384HkdfSha384();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemP521HkdfSha512.serializePrivateKey with a private key for DhkemX25519HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemX25519HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemP521HkdfSha512();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemX25519HkdfSha256.serializePrivateKey with a private key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemX25519HkdfSha256();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw SerializeError on DhkemX448HkdfSha512.serializePrivateKey with a private key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemX448HkdfSha512();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        errors.SerializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP256HkdfSha256.deserializePrivateKey with invalid length key", async () => {
       // assert
       const kemContext = new DhkemP256HkdfSha256();
       const cryptoApi = await loadCrypto();
-      const rawKey = new Uint8Array(65);
+      const rawKey = new Uint8Array(33);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP384HkdfSha384.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemP384HkdfSha384();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(49);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP521HkdfSha512.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemP521HkdfSha512();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(67);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemX25519HkdfSha256.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(33);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        errors.DeserializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(55);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),

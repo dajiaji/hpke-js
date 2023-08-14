@@ -13,6 +13,6 @@ export class DhkemP521HkdfSha512 extends Dhkem {
   constructor() {
     const kdf = new HkdfSha512();
     const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
-    super(prim, kdf);
+    super(KemId.DhkemP521HkdfSha512, prim, kdf);
   }
 }

@@ -10,7 +10,7 @@ export class HkdfSha256 extends HkdfSha256Native {
     salt: ArrayBuffer,
     ikm: ArrayBuffer,
   ): Promise<ArrayBuffer> {
-    await this.setup();
+    await this._setup();
     if (salt.byteLength === 0) {
       salt = new ArrayBuffer(this.hashSize);
     }

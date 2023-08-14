@@ -4,9 +4,7 @@ import type { KemPrimitives } from "../interfaces/kemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
-import { Algorithm } from "../algorithm.ts";
 import { KemId } from "../identifiers.ts";
-import { loadSubtleCrypto } from "../webCrypto.ts";
 import { concat, concat3, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
 import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
@@ -23,8 +21,8 @@ const LABEL_SHARED_SECRET = new Uint8Array([
   114, 101, 116,
 ]);
 
-export class Dhkem extends Algorithm implements KemInterface {
-  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
+export class Dhkem implements KemInterface {
+  public readonly id: KemId;
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;
   public readonly publicKeySize: number = 0;
@@ -32,67 +30,40 @@ export class Dhkem extends Algorithm implements KemInterface {
   protected _prim: KemPrimitives;
   protected _kdf: KdfInterface;
 
-  constructor(prim: KemPrimitives, kdf: KdfInterface) {
-    super();
+  constructor(id: KemId, prim: KemPrimitives, kdf: KdfInterface) {
+    this.id = id;
     this._prim = prim;
     this._kdf = kdf;
+    const suiteId = new Uint8Array(SUITE_ID_HEADER_KEM);
+    suiteId.set(i2Osp(this.id, 2), 3);
+    this._kdf.init(suiteId);
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    await this._setup();
-    try {
-      return await this._prim.generateKeyPair();
-    } catch (e: unknown) {
-      throw new errors.NotSupportedError(e);
-    }
+    return await this._prim.generateKeyPair();
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
       throw new errors.InvalidParamError("Too long ikm");
     }
-    await this._setup();
-    try {
-      return await this._prim.deriveKeyPair(ikm);
-    } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
-    }
+    return await this._prim.deriveKeyPair(ikm);
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
-    await this._setup();
-    try {
-      return await this._prim.serializePublicKey(key);
-    } catch (e: unknown) {
-      throw new errors.SerializeError(e);
-    }
+    return await this._prim.serializePublicKey(key);
   }
 
   public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
-    await this._setup();
-    try {
-      return await this._prim.deserializePublicKey(key);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.deserializePublicKey(key);
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
-    await this._setup();
-    try {
-      return await this._prim.serializePrivateKey(key);
-    } catch (e: unknown) {
-      throw new errors.SerializeError(e);
-    }
+    return await this._prim.serializePrivateKey(key);
   }
 
   public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    await this._setup();
-    try {
-      return await this._prim.deserializePrivateKey(key);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.deserializePrivateKey(key);
   }
 
   public async importKey(
@@ -100,27 +71,21 @@ export class Dhkem extends Algorithm implements KemInterface {
     key: ArrayBuffer | JsonWebKey,
     isPublic = true,
   ): Promise<CryptoKey> {
-    await this._setup();
-    try {
-      return await this._prim.importKey(format, key, isPublic);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    return await this._prim.importKey(format, key, isPublic);
   }
 
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
-    await this._setup();
-    try {
-      const ke = params.nonEphemeralKeyPair === undefined
-        ? await this.generateKeyPair()
-        : params.nonEphemeralKeyPair;
-      const enc = await this._prim.serializePublicKey(ke.publicKey);
-      const pkrm = await this._prim.serializePublicKey(
-        params.recipientPublicKey,
-      );
+    const ke = params.nonEphemeralKeyPair === undefined
+      ? await this.generateKeyPair()
+      : params.nonEphemeralKeyPair;
+    const enc = await this._prim.serializePublicKey(ke.publicKey);
+    const pkrm = await this._prim.serializePublicKey(
+      params.recipientPublicKey,
+    );
 
+    try {
       let dh: Uint8Array;
       if (params.senderKey === undefined) {
         dh = new Uint8Array(
@@ -164,23 +129,16 @@ export class Dhkem extends Algorithm implements KemInterface {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    let pke: CryptoKey;
-    await this._setup();
-    try {
-      pke = await this._prim.deserializePublicKey(params.enc);
-    } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
-    }
+    const pke = await this._prim.deserializePublicKey(params.enc);
+    const skr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.privateKey
+      : params.recipientKey;
+    const pkr = isCryptoKeyPair(params.recipientKey)
+      ? params.recipientKey.publicKey
+      : await this._prim.derivePublicKey(params.recipientKey);
+    const pkrm = await this._prim.serializePublicKey(pkr);
 
     try {
-      const skr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.privateKey
-        : params.recipientKey;
-      const pkr = isCryptoKeyPair(params.recipientKey)
-        ? params.recipientKey.publicKey
-        : await this._prim.derivePublicKey(params.recipientKey);
-      const pkrm = await this._prim.serializePublicKey(pkr);
-
       let dh: Uint8Array;
       if (params.senderPublicKey === undefined) {
         dh = new Uint8Array(await this._prim.dh(skr, pke));
@@ -213,18 +171,6 @@ export class Dhkem extends Algorithm implements KemInterface {
     } catch (e: unknown) {
       throw new errors.DecapError(e);
     }
-  }
-
-  private async _setup() {
-    if (this._api !== undefined) {
-      return;
-    }
-    const api = await loadSubtleCrypto();
-    const suiteId = new Uint8Array(SUITE_ID_HEADER_KEM);
-    suiteId.set(i2Osp(this.id, 2), 3);
-    this._prim.init(api);
-    this._kdf.init(suiteId);
-    super.init(api);
   }
 
   private async _generateSharedSecret(

@@ -13,6 +13,6 @@ export class DhkemP384HkdfSha384 extends Dhkem {
   constructor() {
     const kdf = new HkdfSha384();
     const prim = new Ec(KemId.DhkemP384HkdfSha384, kdf);
-    super(prim, kdf);
+    super(KemId.DhkemP384HkdfSha384, prim, kdf);
   }
 }

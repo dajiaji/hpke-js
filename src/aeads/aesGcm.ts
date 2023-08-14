@@ -1,7 +1,6 @@
 import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
 import type { AeadInterface } from "../interfaces/aeadInterface.ts";
 
-import { AlgorithmBase } from "../algorithm.ts";
 import { AeadId } from "../identifiers.ts";
 import { loadSubtleCrypto } from "../webCrypto.ts";
 import { AEAD_USAGES } from "../interfaces/aeadEncryptionContext.ts";
@@ -75,7 +74,7 @@ export class AesGcmContext implements AeadEncryptionContext {
   }
 }
 
-export class Aes128Gcm extends AlgorithmBase implements AeadInterface {
+export class Aes128Gcm implements AeadInterface {
   public readonly id: AeadId = AeadId.Aes128Gcm;
   public readonly keySize: number = 16;
   public readonly nonceSize: number = 12;
