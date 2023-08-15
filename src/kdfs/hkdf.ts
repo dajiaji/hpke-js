@@ -1,10 +1,9 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../algorithm.ts";
+import { EMPTY } from "../consts.ts";
+import { InvalidParamError } from "../errors.ts";
 import { KdfId } from "../identifiers.ts";
-
-import * as consts from "../consts.ts";
-import * as errors from "../errors.ts";
 
 // b"HPKE-v1"
 const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
@@ -12,7 +11,7 @@ const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
 export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
   public readonly hashSize: number = 0;
-  protected _suiteId: Uint8Array = consts.EMPTY;
+  protected _suiteId: Uint8Array = EMPTY;
   protected readonly algHash: HmacKeyGenParams = {
     name: "HMAC",
     hash: "SHA-256",
@@ -65,7 +64,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
       salt = new ArrayBuffer(this.hashSize);
     }
     if (salt.byteLength !== this.hashSize) {
-      throw new errors.InvalidParamError(
+      throw new InvalidParamError(
         "The salt length must be the same as the hashSize",
       );
     }
@@ -99,7 +98,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
 
     const okm = new ArrayBuffer(len);
     const p = new Uint8Array(okm);
-    let prev = consts.EMPTY;
+    let prev = EMPTY;
     const mid = new Uint8Array(info);
     const tail = new Uint8Array(1);
 
@@ -175,7 +174,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   }
 
   protected _checkInit(): void {
-    if (this._suiteId === consts.EMPTY) {
+    if (this._suiteId === EMPTY) {
       throw new Error("Not initialized. Call init()");
     }
   }

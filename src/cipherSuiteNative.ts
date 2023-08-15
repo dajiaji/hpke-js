@@ -15,8 +15,8 @@ import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
 import { ExportOnly } from "./aeads/exportOnly.ts";
 import { NativeAlgorithm } from "./algorithm.ts";
-import * as consts from "./consts.ts";
-import * as errors from "./errors.ts";
+import { EMPTY, INPUT_LENGTH_LIMIT, MINIMUM_PSK_LENGTH } from "./consts.ts";
+import { InvalidParamError } from "./errors.ts";
 import {
   RecipientExporterContextImpl,
   SenderExporterContextImpl,
@@ -150,7 +150,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
           this._kem = new DhkemP521HkdfSha512Native();
           break;
         default:
-          throw new errors.InvalidParamError(
+          throw new InvalidParamError(
             `The KEM (${params.kem}) cannot be specified by KemId. Use submodule for the KEM`,
           );
       }
@@ -189,7 +189,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
           this._aead = new ExportOnly();
           break;
         default:
-          throw new errors.InvalidParamError(
+          throw new InvalidParamError(
             `The AEAD (${params.aead}) cannot be specified by AeadId. Use submodule for the AEAD`,
           );
       }
@@ -353,7 +353,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
   public async seal(
     params: SenderContextParams,
     pt: ArrayBuffer,
-    aad: ArrayBuffer = consts.EMPTY,
+    aad: ArrayBuffer = EMPTY,
   ): Promise<CipherSuiteSealResponse> {
     const ctx = await this.createSenderContext(params);
     return {
@@ -376,7 +376,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
   public async open(
     params: RecipientContextParams,
     ct: ArrayBuffer,
-    aad: ArrayBuffer = consts.EMPTY,
+    aad: ArrayBuffer = EMPTY,
   ): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
@@ -408,19 +408,19 @@ export class CipherSuiteNative extends NativeAlgorithm {
     // this.verifyPskInputs(mode, params);
 
     const pskId = params.psk === undefined
-      ? consts.EMPTY
+      ? EMPTY
       : new Uint8Array(params.psk.id);
     const pskIdHash = await this._kdf.labeledExtract(
-      consts.EMPTY,
+      EMPTY,
       LABEL_PSK_ID_HASH,
       pskId,
     );
 
     const info = params.info === undefined
-      ? consts.EMPTY
+      ? EMPTY
       : new Uint8Array(params.info);
     const infoHash = await this._kdf.labeledExtract(
-      consts.EMPTY,
+      EMPTY,
       LABEL_INFO_HASH,
       info,
     );
@@ -433,7 +433,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
     keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
 
     const psk = params.psk === undefined
-      ? consts.EMPTY
+      ? EMPTY
       : new Uint8Array(params.psk.key);
     const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
 
@@ -528,21 +528,21 @@ export class CipherSuiteNative extends NativeAlgorithm {
   private _validateInputLength(params: KeyScheduleParams) {
     if (
       params.info !== undefined &&
-      params.info.byteLength > consts.INPUT_LENGTH_LIMIT
+      params.info.byteLength > INPUT_LENGTH_LIMIT
     ) {
-      throw new errors.InvalidParamError("Too long info");
+      throw new InvalidParamError("Too long info");
     }
     if (params.psk !== undefined) {
-      if (params.psk.key.byteLength < consts.MINIMUM_PSK_LENGTH) {
-        throw new errors.InvalidParamError(
-          `PSK must have at least ${consts.MINIMUM_PSK_LENGTH} bytes`,
+      if (params.psk.key.byteLength < MINIMUM_PSK_LENGTH) {
+        throw new InvalidParamError(
+          `PSK must have at least ${MINIMUM_PSK_LENGTH} bytes`,
         );
       }
-      if (params.psk.key.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError("Too long psk.key");
+      if (params.psk.key.byteLength > INPUT_LENGTH_LIMIT) {
+        throw new InvalidParamError("Too long psk.key");
       }
-      if (params.psk.id.byteLength > consts.INPUT_LENGTH_LIMIT) {
-        throw new errors.InvalidParamError("Too long psk.id");
+      if (params.psk.id.byteLength > INPUT_LENGTH_LIMIT) {
+        throw new InvalidParamError("Too long psk.id");
       }
     }
     return;

@@ -4,11 +4,10 @@ import type { DhkemPrimitives } from "../interfaces/dhkemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
+import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
+import { DecapError, EncapError, InvalidParamError } from "../errors.ts";
 import { KemId } from "../identifiers.ts";
 import { i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
-
-import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
-import * as errors from "../errors.ts";
 
 // b"KEM"
 const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
@@ -88,7 +87,7 @@ export class Dhkem implements KemInterface {
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError("Too long ikm");
+      throw new InvalidParamError("Too long ikm");
     }
     return await this._prim.deriveKeyPair(ikm);
   }
@@ -143,7 +142,7 @@ export class Dhkem implements KemInterface {
         sharedSecret: sharedSecret,
       };
     } catch (e: unknown) {
-      throw new errors.EncapError(e);
+      throw new EncapError(e);
     }
   }
 
@@ -188,7 +187,7 @@ export class Dhkem implements KemInterface {
       }
       return await this._generateSharedSecret(dh, kemContext);
     } catch (e: unknown) {
-      throw new errors.DecapError(e);
+      throw new DecapError(e);
     }
   }
 

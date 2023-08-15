@@ -2,10 +2,9 @@ import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
+import { INPUT_LENGTH_LIMIT } from "./consts.ts";
+import { ExportError, InvalidParamError } from "./errors.ts";
 import { emitNotSupported } from "./utils/emitNotSupported.ts";
-
-import * as consts from "./consts.ts";
-import * as errors from "./errors.ts";
 
 // b"sec"
 const LABEL_SEC = new Uint8Array([115, 101, 99]);
@@ -43,8 +42,8 @@ export class ExporterContextImpl implements EncryptionContext {
     exporterContext: ArrayBuffer,
     len: number,
   ): Promise<ArrayBuffer> {
-    if (exporterContext.byteLength > consts.INPUT_LENGTH_LIMIT) {
-      throw new errors.InvalidParamError("Too long exporter context");
+    if (exporterContext.byteLength > INPUT_LENGTH_LIMIT) {
+      throw new InvalidParamError("Too long exporter context");
     }
     try {
       return await this._kdf.labeledExpand(
@@ -54,7 +53,7 @@ export class ExporterContextImpl implements EncryptionContext {
         len,
       );
     } catch (e: unknown) {
-      throw new errors.ExportError(e);
+      throw new ExportError(e);
     }
   }
 }

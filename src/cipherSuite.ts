@@ -3,6 +3,7 @@ import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
 import { ExportOnly } from "./aeads/exportOnly.ts";
 import { Chacha20Poly1305 } from "./aeads/chacha20Poly1305.ts";
+import { InvalidParamError } from "./errors.ts";
 import { HkdfSha256 } from "./kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "./kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "./kdfs/hkdfSha512.ts";
@@ -13,8 +14,6 @@ import { DhkemX25519HkdfSha256 } from "./kems/dhkemX25519.ts";
 import { DhkemX448HkdfSha512 } from "./kems/dhkemX448.ts";
 import { AeadId, KdfId, KemId } from "./identifiers.ts";
 import { CipherSuiteNative } from "./cipherSuiteNative.ts";
-
-import * as errors from "./errors.ts";
 
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,
@@ -64,7 +63,7 @@ export class CipherSuite extends CipherSuiteNative {
           params.kem = new DhkemX448HkdfSha512();
           break;
         default:
-          throw new errors.InvalidParamError(
+          throw new InvalidParamError(
             `The KEM (${params.kem}) cannot be specified by KemId. Use submodule for the KEM`,
           );
       }

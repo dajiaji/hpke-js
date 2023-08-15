@@ -3,10 +3,9 @@ import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
+import { MessageLimitReachedError } from "./errors.ts";
 import { ExporterContextImpl } from "./exporterContext.ts";
 import { i2Osp } from "./utils/misc.ts";
-
-import * as errors from "./errors.ts";
 
 export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
   if (a.byteLength !== b.byteLength) {
@@ -61,7 +60,7 @@ export class EncryptionContextImpl extends ExporterContextImpl {
   protected incrementSeq(k: KeyInfo) {
     // if (this.seq >= (1 << (8 * this.baseNonce.byteLength)) - 1) {
     if (k.seq > Number.MAX_SAFE_INTEGER) {
-      throw new errors.MessageLimitReachedError("Message limit reached");
+      throw new MessageLimitReachedError("Message limit reached");
     }
     k.seq += 1;
     return;

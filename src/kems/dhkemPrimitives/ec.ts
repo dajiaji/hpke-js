@@ -3,7 +3,12 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../../algorithm.ts";
 import { EMPTY } from "../../consts.ts";
-import * as errors from "../../errors.ts";
+import {
+  DeriveKeyPairError,
+  DeserializeError,
+  NotSupportedError,
+  SerializeError,
+} from "../../errors.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/dhkemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
@@ -123,7 +128,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     try {
       return await (this._api as SubtleCrypto).exportKey("raw", key);
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 
@@ -132,7 +137,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     try {
       return await this._importRawKey(key, true);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -145,7 +150,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
       }
       return base64UrlToBytes(jwk["d"] as string);
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 
@@ -154,7 +159,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     try {
       return await this._importRawKey(key, false);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -174,7 +179,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
       }
       return await this._importJWK(key as JsonWebKey, isPublic);
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -187,7 +192,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
         KEM_USAGES,
       );
     } catch (e: unknown) {
-      throw new errors.NotSupportedError(e);
+      throw new NotSupportedError(e);
     }
   }
 
@@ -226,7 +231,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
         publicKey: await this.derivePublicKey(sk),
       };
     } catch (e: unknown) {
-      throw new errors.DeriveKeyPairError(e);
+      throw new DeriveKeyPairError(e);
     }
   }
 
@@ -244,7 +249,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
         [],
       );
     } catch (e: unknown) {
-      throw new errors.DeserializeError(e);
+      throw new DeserializeError(e);
     }
   }
 
@@ -261,7 +266,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
       );
       return bits;
     } catch (e: unknown) {
-      throw new errors.SerializeError(e);
+      throw new SerializeError(e);
     }
   }
 
