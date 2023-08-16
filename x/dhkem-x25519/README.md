@@ -6,7 +6,10 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation: [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-x25519/mod.ts) | [pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x25519/docs/)
+Documentation:
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-x25519/mod.ts)
+|
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x25519/docs/)
 
 </div>
 
@@ -104,15 +107,15 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.1.1";
       import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.1.1";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
           kem: new DhkemX25519HkdfSha256(),
-          kdf: KdfId.HkdfSha256,
-          aead: AeadId.Aes128Gcm
+          kdf: new HkdfSha256(),
+          aead: new Aes128Gcm(),
         });
  
         const rkp = await suite.kem.generateKeyPair();
@@ -149,7 +152,7 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "@hpke/core";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 // const { DhkemX25519HkdfSha256 } = require("@hpke/dhkem-x25519");
 
@@ -157,8 +160,8 @@ async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemX25519HkdfSha256(),
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
@@ -192,15 +195,15 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
 import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.1.1/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemX25519HkdfSha256(),
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();

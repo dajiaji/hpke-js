@@ -1,4 +1,5 @@
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
+import type { KemInterface } from "./interfaces/kemInterface.ts";
 
 import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
 import { ExportOnly } from "./aeads/exportOnly.ts";
@@ -31,12 +32,43 @@ import { CipherSuiteNative } from "./cipherSuiteNative.ts";
  * - [DEPRECATED] Generates a key pair for the cipher suite.
  * - [DEPRECATED] Derives a key pair for the cipher suite.
  * - [DEPRECATED] Imports and converts a key to a CryptoKey.
- * - Creates an encryption context both for senders and recipients.
- * - Encrypts a message as a single-shot API.
- * - Decrypts an encrypted message as as single-shot API.
+ * - Creates encryption contexts both for senders and recipients.
+ *   - {@link createSenderContext}
+ *   - {@link createRecipientContext}
+ * - Provides single-shot encryption API.
+ *   - {@link seal}
+ *   - {@link open}
  *
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.
+ *
+ * @example Use only ciphersuites supported internally.
+ *
+ * ```ts
+ * import { AeadId, CipherSuite, KdfId, KemId } from "http://deno.land/x/hpke/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: KemId.DhkemP256HkdfSha256,
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
+ *
+ * @example Use a ciphersuite consisting of an external module.
+ *
+ * ```ts
+ * import { AeadId, CipherSuite, KdfId } from "http://deno.land/x/hpke/mod.ts";
+ * // Use an extension module.
+ * import {
+ *   HybridkemX25519Kyber768,
+ * } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new HybridkemX25519Kyber768(),
+ *   kdf: KdfId.HkdfSha256,
+ *   aead: AeadId.Aes128Gcm,
+ * });
+ * ```
  */
 export class CipherSuite extends CipherSuiteNative {
   /**
@@ -104,5 +136,66 @@ export class CipherSuite extends CipherSuiteNative {
       }
     }
     super(params);
+  }
+
+  /**
+   * Generates a key pair for the cipher suite.
+   *
+   * If the error occurred, throws {@link NotSupportedError}.
+   *
+   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
+   *
+   * @returns A key pair generated.
+   * @throws {@link NotSupportedError}
+   */
+  public async generateKeyPair(): Promise<CryptoKeyPair> {
+    await this._setup();
+    return await (this._kem as KemInterface).generateKeyPair();
+  }
+
+  /**
+   * Derives a key pair for the cipher suite in the manner
+   * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
+   *
+   * If the error occurred, throws {@link DeriveKeyPairError}.
+   *
+   * @deprecated Use {@link KemInterface.deriveKeyPair} instead.
+   *
+   * @param ikm A byte string of input keying material. The maximum length is 128 bytes.
+   * @returns A key pair derived.
+   * @throws {@link DeriveKeyPairError}
+   */
+  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+    await this._setup();
+    return await (this._kem as KemInterface).deriveKeyPair(ikm);
+  }
+
+  /**
+   * Imports a public or private key and converts to a {@link CryptoKey}.
+   *
+   * Since key parameters for {@link createSenderContext} or {@link createRecipientContext}
+   * are {@link CryptoKey} format, you have to use this function to convert provided keys
+   * to {@link CryptoKey}.
+   *
+   * Basically, this is a thin wrapper function of
+   * [SubtleCrypto.importKey](https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey).
+   *
+   * If the error occurred, throws {@link DeserializeError}.
+   *
+   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
+   *
+   * @param format For now, `'raw'` and `'jwk'` are supported.
+   * @param key A byte string of a raw key or A {@link JsonWebKey} object.
+   * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
+   * @returns A public or private CryptoKey.
+   * @throws {@link DeserializeError}
+   */
+  public async importKey(
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKey,
+    isPublic = true,
+  ): Promise<CryptoKey> {
+    await this._setup();
+    return await (this._kem as KemInterface).importKey(format, key, isPublic);
   }
 }

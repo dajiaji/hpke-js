@@ -1,4 +1,14 @@
 import { CipherSuiteNative } from "../../src/cipherSuiteNative.ts";
+import {
+  HkdfSha256Native,
+  HkdfSha384Native,
+  HkdfSha512Native,
+} from "../../src/kdfs/hkdf.ts";
+import {
+  DhkemP256HkdfSha256Native,
+  DhkemP384HkdfSha384Native,
+  DhkemP521HkdfSha512Native,
+} from "../../src/kems/dhkemNative.ts";
 
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,
@@ -23,35 +33,50 @@ import { CipherSuiteNative } from "../../src/cipherSuiteNative.ts";
  *
  * This class provides following functions:
  *
- * - [DEPRECATED] Generates a key pair for the cipher suite.
- * - [DEPRECATED] Derives a key pair for the cipher suite.
- * - [DEPRECATED] Imports and converts a key to a CryptoKey.
- * - Creates an encryption context both for senders and recipients.
- * - Encrypts a message as a single-shot API.
- * - Decrypts an encrypted message as as single-shot API.
+ * - Creates encryption contexts both for senders and recipients.
+ *   - {@link createSenderContext}
+ *   - {@link createRecipientContext}
+ * - Provides single-shot encryption API.
+ *   - {@link seal}
+ *   - {@link open}
  *
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.
  *
  * @example Use only ciphersuites supported by Web Cryptography API.
+ *
  * ```ts
- * import { KemId, KdfId, AeadId, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
+ * import {
+ *   Aes128Gcm,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ *   CipherSuite,
+ * } from "http://deno.land/x/hpke/core/mod.ts";
+ *
  * const suite = new CipherSuite({
- *   kem: KemId.DhkemP256HkdfSha256,
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes128Gcm(),
  * });
  * ```
  *
  * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
+ *
  * ```ts
- * import { KdfId, AeadId, CipherSuiteNative } from "http://deno.land/x/hpke/core/mod.ts";
+ * import { Aes128Gcm, HkdfSha256, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
  * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
  * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes128Gcm(),
  * });
  * ```
  */
 export class CipherSuite extends CipherSuiteNative {}
+
+export class DhkemP256HkdfSha256 extends DhkemP256HkdfSha256Native {}
+export class DhkemP384HkdfSha384 extends DhkemP384HkdfSha384Native {}
+export class DhkemP521HkdfSha512 extends DhkemP521HkdfSha512Native {}
+export class HkdfSha256 extends HkdfSha256Native {}
+export class HkdfSha384 extends HkdfSha384Native {}
+export class HkdfSha512 extends HkdfSha512Native {}

@@ -5,6 +5,7 @@
   },
   "fmt": {
     "include": [
+      "README.md",
       "deno.json",
       "dnt.ts",
       "mod.ts",

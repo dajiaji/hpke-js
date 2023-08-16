@@ -2,23 +2,36 @@
   <head><title>@hpke/chacha20poly1305 test</title></head>
   <body>
     <script type="module">
-      import { KemId, KdfId, CipherSuite } from './src/hpke-core.js';
+      import {
+        // Aes128Gcm,
+        // Aes256Gcm,
+        CipherSuite,
+        DhkemP256HkdfSha256,
+        DhkemP384HkdfSha384,
+        DhkemP521HkdfSha512,
+        // ExportOnly,
+        HkdfSha256,
+        HkdfSha384,
+        HkdfSha512,
+      } from "./src/hpke-core.js";
       import { Chacha20Poly1305 } from './src/hpke-chacha20poly1305.js';
 
       const kems = [
-        KemId.DhkemP256HkdfSha256,
-        KemId.DhkemP384HkdfSha384,
-        KemId.DhkemP521HkdfSha512,
-        // KemId.DhkemSecp256K1HkdfSha256,
-        // KemId.DhkemX25519HkdfSha256,
-        // KemId.DhkemX448HkdfSha512,
+        new DhkemP256HkdfSha256(),
+        new DhkemP384HkdfSha384(),
+        new DhkemP521HkdfSha512(),
       ];
 
       const kdfs = [
-        KdfId.HkdfSha256,
-        KdfId.HkdfSha384,
-        KdfId.HkdfSha512,
+        new HkdfSha256(),
+        new HkdfSha384(),
+        new HkdfSha512(),
       ];
+
+      // const aeads = [
+      //   new Aes128Gcm(),
+      //   new Aes256Gcm(),
+      // ];
 
       globalThis.run = async () => {
         let pass = 0;

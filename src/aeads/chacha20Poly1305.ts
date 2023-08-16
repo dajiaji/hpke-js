@@ -70,12 +70,13 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
  * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
  *
  * @example
+ *
  * ```ts
- * import { KemId, KdfId, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
+ * import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "http://deno.land/x/hpke/core/mod.ts";
  * import { Chacha20Poly1305 } from "https://deno.land/x/hpke/x/chach20poly1305/mod.ts";
  * const suite = new CipherSuite({
- *   kem: KemId.DhkemP256HkdfSha256,
- *   kdf: KdfId.HkdfSha256,
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
  *   aead: new Chacha20Poly1305(),
  * });
  * ```

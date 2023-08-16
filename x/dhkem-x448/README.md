@@ -6,7 +6,10 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation: [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-x448/mod.ts) | [pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x448/docs/)
+Documentation:
+[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-x448/mod.ts)
+|
+[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x448/docs/)
 
 </div>
 
@@ -104,15 +107,15 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.1.1";
       import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.1.1";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
           kem: new DhkemX448HkdfSha512(),
-          kdf: KdfId.HkdfSha512,
-          aead: AeadId.Aes128Gcm
+          kdf: new HkdfSha512(),
+          aead: new Aes256Gcm(),
         });
  
         const rkp = await suite.kem.generateKeyPair();
@@ -149,7 +152,7 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "@hpke/core";
+import { Aes256Gcm, CipherSuite, HkdfSha512 } from "@hpke/core";
 import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 // const { DhkemX448HkdfSha512 } = require("@hpke/dhkem-x448");
 
@@ -157,8 +160,8 @@ async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemX448HkdfSha512(),
-    kdf: KdfId.HkdfSha512,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha512(),
+    aead: new Aes256Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
@@ -199,8 +202,8 @@ async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemX448HkdfSha512(),
-    kdf: KdfId.HkdfSha512,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha512(),
+    aead: new Aes256Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();

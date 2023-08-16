@@ -107,15 +107,15 @@ This section shows some typical usage examples.
   <head></head>
   <body>
     <script type="module">
-      import { KdfId, AeadId, CipherSuite } from "https://esm.sh/@hpke/core@1.1.1";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.1.1";
       import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@1.1.1";
 
       globalThis.doHpke = async () => {
 
         const suite = new CipherSuite({
           kem: new DhkemSecp256k1HkdfSha256(),
-          kdf: KdfId.HkdfSha256,
-          aead: AeadId.Aes128Gcm
+          kdf: new HkdfSha256(),
+          aead: new Aes128Gcm(),
         });
  
         const rkp = await suite.kem.generateKeyPair();
@@ -152,7 +152,7 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { AeadId, CipherSuite, KdfId } from "@hpke/core";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { DhkemSecp256k1HkdfSha256 } from "@hpke/dhkem-secp256k1";
 // const { DhkemSecp256k1HkdfSha256 } = require("@hpke/dhkem-secp256k1");
 
@@ -160,8 +160,8 @@ async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemSecp256k1HkdfSha256(),
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
@@ -195,15 +195,15 @@ doHpke();
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
+import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://deno.land/x/hpke@1.1.1/core/mod.ts";
 import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@1.1.1/x/dhkem-secp256k1/mod.ts";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
     kem: new DhkemSecp256k1HkdfSha256(),
-    kdf: KdfId.HkdfSha256,
-    aead: AeadId.Aes128Gcm,
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();

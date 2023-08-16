@@ -12,8 +12,6 @@ import type { RecipientContextParams } from "./interfaces/recipientContextParams
 import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 import type { SenderContextParams } from "./interfaces/senderContextParams.ts";
 
-import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
-import { ExportOnly } from "./aeads/exportOnly.ts";
 import { NativeAlgorithm } from "./algorithm.ts";
 import { EMPTY, INPUT_LENGTH_LIMIT, MINIMUM_PSK_LENGTH } from "./consts.ts";
 import { InvalidParamError } from "./errors.ts";
@@ -21,19 +19,9 @@ import {
   RecipientExporterContextImpl,
   SenderExporterContextImpl,
 } from "./exporterContext.ts";
-import { AeadId, KdfId, KemId, Mode } from "./identifiers.ts";
-import {
-  HkdfSha256Native,
-  HkdfSha384Native,
-  HkdfSha512Native,
-} from "./kdfs/hkdf.ts";
+import { AeadId, Mode } from "./identifiers.ts";
 import { RecipientContextImpl } from "./recipientContext.ts";
 import { SenderContextImpl } from "./senderContext.ts";
-import {
-  DhkemP256HkdfSha256Native,
-  DhkemP384HkdfSha384Native,
-  DhkemP521HkdfSha512Native,
-} from "./kems/dhkemNative.ts";
 import { i2Osp } from "./utils/misc.ts";
 
 // b"base_nonce"
@@ -77,8 +65,8 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  *   - DHKEM(X448, HKDF-SHA512)
  *   - ChaCha20Poly1305
  *
- * In addtion, the HKDF functions contained in this `CipherSuiteNative`
- * class can only derive keys of the same length as the `hashSize`.
+ * In addtion, the HKDF functions contained in this class can only derive
+ * keys of the same length as the `hashSize`.
  *
  * If you want to use the unsupported cryptographic algorithms
  * above or derive keys longer than the `hashSize`,
@@ -86,12 +74,12 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  *
  * This class provides following functions:
  *
- * - [DEPRECATED] Generates a key pair for the cipher suite.
- * - [DEPRECATED] Derives a key pair for the cipher suite.
- * - [DEPRECATED] Imports and converts a key to a CryptoKey.
- * - Creates an encryption context both for senders and recipients.
- * - Encrypts a message as a single-shot API.
- * - Decrypts an encrypted message as as single-shot API.
+ * - Creates encryption contexts both for senders and recipients.
+ *   - {@link createSenderContext}
+ *   - {@link createRecipientContext}
+ * - Provides single-shot encryption API.
+ *   - {@link seal}
+ *   - {@link open}
  *
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.
@@ -99,28 +87,36 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  * @example Use only ciphersuites supported by Web Cryptography API.
  *
  * ```ts
- * import { KemId, KdfId, AeadId, CipherSuiteNative } from "http://deno.land/x/hpke/mod.ts";
- * const suite = new CipherSuiteNative({
- *   kem: KemId.DhkemP256HkdfSha256,
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
+ * import {
+ *   Aes128Gcm,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ *   CipherSuite,
+ * } from "http://deno.land/x/hpke/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes128Gcm(),
  * });
  * ```
  *
  * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
  *
  * ```ts
- * import { KdfId, AeadId, CipherSuiteNative } from "http://deno.land/x/hpke/mod.ts";
+ * import { Aes128Gcm, HkdfSha256, CipherSuite } from "http://deno.land/x/hpke/mod.ts";
+ * // Use an extension module.
  * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
- * const suite = new CipherSuiteNative({
+ *
+ * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes128Gcm(),
  * });
  * ```
  */
 export class CipherSuiteNative extends NativeAlgorithm {
-  private _kem: KemInterface;
+  protected _kem: KemInterface;
   private _kdf: KdfInterface;
   private _aead: AeadInterface;
   private _suiteId: Uint8Array;
@@ -136,64 +132,22 @@ export class CipherSuiteNative extends NativeAlgorithm {
     super();
 
     // KEM
-    if (typeof params.kem !== "number") {
-      this._kem = params.kem;
-    } else {
-      switch (params.kem) {
-        case KemId.DhkemP256HkdfSha256:
-          this._kem = new DhkemP256HkdfSha256Native();
-          break;
-        case KemId.DhkemP384HkdfSha384:
-          this._kem = new DhkemP384HkdfSha384Native();
-          break;
-        case KemId.DhkemP521HkdfSha512:
-          this._kem = new DhkemP521HkdfSha512Native();
-          break;
-        default:
-          throw new InvalidParamError(
-            `The KEM (${params.kem}) cannot be specified by KemId. Use submodule for the KEM`,
-          );
-      }
+    if (typeof params.kem === "number") {
+      throw new InvalidParamError("KemId cannot be used");
     }
+    this._kem = params.kem;
 
     // KDF
-    if (typeof params.kdf !== "number") {
-      this._kdf = params.kdf;
-    } else {
-      switch (params.kdf) {
-        case KdfId.HkdfSha256:
-          this._kdf = new HkdfSha256Native();
-          break;
-        case KdfId.HkdfSha384:
-          this._kdf = new HkdfSha384Native();
-          break;
-        default:
-          // case KdfId.HkdfSha512:
-          this._kdf = new HkdfSha512Native();
-          break;
-      }
+    if (typeof params.kdf === "number") {
+      throw new InvalidParamError("KdfId cannot be used");
     }
+    this._kdf = params.kdf;
 
     // AEAD
-    if (typeof params.aead !== "number") {
-      this._aead = params.aead;
-    } else {
-      switch (params.aead) {
-        case AeadId.Aes128Gcm:
-          this._aead = new Aes128Gcm();
-          break;
-        case AeadId.Aes256Gcm:
-          this._aead = new Aes256Gcm();
-          break;
-        case AeadId.ExportOnly:
-          this._aead = new ExportOnly();
-          break;
-        default:
-          throw new InvalidParamError(
-            `The AEAD (${params.aead}) cannot be specified by AeadId. Use submodule for the AEAD`,
-          );
-      }
+    if (typeof params.aead === "number") {
+      throw new InvalidParamError("AeadId cannot be used");
     }
+    this._aead = params.aead;
 
     this._suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
     this._suiteId.set(i2Osp(this._kem.id, 2), 4);
@@ -221,67 +175,6 @@ export class CipherSuiteNative extends NativeAlgorithm {
    */
   public get aead() {
     return this._aead;
-  }
-
-  /**
-   * Generates a key pair for the cipher suite.
-   *
-   * If the error occurred, throws {@link NotSupportedError}.
-   *
-   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
-   *
-   * @returns A key pair generated.
-   * @throws {@link NotSupportedError}
-   */
-  public async generateKeyPair(): Promise<CryptoKeyPair> {
-    await this._setup();
-    return await (this._kem as KemInterface).generateKeyPair();
-  }
-
-  /**
-   * Derives a key pair for the cipher suite in the manner
-   * defined in [RFC9180 Section 7.1.3](https://www.rfc-editor.org/rfc/rfc9180.html#section-7.1.3).
-   *
-   * If the error occurred, throws {@link DeriveKeyPairError}.
-   *
-   * @deprecated Use {@link KemInterface.deriveKeyPair} instead.
-   *
-   * @param ikm A byte string of input keying material. The maximum length is 128 bytes.
-   * @returns A key pair derived.
-   * @throws {@link DeriveKeyPairError}
-   */
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    await this._setup();
-    return await (this._kem as KemInterface).deriveKeyPair(ikm);
-  }
-
-  /**
-   * Imports a public or private key and converts to a {@link CryptoKey}.
-   *
-   * Since key parameters for {@link createSenderContext} or {@link createRecipientContext}
-   * are {@link CryptoKey} format, you have to use this function to convert provided keys
-   * to {@link CryptoKey}.
-   *
-   * Basically, this is a thin wrapper function of
-   * [SubtleCrypto.importKey](https://www.w3.org/TR/WebCryptoAPI/#dfn-SubtleCrypto-method-importKey).
-   *
-   * If the error occurred, throws {@link DeserializeError}.
-   *
-   * @deprecated Use {@link KemInterface.generateKeyPair} instead.
-   *
-   * @param format For now, `'raw'` and `'jwk'` are supported.
-   * @param key A byte string of a raw key or A {@link JsonWebKey} object.
-   * @param isPublic The indicator whether the provided key is a public key or not, which is used only for `'raw'` format.
-   * @returns A public or private CryptoKey.
-   * @throws {@link DeserializeError}
-   */
-  public async importKey(
-    format: "raw" | "jwk",
-    key: ArrayBuffer | JsonWebKey,
-    isPublic = true,
-  ): Promise<CryptoKey> {
-    await this._setup();
-    return await (this._kem as KemInterface).importKey(format, key, isPublic);
   }
 
   /**
