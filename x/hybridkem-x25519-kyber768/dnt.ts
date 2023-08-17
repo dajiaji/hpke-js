@@ -1,12 +1,6 @@
 import { build, emptyDir } from "dnt";
 
 await emptyDir("./npm");
-await emptyDir("./core/npm");
-await emptyDir("./x/chacha20poly1305/npm");
-await emptyDir("./x/dhkem-secp256k1/npm");
-await emptyDir("./x/dhkem-x25519/npm");
-await emptyDir("./x/dhkem-x448/npm");
-await emptyDir("./x/hybridkem-x25519-kyber768/npm");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -26,34 +20,33 @@ await build({
     name: "@hpke/hybridkem-x25519-kyber768",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) module extension for a hybrid post-quantum KEM, X25519Kyber768",
+      "A Hybrid Public Key Encryption (HPKE) extension module for a hybrid qost-quantum KEM which is the parallel combination of DHKEM(X25519, HKDF-SHA256) and Kyber768 (EXPERIMENTAL)",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
-    module: "./esm/mod.js",
-    main: "./script/mod.js",
-    types: "./esm/mod.d.ts",
+    module: "./esm/x/hybridkem-x25519-kyber768/mod.js",
+    main: "./script/x/hybridkem-x25519-kyber768/mod.js",
+    types: "./esm/x/hybridkem-x25519-kyber768/mod.d.ts",
     sideEffects: false,
     exports: {
       ".": {
-        "import": "./esm/mod.js",
-        "require": "./script/mod.js",
+        "import": "./esm/x/hybridkem-x25519-kyber768/mod.js",
+        "require": "./script/x/hybridkem-x25519-kyber768/mod.js",
       },
       "./package.json": "./package.json",
     },
     keywords: [
       "hpke",
-      "public-key-encryption",
       "rfc9180",
-      "hkdf",
-      "dh",
+      "kem",
+      "kyber",
+      "x25519",
+      "post-quantum",
       "security",
       "encryption",
-      "odoh",
-      "mls",
     ],
     engines: {
       "node": ">=16.0.0",
@@ -66,5 +59,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "npm/LICENSE");
+Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");
