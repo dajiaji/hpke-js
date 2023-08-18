@@ -1,0 +1,4 @@
+name = "wrangler"
+main = "src/index.js"
+compatibility_date = "2022-07-01"
+node_compat = false
