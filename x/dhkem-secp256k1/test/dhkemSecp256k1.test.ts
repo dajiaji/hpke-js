@@ -2,10 +2,8 @@ import { assertEquals, assertRejects } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
 
 import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
-// } from "https://deno.land/x/hpke/mod.ts";
-
+import { hexToBytes, loadCrypto } from "../../../test/utils.ts";
 import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
-import { hexStringToBytes, loadCrypto } from "./utils.ts";
 
 describe("DhkemSecp256k1Hkdf256", () => {
   describe("with valid parameters", () => {
@@ -109,7 +107,7 @@ describe("importKey", () => {
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(33);
       cryptoApi.getRandomValues(rawKey);
-      rawKey[0] = hexStringToBytes("04")[0];
+      rawKey[0] = hexToBytes("04")[0];
       const privKey = await kem.importKey("raw", rawKey, true);
 
       // assert
