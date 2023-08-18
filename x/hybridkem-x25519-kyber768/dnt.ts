@@ -20,7 +20,7 @@ await build({
     name: "@hpke/hybridkem-x25519-kyber768",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) extension module for a hybrid qost-quantum KEM which is the parallel combination of DHKEM(X25519, HKDF-SHA256) and Kyber768 (EXPERIMENTAL)",
+      "A Hybrid Public Key Encryption (HPKE) module extension for a hybrid post-quantum KEM, X25519Kyber768Draft00",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",

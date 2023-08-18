@@ -23,10 +23,10 @@ await build({
     deno: "dev",
   },
   package: {
-    name: "@hpke/hybridkem-x25519-kyber768",
+    name: "hpke-js",
     version: Deno.args[0],
     description:
-      "A Hybrid Public Key Encryption (HPKE) module extension for a hybrid post-quantum KEM, X25519Kyber768",
+      "A Hybrid Public Key Encryption (HPKE) module for various JavaScript runtimes",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
