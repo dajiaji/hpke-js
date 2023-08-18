@@ -24,7 +24,7 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 
 Documentation:
 [deno.land](https://doc.deno.land/https://deno.land/x/hpke/mod.ts) |
-[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/docs/)
+[pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/docs/)
 
 </div>
 
@@ -97,9 +97,9 @@ try {
 - [Supported Environments](#supported-environments)
 - [Warnings and Restrictions](#warnings-and-restrictions)
 - [Installation](#installation)
-  - [Web Browser](#web-browser)
   - [Node.js](#nodejs)
   - [Deno](#deno)
+  - [Web Browsers](#web-browsers)
   - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
   - [Base mode](#base-mode) - for web browsers, Node.js and Deno.
@@ -115,15 +115,15 @@ try {
 
 The hpke-js includes the following packages.
 
-| name                            | since   | description                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| hpke-js                         | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                                      |
-| @hpke/core                      | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies and is small in size. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md).         |
-| @hpke/chacha20poly1305          | v1.0.0- | The HPKE extension module for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                                 |
-| @hpke/dhkem-x25519              | v1.0.0- | The HPKE extension module for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                                    |
-| @hpke/dhkem-x448                | v1.0.0- | The HPKE extension module for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                          |
-| @hpke/hybridkem-x25519-kyber768 | v1.2.1- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE extension module for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/). See [/x/hybridkem-x25519-kyber768/README](https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md). |
-| @hpke/dhkem-secp256k1           | v1.0.0- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE extension module for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                                     |
+| name                            | since   | description                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| hpke-js                         | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                                                       |
+| @hpke/core                      | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md). |
+| @hpke/chacha20poly1305          | v1.0.0- | The HPKE module extension for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                                                  |
+| @hpke/dhkem-x25519              | v1.0.0- | The HPKE module extension for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                                                     |
+| @hpke/dhkem-x448                | v1.0.0- | The HPKE module extension for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                                           |
+| @hpke/hybridkem-x25519-kyber768 | v1.2.1- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE module extension for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/). See [/x/hybridkem-x25519-kyber768/README](https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md).                  |
+| @hpke/dhkem-secp256k1           | v1.0.0- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                                                      |
 
 ## Supported Features
 
@@ -187,39 +187,6 @@ The hpke-js includes the following packages.
 
 ## Installation
 
-### Web Browser
-
-Followings are how to use with typical CDNs. Other CDNs can be used as well.
-
-Using esm.sh:
-
-```html
-<!-- use a specific version -->
-<script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@1.2.0";
-  // import * as hpke from "https://esm.sh/@hpke/core@1.2.0";
-  // ...
-</script>
-
-<!-- use the latest stable version -->
-<script type="module">
-  import * as hpke from "https://esm.sh/hpke-js";
-  // import * as hpke from "https://esm.sh/@hpke/core";
-  // ...
-</script>
-```
-
-Using unpkg:
-
-```html
-<!-- use a specific version -->
-<script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@1.2.0/esm/mod.js";
-  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.0/esm/mod.js";
-  // ...
-</script>
-```
-
 ### Node.js
 
 Using npm:
@@ -262,6 +229,40 @@ import * as hpke from "https://deno.land/x/hpke/mod.ts";
 // import * as hpke from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
 ```
 
+### Web Browsers
+
+Followings are how to use the module with typical CDNs. Other CDNs can be used
+as well.
+
+Using esm.sh:
+
+```html
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://esm.sh/hpke-js@1.2.0";
+  // import * as hpke from "https://esm.sh/@hpke/core@1.2.0";
+  // ...
+</script>
+
+<!-- use the latest stable version -->
+<script type="module">
+  import * as hpke from "https://esm.sh/hpke-js";
+  // import * as hpke from "https://esm.sh/@hpke/core";
+  // ...
+</script>
+```
+
+Using unpkg:
+
+```html
+<!-- use a specific version -->
+<script type="module">
+  import * as hpke from "https://unpkg.com/hpke-js@1.2.0/esm/mod.js";
+  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.0/esm/mod.js";
+  // ...
+</script>
+```
+
 ### Cloudflare Workers
 
 ```sh
@@ -290,87 +291,6 @@ deno task minify > $YOUR_SRC_PATH/hpke-dhkem-x25519.js
 This section shows some typical usage examples.
 
 ### Base mode
-
-Browsers:
-
-```html
-<html>
-  <head></head>
-  <body>
-    <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.0";
-      // import {
-      //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      // } from "@hpke/core@1.2.0";
-
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: KemId.DhkemP256HkdfSha256,
-            kdf: KdfId.HkdfSha256,
-            aead: AeadId.Aes128Gcm
-          });
- 
-          const rkp = await suite.kem.generateKeyPair();
-      
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
-          });
-      
-          // A JWK-formatted recipient public key can also be used.
-          // const jwkPkR = {
-          //   kty: "EC",
-          //   crv: "P-256",
-          //   kid: "P-256-01",
-          //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
-          //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
-          //   key_ops: [],
-          // };
-          // const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
-          // const sender = await suite.createSenderContext({
-          //   recipientPublicKey: pkR,
-          // });
-
-          // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-
-
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
-
-          // A JWK-formatted recipient private key can also be used.
-          // const jwkSkR = {
-          //   kty: "EC",
-          //   crv: "P-256",
-          //   kid: "P-256-01",
-          //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
-          //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
-          //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
-          //   key_ops: ["deriveBits"],
-          // };
-          // const skR = await suite.kem.importKey("jwk", jwkSkR, false);
-          // const recipient = await suite.createRecipientContext({
-          //   recipientKey: skR,
-          //   enc: sender.enc,
-          // });
-
-          // decrypt
-          const pt = await recipient.open(ct);
-
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      }
-      
-    </script>
-    <button type="button" onclick="doHpke()">do HPKE</button>
-  </body>
-</html>
-```
 
 Node.js:
 
@@ -446,6 +366,20 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
   });
 
+  // A JWK-formatted recipient public key can also be used.
+  // const jwkPkR = {
+  //   kty: "EC",
+  //   crv: "P-256",
+  //   kid: "P-256-01",
+  //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+  //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+  //   key_ops: [],
+  // };
+  // const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
+  // const sender = await suite.createSenderContext({
+  //   recipientPublicKey: pkR,
+  // });
+
   // encrypt
   const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
 
@@ -453,6 +387,22 @@ async function doHpke() {
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
+
+  // A JWK-formatted recipient private key can also be used.
+  // const jwkSkR = {
+  //   kty: "EC",
+  //   crv: "P-256",
+  //   kid: "P-256-01",
+  //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+  //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+  //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+  //   key_ops: ["deriveBits"],
+  // };
+  // const skR = await suite.kem.importKey("jwk", jwkSkR, false);
+  // const recipient = await suite.createRecipientContext({
+  //   recipientKey: skR,
+  //   enc: sender.enc,
+  // });
 
   // decrypt
   const pt = await recipient.open(ct);
@@ -466,6 +416,57 @@ try {
 } catch (_err: unknown) {
   console.log("failed.");
 }
+```
+
+Browsers:
+
+```html
+<html>
+  <head></head>
+  <body>
+    <script type="module">
+      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.0";
+      // import {
+      //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+      // } from "@hpke/core@1.2.0";
+
+      globalThis.doHpke = async () => {
+        try {
+          const suite = new CipherSuite({
+            kem: KemId.DhkemP256HkdfSha256,
+            kdf: KdfId.HkdfSha256,
+            aead: AeadId.Aes128Gcm
+          });
+ 
+          const rkp = await suite.kem.generateKeyPair();
+      
+          const sender = await suite.createSenderContext({
+            recipientPublicKey: rkp.publicKey
+          });
+      
+          // encrypt
+          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
+
+          const recipient = await suite.createRecipientContext({
+            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+            enc: sender.enc,
+          });
+
+          // decrypt
+          const pt = await recipient.open(ct);
+
+          // Hello world!
+          alert(new TextDecoder().decode(pt));
+        } catch (err) {
+          alert("failed:", err.message);
+        }
+      }
+      
+    </script>
+    <button type="button" onclick="doHpke()">do HPKE</button>
+  </body>
+</html>
 ```
 
 ### Base mode with Single-Shot APIs

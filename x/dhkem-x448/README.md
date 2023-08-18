@@ -9,25 +9,54 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 Documentation:
 [deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/dhkem-x448/mod.ts)
 |
-[pages(only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x448/docs/)
+[pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/dhkem-x448/docs/)
 
 </div>
 
 ## Index
 
 - [Installation](#installation)
-  - [Web Browser](#web-browser)
   - [Node.js](#nodejs)
   - [Deno](#deno)
+  - [Web Browsers](#web-browsers)
   - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
 ## Installation
 
-### Web Browser
+### Node.js
 
-Followings are how to use with typical CDNs. Other CDNs can be used as well.
+Using npm:
+
+```sh
+npm install @hpke/dhkem-x448
+```
+
+Using yarn:
+
+```sh
+yarn add @hpke/dhkem-x448
+```
+
+### Deno
+
+Using deno.land:
+
+```js
+// use a specific version
+import * as hpke from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
+import * as x448 from "https://deno.land/x/hpke@1.2.0/x/dhkem-x448/mod.ts";
+
+// use the latest stable version
+import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
+import * as x448 from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
+```
+
+### Web Browsers
+
+Followings are how to use this module with typical CDNs. Other CDNs can be used
+as well.
 
 Using esm.sh:
 
@@ -58,34 +87,6 @@ Using unpkg:
 </script>
 ```
 
-### Node.js
-
-Using npm:
-
-```sh
-npm install @hpke/dhkem-x448
-```
-
-Using yarn:
-
-```sh
-yarn add @hpke/dhkem-x448
-```
-
-### Deno
-
-Using deno.land:
-
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke@1.2.0/x/dhkem-x448/mod.ts";
-
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
-```
-
 ### Cloudflare Workers
 
 ```sh
@@ -99,53 +100,6 @@ deno task minify > $YOUR_SRC_PATH/hpke-dhkem-x448.js
 ## Usage
 
 This section shows some typical usage examples.
-
-### Browsers
-
-```html
-<html>
-  <head></head>
-  <body>
-    <script type="module">
-      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.2.0";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.0";
-
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: new DhkemX448HkdfSha512(),
-            kdf: new HkdfSha512(),
-            aead: new Aes256Gcm(),
-          });
- 
-          const rkp = await suite.kem.generateKeyPair();
-      
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
-          });
-
-          // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-      
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
-
-          // decrypt
-          const pt = await recipient.open(ct);
-
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err);
-        }
-      }
-    </script>
-    <button type="button" onclick="doHpke()">do HPKE</button>
-  </body>
-</html>
-```
 
 ### Node.js
 
@@ -230,6 +184,53 @@ try {
 } catch (_err: unknown) {
   console.log("failed.");
 }
+```
+
+### Browsers
+
+```html
+<html>
+  <head></head>
+  <body>
+    <script type="module">
+      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.2.0";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.0";
+
+      globalThis.doHpke = async () => {
+        try {
+          const suite = new CipherSuite({
+            kem: new DhkemX448HkdfSha512(),
+            kdf: new HkdfSha512(),
+            aead: new Aes256Gcm(),
+          });
+ 
+          const rkp = await suite.kem.generateKeyPair();
+      
+          const sender = await suite.createSenderContext({
+            recipientPublicKey: rkp.publicKey
+          });
+
+          // encrypt
+          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+      
+          const recipient = await suite.createRecipientContext({
+            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+            enc: sender.enc,
+          });
+
+          // decrypt
+          const pt = await recipient.open(ct);
+
+          // Hello world!
+          alert(new TextDecoder().decode(pt));
+        } catch (err) {
+          alert("failed:", err);
+        }
+      }
+    </script>
+    <button type="button" onclick="doHpke()">do HPKE</button>
+  </body>
+</html>
 ```
 
 ## Contributing
