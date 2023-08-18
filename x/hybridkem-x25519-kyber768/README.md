@@ -177,7 +177,7 @@ async function doHpke() {
   });
 
   // decrypt
-  const pt = await recipient.open(ct);j
+  const pt = await recipient.open(ct);
 
   // Hello world!
   console.log(new TextDecoder().decode(pt));
