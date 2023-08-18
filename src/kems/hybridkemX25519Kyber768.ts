@@ -35,6 +35,7 @@ class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
  * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
  *
  * @example
+ *
  * ```ts
  * import { Aes128Gcm, CipherSuite, HkdfSha256 } from "http://deno.land/x/hpke/core/mod.ts";
  * import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
