@@ -1,12 +1,12 @@
-// @ts-ignore: for "npm:"
 import {
   sha3_256,
   sha3_512,
   shake128,
   shake256,
+  // @ts-ignore: for "npm:"
 } from "npm:@noble/hashes@1.3.1/sha3";
 
-import { concat } from "../../utils/misc.ts";
+import { concat, isBrowser, isCloudflareWorkers } from "../../utils/misc.ts";
 
 // deno-fmt-ignore
 const nttZetas = [
@@ -43,31 +43,40 @@ const paramsQinv = 62209;
 const paramsETA = 2;
 
 export class Kyber768 {
-  private _api;
+  private _api: Crypto | undefined = undefined;
 
-  constructor() {
-    this._api = globalThis.crypto;
-  }
+  constructor() {}
 
-  public generateKeyPair(): [Uint8Array, Uint8Array] {
+  public async generateKeyPair(): Promise<[Uint8Array, Uint8Array]> {
+    await this._setup();
+
     const rnd = new Uint8Array(64);
-    this._api.getRandomValues(rnd);
+    (this._api as Crypto).getRandomValues(rnd);
     return this._deriveKeyPair(rnd);
   }
 
-  public deriveKeyPair(ikm: Uint8Array): [Uint8Array, Uint8Array] {
+  public async deriveKeyPair(
+    ikm: Uint8Array,
+  ): Promise<[Uint8Array, Uint8Array]> {
+    await this._setup();
+
     if (ikm.byteLength !== 64) {
       throw new Error("ikm must be 64 bytes in length");
     }
     return this._deriveKeyPair(ikm);
   }
 
-  public encap(pk: Uint8Array, ikm?: Uint8Array): [Uint8Array, Uint8Array] {
+  public async encap(
+    pk: Uint8Array,
+    ikm?: Uint8Array,
+  ): Promise<[Uint8Array, Uint8Array]> {
+    await this._setup();
+
     // random 32 bytes m
     let m: Uint8Array;
     if (ikm === undefined) {
       m = new Uint8Array(32);
-      this._api.getRandomValues(m);
+      (this._api as Crypto).getRandomValues(m);
     } else {
       if (ikm.byteLength !== 32) {
         throw new Error("ikm must be 32 bytes in length");
@@ -85,7 +94,12 @@ export class Kyber768 {
     return [c, ss];
   }
 
-  public decap(c: Uint8Array, privateKey: Uint8Array): Uint8Array {
+  public async decap(
+    c: Uint8Array,
+    privateKey: Uint8Array,
+  ): Promise<Uint8Array> {
+    await this._setup();
+
     // extract sk, pk, pkh and z
     const sk = privateKey.subarray(0, 1152);
     const pk = privateKey.subarray(1152, 2336);
@@ -325,6 +339,30 @@ export class Kyber768 {
     mp = subtract(v, mp);
     mp = reduce(mp);
     return polyToMsg(mp);
+  }
+
+  protected async _setup() {
+    if (this._api !== undefined) {
+      return;
+    }
+    this._api = await loadCrypto();
+  }
+}
+
+async function loadCrypto(): Promise<Crypto> {
+  if (isBrowser() || isCloudflareWorkers()) {
+    if (globalThis.crypto !== undefined) {
+      return globalThis.crypto;
+    }
+    // jsdom
+  }
+
+  try {
+    // @ts-ignore: to ignore "crypto"
+    const { webcrypto } = await import("crypto"); // node:crypto
+    return (webcrypto as unknown as Crypto);
+  } catch (_e: unknown) {
+    throw new Error("Web Cryptograph API not supported");
   }
 }
 

@@ -73,7 +73,7 @@ export class KemKyber768 implements KemInterface {
     // const keys = kyber.KeyGen768();
     // const sk = await this.deserializePrivateKey(new Uint8Array(keys[1]));
     // const pk = await this.deserializePublicKey(new Uint8Array(keys[0]));
-    const keys = this._prim.generateKeyPair();
+    const keys = await this._prim.generateKeyPair();
     const sk = await this.deserializePrivateKey(keys[1]);
     const pk = await this.deserializePublicKey(keys[0]);
     return { publicKey: pk, privateKey: sk };
@@ -122,7 +122,7 @@ export class KemKyber768 implements KemInterface {
       await this.serializePublicKey(params.recipientPublicKey),
     );
     try {
-      const res = this._prim.encap(pkR, ikm);
+      const res = await this._prim.encap(pkR, ikm);
       return { sharedSecret: res[1], enc: res[0] };
     } catch (e: unknown) {
       throw new EncapError(e);
@@ -135,7 +135,7 @@ export class KemKyber768 implements KemInterface {
       : params.recipientKey;
     const serializedSkR = new Uint8Array(await this.serializePrivateKey(skR));
     try {
-      return this._prim.decap(new Uint8Array(params.enc), serializedSkR);
+      return await this._prim.decap(new Uint8Array(params.enc), serializedSkR);
     } catch (e: unknown) {
       throw new DecapError(e);
     }
