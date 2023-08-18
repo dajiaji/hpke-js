@@ -111,38 +111,36 @@ This section shows some typical usage examples.
       import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.0";
 
       globalThis.doHpke = async () => {
-
-        const suite = new CipherSuite({
-          kem: new DhkemX448HkdfSha512(),
-          kdf: new HkdfSha512(),
-          aead: new Aes256Gcm(),
-        });
- 
-        const rkp = await suite.kem.generateKeyPair();
-      
-        const sender = await suite.createSenderContext({
-          recipientPublicKey: rkp.publicKey
-        });
-
-        const recipient = await suite.createRecipientContext({
-          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-          enc: sender.enc,
-        });
-
-        // encrypt
-        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
-      
-        // decrypt
         try {
+          const suite = new CipherSuite({
+            kem: new DhkemX448HkdfSha512(),
+            kdf: new HkdfSha512(),
+            aead: new Aes256Gcm(),
+          });
+ 
+          const rkp = await suite.kem.generateKeyPair();
+      
+          const sender = await suite.createSenderContext({
+            recipientPublicKey: rkp.publicKey
+          });
+
+          // encrypt
+          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+      
+          const recipient = await suite.createRecipientContext({
+            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+            enc: sender.enc,
+          });
+
+          // decrypt
           const pt = await recipient.open(ct);
 
-          // hello world!
+          // Hello world!
           alert(new TextDecoder().decode(pt));
         } catch (err) {
-          alert("failed to decrypt.");
+          alert("failed:", err);
         }
       }
-      
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>
@@ -170,26 +168,26 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
-
   // decrypt
-  try {
-    const pt = await recipient.open(ct);
+  const pt = await recipient.open(ct);
 
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### Deno
@@ -212,26 +210,26 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-  try {
-    // decrypt
-    const pt = await recipient.open(ct);
-
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (_err: unknown) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (_err: unknown) {
+  console.log("failed.");
+}
 ```
 
 ## Contributing

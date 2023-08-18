@@ -112,7 +112,6 @@ This section shows some typical usage examples.
       import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.1";
 
       globalThis.doHpke = async () => {
-
         try {
           const suite = new CipherSuite({
             kem: new HybridkemX25519Kyber768(),
@@ -142,7 +141,6 @@ This section shows some typical usage examples.
           alert("failed:", err.message);
         }
       }
-      
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>
@@ -180,8 +178,9 @@ async function doHpke() {
 
   // decrypt
   const pt = await recipient.open(ct);j
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: Hello world!
+
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
 try {
@@ -222,8 +221,8 @@ async function doHpke() {
   // decrypt
   const pt = await recipient.open(ct);
 
-  console.log("decrypted: ", new TextDecoder().decode(pt));
-  // decrypted: Hello world!
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
 try {
