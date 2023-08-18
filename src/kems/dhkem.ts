@@ -87,9 +87,16 @@ export class Dhkem implements KemInterface {
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
-    const ke = params.nonEphemeralKeyPair === undefined
-      ? await this.generateKeyPair()
-      : params.nonEphemeralKeyPair;
+    let ke: CryptoKeyPair;
+    if (params.ekm === undefined) {
+      ke = await this.generateKeyPair();
+    } else if (isCryptoKeyPair(params.ekm)) {
+      // params.ekm is only used for testing.
+      ke = params.ekm as CryptoKeyPair;
+    } else {
+      // params.ekm is only used for testing.
+      ke = await this.deriveKeyPair(params.ekm as ArrayBuffer);
+    }
     const enc = await this._prim.serializePublicKey(ke.publicKey);
     const pkrm = await this._prim.serializePublicKey(
       params.recipientPublicKey,

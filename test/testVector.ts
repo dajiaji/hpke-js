@@ -29,6 +29,7 @@ export interface TestVector {
   pkRm: string;
   pkSm?: string;
   pkEm: string;
+  ier: string;
   enc: string;
   shared_secret: string;
   key_schedule_context: string;

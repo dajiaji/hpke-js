@@ -11,5 +11,5 @@ export interface SenderContextParams extends KeyScheduleParams {
   senderKey?: CryptoKey | CryptoKeyPair;
 
   /** DO NOT USE. FOR DEBUGGING/TESTING PURPOSES ONLY. */
-  nonEphemeralKeyPair?: CryptoKeyPair;
+  ekm?: CryptoKeyPair | ArrayBuffer;
 }

@@ -144,6 +144,15 @@ export class Hybridkem implements KemInterface {
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    let ekmA: ArrayBuffer | undefined = undefined;
+    let ekmB: ArrayBuffer | undefined = undefined;
+    if (params.ekm !== undefined && !isCryptoKeyPair(params.ekm)) {
+      if (params.ekm.byteLength !== 64) {
+        throw new InvalidParamError("ekm must be 32 bytes in length");
+      }
+      ekmA = params.ekm.slice(0, 32);
+      ekmB = params.ekm.slice(32);
+    }
     const pkR = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
     );
@@ -153,8 +162,8 @@ export class Hybridkem implements KemInterface {
     const pkRB = await this._b.deserializePublicKey(
       pkR.slice(this._a.publicKeySize),
     );
-    const resA = await this._a.encap({ recipientPublicKey: pkRA });
-    const resB = await this._b.encap({ recipientPublicKey: pkRB });
+    const resA = await this._a.encap({ recipientPublicKey: pkRA, ekm: ekmA });
+    const resB = await this._b.encap({ recipientPublicKey: pkRB, ekm: ekmB });
     return {
       sharedSecret: concat(
         new Uint8Array(resA.sharedSecret),

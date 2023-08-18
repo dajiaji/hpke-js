@@ -110,16 +110,19 @@ export class KemKyber768 implements KemInterface {
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    // params.ekm is only used for testing
+    let ikm: Uint8Array | undefined = undefined;
+    if (params.ekm !== undefined && !isCryptoKeyPair(params)) {
+      if ((params.ekm as ArrayBuffer).byteLength !== 32) {
+        throw new InvalidParamError("ekm must be 32 bytes in length");
+      }
+      ikm = new Uint8Array(params.ekm as ArrayBuffer);
+    }
     const pkR = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
     );
     try {
-      // const res = kyber.Encrypt768(pkR);
-      // return {
-      //   sharedSecret: new Uint8Array(res[1]),
-      //   enc: new Uint8Array(res[0]),
-      // };
-      const res = this._prim.encap(pkR);
+      const res = this._prim.encap(pkR, ikm);
       return { sharedSecret: res[1], enc: res[0] };
     } catch (e: unknown) {
       throw new EncapError(e);
@@ -132,8 +135,6 @@ export class KemKyber768 implements KemInterface {
       : params.recipientKey;
     const serializedSkR = new Uint8Array(await this.serializePrivateKey(skR));
     try {
-      // const res = kyber.Decrypt768(new Uint8Array(params.enc), serializedSkR);
-      // return new Uint8Array(res);
       return this._prim.decap(new Uint8Array(params.enc), serializedSkR);
     } catch (e: unknown) {
       throw new DecapError(e);
