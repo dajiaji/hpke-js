@@ -219,9 +219,9 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.0/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.2.0/x/dhkem-x25519/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.1/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.2.1/x/dhkem-x25519/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -239,8 +239,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@1.2.0";
-  // import * as hpke from "https://esm.sh/@hpke/core@1.2.0";
+  import * as hpke from "https://esm.sh/hpke-js@1.2.1";
+  // import * as hpke from "https://esm.sh/@hpke/core@1.2.1";
   // ...
 </script>
 
@@ -257,8 +257,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@1.2.0/esm/mod.js";
-  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@1.2.1/esm/mod.js";
+  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -338,11 +338,11 @@ try {
 Deno:
 
 ```js
-import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke@1.2.0/mod.ts";
+import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke@1.2.1/mod.ts";
 // import {
 //   Aes128Gcm, CipherSuite, HkdfSha256,
-// } from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
-// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.0/x/dhkem-x25519/mod.ts";
+// } from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
+// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.1/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {
   // setup
@@ -425,10 +425,10 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.0";
+      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.1";
       // import {
       //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      // } from "@hpke/core@1.2.0";
+      // } from "@hpke/core@1.2.1";
 
       globalThis.doHpke = async () => {
         try {
