@@ -7,7 +7,7 @@ describe("Cloudflare Workers", () => {
       for (const kdf of ["0x0001", "0x0002", "0x0003"]) {
         for (const aead of ["0x0001", "0x0002"]) {
           const res = await fetch(
-            `http://localhost:8792/test?kdf=${kdf}&aead=${aead}`,
+            `http://localhost:8793/test?kdf=${kdf}&aead=${aead}`,
           );
           assertEquals("ok", await res.text());
         }

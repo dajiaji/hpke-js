@@ -6,7 +6,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "wrangler dev --port 8792",
+    "start": "wrangler dev --port 8793",
     "deploy": "wrangler publish"
   }
 }

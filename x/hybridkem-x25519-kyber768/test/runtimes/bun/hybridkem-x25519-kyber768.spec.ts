@@ -7,7 +7,7 @@ describe("Bun", () => {
       for (const kdf of ["0x0001", "0x0002", "0x0003"]) {
         for (const aead of ["0x0001", "0x0002"]) {
           const res = await fetch(
-            `http://localhost:3005/test?kdf=${kdf}&aead=${aead}`,
+            `http://localhost:3006/test?kdf=${kdf}&aead=${aead}`,
           );
           assertEquals("ok", await res.text());
         }
