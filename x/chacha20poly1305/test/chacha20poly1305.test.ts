@@ -1,11 +1,10 @@
 import { assertEquals } from "testing/asserts.ts";
 import { describe, it } from "testing/bdd.ts";
+
 import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
-// } from "https://deno.land/x/hpke/mod.ts";
+import { loadCrypto } from "../../../test/utils.ts";
 
 import { Chacha20Poly1305 } from "../mod.ts";
-
-import { loadCrypto } from "./utils.ts";
 
 describe("Chacha20Poly1305", () => {
   describe("with valid parameters", () => {
