@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.2.1
+
+Released 2023-08-19
+
+- [(#264) Refine READMEs.](https://github.com/dajiaji/hpke-js/pull/264)
+- [(#263) Add support for the hybrid post-quantum KEM (X25519Kyber768Draft00) experimentally.](https://github.com/dajiaji/hpke-js/pull/263)
+
 ## Version 1.2.0
 
 Released 2023-08-16

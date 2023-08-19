@@ -44,7 +44,7 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -60,7 +60,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.0";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.1";
   // ...
 </script>
 
@@ -76,7 +76,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.1/esm/mod.js";
   // ...
 </script>
 ```
@@ -149,7 +149,7 @@ doHpke();
 ```js
 import {
   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-} from "https://deno.land/x/hpke@1.2.0/core/mod.ts";
+} from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
 
 async function doHpke() {
   // setup
@@ -194,10 +194,10 @@ doHpke();
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.2.0";
+      // import * as hpke from "https://esm.sh/hpke-js@1.2.1";
       import {
         Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      } from "https://esm.sh/@hpke/core@1.2.0";
+      } from "https://esm.sh/@hpke/core@1.2.1";
 
       globalThis.doHpke = async () => {
 
