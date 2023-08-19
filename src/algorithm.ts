@@ -1,14 +1,11 @@
 import { NotSupportedError } from "./errors.ts";
-import { isBrowser, isCloudflareWorkers } from "./utils/misc.ts";
 
 async function loadSubtleCrypto(): Promise<SubtleCrypto> {
-  if (isBrowser() || isCloudflareWorkers()) {
-    if (globalThis.crypto !== undefined) {
-      return globalThis.crypto.subtle;
-    }
-    // jsdom
+  if (globalThis !== undefined && globalThis.crypto !== undefined) {
+    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
+    return globalThis.crypto.subtle;
   }
-
+  // Node.js <= v18
   try {
     // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto

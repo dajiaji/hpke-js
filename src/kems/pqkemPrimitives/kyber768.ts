@@ -11,8 +11,6 @@ import {
   // @ts-ignore: for "npm:"
 } from "npm:@noble/hashes@1.3.1/sha3";
 
-import { isBrowser, isCloudflareWorkers } from "../../utils/misc.ts";
-
 // deno-fmt-ignore
 const NTT_ZETAS = [
   2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962,
@@ -354,13 +352,11 @@ export class Kyber768 {
 }
 
 async function loadCrypto(): Promise<Crypto> {
-  if (isBrowser() || isCloudflareWorkers()) {
-    if (globalThis.crypto !== undefined) {
-      return globalThis.crypto;
-    }
-    // jsdom
+  if (globalThis !== undefined && globalThis.crypto !== undefined) {
+    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
+    return globalThis.crypto;
   }
-
+  // Node.js <= v18
   try {
     // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto
