@@ -21,8 +21,6 @@ import { XCryptoKey } from "../xCryptoKey.ts";
 
 import { Kyber768 } from "./pqkemPrimitives/kyber768.ts";
 
-// import { INPUT_LENGTH_LIMIT } from "../consts.ts";
-
 const ALG_NAME = "Keyber768";
 
 export class KemKyber768 implements KemInterface {
@@ -70,9 +68,6 @@ export class KemKyber768 implements KemInterface {
   }
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
-    // const keys = kyber.KeyGen768();
-    // const sk = await this.deserializePrivateKey(new Uint8Array(keys[1]));
-    // const pk = await this.deserializePublicKey(new Uint8Array(keys[0]));
     const keys = await this._prim.generateKeyPair();
     const sk = await this.deserializePrivateKey(keys[1]);
     const pk = await this.deserializePublicKey(keys[0]);
