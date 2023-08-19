@@ -1,5 +1,5 @@
 import { KemId } from "../src/identifiers.ts";
-import { isBrowser, isCloudflareWorkers, isDeno } from "../src/utils/misc.ts";
+import { isDeno } from "../src/utils/misc.ts";
 
 export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
   const ret = new Uint8Array(a.length + b.length);
@@ -65,13 +65,11 @@ export function kemToKeyGenAlgorithm(kem: KemId): KeyAlgorithm {
 }
 
 export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
-  if (isBrowser() || isCloudflareWorkers()) {
-    if (globalThis.crypto !== undefined) {
-      return globalThis.crypto.subtle;
-    }
-    // jsdom
+  if (globalThis !== undefined && globalThis.crypto !== undefined) {
+    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
+    return globalThis.crypto.subtle;
   }
-
+  // Node.js <= v18
   try {
     // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto
@@ -82,13 +80,11 @@ export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
 }
 
 export async function loadCrypto(): Promise<Crypto> {
-  if (isBrowser() || isCloudflareWorkers()) {
-    if (globalThis.crypto !== undefined) {
-      return globalThis.crypto;
-    }
-    // jsdom
+  if (globalThis !== undefined && globalThis.crypto !== undefined) {
+    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
+    return globalThis.crypto;
   }
-
+  // Node.js <= v18
   try {
     // @ts-ignore: to ignore "crypto"
     const { webcrypto } = await import("crypto"); // node:crypto

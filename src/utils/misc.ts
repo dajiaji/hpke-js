@@ -1,15 +1,4 @@
 declare const Deno: undefined;
-declare const caches: undefined;
-
-/**
- * Checks whether the execution env is browser or not.
- */
-export const isBrowser = () => typeof window !== "undefined";
-
-/**
- * Checks whether the execution env is Cloudflare Workers or not.
- */
-export const isCloudflareWorkers = () => typeof caches !== "undefined";
 
 /**
  * Checks whether the execution env is Deno or not.
