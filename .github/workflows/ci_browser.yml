@@ -35,6 +35,8 @@ jobs:
           cp -rf x/dhkem-x448/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x448
           mkdir test/runtimes/browsers/pages/chacha20poly1305
           cp -rf x/chacha20poly1305/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/chacha20poly1305
+          mkdir test/runtimes/browsers/pages/hybridkem-x25519-kyber768
+          cp -rf x/hybridkem-x25519-kyber768/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/hybridkem-x25519-kyber768
           mkdir test/runtimes/browsers/pages/dhkem-secp256k1
           cp -rf x/dhkem-secp256k1/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-secp256k1
       - working-directory: ./core
@@ -45,6 +47,7 @@ jobs:
           deno task minify > ../test/runtimes/browsers/pages/dhkem-x25519/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/dhkem-x448/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/chacha20poly1305/src/hpke-core.js
+          deno task minify > ../test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-core.js
           deno task minify > ../test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-core.js
       - working-directory: ./x/dhkem-x25519
         run: |
@@ -61,6 +64,11 @@ jobs:
           npx typedoc --name "@hpke/chacha20poly1305 $(git describe --tags --abbrev=0)" --out ../../test/runtimes/browsers/pages/chacha20poly1305/docs mod.ts
           deno task dnt
           deno task minify > ../../test/runtimes/browsers/pages/chacha20poly1305/src/hpke-chacha20poly1305.js
+      - working-directory: ./x/hybridkem-x25519-kyber768
+        run: |
+          npx typedoc --name "@hpke/hybridkem-x25519-kyber768 $(git describe --tags --abbrev=0)" --out ../../test/runtimes/browsers/pages/hybridkem-x25519-kyber768/docs mod.ts
+          deno task dnt
+          deno task minify > ../../test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-hybridkem-x25519-kyber768.js
       - working-directory: ./x/dhkem-secp256k1
         run: |
           npx typedoc --name "@hpke/dhkem-secp256k1 $(git describe --tags --abbrev=0)" --out ../../test/runtimes/browsers/pages/dhkem-secp256k1/docs mod.ts
@@ -90,6 +98,8 @@ jobs:
       - working-directory: ./x/dhkem-x448/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/chacha20poly1305/test/runtimes/browsers
+        run: npm install && npx playwright install && npx playwright test
+      - working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/dhkem-secp256k1/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test

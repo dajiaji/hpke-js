@@ -45,6 +45,7 @@ jobs:
           deno task minify > ../x/dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../x/chacha20poly1305/test/runtimes/hpke-core.js
+          deno task minify > ../x/hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run test for core
         working-directory: ./core/test/runtimes/bun
@@ -82,6 +83,16 @@ jobs:
           nohup bun src/index.js &
           sleep 3
           deno test chacha20poly1305.spec.ts --allow-net
+      - working-directory: ./x/hybridkem-x25519-kyber768
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
+      - name: Run test for hybridkem-x25519-kyber768
+        working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/bun
+        run: |
+          nohup bun src/index.js &
+          sleep 3
+          deno test hybridkem-x25519-kyber768.spec.ts --allow-net
       - working-directory: ./x/dhkem-secp256k1/
         run: |
           deno task dnt

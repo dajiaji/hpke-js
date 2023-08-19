@@ -77,15 +77,17 @@ async function doHpke() {
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
-  try {
-    const pt = await recipient.open(ct);
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-  } catch (e) {
-    console.log("failed to decrypt:", e.message);
-  }
+  const pt = await recipient.open(ct);
+
+  // Hello world!
+  console.log("new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (e) {
+  console.log("failed:", e.message);
+}
 ```
 
 ## Index
@@ -113,14 +115,15 @@ doHpke();
 
 The hpke-js includes the following packages.
 
-| name                   | since   | description                                                                                                                                                                                                                                                                                                                               |
-| ---------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| hpke-js                | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                              |
-| @hpke/core             | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies and is small in size. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md). |
-| @hpke/dhkem-x25519     | v1.0.0- | The HPKE extension module for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                            |
-| @hpke/dhkem-x448       | v1.0.0- | The HPKE extension module for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                  |
-| @hpke/chacha20poly1305 | v1.0.0- | The HPKE extension module for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                         |
-| @hpke/dhkem-secp256k1  | v1.0.0- | [EXPERIMENTAL AND NOT STANDARDIZED] The HPKE extension module for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                               |
+| name                            | since   | description                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| hpke-js                         | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                                      |
+| @hpke/core                      | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies and is small in size. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md).         |
+| @hpke/chacha20poly1305          | v1.0.0- | The HPKE extension module for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                                 |
+| @hpke/dhkem-x25519              | v1.0.0- | The HPKE extension module for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                                    |
+| @hpke/dhkem-x448                | v1.0.0- | The HPKE extension module for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                          |
+| @hpke/hybridkem-x25519-kyber768 | v1.2.1- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE extension module for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/). See [/x/hybridkem-x25519-kyber768/README](https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md). |
+| @hpke/dhkem-secp256k1           | v1.0.0- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE extension module for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                                     |
 
 ## Supported Features
 
@@ -132,14 +135,15 @@ The hpke-js includes the following packages.
 
 ### Key Encapsulation Machanisms (KEMs)
 
-| KEMs                           | Browser                             | Node.js                             | Deno                                | Cloudflare<br>Workers               | bun                                 |
-| ------------------------------ | ----------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- | ----------------------------------- |
-| DHKEM (P-256, HKDF-SHA256)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
-| DHKEM (P-384, HKDF-SHA384)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
-| DHKEM (P-521, HKDF-SHA512)     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |                                     | ✅<br>hpke-js<br>@hpke/core         | ✅<br>hpke-js<br>@hpke/core         |
-| DHKEM (X25519, HKDF-SHA256)    | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 | ✅<br>hpke-js<br>@hpke/dhkem-x25519 |
-| DHKEM (X448, HKDF-SHA512)      | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   | ✅<br>hpke-js<br>@hpke/dhkem-x448   |
-| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         | ✅<br>@hpke/dhkem-secp256k1         |
+| KEMs                           | Browser                               | Node.js                               | Deno                                  | Cloudflare<br>Workers                 | bun                                   |
+| ------------------------------ | ------------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------------------- | ------------------------------------- |
+| DHKEM (P-256, HKDF-SHA256)     | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           |
+| DHKEM (P-384, HKDF-SHA384)     | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           |
+| DHKEM (P-521, HKDF-SHA512)     | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           |                                       | ✅<br>hpke-js<br>@hpke/core           | ✅<br>hpke-js<br>@hpke/core           |
+| DHKEM (X25519, HKDF-SHA256)    | ✅<br>hpke-js<br>@hpke/dhkem-x25519   | ✅<br>hpke-js<br>@hpke/dhkem-x25519   | ✅<br>hpke-js<br>@hpke/dhkem-x25519   | ✅<br>hpke-js<br>@hpke/dhkem-x25519   | ✅<br>hpke-js<br>@hpke/dhkem-x25519   |
+| DHKEM (X448, HKDF-SHA512)      | ✅<br>hpke-js<br>@hpke/dhkem-x448     | ✅<br>hpke-js<br>@hpke/dhkem-x448     | ✅<br>hpke-js<br>@hpke/dhkem-x448     | ✅<br>hpke-js<br>@hpke/dhkem-x448     | ✅<br>hpke-js<br>@hpke/dhkem-x448     |
+| Hybrid KEM (X25519, Kyber768)  | ✅<br>@hpke/hybridkem-x25519-kyber768 | ✅<br>@hpke/hybridkem-x25519-kyber768 | ✅<br>@hpke/hybridkem-x25519-kyber768 | ✅<br>@hpke/hybridkem-x25519-kyber768 | ✅<br>@hpke/hybridkem-x25519-kyber768 |
+| DHKEM (secp256k1, HKDF-SHA256) | ✅<br>@hpke/dhkem-secp256k1           | ✅<br>@hpke/dhkem-secp256k1           | ✅<br>@hpke/dhkem-secp256k1           | ✅<br>@hpke/dhkem-secp256k1           | ✅<br>@hpke/dhkem-secp256k1           |
 
 ### Key Derivation Functions (KDFs)
 
@@ -300,66 +304,65 @@ Browsers:
       // } from "@hpke/core@1.2.0";
 
       globalThis.doHpke = async () => {
-
-        const suite = new CipherSuite({
-          kem: KemId.DhkemP256HkdfSha256,
-          kdf: KdfId.HkdfSha256,
-          aead: AeadId.Aes128Gcm
-        });
- 
-        const rkp = await suite.kem.generateKeyPair();
-      
-        const sender = await suite.createSenderContext({
-          recipientPublicKey: rkp.publicKey
-        });
-      
-        // A JWK-formatted recipient public key can also be used.
-        // const jwkPkR = {
-        //   kty: "EC",
-        //   crv: "P-256",
-        //   kid: "P-256-01",
-        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
-        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
-        //   key_ops: [],
-        // };
-        // const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
-        // const sender = await suite.createSenderContext({
-        //   recipientPublicKey: pkR,
-        // });
-
-        const recipient = await suite.createRecipientContext({
-          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-          enc: sender.enc,
-        });
-
-        // A JWK-formatted recipient private key can also be used.
-        // const jwkSkR = {
-        //   kty: "EC",
-        //   crv: "P-256",
-        //   kid: "P-256-01",
-        //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
-        //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
-        //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
-        //   key_ops: ["deriveBits"],
-        // };
-        // const skR = await suite.kem.importKey("jwk", jwkSkR, false);
-        // const recipient = await suite.createRecipientContext({
-        //   recipientKey: skR,
-        //   enc: sender.enc,
-        // });
-
-      
-        // encrypt
-        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
-      
-        // decrypt
         try {
+          const suite = new CipherSuite({
+            kem: KemId.DhkemP256HkdfSha256,
+            kdf: KdfId.HkdfSha256,
+            aead: AeadId.Aes128Gcm
+          });
+ 
+          const rkp = await suite.kem.generateKeyPair();
+      
+          const sender = await suite.createSenderContext({
+            recipientPublicKey: rkp.publicKey
+          });
+      
+          // A JWK-formatted recipient public key can also be used.
+          // const jwkPkR = {
+          //   kty: "EC",
+          //   crv: "P-256",
+          //   kid: "P-256-01",
+          //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+          //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+          //   key_ops: [],
+          // };
+          // const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
+          // const sender = await suite.createSenderContext({
+          //   recipientPublicKey: pkR,
+          // });
+
+          // encrypt
+          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
+
+          const recipient = await suite.createRecipientContext({
+            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+            enc: sender.enc,
+          });
+
+          // A JWK-formatted recipient private key can also be used.
+          // const jwkSkR = {
+          //   kty: "EC",
+          //   crv: "P-256",
+          //   kid: "P-256-01",
+          //   x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+          //   y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+          //   d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+          //   key_ops: ["deriveBits"],
+          // };
+          // const skR = await suite.kem.importKey("jwk", jwkSkR, false);
+          // const recipient = await suite.createRecipientContext({
+          //   recipientKey: skR,
+          //   enc: sender.enc,
+          // });
+
+          // decrypt
           const pt = await recipient.open(ct);
 
-          // hello world!
+          // Hello world!
           alert(new TextDecoder().decode(pt));
         } catch (err) {
-          alert("failed to decrypt.");
+          alert("failed:", err.message);
         }
       }
       
@@ -399,15 +402,17 @@ async function doHpke() {
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
-  try {
-    const pt = await recipient.open(ct);
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-  } catch (e) {
-    console.log("failed to decrypt:", e.message);
-  }
+  const pt = await recipient.open(ct);
+
+  // Hello world!
+  console.log("decrypted: ", new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (e) {
+  console.log("failed:", e.message);
+}
 ```
 
 Deno:
@@ -441,26 +446,26 @@ async function doHpke() {
     recipientPublicKey: rkp.publicKey,
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-  try {
-    // decrypt
-    const pt = await recipient.open(ct);
-
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (_err: unknown) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (_err: unknown) {
+  console.log("failed.");
+}
 ```
 
 ### Base mode with Single-Shot APIs
@@ -484,23 +489,23 @@ async function doHpke() {
   });
 
   const rkp = await suite.kem.generateKeyPair();
-  const pt = new TextEncoder().encode('my-secret-message'),
+  const pt = new TextEncoder().encode('Hello world!'),
 
   // encrypt
   const { ct, enc } = await suite.seal({ recipientPublicKey: rkp.publicKey }, pt);
 
   // decrypt
-  try {
   const pt = await suite.open({ recipientKey: rkp.privateKey, enc: enc }, ct);
 
-  console.log('decrypted: ', new TextDecoder().decode(pt));
-  // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### Base mode with export-only AEAD
@@ -547,7 +552,11 @@ async function doHpke() {
   // pskR === pskS
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### PSK mode
@@ -580,6 +589,9 @@ async function doHpke() {
     },
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
@@ -590,21 +602,18 @@ async function doHpke() {
     },
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
-
   // decrypt
-  try {
-    const pt = await recipient.open(ct);
+  const pt = await recipient.open(ct);
 
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt:", err.message);
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### Auth mode
@@ -634,27 +643,27 @@ async function doHpke() {
     senderKey: skp,
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
     senderPublicKey: skp.publicKey,
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  // decrypt
+  const pt = await recipient.open(ct);
 
-  try {
-    // decrypt
-    const pt = await recipient.open(ct);
-
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt:", err.message);
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### AuthPSK mode
@@ -689,6 +698,9 @@ async function doHpke() {
     },
   });
 
+  // encrypt
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
     enc: sender.enc,
@@ -700,21 +712,18 @@ async function doHpke() {
     },
   });
 
-  // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
-
   // decrypt
-  try {
-    const pt = await recipient.open(ct);
+  const pt = await recipient.open(ct);
 
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt:", err.message);
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ## Contributing

@@ -47,6 +47,11 @@ jobs:
         run: |
           deno task dnt
           deno task minify > ./npm/hpke-chacha20poly1305.min.js
+      - name: Run dnt & minify for /x/hybridkem-x25519-kyber768
+        working-directory: ./x/hybridkem-x25519-kyber768
+        run: |
+          deno task dnt
+          deno task minify > ./npm/hpke-hybridkem-x25519-kyber768.min.js
       - name: Run dnt & minify for /x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |

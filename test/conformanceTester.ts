@@ -92,7 +92,7 @@ export class ConformanceTester {
       psk: psk,
       recipientPublicKey: rkp.publicKey,
       senderKey: skp,
-      nonEphemeralKeyPair: ekp, // FOR DEBUGGING/TESTING PURPOSES ONLY.
+      ekm: ekp, // FOR DEBUGGING/TESTING PURPOSES ONLY.
     });
     assertEquals(new Uint8Array(sender.enc), enc);
 

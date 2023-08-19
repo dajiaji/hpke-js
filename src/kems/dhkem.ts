@@ -7,10 +7,9 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
 import { DecapError, EncapError, InvalidParamError } from "../errors.ts";
 import { KemId } from "../identifiers.ts";
-import { i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
+import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
+import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
-// b"KEM"
-const SUITE_ID_HEADER_KEM = new Uint8Array([75, 69, 77, 0, 0]);
 // b"eae_prk"
 const LABEL_EAE_PRK = new Uint8Array([101, 97, 101, 95, 112, 114, 107]);
 // b"shared_secret"
@@ -19,13 +18,6 @@ const LABEL_SHARED_SECRET = new Uint8Array([
   115, 104, 97, 114, 101, 100, 95, 115, 101, 99,
   114, 101, 116,
 ]);
-
-function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  return ret;
-}
 
 function concat3(
   a: Uint8Array,
@@ -95,9 +87,16 @@ export class Dhkem implements KemInterface {
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
-    const ke = params.nonEphemeralKeyPair === undefined
-      ? await this.generateKeyPair()
-      : params.nonEphemeralKeyPair;
+    let ke: CryptoKeyPair;
+    if (params.ekm === undefined) {
+      ke = await this.generateKeyPair();
+    } else if (isCryptoKeyPair(params.ekm)) {
+      // params.ekm is only used for testing.
+      ke = params.ekm as CryptoKeyPair;
+    } else {
+      // params.ekm is only used for testing.
+      ke = await this.deriveKeyPair(params.ekm as ArrayBuffer);
+    }
     const enc = await this._prim.serializePublicKey(ke.publicKey);
     const pkrm = await this._prim.serializePublicKey(
       params.recipientPublicKey,

@@ -44,6 +44,16 @@ export function i2Osp(n: number, w: number): Uint8Array {
 }
 
 /**
+ * Concatenates two Uint8Arrays.
+ */
+export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const ret = new Uint8Array(a.length + b.length);
+  ret.set(a, 0);
+  ret.set(b, a.length);
+  return ret;
+}
+
+/**
  * Decodes Base64Url-encoded data.
  */
 export function base64UrlToBytes(v: string): Uint8Array {
