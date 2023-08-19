@@ -1,7 +1,7 @@
 <h1 align="center">@hpke/hybridkem-x25519-kyber768</h1>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for the hybrid post-quantum KEM(X25519, Kyber768) compliant with <a href="https://www.ietf.org/archive/id/draft-westerbaan-cfrg-hpke-xyber768d00-02.html">X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE</a>. Note that this implementation is EXPERIMENTAL and the specification has not been done yet. The kyber implementation included in this module is based on <a href="https://github.com/antontutoveanu/crystals-kyber-javascript">ntontutoveanu/crystals-kyber-javascript</a> published under <a href="https://github.com/antontutoveanu/crystals-kyber-javascript/blob/main/License">the MIT license</a>.
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for the hybrid post-quantum KEM(X25519, Kyber768) compliant with <a href="https://www.ietf.org/archive/id/draft-westerbaan-cfrg-hpke-xyber768d00-02.html">X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE</a>. The kyber implementation included in this module is based on <a href="https://github.com/antontutoveanu/crystals-kyber-javascript">ntontutoveanu/crystals-kyber-javascript</a> published under <a href="https://github.com/antontutoveanu/crystals-kyber-javascript/blob/main/License">the MIT license</a>. Note that this module is EXPERIMENTAL and the referred specification has not been standardized yet.
 </div>
 <p></p>
 
@@ -17,18 +17,47 @@ Documentation:
 ## Index
 
 - [Installation](#installation)
-  - [Web Browser](#web-browser)
   - [Node.js](#nodejs)
   - [Deno](#deno)
+  - [Web Browsers](#web-browsers)
   - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
 ## Installation
 
-### Web Browser
+### Node.js
 
-Followings are how to use with typical CDNs. Other CDNs can be used as well.
+Using npm:
+
+```sh
+npm install @hpke/hybridkem-x25519-kyber768
+```
+
+Using yarn:
+
+```sh
+yarn add @hpke/hybridkem-x25519-kyber768
+```
+
+### Deno
+
+Using deno.land:
+
+```js
+// use a specific version
+import * as hpke from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
+import * as kyber from "https://deno.land/x/hpke@1.2.1/x/hybridkem-x25519-kyber768/mod.ts";
+
+// use the latest stable version
+import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
+import * as kyber from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+```
+
+### Web Browsers
+
+Followings are how to use this module with typical CDNs. Other CDNs can be used
+as well.
 
 Using esm.sh:
 
@@ -59,34 +88,6 @@ Using unpkg:
 </script>
 ```
 
-### Node.js
-
-Using npm:
-
-```sh
-npm install @hpke/hybridkem-x25519-kyber768
-```
-
-Using yarn:
-
-```sh
-yarn add @hpke/hybridkem-x25519-kyber768
-```
-
-### Deno
-
-Using deno.land:
-
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.1/core/mod.ts";
-import * as kyber from "https://deno.land/x/hpke@1.2.1/x/hybridkem-x25519-kyber768/mod.ts";
-
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as kyber from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
-```
-
 ### Cloudflare Workers
 
 ```sh
@@ -100,52 +101,6 @@ deno task minify > $YOUR_SRC_PATH/hpke-hybridkem-x25519-kyber768.js
 ## Usage
 
 This section shows some typical usage examples.
-
-### Browsers
-
-```html
-<html>
-  <head></head>
-  <body>
-    <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.1";
-      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.1";
-
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: new HybridkemX25519Kyber768(),
-            kdf: new HkdfSha256(),
-            aead: new Aes128Gcm(),
-          });
- 
-          const rkp = await suite.kem.generateKeyPair();
-      
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
-          });
-          // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-      
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
-
-          // decrypt
-          const pt = await recipient.open(ct);
-
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      }
-    </script>
-    <button type="button" onclick="doHpke()">do HPKE</button>
-  </body>
-</html>
-```
 
 ### Node.js
 
@@ -230,6 +185,52 @@ try {
 } catch (_err: unknown) {
   console.log("failed.");
 }
+```
+
+### Browsers
+
+```html
+<html>
+  <head></head>
+  <body>
+    <script type="module">
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.1";
+      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.1";
+
+      globalThis.doHpke = async () => {
+        try {
+          const suite = new CipherSuite({
+            kem: new HybridkemX25519Kyber768(),
+            kdf: new HkdfSha256(),
+            aead: new Aes128Gcm(),
+          });
+ 
+          const rkp = await suite.kem.generateKeyPair();
+      
+          const sender = await suite.createSenderContext({
+            recipientPublicKey: rkp.publicKey
+          });
+          // encrypt
+          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+      
+          const recipient = await suite.createRecipientContext({
+            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+            enc: sender.enc,
+          });
+
+          // decrypt
+          const pt = await recipient.open(ct);
+
+          // Hello world!
+          alert(new TextDecoder().decode(pt));
+        } catch (err) {
+          alert("failed:", err.message);
+        }
+      }
+    </script>
+    <button type="button" onclick="doHpke()">do HPKE</button>
+  </body>
+</html>
 ```
 
 ## Contributing
