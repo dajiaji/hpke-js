@@ -6,7 +6,7 @@
   "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
   "license": "MIT",
   "dependencies": {
-    "@hpke/core": "^1.2.1",
+    "@hpke/core": "^1.2.2",
     "ts-node": "^10.7.0"
   }
 }
