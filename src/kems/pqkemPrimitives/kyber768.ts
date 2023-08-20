@@ -39,14 +39,17 @@ const NTT_ZETAS_INV = [
   3127, 3042, 1907, 1836, 1517, 359, 758, 1441,
 ];
 
-const PARAMS_K = 3;
-const PARAMS_N = 256;
-const PARAMS_Q = 3329;
-const PARAMS_Q_INV = 62209;
-const PARAMS_ETA = 2;
+const N = 256;
+const Q = 3329;
+const Q_INV = 62209;
 
 export class Kyber768 {
   private _api: Crypto | undefined = undefined;
+  private _k = 3;
+  private _du = 10;
+  private _dv = 4;
+  private _eta1 = 2;
+  private _eta2 = 2;
 
   constructor() {}
 
@@ -71,77 +74,54 @@ export class Kyber768 {
 
   public async encap(
     pk: Uint8Array,
-    ikm?: Uint8Array,
+    seed?: Uint8Array,
   ): Promise<[Uint8Array, Uint8Array]> {
     await this._setup();
 
-    // random 32 bytes m
-    let m: Uint8Array;
-    if (ikm === undefined) {
-      m = new Uint8Array(32);
-      (this._api as Crypto).getRandomValues(m);
-    } else {
-      if (ikm.byteLength !== 32) {
-        throw new Error("ikm must be 32 bytes in length");
-      }
-      m = ikm;
-    }
-    const mh = sha3_256.create().update(m).digest();
-    const pkh = sha3_256.create().update(pk).digest();
-    const kr = sha3_512.create().update(mh).update(pkh).digest();
-    const kr1 = kr.subarray(0, 32);
-    const kr2 = kr.subarray(32, 64);
-    const c = this._encap(pk, mh, kr2);
-    const ch = sha3_256.create().update(c).digest();
-    const ss = shake256.create({}).update(kr1).update(ch).digest();
-    return [c, ss];
+    const m = h(this._getSeed(seed));
+    const [kBar, r] = g(m, h(pk));
+    const ct = this._encap(pk, m, r);
+    const k = kdf(kBar, h(ct));
+    return [ct, k];
   }
 
-  public async decap(
-    c: Uint8Array,
-    privateKey: Uint8Array,
-  ): Promise<Uint8Array> {
+  public async decap(sk: Uint8Array, ct: Uint8Array): Promise<Uint8Array> {
     await this._setup();
 
-    // extract sk, pk, pkh and z
-    const sk = privateKey.subarray(0, 1152);
-    const pk = privateKey.subarray(1152, 2336);
-    const pkh = privateKey.subarray(2336, 2368);
-    const z = privateKey.subarray(2368, 2400);
+    const sk2 = sk.subarray(0, 12 * this._k * N / 8);
+    const pk = sk.subarray(12 * this._k * N / 8, 24 * this._k * N / 8 + 32);
+    const p = sk.subarray(24 * this._k * N / 8 + 32, 24 * this._k * N / 8 + 64);
+    const z = sk.subarray(24 * this._k * N / 8 + 64, 24 * this._k * N / 8 + 96);
 
-    // IND-CPA decrypt
-    const m = this._decap(c, sk);
-    const kr = sha3_512.create().update(m).update(pkh).digest();
-    const kr1 = kr.subarray(0, 32);
-    const kr2 = kr.subarray(32, 64);
-
-    // IND-CPA encrypt
-    const cmp = this._encap(pk, m, kr2);
-
-    // compare c and cmp
-    const validated = compareArray(c, cmp);
-
-    // hash c with SHA3-256
-    const ch = sha3_256.create().update(c).digest();
-
-    let ss: Uint8Array;
-    if (validated) {
-      ss = shake256.create({}).update(kr1).update(ch).digest();
-    } else {
-      ss = shake256.create({}).update(z).update(ch).digest();
+    const m2 = this._decap(sk2, ct);
+    const [kBar2, r2] = g(m2, p);
+    const ct2 = this._encap(pk, m2, r2);
+    if (constantTimeCompare(ct, ct2) == 1) {
+      return kdf(kBar2, h(ct));
     }
-    return ss;
+    return kdf(z, h(ct));
+  }
+
+  private _getSeed(seed?: Uint8Array): Uint8Array {
+    if (seed == undefined) {
+      const s = new Uint8Array(32);
+      (this._api as Crypto).getRandomValues(s);
+      return s;
+    }
+    if (seed.byteLength !== 32) {
+      throw new Error("seed must be 32 bytes in length");
+    }
+    return seed;
   }
 
   private _deriveKeyPair(ikm: Uint8Array): [Uint8Array, Uint8Array] {
     const cpaSeed = ikm.subarray(0, 32);
     const z = ikm.subarray(32, 64);
 
-    // IND-CPA keypair
     const cpaKeys = this._deriveCpaKeyPair(cpaSeed);
 
     const pk = cpaKeys[0];
-    const pkh = sha3_256.create().update(pk).digest();
+    const pkh = h(pk);
     const sk = new Uint8Array(2400);
     sk.set(cpaKeys[1], 0);
     sk.set(pk, 1152);
@@ -153,67 +133,33 @@ export class Kyber768 {
   // indcpaKeyGen generates public and private keys for the CPA-secure
   // public-key encryption scheme underlying Kyber.
   private _deriveCpaKeyPair(cpaSeed: Uint8Array): [Uint8Array, Uint8Array] {
-    const seed = sha3_512.create().update(cpaSeed).digest();
-    const publicSeed = seed.subarray(0, 32);
-    const noiseSeed = seed.subarray(32, 64);
-
-    // generate public matrix A (already in NTT form)
-    const a = generateMatrixA(publicSeed, false);
-
-    // sample secret s
-    const s = new Array<Array<number>>(PARAMS_K);
-    let nonce = 0;
-    for (let i = 0; i < PARAMS_K; i++) {
-      s[i] = sample(noiseSeed, nonce);
-      nonce++;
-    }
-
-    // sample noise e
-    const e = new Array<Array<number>>(PARAMS_K);
-    for (let i = 0; i < PARAMS_K; i++) {
-      e[i] = sample(noiseSeed, nonce);
-      nonce++;
-    }
+    const seed = g(cpaSeed);
+    const publicSeed = seed[0];
+    const noiseSeed = seed[1];
+    const a = sampleMatrix(publicSeed, this._k, false);
+    const s = sampleNoise(noiseSeed, this._eta1, 0, this._k);
+    const e = sampleNoise(noiseSeed, this._eta1, this._k, this._k);
 
     // perform number theoretic transform on secret s
-    for (let i = 0; i < PARAMS_K; i++) {
+    for (let i = 0; i < this._k; i++) {
       s[i] = ntt(s[i]);
-    }
-
-    // perform number theoretic transform on error/noise e
-    for (let i = 0; i < PARAMS_K; i++) {
+      s[i] = reduce(s[i]);
       e[i] = ntt(e[i]);
     }
 
-    // barrett reduction
-    for (let i = 0; i < PARAMS_K; i++) {
-      s[i] = reduce(s[i]);
-    }
-
     // KEY COMPUTATION
-    // A.s + e = pk
-
-    // calculate A.s
-    const pk = new Array<Array<number>>(PARAMS_K);
-    for (let i = 0; i < PARAMS_K; i++) {
-      // montgomery reduction
-      pk[i] = polyToMont(multiply(a[i], s));
-    }
-
-    // calculate addition of e
-    for (let i = 0; i < PARAMS_K; i++) {
+    // pk = A*s + e
+    const pk = new Array<Array<number>>(this._k);
+    for (let i = 0; i < this._k; i++) {
+      pk[i] = polyToMont(this._multiply(a[i], s));
       pk[i] = add(pk[i], e[i]);
-    }
-
-    // barrett reduction
-    for (let i = 0; i < PARAMS_K; i++) {
       pk[i] = reduce(pk[i]);
     }
 
     // PUBLIC KEY
     // turn polynomials into byte arrays
     const pubKey = new Uint8Array(1184);
-    for (let i = 0; i < PARAMS_K; i++) {
+    for (let i = 0; i < this._k; i++) {
       pubKey.set(polyToBytes(pk[i]), i * 384);
     }
     // append public seed
@@ -222,7 +168,7 @@ export class Kyber768 {
     // PRIVATE KEY
     // turn polynomials into byte arrays
     const privKey = new Uint8Array(1152);
-    for (let i = 0; i < PARAMS_K; i++) {
+    for (let i = 0; i < this._k; i++) {
       privKey.set(polyToBytes(s[i]), i * 384);
     }
     return [pubKey, privKey];
@@ -231,112 +177,64 @@ export class Kyber768 {
   // _encap is the encapsulation function of the CPA-secure
   // public-key encryption scheme underlying Kyber.
   private _encap(
-    pk1: Uint8Array,
+    pk: Uint8Array,
     msg: Uint8Array,
-    coins: Uint8Array,
+    seed: Uint8Array,
   ): Uint8Array {
-    const pk = new Array<Array<number>>(PARAMS_K);
-    for (let i = 0; i < PARAMS_K; i++) {
-      pk[i] = polyFromBytes(pk1.subarray(i * 384, (i + 1) * 384));
+    const tHat = new Array<Array<number>>(this._k);
+    for (let i = 0; i < this._k; i++) {
+      tHat[i] = polyFromBytes(pk.subarray(i * 384, (i + 1) * 384));
     }
-    const seed = pk1.subarray(1152, 1184);
-
-    // generate transpose of public matrix A
-    const at = generateMatrixA(seed, true);
-
-    // sample random vector r
-    const r = new Array<Array<number>>(PARAMS_K);
-    let nonce = 0;
-    for (let i = 0; i < PARAMS_K; i++) {
-      r[i] = sample(coins, nonce);
-      nonce++;
-    }
-
-    // sample error vector e1
-    const e1 = new Array<Array<number>>(PARAMS_K);
-    for (let i = 0; i < PARAMS_K; i++) {
-      e1[i] = sample(coins, nonce);
-      nonce++;
-    }
-
-    // sample e2
-    const e2 = sample(coins, nonce);
+    const rho = pk.subarray(1152);
+    const a = sampleMatrix(rho, this._k, true);
+    const r = sampleNoise(seed, this._eta1, 0, this._k);
+    const e1 = sampleNoise(seed, this._eta1, this._k, this._k);
+    const e2 = sampleNoise(seed, this._eta2, this._k * 2, 1)[0];
 
     // perform number theoretic transform on random vector r
-    for (let i = 0; i < PARAMS_K; i++) {
+    for (let i = 0; i < this._k; i++) {
       r[i] = ntt(r[i]);
-    }
-
-    // barrett reduction
-    for (let i = 0; i < PARAMS_K; i++) {
       r[i] = reduce(r[i]);
     }
 
-    // ENCRYPT COMPUTATION
-    // A.r + e1 = u
-    // pk.r + e2 + m = v
-
-    // calculate A.r
-    const u = new Array<Array<number>>(PARAMS_K);
-    for (let i = 0; i < PARAMS_K; i++) {
-      u[i] = multiply(at[i], r);
-    }
-
-    // perform inverse number theoretic transform on A.r
-    for (let i = 0; i < PARAMS_K; i++) {
+    // u = A*r + e1
+    const u = new Array<Array<number>>(this._k);
+    for (let i = 0; i < this._k; i++) {
+      u[i] = this._multiply(a[i], r);
       u[i] = nttInverse(u[i]);
-    }
-
-    // calculate addition of e1
-    for (let i = 0; i < PARAMS_K; i++) {
       u[i] = add(u[i], e1[i]);
-    }
-
-    // decode message m
-    const m = polyFromMsg(msg);
-
-    // calculate pk.r
-    let v = multiply(pk, r);
-
-    // perform inverse number theoretic transform on pk.r
-    v = nttInverse(v);
-
-    // calculate addition of e2
-    v = add(v, e2);
-
-    // calculate addition of m
-    v = add(v, m);
-
-    // barrett reduction
-    for (let i = 0; i < PARAMS_K; i++) {
       u[i] = reduce(u[i]);
     }
 
-    // barrett reduction
+    // v = tHat*r + e2 + m
+    const m = polyFromMsg(msg);
+    let v = this._multiply(tHat, r);
+    v = nttInverse(v);
+    v = add(v, e2);
+    v = add(v, m);
     v = reduce(v);
 
     // compress
     const ret = new Uint8Array(960 + 128);
-    compress1(ret.subarray(0, 960), u);
-    compress2(ret.subarray(960), v);
+    this._compress1(ret.subarray(0, 960), u);
+    this._compress2(ret.subarray(960), v);
     return ret;
   }
 
   // indcpaDecrypt is the decryption function of the CPA-secure
   // public-key encryption scheme underlying Kyber.
-  private _decap(c: Uint8Array, privateKey: Uint8Array): Uint8Array {
+  private _decap(sk: Uint8Array, ct: Uint8Array): Uint8Array {
     // extract ciphertext
-    const u = decompress1(c.subarray(0, 960));
-    const v = decompress2(c.subarray(960, 1088));
+    const u = this._decompress1(ct.subarray(0, 960));
+    const v = this._decompress2(ct.subarray(960, 1088));
 
-    const privateKeyPolyvec = polyvecFromBytes(privateKey);
+    const privateKeyPolyvec = this._polyvecFromBytes(sk);
 
-    for (let i = 0; i < PARAMS_K; i++) {
+    for (let i = 0; i < this._k; i++) {
       u[i] = ntt(u[i]);
     }
 
-    // ???
-    let mp = multiply(privateKeyPolyvec, u);
+    let mp = this._multiply(privateKeyPolyvec, u);
     mp = nttInverse(mp);
     mp = subtract(v, mp);
     mp = reduce(mp);
@@ -348,6 +246,117 @@ export class Kyber768 {
       return;
     }
     this._api = await loadCrypto();
+  }
+
+  // polyvecFromBytes deserializes a vector of polynomials.
+  private _polyvecFromBytes(a: Uint8Array): Array<Array<number>> {
+    const r = new Array<Array<number>>(this._k);
+    for (let i = 0; i < this._k; i++) {
+      r[i] = new Array<number>(384);
+    }
+    for (let i = 0; i < this._k; i++) {
+      r[i] = polyFromBytes(a.subarray(i * 384, (i + 1) * 384));
+    }
+    return r;
+  }
+
+  // compress1 lossily compresses and serializes a vector of polynomials.
+  private _compress1(r: Uint8Array, u: Array<Array<number>>): Uint8Array {
+    // const r = new Uint8Array(960);
+    const t = new Array<number>(4);
+    for (let rr = 0, i = 0; i < this._k; i++) {
+      for (let j = 0; j < N / 4; j++) {
+        for (let k = 0; k < 4; k++) {
+          // parse {0,...,3328} to {0,...,1023}
+          t[k] = (((u[i][4 * j + k] << 10) + Q / 2) / Q) &
+            0b1111111111;
+        }
+        // converts 4 12-bit coefficients {0,...,3328} to 5 8-bit bytes {0,...,255}
+        // 48 bits down to 40 bits per block
+        r[rr + 0] = byte(t[0] >> 0);
+        r[rr + 1] = byte((t[0] >> 8) | (t[1] << 2));
+        r[rr + 2] = byte((t[1] >> 6) | (t[2] << 4));
+        r[rr + 3] = byte((t[2] >> 4) | (t[3] << 6));
+        r[rr + 4] = byte(t[3] >> 2);
+        rr = rr + 5;
+      }
+    }
+    return r;
+  }
+
+  // compress2 lossily compresses and subsequently serializes a polynomial.
+  private _compress2(r: Uint8Array, v: Array<number>): Uint8Array {
+    // const r = new Uint8Array(128);
+    const t = new Uint8Array(8);
+    for (let rr = 0, i = 0; i < N / 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        t[j] = byte(((v[8 * i + j] << 4) + Q / 2) / Q) & 0b1111;
+      }
+      r[rr + 0] = t[0] | (t[1] << 4);
+      r[rr + 1] = t[2] | (t[3] << 4);
+      r[rr + 2] = t[4] | (t[5] << 4);
+      r[rr + 3] = t[6] | (t[7] << 4);
+      rr = rr + 4;
+    }
+    return r;
+  }
+
+  // decompress1 de-serializes and decompresses a vector of polynomials and
+  // represents the approximate inverse of compress1. Since compression is lossy,
+  // the results of decompression will may not match the original vector of polynomials.
+  private _decompress1(a: Uint8Array): Array<Array<number>> {
+    const r = new Array<Array<number>>(this._k);
+    for (let i = 0; i < this._k; i++) {
+      r[i] = new Array<number>(384);
+    }
+    let aa = 0;
+    const t = new Array<number>(4);
+    for (let i = 0; i < this._k; i++) {
+      for (let j = 0; j < N / 4; j++) {
+        t[0] = (uint16(a[aa + 0]) >> 0) | (uint16(a[aa + 1]) << 8);
+        t[1] = (uint16(a[aa + 1]) >> 2) | (uint16(a[aa + 2]) << 6);
+        t[2] = (uint16(a[aa + 2]) >> 4) | (uint16(a[aa + 3]) << 4);
+        t[3] = (uint16(a[aa + 3]) >> 6) | (uint16(a[aa + 4]) << 2);
+        aa = aa + 5;
+        for (let k = 0; k < 4; k++) {
+          r[i][4 * j + k] = int16(
+            (((uint32(t[k] & 0x3FF) >>> 0) * (uint32(Q) >>> 0) >>> 0) +
+                  512) >> 10 >>> 0,
+          );
+        }
+      }
+    }
+    return r;
+  }
+
+  // decompress2 de-serializes and subsequently decompresses a polynomial,
+  // representing the approximate inverse of compress2.
+  // Note that compression is lossy, and thus decompression will not match the
+  // original input.
+  private _decompress2(a: Uint8Array): Array<number> {
+    const r = new Array<number>(384);
+    let aa = 0;
+    for (let i = 0; i < N / 2; i++) {
+      r[2 * i + 0] = int16(((uint16(a[aa] & 15) * uint16(Q)) + 8) >> 4);
+      r[2 * i + 1] = int16(((uint16(a[aa] >> 4) * uint16(Q)) + 8) >> 4);
+      aa = aa + 1;
+    }
+    return r;
+  }
+
+  // pointwise-multiplies elements of polynomial-vectors
+  // `a` and `b`, accumulates the results into `r`, and then multiplies by `2^-16`.
+  private _multiply(
+    a: Array<Array<number>>,
+    b: Array<Array<number>>,
+  ): Array<number> {
+    let r = polyBaseMulMontgomery(a[0], b[0]);
+    let t;
+    for (let i = 1; i < this._k; i++) {
+      t = polyBaseMulMontgomery(a[i], b[i]);
+      r = add(r, t);
+    }
+    return reduce(r);
   }
 }
 
@@ -366,16 +375,76 @@ async function loadCrypto(): Promise<Crypto> {
   }
 }
 
-// polyvecFromBytes deserializes a vector of polynomials.
-function polyvecFromBytes(a: Uint8Array): Array<Array<number>> {
-  const r = new Array<Array<number>>(PARAMS_K);
-  for (let i = 0; i < PARAMS_K; i++) {
-    r[i] = new Array<number>(384);
+function g(a: Uint8Array, b?: Uint8Array): [Uint8Array, Uint8Array] {
+  const hash = sha3_512.create().update(a);
+  if (b !== undefined) {
+    hash.update(b);
   }
-  for (let i = 0; i < PARAMS_K; i++) {
-    r[i] = polyFromBytes(a.subarray(i * 384, (i + 1) * 384));
+  const res = hash.digest();
+  return [res.subarray(0, 32), res.subarray(32, 64)];
+}
+
+function h(msg: Uint8Array): Uint8Array {
+  return sha3_256.create().update(msg).digest();
+}
+
+function kdf(a: Uint8Array, b?: Uint8Array): Uint8Array {
+  const hash = shake256.create({ dkLen: 32 }).update(a);
+  if (b !== undefined) {
+    hash.update(b);
   }
-  return r;
+  return hash.digest();
+}
+
+function xof(seed: Uint8Array, transpose: Uint8Array): Uint8Array {
+  return shake128.create({ dkLen: 672 }).update(seed).update(transpose)
+    .digest();
+}
+
+// generateMatrixA deterministically generates a matrix `A` (or the transpose of `A`)
+// from a seed. Entries of the matrix are polynomials that look uniformly random.
+// Performs rejection sampling on the output of an extendable-output function (XOF).
+function sampleMatrix(
+  seed: Uint8Array,
+  paramsK: number,
+  transposed: boolean,
+): Array<Array<Array<number>>> {
+  const a = new Array<Array<Array<number>>>(3);
+  const transpose = new Uint8Array(2);
+
+  for (let ctr = 0, i = 0; i < paramsK; i++) {
+    a[i] = new Array<Array<number>>(paramsK);
+
+    for (let j = 0; j < paramsK; j++) {
+      // set if transposed matrix or not
+      if (transposed) {
+        transpose[0] = i;
+        transpose[1] = j;
+      } else {
+        transpose[0] = j;
+        transpose[1] = i;
+      }
+      const output = xof(seed, transpose);
+
+      // run rejection sampling on the output from above
+      const result = indcpaRejUniform(output.subarray(0, 504), 504, N);
+      a[i][j] = result[0]; // the result here is an NTT-representation
+      ctr = result[1]; // keeps track of index of output array from sampling function
+
+      while (ctr < N) { // if the polynomial hasnt been filled yet with mod q entries
+        const outputn = output.subarray(504, 672); // take last 168 bytes of byte array from xof
+        const result1 = indcpaRejUniform(outputn, 168, N - ctr); // run sampling function again
+        const missing = result1[0]; // here is additional mod q polynomial coefficients
+        const ctrn = result1[1]; // how many coefficients were accepted and are in the output
+        // starting at last position of output array from first sampling function until 256 is reached
+        for (let k = ctr; k < N; k++) {
+          a[i][j][k] = missing[k - ctr]; // fill rest of array with the additional coefficients until full
+        }
+        ctr = ctr + ctrn; // update index
+      }
+    }
+  }
+  return a;
 }
 
 // polyToBytes serializes a polynomial into an array of bytes.
@@ -385,7 +454,7 @@ function polyToBytes(a: Array<number>): Uint8Array {
   const r = new Uint8Array(384);
   const a2 = subtract_q(a); // Returns: a - q if a >= q, else a (each coefficient of the polynomial)
   // for 0-127
-  for (let i = 0; i < PARAMS_N / 2; i++) {
+  for (let i = 0; i < N / 2; i++) {
     // get two coefficient entries in the polynomial
     t0 = uint16(a2[2 * i]);
     t1 = uint16(a2[2 * i + 1]);
@@ -402,7 +471,7 @@ function polyToBytes(a: Array<number>): Uint8Array {
 // and represents the inverse of polyToBytes.
 function polyFromBytes(a: Uint8Array): Array<number> {
   const r = new Array<number>(384).fill(0);
-  for (let i = 0; i < PARAMS_N / 2; i++) {
+  for (let i = 0; i < N / 2; i++) {
     r[2 * i] = int16(
       ((uint16(a[3 * i + 0]) >> 0) | (uint16(a[3 * i + 1]) << 8)) & 0xFFF,
     );
@@ -419,11 +488,11 @@ function polyToMsg(a: Array<number>): Uint8Array {
   const msg = new Uint8Array(32);
   let t;
   const a2 = subtract_q(a);
-  for (let i = 0; i < PARAMS_N / 8; i++) {
+  for (let i = 0; i < N / 8; i++) {
     msg[i] = 0;
     for (let j = 0; j < 8; j++) {
-      t = (((uint16(a2[8 * i + j]) << 1) + uint16(PARAMS_Q / 2)) /
-        uint16(PARAMS_Q)) & 1;
+      t = (((uint16(a2[8 * i + j]) << 1) + uint16(Q / 2)) /
+        uint16(Q)) & 1;
       msg[i] |= byte(t << j);
     }
   }
@@ -434,60 +503,13 @@ function polyToMsg(a: Array<number>): Uint8Array {
 function polyFromMsg(msg: Uint8Array): Array<number> {
   const r = new Array<number>(384).fill(0); // each element is int16 (0-65535)
   let mask; // int16
-  for (let i = 0; i < PARAMS_N / 8; i++) {
+  for (let i = 0; i < N / 8; i++) {
     for (let j = 0; j < 8; j++) {
       mask = -1 * int16((msg[i] >> j) & 1);
-      r[8 * i + j] = mask & int16((PARAMS_Q + 1) / 2);
+      r[8 * i + j] = mask & int16((Q + 1) / 2);
     }
   }
   return r;
-}
-
-// generateMatrixA deterministically generates a matrix `A` (or the transpose of `A`)
-// from a seed. Entries of the matrix are polynomials that look uniformly random.
-// Performs rejection sampling on the output of an extendable-output function (XOF).
-function generateMatrixA(
-  seed: Uint8Array,
-  transposed: boolean,
-): Array<Array<Array<number>>> {
-  const a = new Array<Array<Array<number>>>(3);
-  const transpose = new Uint8Array(2);
-
-  for (let ctr = 0, i = 0; i < PARAMS_K; i++) {
-    a[i] = new Array<Array<number>>(PARAMS_K);
-
-    for (let j = 0; j < PARAMS_K; j++) {
-      // set if transposed matrix or not
-      if (transposed) {
-        transpose[0] = i;
-        transpose[1] = j;
-      } else {
-        transpose[0] = j;
-        transpose[1] = i;
-      }
-      const xof = shake128.create({ dkLen: 672 });
-      // const output = xof.update(seed).update(Uint8Array.from(transpose)).digest();
-      const output = xof.update(seed).update(transpose).digest();
-
-      // run rejection sampling on the output from above
-      const result = indcpaRejUniform(output.subarray(0, 504), 504, PARAMS_N);
-      a[i][j] = result[0]; // the result here is an NTT-representation
-      ctr = result[1]; // keeps track of index of output array from sampling function
-
-      while (ctr < PARAMS_N) { // if the polynomial hasnt been filled yet with mod q entries
-        const outputn = output.subarray(504, 672); // take last 168 bytes of byte array from xof
-        const result1 = indcpaRejUniform(outputn, 168, PARAMS_N - ctr); // run sampling function again
-        const missing = result1[0]; // here is additional mod q polynomial coefficients
-        const ctrn = result1[1]; // how many coefficients were accepted and are in the output
-        // starting at last position of output array from first sampling function until 256 is reached
-        for (let k = ctr; k < PARAMS_N; k++) {
-          a[i][j][k] = missing[k - ctr]; // fill rest of array with the additional coefficients until full
-        }
-        ctr = ctr + ctrn; // update index
-      }
-    }
-  }
-  return a;
 }
 
 // indcpaRejUniform runs rejection sampling on uniform random bytes
@@ -510,13 +532,13 @@ function indcpaRejUniform(
     pos = pos + 3;
 
     // if d1 is less than 3329
-    if (val0 < PARAMS_Q) {
+    if (val0 < Q) {
       // assign to d1
       r[ctr] = val0;
       // increment position of output array
       ctr = ctr + 1;
     }
-    if (ctr < len && val1 < PARAMS_Q) {
+    if (ctr < len && val1 < Q) {
       r[ctr] = val1;
       ctr = ctr + 1;
     }
@@ -527,17 +549,25 @@ function indcpaRejUniform(
 // sample samples a polynomial deterministically from a seed
 // and nonce, with the output polynomial being close to a centered
 // binomial distribution with parameter PARAMS_ETA = 2.
-function sample(seed: Uint8Array, nonce: number): Array<number> {
-  const l = PARAMS_ETA * PARAMS_N / 4;
-  const p = prf(l, seed, nonce);
-  return byteopsCbd(p);
+function sampleNoise(
+  sigma: Uint8Array,
+  eta: number,
+  offset: number,
+  paramsK: number,
+): Array<Array<number>> {
+  const r = new Array<Array<number>>(paramsK);
+  for (let i = 0; i < paramsK; i++) {
+    r[i] = byteopsCbd(prf(sigma, offset), eta);
+    offset++;
+  }
+  return r;
 }
 
 // prf provides a pseudo-random function (PRF) which returns
 // a byte array of length `l`, using the provided key and nonce
 // to instantiate the PRF's underlying hash function.
-function prf(l: number, key: Uint8Array, nonce: number): Uint8Array {
-  return shake256.create({ dkLen: l }).update(key).update(
+function prf(seed: Uint8Array, nonce: number): Uint8Array {
+  return shake256.create({ dkLen: 2000 }).update(seed).update(
     new Uint8Array([nonce]),
   ).digest();
 }
@@ -545,17 +575,17 @@ function prf(l: number, key: Uint8Array, nonce: number): Uint8Array {
 // byteopsCbd computes a polynomial with coefficients distributed
 // according to a centered binomial distribution with parameter PARAMS_ETA,
 // given an array of uniformly random bytes.
-function byteopsCbd(buf: Uint8Array): Array<number> {
+function byteopsCbd(buf: Uint8Array, eta: number): Array<number> {
   let t, d;
   let a, b;
   const r = new Array<number>(384).fill(0);
-  for (let i = 0; i < PARAMS_N / 8; i++) {
+  for (let i = 0; i < N / 8; i++) {
     t = byteopsLoad32(buf.subarray(4 * i, buf.length)) >>> 0;
     d = (t & 0x55555555) >>> 0;
     d = d + ((((t >> 1) >>> 0) & 0x55555555) >>> 0) >>> 0;
     for (let j = 0; j < 8; j++) {
       a = int16((((d >> (4 * j + 0)) >>> 0) & 0x3) >>> 0);
-      b = int16((((d >> (4 * j + PARAMS_ETA)) >>> 0) & 0x3) >>> 0);
+      b = int16((((d >> (4 * j + eta)) >>> 0) & 0x3) >>> 0);
       r[8 * i + j] = a - b;
     }
   }
@@ -602,7 +632,7 @@ function nttFqMul(a: number, b: number): number {
 
 // reduce applies Barrett reduction to all coefficients of a polynomial.
 function reduce(r: Array<number>): Array<number> {
-  for (let i = 0; i < PARAMS_N; i++) {
+  for (let i = 0; i < N; i++) {
     r[i] = barrett(r[i]);
   }
   return r;
@@ -612,17 +642,17 @@ function reduce(r: Array<number>): Array<number> {
 // a integer `a`, returns a integer congruent to
 // `a mod Q` in {0,...,Q}.
 function barrett(a: number): number {
-  const v = ((1 << 24) + PARAMS_Q / 2) / PARAMS_Q;
+  const v = ((1 << 24) + Q / 2) / Q;
   let t = v * a >> 24;
-  t = t * PARAMS_Q;
+  t = t * Q;
   return a - t;
 }
 
 // byteopsMontgomeryReduce computes a Montgomery reduction; given
 // a 32-bit integer `a`, returns `a * R^-1 mod Q` where `R=2^16`.
 function byteopsMontgomeryReduce(a: number): number {
-  const u = int16(int32(a) * PARAMS_Q_INV);
-  let t = u * PARAMS_Q;
+  const u = int16(int32(a) * Q_INV);
+  let t = u * Q;
   t = a - t;
   t >>= 16;
   return int16(t);
@@ -631,27 +661,12 @@ function byteopsMontgomeryReduce(a: number): number {
 // polyToMont performs the in-place conversion of all coefficients
 // of a polynomial from the normal domain to the Montgomery domain.
 function polyToMont(r: Array<number>): Array<number> {
-  // let f = int16(((uint64(1) << 32) >>> 0) % uint64(PARAMS_Q));
-  const f = 1353; // if PARAMS_Q changes then this needs to be updated
-  for (let i = 0; i < PARAMS_N; i++) {
+  // let f = int16(((uint64(1) << 32) >>> 0) % uint64(Q));
+  const f = 1353; // if Q changes then this needs to be updated
+  for (let i = 0; i < N; i++) {
     r[i] = byteopsMontgomeryReduce(int32(r[i]) * int32(f));
   }
   return r;
-}
-
-// pointwise-multiplies elements of polynomial-vectors
-// `a` and `b`, accumulates the results into `r`, and then multiplies by `2^-16`.
-function multiply(
-  a: Array<Array<number>>,
-  b: Array<Array<number>>,
-): Array<number> {
-  let r = polyBaseMulMontgomery(a[0], b[0]);
-  let t;
-  for (let i = 1; i < PARAMS_K; i++) {
-    t = polyBaseMulMontgomery(a[i], b[i]);
-    r = add(r, t);
-  }
-  return reduce(r);
 }
 
 // polyBaseMulMontgomery performs the multiplication of two polynomials
@@ -661,7 +676,7 @@ function polyBaseMulMontgomery(
   b: Array<number>,
 ): Array<number> {
   let rx, ry;
-  for (let i = 0; i < PARAMS_N / 4; i++) {
+  for (let i = 0; i < N / 4; i++) {
     rx = nttBaseMul(
       a[4 * i + 0],
       a[4 * i + 1],
@@ -706,7 +721,7 @@ function nttBaseMul(
 // adds two polynomials.
 function add(a: Array<number>, b: Array<number>): Array<number> {
   const c = new Array<number>(384);
-  for (let i = 0; i < PARAMS_N; i++) {
+  for (let i = 0; i < N; i++) {
     c[i] = a[i] + b[i];
   }
   return c;
@@ -714,7 +729,7 @@ function add(a: Array<number>, b: Array<number>): Array<number> {
 
 // subtracts two polynomials.
 function subtract(a: Array<number>, b: Array<number>): Array<number> {
-  for (let i = 0; i < PARAMS_N; i++) {
+  for (let i = 0; i < N; i++) {
     a[i] = a[i] - b[i];
   }
   return a;
@@ -743,100 +758,16 @@ function nttInverse(r: Array<number>): Array<number> {
   return r;
 }
 
-// compress1 lossily compresses and serializes a vector of polynomials.
-function compress1(r: Uint8Array, u: Array<Array<number>>): Uint8Array {
-  // const r = new Uint8Array(960);
-  const t = new Array<number>(4);
-  for (let rr = 0, i = 0; i < PARAMS_K; i++) {
-    for (let j = 0; j < PARAMS_N / 4; j++) {
-      for (let k = 0; k < 4; k++) {
-        // parse {0,...,3328} to {0,...,1023}
-        t[k] = (((u[i][4 * j + k] << 10) + PARAMS_Q / 2) / PARAMS_Q) &
-          0b1111111111;
-      }
-      // converts 4 12-bit coefficients {0,...,3328} to 5 8-bit bytes {0,...,255}
-      // 48 bits down to 40 bits per block
-      r[rr + 0] = byte(t[0] >> 0);
-      r[rr + 1] = byte((t[0] >> 8) | (t[1] << 2));
-      r[rr + 2] = byte((t[1] >> 6) | (t[2] << 4));
-      r[rr + 3] = byte((t[2] >> 4) | (t[3] << 6));
-      r[rr + 4] = byte(t[3] >> 2);
-      rr = rr + 5;
-    }
-  }
-  return r;
-}
-
-// compress2 lossily compresses and subsequently serializes a polynomial.
-function compress2(r: Uint8Array, v: Array<number>): Uint8Array {
-  // const r = new Uint8Array(128);
-  const t = new Uint8Array(8);
-  for (let rr = 0, i = 0; i < PARAMS_N / 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      t[j] = byte(((v[8 * i + j] << 4) + PARAMS_Q / 2) / PARAMS_Q) & 0b1111;
-    }
-    r[rr + 0] = t[0] | (t[1] << 4);
-    r[rr + 1] = t[2] | (t[3] << 4);
-    r[rr + 2] = t[4] | (t[5] << 4);
-    r[rr + 3] = t[6] | (t[7] << 4);
-    rr = rr + 4;
-  }
-  return r;
-}
-
-// decompress1 de-serializes and decompresses a vector of polynomials and
-// represents the approximate inverse of compress1. Since compression is lossy,
-// the results of decompression will may not match the original vector of polynomials.
-function decompress1(a: Uint8Array): Array<Array<number>> {
-  const r = new Array<Array<number>>(PARAMS_K);
-  for (let i = 0; i < PARAMS_K; i++) {
-    r[i] = new Array<number>(384);
-  }
-  let aa = 0;
-  const t = new Array<number>(4);
-  for (let i = 0; i < PARAMS_K; i++) {
-    for (let j = 0; j < PARAMS_N / 4; j++) {
-      t[0] = (uint16(a[aa + 0]) >> 0) | (uint16(a[aa + 1]) << 8);
-      t[1] = (uint16(a[aa + 1]) >> 2) | (uint16(a[aa + 2]) << 6);
-      t[2] = (uint16(a[aa + 2]) >> 4) | (uint16(a[aa + 3]) << 4);
-      t[3] = (uint16(a[aa + 3]) >> 6) | (uint16(a[aa + 4]) << 2);
-      aa = aa + 5;
-      for (let k = 0; k < 4; k++) {
-        r[i][4 * j + k] = int16(
-          (((uint32(t[k] & 0x3FF) >>> 0) * (uint32(PARAMS_Q) >>> 0) >>> 0) +
-                512) >> 10 >>> 0,
-        );
-      }
-    }
-  }
-  return r;
-}
-
 // subtract_q applies the conditional subtraction of q to each coefficient of a polynomial.
 // if a is 3329 then convert to 0
 // Returns:     a - q if a >= q, else a
 function subtract_q(r: Array<number>): Array<number> {
-  for (let i = 0; i < PARAMS_N; i++) {
-    r[i] = r[i] - PARAMS_Q; // should result in a negative integer
+  for (let i = 0; i < N; i++) {
+    r[i] = r[i] - Q; // should result in a negative integer
     // push left most signed bit to right most position
     // javascript does bitwise operations in signed 32 bit
     // add q back again if left most bit was 0 (positive number)
-    r[i] = r[i] + ((r[i] >> 31) & PARAMS_Q);
-  }
-  return r;
-}
-
-// decompress2 de-serializes and subsequently decompresses a polynomial,
-// representing the approximate inverse of compress2.
-// Note that compression is lossy, and thus decompression will not match the
-// original input.
-function decompress2(a: Uint8Array): Array<number> {
-  const r = new Array<number>(384);
-  let aa = 0;
-  for (let i = 0; i < PARAMS_N / 2; i++) {
-    r[2 * i + 0] = int16(((uint16(a[aa] & 15) * uint16(PARAMS_Q)) + 8) >> 4);
-    r[2 * i + 1] = int16(((uint16(a[aa] >> 4) * uint16(PARAMS_Q)) + 8) >> 4);
-    aa = aa + 1;
+    r[i] = r[i] + ((r[i] >> 31) & Q);
   }
   return r;
 }
@@ -892,16 +823,20 @@ function uint32(n: number): number {
 }
 
 // compares two arrays and returns 1 if they are the same or 0 if not
-function compareArray(a: Uint8Array, b: Uint8Array): boolean {
+function constantTimeCompare(x: Uint8Array, y: Uint8Array): number {
   // check array lengths
-  if (a.length != b.length) {
-    return false;
+  if (x.length != y.length) {
+    return 0;
   }
-  // check contents
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) {
-      return false;
-    }
+  const v = new Uint8Array([0]);
+  for (let i = 0; i < x.length; i++) {
+    v[0] |= x[i] ^ y[i];
   }
-  return true;
+  // constantTimeByteEq
+  const z = new Uint8Array([0]);
+  z[0] = ~(v[0] ^ z[0]);
+  z[0] &= z[0] >> 4;
+  z[0] &= z[0] >> 2;
+  z[0] &= z[0] >> 1;
+  return z[0];
 }
