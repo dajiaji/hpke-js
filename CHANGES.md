@@ -1,5 +1,14 @@
 # Changes
 
+## Version 1.2.2
+
+Released 2023-08-20
+
+- [(#273) Add docstring for tsdoc.](https://github.com/dajiaji/hpke-js/pull/273)
+- [(#272) Refactor kyber.](https://github.com/dajiaji/hpke-js/pull/272)
+- [(#271) Introduce constantTimeCompare to kyber.](https://github.com/dajiaji/hpke-js/pull/271)
+- [(#270) Update loadSubtleCrypto/loadCrypto.](https://github.com/dajiaji/hpke-js/pull/270)
+
 ## Version 1.2.1
 
 Released 2023-08-19
