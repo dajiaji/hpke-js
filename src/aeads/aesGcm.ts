@@ -75,10 +75,37 @@ export class AesGcmContext extends NativeAlgorithm
   }
 }
 
+/**
+ * The AES-128-GCM for HPKE AEAD implementing {@link AeadInterface}.
+ *
+ * When using `@hpke/core`, the instance of this class must be specified
+ * to the `aead` parameter of {@link CipherSuiteParams} instead of `AeadId.Aes128Gcm`.
+ *
+ * @example
+ *
+ * ```ts
+ * import {
+ *   Aes128Gcm,
+ *   CipherSuite,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ * } from "http://deno.land/x/hpke/core/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes128Gcm(),
+ * });
+ * ```
+ */
 export class Aes128Gcm implements AeadInterface {
+  /** AeadId.Aes128Gcm (0x0001) */
   public readonly id: AeadId = AeadId.Aes128Gcm;
+  /** 16 */
   public readonly keySize: number = 16;
+  /** 12 */
   public readonly nonceSize: number = 12;
+  /** 16 */
   public readonly tagSize: number = 16;
 
   public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
@@ -86,9 +113,37 @@ export class Aes128Gcm implements AeadInterface {
   }
 }
 
+/**
+ * The AES-256-GCM for HPKE AEAD implementing {@link AeadInterface}.
+ *
+ * When using `@hpke/core`, the instance of this class must be specified
+ * to the `aead` parameter of {@link CipherSuiteParams} instead of `AeadId.Aes256Gcm`
+ * as follows:
+ *
+ * @example
+ *
+ * ```ts
+ * import {
+ *   Aes256Gcm,
+ *   CipherSuite,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ * } from "http://deno.land/x/hpke/core/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
+ *   aead: new Aes256Gcm(),
+ * });
+ * ```
+ */
 export class Aes256Gcm extends Aes128Gcm {
+  /** AeadId.Aes256Gcm (0x0002) */
   public readonly id: AeadId = AeadId.Aes256Gcm;
+  /** 32 */
   public readonly keySize: number = 32;
+  /** 12 */
   public readonly nonceSize: number = 12;
+  /** 16 */
   public readonly tagSize: number = 16;
 }

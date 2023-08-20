@@ -22,7 +22,6 @@ import { CipherSuiteNative } from "./cipherSuiteNative.ts";
  * {@link https://datatracker.ietf.org/doc/html/rfc9180 | RFC9180}.
  *
  * The class consists of the {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
- * {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
  * {@link https://deno.land/x/hpke/x/chacha20Poly1305/mod.ts | @hpke/chcha20poly1305},
  * {@link https://deno.land/x/hpke/x/dhkem-x25519/mod.ts | @hpke/dhkem-x25519} and
  * {@link https://deno.land/x/hpke/x/dhkem-x448/mod.ts | @hpke/dhkem-x448} internally.
@@ -33,11 +32,11 @@ import { CipherSuiteNative } from "./cipherSuiteNative.ts";
  * - [DEPRECATED] Derives a key pair for the cipher suite.
  * - [DEPRECATED] Imports and converts a key to a CryptoKey.
  * - Creates encryption contexts both for senders and recipients.
- *   - {@link createSenderContext}
- *   - {@link createRecipientContext}
+ *     - {@link createSenderContext}
+ *     - {@link createRecipientContext}
  * - Provides single-shot encryption API.
- *   - {@link seal}
- *   - {@link open}
+ *     - {@link seal}
+ *     - {@link open}
  *
  * The calling of the constructor of this class is the starting
  * point for HPKE operations for both senders and recipients.

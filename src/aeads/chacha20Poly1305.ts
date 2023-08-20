@@ -61,30 +61,42 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
 }
 
 /**
- * The ChaCha20Poly1305 AEAD.
+ * The ChaCha20Poly1305 for HPKE AEAD implementing {@link AeadInterface}.
  *
- * This class is implemented using
- * {@link https://github.com/paulmillr/noble-ciphers | @noble/ciphers}.
- *
- * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
+ * When using `@hpke/core`, the instance of this class can be specified
+ * to the `aead` parameter of {@link CipherSuiteParams} instead of `AeadId.Chacha20Poly1305`
+ * as follows:
  *
  * @example
  *
  * ```ts
- * import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "http://deno.land/x/hpke/core/mod.ts";
- * import { Chacha20Poly1305 } from "https://deno.land/x/hpke/x/chach20poly1305/mod.ts";
+ * import {
+ *   CipherSuite,
+ *   DhkemP256HkdfSha256,
+ *   HkdfSha256,
+ * } from "http://deno.land/x/hpke/core/mod.ts";
+ * import {
+ *   Chacha20Poly1305,
+ * } from "https://deno.land/x/hpke/x/chach20poly1305/mod.ts";
+ *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
  *   kdf: new HkdfSha256(),
  *   aead: new Chacha20Poly1305(),
  * });
  * ```
+ *
+ * This class is implemented using
+ * {@link https://github.com/paulmillr/noble-ciphers | @noble/ciphers}.
  */
 export class Chacha20Poly1305 implements AeadInterface {
+  /** AeadId.Chacha20Poly1305 (0x0003) */
   public readonly id: AeadId = AeadId.Chacha20Poly1305;
+  /** 32 */
   public readonly keySize: number = 32;
+  /** 12 */
   public readonly nonceSize: number = 12;
+  /** 16 */
   public readonly tagSize: number = 16;
 
   public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
