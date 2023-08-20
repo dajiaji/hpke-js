@@ -11,6 +11,16 @@ import {
   // @ts-ignore: for "npm:"
 } from "npm:@noble/hashes@1.3.1/sha3";
 
+import {
+  byte,
+  constantTimeCompare,
+  int16,
+  int32,
+  loadCrypto,
+  uint16,
+  uint32,
+} from "./utils.ts";
+
 // deno-fmt-ignore
 const NTT_ZETAS = [
   2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962,
@@ -100,6 +110,13 @@ export class Kyber768 {
       return kdf(kBar2, h(ct));
     }
     return kdf(z, h(ct));
+  }
+
+  private async _setup() {
+    if (this._api !== undefined) {
+      return;
+    }
+    this._api = await loadCrypto();
   }
 
   private _getSeed(seed?: Uint8Array): Uint8Array {
@@ -241,13 +258,6 @@ export class Kyber768 {
     return polyToMsg(mp);
   }
 
-  protected async _setup() {
-    if (this._api !== undefined) {
-      return;
-    }
-    this._api = await loadCrypto();
-  }
-
   // polyvecFromBytes deserializes a vector of polynomials.
   private _polyvecFromBytes(a: Uint8Array): Array<Array<number>> {
     const r = new Array<Array<number>>(this._k);
@@ -309,9 +319,8 @@ export class Kyber768 {
     for (let i = 0; i < this._k; i++) {
       r[i] = new Array<number>(384);
     }
-    let aa = 0;
     const t = new Array<number>(4);
-    for (let i = 0; i < this._k; i++) {
+    for (let aa = 0, i = 0; i < this._k; i++) {
       for (let j = 0; j < N / 4; j++) {
         t[0] = (uint16(a[aa + 0]) >> 0) | (uint16(a[aa + 1]) << 8);
         t[1] = (uint16(a[aa + 1]) >> 2) | (uint16(a[aa + 2]) << 6);
@@ -357,21 +366,6 @@ export class Kyber768 {
       r = add(r, t);
     }
     return reduce(r);
-  }
-}
-
-async function loadCrypto(): Promise<Crypto> {
-  if (globalThis !== undefined && globalThis.crypto !== undefined) {
-    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
-    return globalThis.crypto;
-  }
-  // Node.js <= v18
-  try {
-    // @ts-ignore: to ignore "crypto"
-    const { webcrypto } = await import("crypto"); // node:crypto
-    return (webcrypto as unknown as Crypto);
-  } catch (_e: unknown) {
-    throw new Error("failed to load Crypto");
   }
 }
 
@@ -770,73 +764,4 @@ function subtract_q(r: Array<number>): Array<number> {
     r[i] = r[i] + ((r[i] >> 31) & Q);
   }
   return r;
-}
-
-function byte(n: number): number {
-  return n % 256;
-}
-
-function int16(n: number): number {
-  const end = -32768;
-  const start = 32767;
-
-  if (n >= end && n <= start) {
-    return n;
-  }
-  if (n < end) {
-    n = n + 32769;
-    n = n % 65536;
-    return start + n;
-  }
-  // if (n > start) {
-  n = n - 32768;
-  n = n % 65536;
-  return end + n;
-}
-
-function uint16(n: number): number {
-  return n % 65536;
-}
-
-function int32(n: number): number {
-  const end = -2147483648;
-  const start = 2147483647;
-
-  if (n >= end && n <= start) {
-    return n;
-  }
-  if (n < end) {
-    n = n + 2147483649;
-    n = n % 4294967296;
-    return start + n;
-  }
-  // if (n > start) {
-  n = n - 2147483648;
-  n = n % 4294967296;
-  return end + n;
-}
-
-// any bit operations to be done in uint32 must have >>> 0
-// javascript calculates bitwise in SIGNED 32 bit so you need to convert
-function uint32(n: number): number {
-  return n % 4294967296;
-}
-
-// compares two arrays and returns 1 if they are the same or 0 if not
-function constantTimeCompare(x: Uint8Array, y: Uint8Array): number {
-  // check array lengths
-  if (x.length != y.length) {
-    return 0;
-  }
-  const v = new Uint8Array([0]);
-  for (let i = 0; i < x.length; i++) {
-    v[0] |= x[i] ^ y[i];
-  }
-  // constantTimeByteEq
-  const z = new Uint8Array([0]);
-  z[0] = ~(v[0] ^ z[0]);
-  z[0] &= z[0] >> 4;
-  z[0] &= z[0] >> 2;
-  z[0] &= z[0] >> 1;
-  return z[0];
 }
