@@ -5,6 +5,30 @@ import { AeadId } from "../identifiers.ts";
 
 import { NotSupportedError } from "../errors.ts";
 
+/**
+ * The ExportOnly mode for HPKE AEAD implementing {@link AeadInterface}.
+ *
+ * When using `@hpke/core`, the instance of this class must be specified
+ * to the `aead` parameter of {@link CipherSuiteParams} instead of `AeadId.ExportOnly`
+ * as follows:
+ *
+ * @example
+ *
+ * ```ts
+ * import {
+ *   CipherSuite,
+ *   DhkemP256HkdfSha256,
+ *   ExportOnly,
+ *   HkdfSha256,
+ * } from "http://deno.land/x/hpke/core/mod.ts";
+ *
+ * const suite = new CipherSuite({
+ *   kem: new DhkemP256HkdfSha256(),
+ *   kdf: new HkdfSha256(),
+ *   aead: new ExportOnly(),
+ * });
+ * ```
+ */
 export class ExportOnly implements AeadInterface {
   public readonly id: AeadId = AeadId.ExportOnly;
   public readonly keySize: number = 0;
