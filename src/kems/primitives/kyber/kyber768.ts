@@ -21,6 +21,10 @@ import {
   uint32,
 } from "./utils.ts";
 
+const N = 256;
+const Q = 3329;
+const Q_INV = 62209;
+
 // deno-fmt-ignore
 const NTT_ZETAS = [
   2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962,
@@ -48,10 +52,6 @@ const NTT_ZETAS_INV = [
   829, 2946, 3065, 1325, 2756, 1861, 1474, 1202, 2367, 3147, 1752, 2707, 171,
   3127, 3042, 1907, 1836, 1517, 359, 758, 1441,
 ];
-
-const N = 256;
-const Q = 3329;
-const Q_INV = 62209;
 
 export class Kyber768 {
   private _api: Crypto | undefined = undefined;
