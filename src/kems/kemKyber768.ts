@@ -19,7 +19,7 @@ import { KemId } from "../identifiers.ts";
 import { isCryptoKeyPair } from "../utils/misc.ts";
 import { XCryptoKey } from "../xCryptoKey.ts";
 
-import { Kyber768 } from "./pqkemPrimitives/kyber768.ts";
+import { Kyber768 } from "./primitives/kyber/kyber768.ts";
 
 const ALG_NAME = "Keyber768";
 
