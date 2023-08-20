@@ -96,7 +96,7 @@ export class Kyber768 {
     const m2 = this._decap(sk2, ct);
     const [kBar2, r2] = g(m2, p);
     const ct2 = this._encap(pk, m2, r2);
-    if (compareArray(ct, ct2)) {
+    if (constantTimeCompare(ct, ct2) == 1) {
       return kdf(kBar2, h(ct));
     }
     return kdf(z, h(ct));
@@ -823,16 +823,20 @@ function uint32(n: number): number {
 }
 
 // compares two arrays and returns 1 if they are the same or 0 if not
-function compareArray(a: Uint8Array, b: Uint8Array): boolean {
+function constantTimeCompare(x: Uint8Array, y: Uint8Array): number {
   // check array lengths
-  if (a.length != b.length) {
-    return false;
+  if (x.length != y.length) {
+    return 0;
   }
-  // check contents
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) {
-      return false;
-    }
+  const v = new Uint8Array([0]);
+  for (let i = 0; i < x.length; i++) {
+    v[0] |= x[i] ^ y[i];
   }
-  return true;
+  // constantTimeByteEq
+  const z = new Uint8Array([0]);
+  z[0] = ~(v[0] ^ z[0]);
+  z[0] &= z[0] >> 4;
+  z[0] &= z[0] >> 2;
+  z[0] &= z[0] >> 1;
+  return z[0];
 }
