@@ -262,9 +262,6 @@ export class Kyber768 {
   private _polyvecFromBytes(a: Uint8Array): Array<Array<number>> {
     const r = new Array<Array<number>>(this._k);
     for (let i = 0; i < this._k; i++) {
-      r[i] = new Array<number>(384);
-    }
-    for (let i = 0; i < this._k; i++) {
       r[i] = polyFromBytes(a.subarray(i * 384, (i + 1) * 384));
     }
     return r;
