@@ -16,9 +16,15 @@
 <li><a href="ExportOnly.html">ExportOnly</a></li></ul>
 <h1>Class ExportOnly</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>The AEAD interface.</p>
+<div class="tsd-comment tsd-typography"><p>The ExportOnly mode for HPKE AEAD implementing <a href="../interfaces/AeadInterface.html" class="tsd-kind-interface">AeadInterface</a>.</p>
+<p>When using <code>@hpke/core</code>, the instance of this class must be specified
+to the <code>aead</code> parameter of <a href="../interfaces/CipherSuiteParams.html" class="tsd-kind-interface">CipherSuiteParams</a> instead of <code>AeadId.ExportOnly</code>
+as follows:</p>
 </div>
-<div class="tsd-comment tsd-typography"></div></section>
+<div class="tsd-comment tsd-typography">
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-4">import</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-6">CipherSuite</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-6">DhkemP256HkdfSha256</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-6">ExportOnly</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-6">HkdfSha256</span><span class="hl-1">,</span><br/><span class="hl-1">} </span><span class="hl-4">from</span><span class="hl-1"> </span><span class="hl-2">&quot;http://deno.land/x/hpke/core/mod.ts&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-12">suite</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">CipherSuite</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-6">kem:</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">DhkemP256HkdfSha256</span><span class="hl-1">(),</span><br/><span class="hl-1">  </span><span class="hl-6">kdf:</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">HkdfSha256</span><span class="hl-1">(),</span><br/><span class="hl-1">  </span><span class="hl-6">aead:</span><span class="hl-1"> </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">ExportOnly</span><span class="hl-1">(),</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+</div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -28,7 +34,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/AeadInterface.html" class="tsd-signature-type tsd-kind-interface">AeadInterface</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L8">../src/aeads/exportOnly.ts:8</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L32">../src/aeads/exportOnly.ts:32</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -67,7 +73,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/AeadInterface.html">AeadInterface</a>.<a href="../interfaces/AeadInterface.html#id">id</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L9">../src/aeads/exportOnly.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L33">../src/aeads/exportOnly.ts:33</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="keySize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>key<wbr/>Size</span><a href="#keySize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">key<wbr/>Size</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
@@ -76,7 +82,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/AeadInterface.html">AeadInterface</a>.<a href="../interfaces/AeadInterface.html#keySize">keySize</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L10">../src/aeads/exportOnly.ts:10</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L34">../src/aeads/exportOnly.ts:34</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="nonceSize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>nonce<wbr/>Size</span><a href="#nonceSize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">nonce<wbr/>Size</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
@@ -85,7 +91,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/AeadInterface.html">AeadInterface</a>.<a href="../interfaces/AeadInterface.html#nonceSize">nonceSize</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L11">../src/aeads/exportOnly.ts:11</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L35">../src/aeads/exportOnly.ts:35</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="tagSize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>tag<wbr/>Size</span><a href="#tagSize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">tag<wbr/>Size</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div>
@@ -94,7 +100,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/AeadInterface.html">AeadInterface</a>.<a href="../interfaces/AeadInterface.html#tagSize">tagSize</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L12">../src/aeads/exportOnly.ts:12</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L36">../src/aeads/exportOnly.ts:36</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="createEncryptionContext" class="tsd-anchor"></a>
@@ -117,7 +123,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/AeadInterface.html">AeadInterface</a>.<a href="../interfaces/AeadInterface.html#createEncryptionContext">createEncryptionContext</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/0a9be25/src/aeads/exportOnly.ts#L14">../src/aeads/exportOnly.ts:14</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9f2f88a/src/aeads/exportOnly.ts#L38">../src/aeads/exportOnly.ts:38</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
