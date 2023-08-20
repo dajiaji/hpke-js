@@ -135,12 +135,11 @@ export class Kyber768 {
     const cpaSeed = ikm.subarray(0, 32);
     const z = ikm.subarray(32, 64);
 
-    const cpaKeys = this._deriveCpaKeyPair(cpaSeed);
+    const [pk, skBody] = this._deriveCpaKeyPair(cpaSeed);
 
-    const pk = cpaKeys[0];
     const pkh = h(pk);
     const sk = new Uint8Array(2400);
-    sk.set(cpaKeys[1], 0);
+    sk.set(skBody, 0);
     sk.set(pk, 1152);
     sk.set(pkh, 1152 + 1184);
     sk.set(z, 1152 + 1184 + 32);
@@ -150,9 +149,7 @@ export class Kyber768 {
   // indcpaKeyGen generates public and private keys for the CPA-secure
   // public-key encryption scheme underlying Kyber.
   private _deriveCpaKeyPair(cpaSeed: Uint8Array): [Uint8Array, Uint8Array] {
-    const seed = g(cpaSeed);
-    const publicSeed = seed[0];
-    const noiseSeed = seed[1];
+    const [publicSeed, noiseSeed] = g(cpaSeed);
     const a = sampleMatrix(publicSeed, this._k, false);
     const s = sampleNoise(noiseSeed, this._eta1, 0, this._k);
     const e = sampleNoise(noiseSeed, this._eta1, this._k, this._k);
