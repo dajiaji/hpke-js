@@ -168,7 +168,7 @@ export class Kyber768 {
     // pk = A*s + e
     const pk = new Array<Array<number>>(this._k);
     for (let i = 0; i < this._k; i++) {
-      pk[i] = polyToMont(this._multiply(a[i], s));
+      pk[i] = polyToMont(multiply(a[i], s));
       pk[i] = add(pk[i], e[i]);
       pk[i] = reduce(pk[i]);
     }
@@ -217,7 +217,7 @@ export class Kyber768 {
     // u = A*r + e1
     const u = new Array<Array<number>>(this._k);
     for (let i = 0; i < this._k; i++) {
-      u[i] = this._multiply(a[i], r);
+      u[i] = multiply(a[i], r);
       u[i] = nttInverse(u[i]);
       u[i] = add(u[i], e1[i]);
       u[i] = reduce(u[i]);
@@ -225,7 +225,7 @@ export class Kyber768 {
 
     // v = tHat*r + e2 + m
     const m = polyFromMsg(msg);
-    let v = this._multiply(tHat, r);
+    let v = multiply(tHat, r);
     v = nttInverse(v);
     v = add(v, e2);
     v = add(v, m);
@@ -251,7 +251,7 @@ export class Kyber768 {
       u[i] = ntt(u[i]);
     }
 
-    let mp = this._multiply(privateKeyPolyvec, u);
+    let mp = multiply(privateKeyPolyvec, u);
     mp = nttInverse(mp);
     mp = subtract(v, mp);
     mp = reduce(mp);
@@ -352,21 +352,6 @@ export class Kyber768 {
     }
     return r;
   }
-
-  // pointwise-multiplies elements of polynomial-vectors
-  // `a` and `b`, accumulates the results into `r`, and then multiplies by `2^-16`.
-  private _multiply(
-    a: Array<Array<number>>,
-    b: Array<Array<number>>,
-  ): Array<number> {
-    let r = polyBaseMulMontgomery(a[0], b[0]);
-    let t;
-    for (let i = 1; i < this._k; i++) {
-      t = polyBaseMulMontgomery(a[i], b[i]);
-      r = add(r, t);
-    }
-    return reduce(r);
-  }
 }
 
 function g(a: Uint8Array, b?: Uint8Array): [Uint8Array, Uint8Array] {
@@ -446,7 +431,7 @@ function polyToBytes(a: Array<number>): Uint8Array {
   let t0 = 0;
   let t1 = 0;
   const r = new Uint8Array(384);
-  const a2 = subtract_q(a); // Returns: a - q if a >= q, else a (each coefficient of the polynomial)
+  const a2 = subtractQ(a); // Returns: a - q if a >= q, else a (each coefficient of the polynomial)
   // for 0-127
   for (let i = 0; i < N / 2; i++) {
     // get two coefficient entries in the polynomial
@@ -481,7 +466,7 @@ function polyFromBytes(a: Uint8Array): Array<number> {
 function polyToMsg(a: Array<number>): Uint8Array {
   const msg = new Uint8Array(32);
   let t;
-  const a2 = subtract_q(a);
+  const a2 = subtractQ(a);
   for (let i = 0; i < N / 8; i++) {
     msg[i] = 0;
     for (let j = 0; j < 8; j++) {
@@ -663,6 +648,21 @@ function polyToMont(r: Array<number>): Array<number> {
   return r;
 }
 
+// pointwise-multiplies elements of polynomial-vectors
+// `a` and `b`, accumulates the results into `r`, and then multiplies by `2^-16`.
+function multiply(
+  a: Array<Array<number>>,
+  b: Array<Array<number>>,
+): Array<number> {
+  let r = polyBaseMulMontgomery(a[0], b[0]);
+  let t;
+  for (let i = 1; i < a.length; i++) {
+    t = polyBaseMulMontgomery(a[i], b[i]);
+    r = add(r, t);
+  }
+  return reduce(r);
+}
+
 // polyBaseMulMontgomery performs the multiplication of two polynomials
 // in the number-theoretic transform (NTT) domain.
 function polyBaseMulMontgomery(
@@ -752,10 +752,10 @@ function nttInverse(r: Array<number>): Array<number> {
   return r;
 }
 
-// subtract_q applies the conditional subtraction of q to each coefficient of a polynomial.
+// subtractQ applies the conditional subtraction of q to each coefficient of a polynomial.
 // if a is 3329 then convert to 0
 // Returns:     a - q if a >= q, else a
-function subtract_q(r: Array<number>): Array<number> {
+function subtractQ(r: Array<number>): Array<number> {
   for (let i = 0; i < N; i++) {
     r[i] = r[i] - Q; // should result in a negative integer
     // push left most signed bit to right most position
