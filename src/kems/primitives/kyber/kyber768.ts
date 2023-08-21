@@ -11,6 +11,7 @@ import {
   // @ts-ignore: for "npm:"
 } from "npm:@noble/hashes@1.3.1/sha3";
 
+import { KyberError } from "./errors.ts";
 import {
   byte,
   constantTimeCompare,
@@ -66,9 +67,13 @@ export class Kyber768 {
   public async generateKeyPair(): Promise<[Uint8Array, Uint8Array]> {
     await this._setup();
 
-    const rnd = new Uint8Array(64);
-    (this._api as Crypto).getRandomValues(rnd);
-    return this._deriveKeyPair(rnd);
+    try {
+      const rnd = new Uint8Array(64);
+      (this._api as Crypto).getRandomValues(rnd);
+      return this._deriveKeyPair(rnd);
+    } catch (e: unknown) {
+      throw new KyberError(e);
+    }
   }
 
   public async deriveKeyPair(
@@ -76,10 +81,14 @@ export class Kyber768 {
   ): Promise<[Uint8Array, Uint8Array]> {
     await this._setup();
 
-    if (ikm.byteLength !== 64) {
-      throw new Error("ikm must be 64 bytes in length");
+    try {
+      if (ikm.byteLength !== 64) {
+        throw new Error("ikm must be 64 bytes in length");
+      }
+      return this._deriveKeyPair(ikm);
+    } catch (e: unknown) {
+      throw new KyberError(e);
     }
-    return this._deriveKeyPair(ikm);
   }
 
   public async encap(
@@ -88,28 +97,42 @@ export class Kyber768 {
   ): Promise<[Uint8Array, Uint8Array]> {
     await this._setup();
 
-    const m = h(this._getSeed(seed));
-    const [kBar, r] = g(m, h(pk));
-    const ct = this._encap(pk, m, r);
-    const k = kdf(kBar, h(ct));
-    return [ct, k];
+    try {
+      const m = h(this._getSeed(seed));
+      const [kBar, r] = g(m, h(pk));
+      const ct = this._encap(pk, m, r);
+      const k = kdf(kBar, h(ct));
+      return [ct, k];
+    } catch (e: unknown) {
+      throw new KyberError(e);
+    }
   }
 
   public async decap(sk: Uint8Array, ct: Uint8Array): Promise<Uint8Array> {
     await this._setup();
 
-    const sk2 = sk.subarray(0, 12 * this._k * N / 8);
-    const pk = sk.subarray(12 * this._k * N / 8, 24 * this._k * N / 8 + 32);
-    const p = sk.subarray(24 * this._k * N / 8 + 32, 24 * this._k * N / 8 + 64);
-    const z = sk.subarray(24 * this._k * N / 8 + 64, 24 * this._k * N / 8 + 96);
+    try {
+      const sk2 = sk.subarray(0, 12 * this._k * N / 8);
+      const pk = sk.subarray(12 * this._k * N / 8, 24 * this._k * N / 8 + 32);
+      const p = sk.subarray(
+        24 * this._k * N / 8 + 32,
+        24 * this._k * N / 8 + 64,
+      );
+      const z = sk.subarray(
+        24 * this._k * N / 8 + 64,
+        24 * this._k * N / 8 + 96,
+      );
 
-    const m2 = this._decap(sk2, ct);
-    const [kBar2, r2] = g(m2, p);
-    const ct2 = this._encap(pk, m2, r2);
-    if (constantTimeCompare(ct, ct2) == 1) {
-      return kdf(kBar2, h(ct));
+      const m2 = this._decap(sk2, ct);
+      const [kBar2, r2] = g(m2, p);
+      const ct2 = this._encap(pk, m2, r2);
+      if (constantTimeCompare(ct, ct2) == 1) {
+        return kdf(kBar2, h(ct));
+      }
+      return kdf(z, h(ct));
+    } catch (e: unknown) {
+      throw new KyberError(e);
     }
-    return kdf(z, h(ct));
   }
 
   private async _setup() {
