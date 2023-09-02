@@ -1,14 +1,10 @@
-import {
-  Aes128Gcm,
-  CipherSuite,
-  DhkemP256HkdfSha256,
-  HkdfSha256,
-} from "@hpke/core";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 // import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   const suite = new CipherSuite({
-    kem: new DhkemP256HkdfSha256(),
+    kem: new DhkemX25519HkdfSha256(),
     kdf: new HkdfSha256(),
     aead: new Aes128Gcm(),
   });
@@ -26,12 +22,14 @@ async function doHpke() {
     recipientKey: rkp.privateKey,
     enc: sender.enc,
   });
-  try {
-    const pt = await recipient.open(ct);
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-  } catch (e) {
-    console.log("failed to decrypt:", e.message);
-  }
+  const pt = await recipient.open(ct);
+
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (e) {
+  console.log("failed:", e.message);
+}
