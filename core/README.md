@@ -128,20 +128,20 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
 
   // decrypt
-  try {
-    const pt = await recipient.open(ct);
+  const pt = await recipient.open(ct);
 
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (err) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (err) {
+  console.log("failed:", err.message);
+}
 ```
 
 ### Deno
@@ -171,20 +171,20 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("my-secret-message"));
+  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
 
-  try {
-    // decrypt
-    const pt = await recipient.open(ct);
+  // decrypt
+  const pt = await recipient.open(ct);
 
-    console.log("decrypted: ", new TextDecoder().decode(pt));
-    // decrypted: my-secret-message
-  } catch (_err: unknown) {
-    console.log("failed to decrypt.");
-  }
+  // Hello world!
+  console.log(new TextDecoder().decode(pt));
 }
 
-doHpke();
+try {
+  doHpke();
+} catch (_err: unknown) {
+  console.log("doHPKE() failed.");
+}
 ```
 
 ### Browsers

@@ -80,7 +80,7 @@ async function doHpke() {
   const pt = await recipient.open(ct);
 
   // Hello world!
-  console.log("new TextDecoder().decode(pt));
+  console.log(new TextDecoder().decode(pt));
 }
 
 try {
