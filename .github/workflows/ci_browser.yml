@@ -87,10 +87,7 @@ jobs:
       - uses: actions/setup-node@v3
       - uses: microsoft/playwright-github-action@v1
       - working-directory: ./test/runtimes/browsers
-        run: |
-          npm ci
-          npx playwright install --with-deps
-          npx playwright test
+        run: npm install && npx playwright install && npx playwright test
       - working-directory: ./core/test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test
       - working-directory: ./x/dhkem-x25519/test/runtimes/browsers
