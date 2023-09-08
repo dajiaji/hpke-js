@@ -174,7 +174,7 @@ The hpke-js includes the following packages.
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
 - **Deno**: 1.x (1.25-)
 - **Cloudflare Workers**
-- **bun**: 0.x (0.4.0-)
+- **bun**: 0.x (0.6.0-), 1.x
 
 ## Warnings and Restrictions
 
