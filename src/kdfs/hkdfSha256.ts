@@ -1,7 +1,7 @@
 // @ts-ignore: for "npm:"
-import { hmac } from "npm:@noble/hashes@1.3.1/hmac";
+import { hmac } from "npm:@noble/hashes@1.3.2/hmac";
 // @ts-ignore: for "npm:"
-import { sha256 } from "npm:@noble/hashes@1.3.1/sha256";
+import { sha256 } from "npm:@noble/hashes@1.3.2/sha256";
 
 import { HkdfSha256Native } from "./hkdf.ts";
 

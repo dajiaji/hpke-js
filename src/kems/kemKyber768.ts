@@ -130,7 +130,7 @@ export class KemKyber768 implements KemInterface {
       : params.recipientKey;
     const serializedSkR = new Uint8Array(await this.serializePrivateKey(skR));
     try {
-      return await this._prim.decap(serializedSkR, new Uint8Array(params.enc));
+      return await this._prim.decap(new Uint8Array(params.enc), serializedSkR);
     } catch (e: unknown) {
       throw new DecapError(e);
     }

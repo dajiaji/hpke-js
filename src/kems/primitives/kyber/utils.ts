@@ -1,3 +1,6 @@
+// @ts-ignore: for "npm:"
+import { shake256 } from "npm:@noble/hashes@1.3.2/sha3";
+
 export function byte(n: number): number {
   return n % 256;
 }
@@ -80,4 +83,30 @@ export async function loadCrypto(): Promise<Crypto> {
   } catch (_e: unknown) {
     throw new Error("failed to load Crypto");
   }
+}
+
+// prf provides a pseudo-random function (PRF) which returns
+// a byte array of length `l`, using the provided key and nonce
+// to instantiate the PRF's underlying hash function.
+export function prf(len: number, seed: Uint8Array, nonce: number): Uint8Array {
+  return shake256.create({ dkLen: len }).update(seed).update(
+    new Uint8Array([nonce]),
+  ).digest();
+}
+
+// byteopsLoad24 returns a 32-bit unsigned integer loaded from byte x.
+export function byteopsLoad24(x: Uint8Array): number {
+  let r = uint32(x[0]);
+  r |= uint32(x[1]) << 8;
+  r |= uint32(x[2]) << 16;
+  return r;
+}
+
+// byteopsLoad32 returns a 32-bit unsigned integer loaded from byte x.
+export function byteopsLoad32(x: Uint8Array): number {
+  let r = uint32(x[0]);
+  r |= uint32(x[1]) << 8;
+  r |= uint32(x[2]) << 16;
+  r |= uint32(x[3]) << 24;
+  return uint32(r);
 }
