@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        bun-version: [0.4, 0.5, 0.6, 0.7]
+        bun-version: [0.6, 0.7, 0.8, 1.0]
 
     steps:
       - uses: actions/checkout@v3
