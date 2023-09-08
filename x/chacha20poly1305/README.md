@@ -45,8 +45,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-import * as chacha20 from "https://deno.land/x/hpke@1.2.2/x/chacha20poly1305/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+import * as chacha20 from "https://deno.land/x/hpke@1.2.3/x/chacha20poly1305/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -63,8 +63,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.2";
-  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@1.2.2";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.3";
+  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@1.2.3";
   // ...
 </script>
 
@@ -81,8 +81,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.2/esm/mod.js";
-  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@1.2.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.3/esm/mod.js";
+  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@1.2.3/esm/mod.js";
   // ...
 </script>
 ```
@@ -149,8 +149,8 @@ try {
 ```js
 import {
   CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-} from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.2.2/x/chacha20poly1305/mod.ts";
+} from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.2.3/x/chacha20poly1305/mod.ts";
 
 async function doHpke() {
   // setup
@@ -195,11 +195,11 @@ try {
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.2.2";
+      // import * as hpke from "https://esm.sh/hpke-js@1.2.3";
       import {
         CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      } from "https://esm.sh/@hpke/core@1.2.2";
-      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.2.2";
+      } from "https://esm.sh/@hpke/core@1.2.3";
+      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.2.3";
 
       globalThis.doHpke = async () => {
         try {

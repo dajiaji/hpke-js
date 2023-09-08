@@ -1,5 +1,16 @@
 # Changes
 
+## Version 1.2.3
+
+Released 2023-09-09
+
+- [(#282) Update devDependencies.](https://github.com/dajiaji/hpke-js/pull/282)
+- [(#281) Bump @noble/ciphers to 0.3.0.](https://github.com/dajiaji/hpke-js/pull/281)
+- [(#280) Bump @noble/curves to 1.2.0.](https://github.com/dajiaji/hpke-js/pull/280)
+- [(#279) Bump @noble/hashes to 1.3.2.](https://github.com/dajiaji/hpke-js/pull/279)
+- [(#279) Sync kyber implementation to crystals-kyber-js.](https://github.com/dajiaji/hpke-js/pull/279)
+- [(#275) Add BaseError/KyberError.](https://github.com/dajiaji/hpke-js/pull/275)
+
 ## Version 1.2.2
 
 Released 2023-08-20
