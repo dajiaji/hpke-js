@@ -122,13 +122,13 @@
   },
   "npm": {
     "specifiers": {
-      "@noble/ciphers@0.2.0": "@noble/ciphers@0.2.0",
+      "@noble/ciphers@0.3.0": "@noble/ciphers@0.3.0",
       "@noble/curves@1.2.0": "@noble/curves@1.2.0",
       "@noble/hashes@1.3.2": "@noble/hashes@1.3.2"
     },
     "packages": {
-      "@noble/ciphers@0.2.0": {
-        "integrity": "sha512-6YBxJDAapHSdd3bLDv6x2wRPwq4QFMUaB3HvljNBUTThDd12eSm7/3F+2lnfzx2jvM+S6Nsy0jEt9QbPqSwqRw==",
+      "@noble/ciphers@0.3.0": {
+        "integrity": "sha512-ldbrnOjmNRwFdXcTM6uXDcxpMIFrbzAWNnpBPp4oTJTFF0XByGD6vf45WrehZGXRQTRVV+Zm8YP+EgEf+e4cWA==",
         "dependencies": {}
       },
       "@noble/curves@1.2.0": {
