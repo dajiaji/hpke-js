@@ -353,12 +353,12 @@ async function doHpke() {
     kdf: KdfId.HkdfSha256,
     aead: AeadId.Aes128Gcm,
   });
-  // When using hpke/core/mod.ts, specify the instances as follows:
-  const suite = new CipherSuite({
-    kem: new DhkemX25519HkdfSha256(),
-    kdf: new HkdfSha256(),
-    aead: new Aes128Gcm(),
-  });
+  //// When using hpke/core/mod.ts, specify the instances as follows:
+  //const suite = new CipherSuite({
+  //  kem: new DhkemX25519HkdfSha256(),
+  //  kdf: new HkdfSha256(),
+  //  aead: new Aes128Gcm(),
+  //});
 
   const rkp = await suite.kem.generateKeyPair();
 
