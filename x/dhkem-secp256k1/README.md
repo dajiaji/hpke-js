@@ -45,8 +45,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-import * as secp256k1 from "https://deno.land/x/hpke@1.2.2/x/dhkem-secp256k1/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+import * as secp256k1 from "https://deno.land/x/hpke@1.2.3/x/dhkem-secp256k1/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -63,8 +63,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.2";
-  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@1.2.2";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.3";
+  import * as secp256k1 from "https://esm.sh/@hpke/dhkem-secp256k1@1.2.3";
   // ...
 </script>
 
@@ -81,8 +81,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.2/esm/mod.js";
-  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@1.2.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.3/esm/mod.js";
+  import * as secp256k1 from "https://unpkg.com/@hpke/dhkem-secp256k1@1.2.3/esm/mod.js";
   // ...
 </script>
 ```
@@ -147,8 +147,8 @@ try {
 ### Deno
 
 ```js
-import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@1.2.2/x/dhkem-secp256k1/mod.ts";
+import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke@1.2.3/x/dhkem-secp256k1/mod.ts";
 
 async function doHpke() {
   // setup
@@ -193,8 +193,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.2";
-      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@1.2.2";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.3";
+      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1@1.2.3";
 
       globalThis.doHpke = async () => {
         try {

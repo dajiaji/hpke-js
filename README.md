@@ -174,7 +174,7 @@ The hpke-js includes the following packages.
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x
 - **Deno**: 1.x (1.25-)
 - **Cloudflare Workers**
-- **bun**: 0.x (0.4.0-)
+- **bun**: 0.x (0.6.0-), 1.x
 
 ## Warnings and Restrictions
 
@@ -219,9 +219,9 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.2/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.2.2/x/dhkem-x25519/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.3/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+// import * as hpke from "https://deno.land/x/hpke@1.2.3/x/dhkem-x25519/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/mod.ts";
@@ -239,8 +239,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/hpke-js@1.2.2";
-  // import * as hpke from "https://esm.sh/@hpke/core@1.2.2";
+  import * as hpke from "https://esm.sh/hpke-js@1.2.3";
+  // import * as hpke from "https://esm.sh/@hpke/core@1.2.3";
   // ...
 </script>
 
@@ -257,8 +257,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/hpke-js@1.2.2/esm/mod.js";
-  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.2/esm/mod.js";
+  import * as hpke from "https://unpkg.com/hpke-js@1.2.3/esm/mod.js";
+  // import * as hpke from "https://unpkg.com/@hpke/core@1.2.3/esm/mod.js";
   // ...
 </script>
 ```
@@ -338,11 +338,11 @@ try {
 Deno:
 
 ```js
-import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke@1.2.2/mod.ts";
+import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke@1.2.3/mod.ts";
 // import {
 //   Aes128Gcm, CipherSuite, HkdfSha256,
-// } from "https://deno.land/x/hpke@1.2.2/core/mod.ts";
-// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.2/x/dhkem-x25519/mod.ts";
+// } from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
+// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.3/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {
   // setup
@@ -425,10 +425,10 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.2";
+      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@1.2.3";
       // import {
       //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      // } from "@hpke/core@1.2.2";
+      // } from "@hpke/core@1.2.3";
 
       globalThis.doHpke = async () => {
         try {
