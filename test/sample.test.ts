@@ -891,6 +891,67 @@ describe("README examples", () => {
     });
   });
 
+  describe("Bidirectional Encryption with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+
+      // A recipient generates a keypair.
+      const recipient = new CipherSuite({
+        kem: KemId.DhkemP256HkdfSha256,
+        kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+      const rkp = await recipient.kem.generateKeyPair();
+
+      // A sender generates an encapusulated key (enc) with the recipient's public key.
+      const sender = new CipherSuite({
+        kem: KemId.DhkemP256HkdfSha256,
+        kdf: KdfId.HkdfSha256,
+        aead: AeadId.Aes128Gcm,
+      });
+      const ctxS = await sender.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+
+      // The recipient decapsulates the enc with the recipient's private key.
+      const ctxR = await recipient.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: ctxS.enc,
+      });
+
+      // The recipient encrypts a plaintext.
+      const keyR = await ctxR.export(
+        te.encode("response key"),
+        recipient.aead.keySize,
+      );
+      const nonceR = await ctxR.export(
+        te.encode("response nonce"),
+        recipient.aead.nonceSize,
+      );
+      const aeadCtxR = await recipient.aead.createEncryptionContext(keyR);
+      const ct = await aeadCtxR.seal(
+        nonceR,
+        te.encode("Hello world!"),
+        te.encode("jugemu-jugemu"),
+      );
+
+      // The sender decrypts the ciphertext.
+      const keyS = await ctxS.export(
+        te.encode("response key"),
+        sender.aead.keySize,
+      );
+      const nonceS = await ctxS.export(
+        te.encode("response nonce"),
+        sender.aead.nonceSize,
+      );
+      const aeadCtxS = await sender.aead.createEncryptionContext(keyS);
+      const pt = await aeadCtxS.open(nonceS, ct, te.encode("jugemu-jugemu"));
+
+      // pt === "Hello world!"
+      assertEquals(te.encode("Hello world!"), new Uint8Array(pt));
+    });
+  });
+
   describe("Oblivious HTTP with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should work normally", async () => {
       const te = new TextEncoder();
@@ -918,14 +979,13 @@ describe("README examples", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = suite.kdf;
-      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
-      const keyS = await kdfS.expand(
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
         prkS,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceS = await kdfS.expand(
+      const nonceS = await suite.kdf.expand(
         prkS,
         te.encode("nonce"),
         suite.aead.nonceSize,
@@ -950,17 +1010,16 @@ describe("README examples", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = suite.kdf;
-      const prkR = await kdfR.extract(
+      const prkR = await suite.kdf.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(
+      const keyR = await suite.kdf.expand(
         prkR,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceR = await kdfR.expand(
+      const nonceR = await suite.kdf.expand(
         prkR,
         te.encode("nonce"),
         suite.aead.nonceSize,
@@ -1007,14 +1066,13 @@ describe("README examples", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = suite.kdf;
-      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
-      const keyS = await kdfS.expand(
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
         prkS,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceS = await kdfS.expand(
+      const nonceS = await suite.kdf.expand(
         prkS,
         te.encode("nonce"),
         suite.aead.nonceSize,
@@ -1039,17 +1097,16 @@ describe("README examples", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = suite.kdf;
-      const prkR = await kdfR.extract(
+      const prkR = await suite.kdf.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(
+      const keyR = await suite.kdf.expand(
         prkR,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceR = await kdfR.expand(
+      const nonceR = await suite.kdf.expand(
         prkR,
         te.encode("nonce"),
         suite.aead.nonceSize,
@@ -1096,14 +1153,13 @@ describe("README examples", () => {
       cryptoApi.getRandomValues(responseNonce);
       const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-      const kdfS = suite.kdf;
-      const prkS = await kdfS.extract(saltS, new Uint8Array(secretS));
-      const keyS = await kdfS.expand(
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
         prkS,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceS = await kdfS.expand(
+      const nonceS = await suite.kdf.expand(
         prkS,
         te.encode("nonce"),
         suite.aead.nonceSize,
@@ -1128,17 +1184,16 @@ describe("README examples", () => {
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
       );
-      const kdfR = suite.kdf;
-      const prkR = await kdfR.extract(
+      const prkR = await suite.kdf.extract(
         saltR,
         new Uint8Array(secretR),
       );
-      const keyR = await kdfR.expand(
+      const keyR = await suite.kdf.expand(
         prkR,
         te.encode("key"),
         suite.aead.keySize,
       );
-      const nonceR = await kdfR.expand(
+      const nonceR = await suite.kdf.expand(
         prkR,
         te.encode("nonce"),
         suite.aead.nonceSize,
