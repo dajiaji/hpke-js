@@ -45,8 +45,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke@1.2.3/x/dhkem-x448/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.4/core/mod.ts";
+import * as x448 from "https://deno.land/x/hpke@1.2.4/x/dhkem-x448/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -63,8 +63,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.3";
-  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.2.3";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.4";
+  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.2.4";
   // ...
 </script>
 
@@ -81,8 +81,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.3/esm/mod.js";
-  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.2.3/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.4/esm/mod.js";
+  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.2.4/esm/mod.js";
   // ...
 </script>
 ```
@@ -147,8 +147,8 @@ try {
 ### Deno
 
 ```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.2.3/core/mod.ts";
-import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke@1.2.3/x/dhkem-x448/mod.ts";
+import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.2.4/core/mod.ts";
+import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke@1.2.4/x/dhkem-x448/mod.ts";
 
 async function doHpke() {
   // setup
@@ -193,8 +193,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.2.3";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.3";
+      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.2.4";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.4";
 
       globalThis.doHpke = async () => {
         try {
