@@ -1,5 +1,13 @@
 # Changes
 
+## Version 1.2.4
+
+Released 2023-11-05
+
+- [(#288) Unlock the version of Deno on CI for cloudflare workers and bun.](https://github.com/dajiaji/hpke-js/pull/288)
+- [(#288) Bump @noble/ciphers to 0.4.0.](https://github.com/dajiaji/hpke-js/pull/288)
+- [(#285) Add test for bidirectional encryption.](https://github.com/dajiaji/hpke-js/pull/285)
+
 ## Version 1.2.3
 
 Released 2023-09-09
