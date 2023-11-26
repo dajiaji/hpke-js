@@ -13,11 +13,11 @@ await build({
   outDir: "./npm",
   typeCheck: "both",
   test: true,
-  declaration: true,
+  declaration: "inline",
   scriptModule: "umd",
   importMap: "./deno.json",
   compilerOptions: {
-    lib: ["es2022", "dom"],
+    lib: ["ES2022", "DOM"],
   },
   shims: {
     deno: "dev",
