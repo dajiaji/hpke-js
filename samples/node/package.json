@@ -7,7 +7,7 @@
   "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
   "license": "MIT",
   "dependencies": {
-    "@hpke/core": "^1.2.4",
-    "@hpke/dhkem-x25519": "^1.2.4"
+    "@hpke/core": "^1.2.5",
+    "@hpke/dhkem-x25519": "^1.2.5"
   }
 }

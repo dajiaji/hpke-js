@@ -1,5 +1,19 @@
 # Changes
 
+## Version 1.2.5
+
+Released 2023-11-26
+
+- [(#291) Make dnt emit type declaration inline.](https://github.com/dajiaji/hpke-js/pull/291)
+- Update workflows:
+  - [(#289) Loosen bun versions on CI.](https://github.com/dajiaji/hpke-js/pull/289)
+  - [(#289) Add Node 21 to CI.](https://github.com/dajiaji/hpke-js/pull/289)
+  - [(#289) Bump actions/checkout to v4.](https://github.com/dajiaji/hpke-js/pull/289)
+  - [(#289) Bump actions/setup-node to v4.](https://github.com/dajiaji/hpke-js/pull/289)
+- Update devDependencies:
+  - [(#291) Bump deno.land/std to 0.208.0.](https://github.com/dajiaji/hpke-js/pull/291)
+  - [(#291) Bump deno.land/x/dnt to 0.39.0.](https://github.com/dajiaji/hpke-js/pull/291)
+
 ## Version 1.2.4
 
 Released 2023-11-05

@@ -1,13 +1,13 @@
 // import {
 //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-// } from "https://deno.land/x/hpke@1.2.4/core/mod.ts";
-// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.4/x/dhkem-x25519/mod.ts";
+// } from "https://deno.land/x/hpke@1.2.5/core/mod.ts";
+// import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.5/x/dhkem-x25519/mod.ts";
 import {
   AeadId,
   CipherSuite,
   KdfId,
   KemId,
-} from "https://deno.land/x/hpke@1.2.4/mod.ts";
+} from "https://deno.land/x/hpke@1.2.5/mod.ts";
 
 async function doHpke() {
   const suite = new CipherSuite({
