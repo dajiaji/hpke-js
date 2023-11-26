@@ -13,11 +13,11 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: v18.x
       - run: |
@@ -83,8 +83,8 @@ jobs:
     needs: pages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - uses: microsoft/playwright-github-action@v1
       - working-directory: ./test/runtimes/browsers
         run: npm install && npx playwright install && npx playwright test

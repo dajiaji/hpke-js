@@ -18,11 +18,11 @@ jobs:
         bun-version: [0.6, 0.7, 0.8, 1.0]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: v20.x
       - run: |
