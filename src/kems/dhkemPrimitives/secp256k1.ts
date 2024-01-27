@@ -1,5 +1,5 @@
 // @ts-ignore: for "npm:"
-import { secp256k1 } from "npm:@noble/curves@1.2.0/secp256k1";
+import { secp256k1 } from "npm:@noble/curves@1.3.0/secp256k1";
 
 import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";

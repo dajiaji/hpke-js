@@ -1,5 +1,5 @@
 // @ts-ignore: for "npm:"
-import { ed25519, x25519 } from "npm:@noble/curves@1.2.0/ed25519";
+import { x25519 } from "npm:@noble/curves@1.3.0/ed25519";
 
 import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
@@ -85,7 +85,7 @@ export class X25519 implements DhkemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      const rawSk = ed25519.utils.randomPrivateKey();
+      const rawSk = x25519.utils.randomPrivateKey();
       const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
       const pk = await this.derivePublicKey(sk);
       return { publicKey: pk, privateKey: sk };
