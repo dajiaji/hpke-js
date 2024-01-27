@@ -1,5 +1,21 @@
 # Changes
 
+## Version 1.2.6
+
+Released 2024-01-28
+
+- [(#294) Add support for importKey for P-521 public key on Deno.](https://github.com/dajiaji/hpke-js/pull/293)
+- [(#293) Fix test to follow Deno update.](https://github.com/dajiaji/hpke-js/pull/293)
+- [(#293) Add noEmit to tsconfig.json.](https://github.com/dajiaji/hpke-js/pull/293)
+- Update dependencies:
+  - [(#296) Bump @noble/hashes to 1.3.3.](https://github.com/dajiaji/hpke-js/pull/296)
+  - [(#296) Bump @noble/ciphers to 0.4.1.](https://github.com/dajiaji/hpke-js/pull/296)
+- Update devDependencies:
+  - [(#295) Bump dnt to 0.39.0 (for core/ and x/).](https://github.com/dajiaji/hpke-js/pull/295)
+  - [(#295) Bump playwright/test to 1.41.1.](https://github.com/dajiaji/hpke-js/pull/295)
+  - [(#295) Bump Wrangler to 3.19.0.](https://github.com/dajiaji/hpke-js/pull/295)
+  - [(#295) Bump deno.land/std to 0.213.0.](https://github.com/dajiaji/hpke-js/pull/295)
+
 ## Version 1.2.5
 
 Released 2023-11-26
