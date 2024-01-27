@@ -780,9 +780,6 @@ describe("importKey", () => {
     });
 
     it("should return a valid public key for DhkemP521HkdfSha512 from JWK", async () => {
-      if (isDeno()) {
-        return;
-      }
       const kemContext = new DhkemP521HkdfSha512();
 
       const jwk = {
