@@ -158,10 +158,7 @@ export class X448 implements DhkemPrimitives {
       if (isPublic && key.byteLength !== this._nPk) {
         reject(new Error("Invalid length of the key"));
       }
-      if (
-        !isPublic &&
-        (key.byteLength !== this._nSk && key.byteLength !== this._nSk + 1)
-      ) {
+      if (!isPublic && (key.byteLength !== this._nSk)) {
         reject(new Error("Invalid length of the key"));
       }
       resolve(
