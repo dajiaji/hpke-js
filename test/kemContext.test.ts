@@ -95,10 +95,6 @@ describe("generateKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // assert
       const kemContext = new DhkemP521HkdfSha512();
       const kp = await kemContext.generateKeyPair();
@@ -145,21 +141,6 @@ describe("generateKeyPair", () => {
       assertEquals(kp.privateKey.algorithm.name, "X448");
       assertEquals(kp.privateKey.usages.length, 1);
       assertEquals(kp.privateKey.usages[0], "deriveBits");
-    });
-  });
-
-  describe("with invalid parameters", () => {
-    it("should throw NotSupportedError with DhkemP521HkdfSha512", async () => {
-      if (!isDeno()) {
-        return;
-      }
-
-      // assert
-      const kemContext = new DhkemP521HkdfSha512();
-      await assertRejects(
-        () => kemContext.generateKeyPair(),
-        errors.NotSupportedError,
-      );
     });
   });
 });
