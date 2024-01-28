@@ -46,8 +46,8 @@ Using deno.land:
 
 ```js
 // use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.5/core/mod.ts";
-import * as kyber from "https://deno.land/x/hpke@1.2.5/x/hybridkem-x25519-kyber768/mod.ts";
+import * as hpke from "https://deno.land/x/hpke@1.2.6/core/mod.ts";
+import * as kyber from "https://deno.land/x/hpke@1.2.6/x/hybridkem-x25519-kyber768/mod.ts";
 
 // use the latest stable version
 import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
@@ -64,8 +64,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.5";
-  import * as kyber from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.5";
+  import * as hpke from "https://esm.sh/@hpke/core@1.2.6";
+  import * as kyber from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.6";
   // ...
 </script>
 
@@ -82,8 +82,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.5/esm/mod.js";
-  import * as kyber from "https://unpkg.com/@hpke/hybridkem-x25519-kyber768@1.2.5/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.2.6/esm/mod.js";
+  import * as kyber from "https://unpkg.com/@hpke/hybridkem-x25519-kyber768@1.2.6/esm/mod.js";
   // ...
 </script>
 ```
@@ -148,8 +148,8 @@ try {
 ### Deno
 
 ```js
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.2.5/core/mod.ts";
-import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke@1.2.5/x/hybridkem-x25519-kyber768/mod.ts";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.2.6/core/mod.ts";
+import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke@1.2.6/x/hybridkem-x25519-kyber768/mod.ts";
 
 async function doHpke() {
   // setup
@@ -194,8 +194,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.5";
-      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.5";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.6";
+      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.2.6";
 
       globalThis.doHpke = async () => {
         try {
