@@ -1,5 +1,5 @@
 // @ts-ignore: for "npm:"
-import { ed448, x448 } from "npm:@noble/curves@1.2.0/ed448";
+import { x448 } from "npm:@noble/curves@1.3.0/ed448";
 
 import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
@@ -85,7 +85,7 @@ export class X448 implements DhkemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      const rawSk = ed448.utils.randomPrivateKey();
+      const rawSk = x448.utils.randomPrivateKey();
       const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
       const pk = await this.derivePublicKey(sk);
       return { publicKey: pk, privateKey: sk };
@@ -158,10 +158,7 @@ export class X448 implements DhkemPrimitives {
       if (isPublic && key.byteLength !== this._nPk) {
         reject(new Error("Invalid length of the key"));
       }
-      if (
-        !isPublic &&
-        (key.byteLength !== this._nSk && key.byteLength !== this._nSk + 1)
-      ) {
+      if (!isPublic && (key.byteLength !== this._nSk)) {
         reject(new Error("Invalid length of the key"));
       }
       resolve(
