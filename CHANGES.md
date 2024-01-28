@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.2.7
+
+Released 2024-01-28
+
+- Update dependencies:
+  - [(#299) Bump @noble/curves to 1.3.0.](https://github.com/dajiaji/hpke-js/pull/299)
+
 ## Version 1.2.6
 
 Released 2024-01-28
