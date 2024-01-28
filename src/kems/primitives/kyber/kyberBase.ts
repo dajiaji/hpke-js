@@ -9,7 +9,7 @@ import {
   shake128,
   shake256,
   // @ts-ignore: for "npm:"
-} from "npm:@noble/hashes@1.3.2/sha3";
+} from "npm:@noble/hashes@1.3.3/sha3";
 
 import { N, NTT_ZETAS, NTT_ZETAS_INV, Q, Q_INV } from "./consts.ts";
 import { KyberError } from "./errors.ts";
