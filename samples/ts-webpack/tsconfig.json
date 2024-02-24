@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "rootDir": ".",
-    "outDir": "app", 
-    
+    "module": "es2022",
+    "target": "es2022"
   }
 }

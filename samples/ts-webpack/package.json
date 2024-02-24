@@ -13,6 +13,6 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
-    "hpke-js": "^1.2.7"
+    "@hpke/core": "^1.2.7"
   }
 }
