@@ -33,6 +33,8 @@
       "**/*/hpke*.js",
       "samples/node/node_modules",
       "samples/ts-node/node_modules",
+      "samples/ts-webpack/*.js",
+      "samples/ts-webpack/dist",
       "test/runtimes/bun",
       "test/runtimes/browsers/node_modules",
       "test/runtimes/cloudflare"
