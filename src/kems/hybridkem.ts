@@ -148,7 +148,7 @@ export class Hybridkem implements KemInterface {
     let ekmB: ArrayBuffer | undefined = undefined;
     if (params.ekm !== undefined && !isCryptoKeyPair(params.ekm)) {
       if (params.ekm.byteLength !== 64) {
-        throw new InvalidParamError("ekm must be 32 bytes in length");
+        throw new InvalidParamError("ekm must be 64 bytes in length");
       }
       ekmA = params.ekm.slice(0, 32);
       ekmB = params.ekm.slice(32);
