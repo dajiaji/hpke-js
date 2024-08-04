@@ -1,5 +1,24 @@
 # Changes
 
+## Version 1.2.8
+
+Released 2024-08-04
+
+- [(#307) Add config to deno test on test/runtimes/cloudflare.](https://github.com/dajiaji/hpke-js/pull/307)
+- [(#305) Fix ekm byte length typo in Hybrid KEM.](https://github.com/dajiaji/hpke-js/pull/305)
+- [(#303) Fix linter/formatter error on samples/ts-webpack.](https://github.com/dajiaji/hpke-js/pull/303)
+- [(#301) Add webpack sample.](https://github.com/dajiaji/hpke-js/pull/301)
+- Update dependencies:
+  - [(#308) Bump @noble/curves to 1.4.2.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump @noble/hashes to 1.4.0.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump @noble/ciphers to 0.5.3.](https://github.com/dajiaji/hpke-js/pull/308)
+- Update devDependencies:
+  - [(#308) Bump ts-webpack dependencies.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump @playwright/test to 1.45.3.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump wrangler to 3.68.0.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump dnt to 0.40.0.](https://github.com/dajiaji/hpke-js/pull/308)
+  - [(#308) Bump std to 0.224.0.](https://github.com/dajiaji/hpke-js/pull/308)
+
 ## Version 1.2.7
 
 Released 2024-01-28
