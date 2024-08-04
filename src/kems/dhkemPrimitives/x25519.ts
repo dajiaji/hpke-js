@@ -1,5 +1,5 @@
 // @ts-ignore: for "npm:"
-import { x25519 } from "npm:@noble/curves@1.3.0/ed25519";
+import { x25519 } from "npm:@noble/curves@1.4.2/ed25519";
 
 import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
