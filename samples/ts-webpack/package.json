@@ -7,10 +7,10 @@
     "bundle": "webpack"
   },
   "devDependencies": {
-    "http-server": "^13.0.0",
-    "typescript": "^5.3.3",
-    "webpack": "^5.50.0",
-    "webpack-cli": "^4.7.2"
+    "http-server": "^14.1.1",
+    "typescript": "^5.5.4",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@hpke/core": "^1.2.7"
