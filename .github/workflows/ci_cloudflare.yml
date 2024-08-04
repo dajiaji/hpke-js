@@ -30,7 +30,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test hpke.spec.ts --allow-net
+          deno test hpke.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./core
         run: |
           deno task dnt
@@ -46,7 +46,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test core.spec.ts --allow-net
+          deno test core.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/dhkem-x25519
         run: |
           deno task dnt
@@ -57,7 +57,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test dhkem-x25519.spec.ts --allow-net
+          deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/dhkem-x448
         run: |
           deno task dnt
@@ -68,7 +68,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test dhkem-x448.spec.ts --allow-net
+          deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/chacha20poly1305
         run: |
           deno task dnt
@@ -79,7 +79,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test chacha20poly1305.spec.ts --allow-net
+          deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/hybridkem-x25519-kyber768
         run: |
           deno task dnt
@@ -90,7 +90,7 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test hybridkem-x25519-kyber768.spec.ts --allow-net
+          deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
@@ -101,4 +101,4 @@ jobs:
           npm install
           nohup npm start &
           sleep 3
-          deno test dhkem-secp256k1.spec.ts --allow-net
+          deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
