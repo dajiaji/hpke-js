@@ -1,7 +1,7 @@
 {
   "imports": {
-    "testing/": "https://deno.land/std@0.224.0/testing/",
-    "dnt": "https://deno.land/x/dnt@0.40.0/mod.ts"
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.2",
+    "testing/": "https://deno.land/std@0.224.0/testing/"
   },
   "fmt": {
     "include": [
