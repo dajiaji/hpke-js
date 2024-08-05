@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.2.9
+
+Released 2024-08-05
+
+- Update devDependencies:
+  - [(#311) Bump dnt to 0.41.2.](https://github.com/dajiaji/hpke-js/pull/311)
+
 ## Version 1.2.8
 
 Released 2024-08-04
