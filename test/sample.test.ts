@@ -1,5 +1,5 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
-import { describe, it } from "testing/bdd.ts";
+import { assertEquals, assertRejects } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
 
 import { AeadId, CipherSuite, KdfId, KemId } from "../mod.ts";
 import { Aes128Gcm } from "../src/aeads/aesGcm.ts";

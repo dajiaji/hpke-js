@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
+import { assertEquals, assertRejects } from "@std/assert";
 
 import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";
 import type { XCryptoKey } from "../src/xCryptoKey.ts";

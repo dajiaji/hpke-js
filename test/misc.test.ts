@@ -1,5 +1,5 @@
-import { assertEquals, assertThrows } from "testing/asserts.ts";
-import { describe, it } from "testing/bdd.ts";
+import { assertEquals, assertThrows } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
 
 import { xor } from "../src/encryptionContext.ts";
 import { i2Osp } from "../src/utils/misc.ts";

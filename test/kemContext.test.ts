@@ -1,5 +1,5 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
-import { describe, it } from "testing/bdd.ts";
+import { assertEquals, assertRejects } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
 
 import * as errors from "../src/errors.ts";
 import { KemId } from "../src/identifiers.ts";

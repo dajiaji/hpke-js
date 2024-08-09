@@ -1,5 +1,5 @@
-import { assertEquals } from "testing/asserts.ts";
-import { describe, it } from "testing/bdd.ts";
+import { assertEquals } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
 
 describe("Bun", () => {
   describe("GET /test", () => {

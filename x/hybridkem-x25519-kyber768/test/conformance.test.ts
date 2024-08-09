@@ -1,5 +1,5 @@
-import { assertEquals } from "testing/asserts.ts";
-import { afterAll, beforeAll, describe, it } from "testing/bdd.ts";
+import { assertEquals } from "@std/assert";
+import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
 import {
   Aes128Gcm,
