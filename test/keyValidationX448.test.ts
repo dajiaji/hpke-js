@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, it } from "testing/bdd.ts";
+import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
 import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";

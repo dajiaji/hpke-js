@@ -1,6 +1,6 @@
-import { assertEquals, assertThrows } from "testing/asserts.ts";
+import { assertEquals, assertThrows } from "@std/assert";
 
-import { describe, it } from "testing/bdd.ts";
+import { describe, it } from "@std/testing/bdd";
 
 import { Bignum } from "../src/utils/bignum.ts";
 

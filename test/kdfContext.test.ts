@@ -1,6 +1,6 @@
-import { assertEquals, assertRejects } from "testing/asserts.ts";
+import { assertEquals, assertRejects } from "@std/assert";
 
-import { describe, it } from "testing/bdd.ts";
+import { describe, it } from "@std/testing/bdd";
 
 import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";

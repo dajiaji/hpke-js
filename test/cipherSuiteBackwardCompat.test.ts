@@ -1,6 +1,6 @@
-import { assertEquals, assertRejects, assertThrows } from "testing/asserts.ts";
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 
-import { describe, it } from "testing/bdd.ts";
+import { describe, it } from "@std/testing/bdd";
 
 import { Aead, Kdf, Kem } from "../src/identifiers.ts"; // deprecated identifiers as the test target.
 import { CipherSuite } from "../src/cipherSuite.ts";

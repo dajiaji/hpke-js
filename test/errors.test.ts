@@ -1,6 +1,6 @@
-import { assertEquals } from "testing/asserts.ts";
+import { assertEquals } from "@std/assert";
 
-import { describe, it } from "testing/bdd.ts";
+import { describe, it } from "@std/testing/bdd";
 
 import * as errors from "../src/errors.ts";
 
