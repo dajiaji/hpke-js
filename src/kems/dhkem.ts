@@ -1,4 +1,5 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
+import type { KemId } from "../identifiers.ts";
 import type { KemInterface } from "../interfaces/kemInterface.ts";
 import type { DhkemPrimitives } from "../interfaces/dhkemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
@@ -6,7 +7,6 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 
 import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
 import { DecapError, EncapError, InvalidParamError } from "../errors.ts";
-import { KemId } from "../identifiers.ts";
 import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
 import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 

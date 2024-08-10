@@ -1,12 +1,9 @@
 import { assertEquals } from "@std/assert";
 import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
-import {
-  Aes128Gcm,
-  CipherSuite,
-  HkdfSha256,
-  PreSharedKey,
-} from "../../../core/mod.ts";
+import type { PreSharedKey } from "../../../core/mod.ts";
+
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "../../../core/mod.ts";
 import { hexToBytes } from "../../../test/utils.ts";
 import { HybridkemX25519Kyber768 } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
