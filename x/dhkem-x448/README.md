@@ -1,5 +1,7 @@
 <h1 align="center">@hpke/dhkem-x448</h1>
 
+<a href="https://jsr.io/@hpke/dhkem-x448"><img src="https://jsr.io/badges/@hpke/dhkem-x448" alt="JSR"/></a>
+
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for DH-KEM with X448, which is implemented by using <a href="https://github.com/paulmillr/noble-curves">@noble/curves</a></div>
 <p></p>

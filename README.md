@@ -1,15 +1,16 @@
 <h1 align="center">hpke-js</h1>
 
 <div align="center">
-
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/hpke/mod.ts)
-![Browser CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_browser.yml/badge.svg)
-![Node.js CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg)
-![Deno CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg)
-![Cloudflare Workers CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_cloudflare.yml/badge.svg)
-![bun CI](https://github.com/dajiaji/hpke-js/actions/workflows/ci_bun.yml/badge.svg)
-[![codecov](https://codecov.io/gh/dajiaji/hpke-js/branch/main/graph/badge.svg?token=7I7JGKDDJ2)](https://codecov.io/gh/dajiaji/hpke-js)
-
+<a href="https://jsr.io/@dajiaji/hpke"><img src="https://jsr.io/badges/@dajiaji/hpke" alt="JSR"/></a>
+<a href="https://doc.deno.land/https/deno.land/x/hpke/mod.ts"><img src="https://doc.deno.land/badge.svg" alt="deno doc"/></a>
+<img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_browser.yml/badge.svg" alt="Browser CI" />
+<img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg" alt="Node.js CI" />
+<img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg" alt="Deno CI" />
+<img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_cloudflare.yml/badge.svg" alt="Cloudflare Workers CI" />
+<img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_bun.yml/badge.svg" alt="bun CI" />
+<a href="https://codecov.io/gh/dajiaji/hpke-js">
+  <img src="https://codecov.io/gh/dajiaji/hpke-js/branch/main/graph/badge.svg?token=7I7JGKDDJ2" alt="codecov" />
+</a>
 </div>
 
 <div align="center">
