@@ -1,5 +1,7 @@
 <h1 align="center">@hpke/hybridkem-x25519-kyber768</h1>
 
+<a href="https://jsr.io/@hpke/hybridkem-x25519-kyber768"><img src="https://jsr.io/badges/@hpke/hybridkem-x25519-kyber768" alt="JSR"/></a>
+
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for the hybrid post-quantum KEM(X25519, Kyber768) compliant with <a href="https://www.ietf.org/archive/id/draft-westerbaan-cfrg-hpke-xyber768d00-02.html">X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE</a>. The kyber implementation included in this module is based on <a href="https://github.com/antontutoveanu/crystals-kyber-javascript">ntontutoveanu/crystals-kyber-javascript</a> published under <a href="https://github.com/antontutoveanu/crystals-kyber-javascript/blob/main/License">the MIT license</a>. Note that this module is EXPERIMENTAL and the referred specification has not been standardized yet.
 </div>
