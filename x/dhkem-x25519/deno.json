@@ -1,4 +1,7 @@
 {
+  "name": "@hpke/dhkem-x25519",
+  "version": "1.2.9",
+  "exports": "./mod.ts",
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.2",
     "@std/assert": "jsr:@std/assert@1.0.0",

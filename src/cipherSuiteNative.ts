@@ -159,21 +159,21 @@ export class CipherSuiteNative extends NativeAlgorithm {
   /**
    * Gets the KEM context of the ciphersuite.
    */
-  public get kem() {
+  public get kem(): KemInterface {
     return this._kem;
   }
 
   /**
    * Gets the KDF context of the ciphersuite.
    */
-  public get kdf() {
+  public get kdf(): KdfInterface {
     return this._kdf;
   }
 
   /**
    * Gets the AEAD context of the ciphersuite.
    */
-  public get aead() {
+  public get aead(): AeadInterface {
     return this._aead;
   }
 

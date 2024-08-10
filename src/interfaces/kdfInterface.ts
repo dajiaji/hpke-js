@@ -1,4 +1,4 @@
-import { KdfId } from "../identifiers.ts";
+import type { KdfId } from "../identifiers.ts";
 
 /**
  * The KDF interface.

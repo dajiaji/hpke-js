@@ -1,6 +1,6 @@
 import type { AeadEncryptionContext } from "./aeadEncryptionContext.ts";
 
-import { AeadId } from "../identifiers.ts";
+import type { AeadId } from "../identifiers.ts";
 
 /**
  * The AEAD interface.
