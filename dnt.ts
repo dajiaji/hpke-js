@@ -1,6 +1,13 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("./npm");
+await emptyDir("./samples/node/node_modules");
+await emptyDir("./samples/ts-node/node_modules");
+await emptyDir("./samples/ts-webpack/node_modules");
+await emptyDir("./test/runtimes/browsers/node_modules");
+await emptyDir("./test/runtimes/bun/node_modules");
+await emptyDir("./test/runtimes/cloudflare/node_modules");
+
 await emptyDir("./core/npm");
 await emptyDir("./x/chacha20poly1305/npm");
 await emptyDir("./x/dhkem-secp256k1/npm");
