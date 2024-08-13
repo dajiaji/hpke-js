@@ -20,10 +20,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: v20.x
-      - run: |
-          npm install -g esbuild
-          deno task dnt
-          deno task minify > test/runtimes/hpke.js
+      - name: Install esbuild
+        run: npm install -g esbuild
+      - name: Run dnt
+        run: deno run -A dnt.ts 0.0.0
+      - name: Run npm pack
+        working-directory: ./npm
+        run: npm pack
       - name: Run test
         working-directory: ./test/runtimes/cloudflare
         run: |

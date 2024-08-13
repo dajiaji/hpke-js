@@ -32,12 +32,20 @@ jobs:
       - uses: antongolub/action-setup-bun@v1
         with:
           bun-version: ${{ matrix.bun-version }}
+      - name: Install esbuild
+        run: npm install -g esbuild
+      - name: Run dnt
+        run: deno run -A dnt.ts 0.0.0
+      - name: Run npm pack
+        working-directory: ./npm
+        run: npm pack
       - name: Run test
         working-directory: ./test/runtimes/bun
         run: |
-          nohup bun src/index.js &
+          bun install
+          nohup bun run src/index.ts &
           sleep 3
-          deno test hpke.spec.ts --allow-net
+          deno test hpke.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./core
         run: |
           deno task dnt

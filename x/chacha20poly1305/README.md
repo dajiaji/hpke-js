@@ -1,6 +1,10 @@
 <h1 align="center">@hpke/chacha20poly1305</h1>
 
+<!--
+<div align="center">
 <a href="https://jsr.io/@hpke/chacha20poly1305"><img src="https://jsr.io/badges/@hpke/chacha20poly1305" alt="JSR"/></a>
+</div>
+-->
 
 <div align="center">
 A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for AEAD with ChaCha20-Poly1305, which is implemented by using <a href="https://github.com/paulmillr/noble-ciphers">@noble/ciphers</a></div>
