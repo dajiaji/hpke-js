@@ -1,6 +1,6 @@
-import * as hpke from "./hpke.js";
+import { CipherSuite } from "@dajiaji/hpke";
 
-export async function testServer(request) {
+export async function testServer(request: Request): Promise<Response> {
   const url = new URL(request.url);
   if (url.pathname !== "/test") {
     return new Response("ng: invalid path");
@@ -20,7 +20,7 @@ export async function testServer(request) {
   }
 
   try {
-    const suite = new hpke.CipherSuite({ kem: kem, kdf: kdf, aead: aead });
+    const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
     const rkp = await suite.generateKeyPair();
     const sender = await suite.createSenderContext({
       recipientPublicKey: rkp.publicKey,
@@ -34,8 +34,8 @@ export async function testServer(request) {
     if ("hello world!" !== new TextDecoder().decode(pt)) {
       return new Response("ng");
     }
-  } catch (e) {
-    return new Response("ng: " + e.message);
+  } catch (e: unknown) {
+    return new Response("ng: " + (e as Error).message);
   }
   return new Response("ok");
 }
