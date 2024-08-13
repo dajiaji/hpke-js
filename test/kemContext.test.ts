@@ -1,15 +1,15 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../src/errors.ts";
-import { KemId } from "../src/identifiers.ts";
+import * as errors from "../core/src/errors.ts";
+import { KemId } from "../core/src/identifiers.ts";
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
 import { DhkemX25519HkdfSha256 } from "../src/kems/dhkemX25519.ts";
 import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
-import { isDeno } from "../src/utils/misc.ts";
-import { loadCrypto } from "./utils.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
+import { loadCrypto } from "../core/test/utils.ts";
 
 describe("constructor", () => {
   describe("with valid parameters", () => {

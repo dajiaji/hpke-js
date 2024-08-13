@@ -1,14 +1,14 @@
-import { CipherSuiteNative } from "../../src/cipherSuiteNative.ts";
+import { CipherSuiteNative } from "./cipherSuiteNative.ts";
 import {
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
-} from "../../src/kdfs/hkdf.ts";
+} from "./kdfs/hkdf.ts";
 import {
   DhkemP256HkdfSha256Native,
   DhkemP384HkdfSha384Native,
   DhkemP521HkdfSha512Native,
-} from "../../src/kems/dhkemNative.ts";
+} from "./kems/dhkemNative.ts";
 
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,

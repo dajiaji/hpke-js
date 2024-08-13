@@ -2,7 +2,7 @@ import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
-import { loadCrypto } from "../../../test/utils.ts";
+import { loadCrypto } from "../../../core/test/utils.ts";
 
 import { Chacha20Poly1305 } from "../mod.ts";
 

@@ -4,8 +4,8 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { isDeno } from "../src/utils/misc.ts";
-import { testVectorPath } from "./utils.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
+import { testVectorPath } from "../core/test/utils.ts";
 
 describe("RFC9180 conformance", () => {
   let testVectors: TestVector[];

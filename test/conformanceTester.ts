@@ -1,13 +1,17 @@
 import { assertEquals, assertRejects } from "@std/assert";
 
-import type { PreSharedKey } from "../src/interfaces/preSharedKey.ts";
+import type { PreSharedKey } from "../core/src/interfaces/preSharedKey.ts";
 import type { XCryptoKey } from "../src/xCryptoKey.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import * as errors from "../src/errors.ts";
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
-import { hexToBytes, kemToKeyGenAlgorithm, loadSubtleCrypto } from "./utils.ts";
+import * as errors from "../core/src/errors.ts";
+import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
+import {
+  hexToBytes,
+  kemToKeyGenAlgorithm,
+  loadSubtleCrypto,
+} from "../core/test/utils.ts";
 
 export class ConformanceTester {
   protected _api: SubtleCrypto;

@@ -1,4 +1,4 @@
-import type { AeadId, KdfId, KemId } from "../src/identifiers.ts";
+import type { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
 
 interface TestVectorEncryption {
   aad: string;

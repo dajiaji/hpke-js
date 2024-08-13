@@ -1,15 +1,15 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { Aes128Gcm } from "../src/aeads/aesGcm.ts";
-import { ExportOnly } from "../src/aeads/exportOnly.ts";
+import { Aes128Gcm } from "../core/src/aeads/aesGcm.ts";
+import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { EncryptionContextImpl } from "../src/encryptionContext.ts";
-import * as errors from "../src/errors.ts";
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
+import { EncryptionContextImpl } from "../core/src/encryptionContext.ts";
+import * as errors from "../core/src/errors.ts";
+import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
-import { i2Osp } from "../src/utils/misc.ts";
-import { loadSubtleCrypto } from "./utils.ts";
+import { i2Osp } from "../core/src/utils/misc.ts";
+import { loadSubtleCrypto } from "../core/test/utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

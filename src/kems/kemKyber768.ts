@@ -1,11 +1,11 @@
 // @ts-ignore: for "npm:"
 // import * as kyber from "npm:crystals-kyber@5.1.0";
 
-import type { KemInterface } from "../interfaces/kemInterface.ts";
-import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
-import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
+import type { KemInterface } from "../../core/src/interfaces/kemInterface.ts";
+import type { RecipientContextParams } from "../../core/src/interfaces/recipientContextParams.ts";
+import type { SenderContextParams } from "../../core/src/interfaces/senderContextParams.ts";
 
-import { INPUT_LENGTH_LIMIT } from "../consts.ts";
+import { INPUT_LENGTH_LIMIT } from "../../core/src/consts.ts";
 import {
   DecapError,
   DeriveKeyPairError,
@@ -14,9 +14,9 @@ import {
   InvalidParamError,
   NotSupportedError,
   SerializeError,
-} from "../errors.ts";
-import { KemId } from "../identifiers.ts";
-import { isCryptoKeyPair } from "../utils/misc.ts";
+} from "../../core/src/errors.ts";
+import { KemId } from "../../core/src/identifiers.ts";
+import { isCryptoKeyPair } from "../../core/src/utils/misc.ts";
 import { XCryptoKey } from "../xCryptoKey.ts";
 
 import { Kyber768 } from "./primitives/kyber/kyber768.ts";

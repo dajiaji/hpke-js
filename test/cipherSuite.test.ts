@@ -1,11 +1,11 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../src/errors.ts";
-import { AeadId, KdfId, KemId } from "../src/identifiers.ts";
+import * as errors from "../core/src/errors.ts";
+import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { isDeno } from "../src/utils/misc.ts";
-import { hexToBytes } from "./utils.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
+import { hexToBytes } from "../core/test/utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.

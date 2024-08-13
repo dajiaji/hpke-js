@@ -1,10 +1,10 @@
 // @ts-ignore: for "npm:"
 import { chacha20poly1305 } from "npm:@noble/ciphers@0.5.3/chacha";
 
-import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
-import type { AeadInterface } from "../interfaces/aeadInterface.ts";
+import type { AeadEncryptionContext } from "../../core/src/interfaces/aeadEncryptionContext.ts";
+import type { AeadInterface } from "../../core/src/interfaces/aeadInterface.ts";
 
-import { AeadId } from "../identifiers.ts";
+import { AeadId } from "../../core/src/identifiers.ts";
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;

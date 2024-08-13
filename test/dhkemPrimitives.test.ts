@@ -1,15 +1,15 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../src/errors.ts";
-import { KemId } from "../src/identifiers.ts";
+import * as errors from "../core/src/errors.ts";
+import { KemId } from "../core/src/identifiers.ts";
 import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
-import { Ec } from "../src/kems/dhkemPrimitives/ec.ts";
+import { Ec } from "../core/src/kems/dhkemPrimitives/ec.ts";
 import { X25519 } from "../src/kems/dhkemPrimitives/x25519.ts";
 import { X448 } from "../src/kems/dhkemPrimitives/x448.ts";
-import { isDeno } from "../src/utils/misc.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
 
 describe("derivePublicKey", () => {
   describe("with valid parameters", () => {

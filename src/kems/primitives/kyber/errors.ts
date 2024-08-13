@@ -1,4 +1,4 @@
-import { BaseError } from "../../../errors.ts";
+import { BaseError } from "../../../../core/src/errors.ts";
 
 /**
  * The base error class of kyber.
