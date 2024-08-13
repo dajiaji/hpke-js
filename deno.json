@@ -10,11 +10,17 @@
   "publish": {
     "exclude": [
       ".github/",
-      "core/",
-      "x/",
+      "core/LICENSE",
+      "core/README.md",
+      "core/deno.json",
+      "core/deno.lock",
+      "core/dnt.ts",
+      "core/test/",
+      "core/tsconfig.json",
+      "dnt.ts",
       "samples/",
       "test/",
-      "dnt.ts"
+      "x/"
     ]
   },
   "fmt": {

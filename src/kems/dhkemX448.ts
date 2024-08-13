@@ -1,6 +1,6 @@
-import { KemId } from "../identifiers.ts";
+import { KemId } from "../../core/src/identifiers.ts";
 import { HkdfSha512 } from "../kdfs/hkdfSha512.ts";
-import { Dhkem } from "./dhkem.ts";
+import { Dhkem } from "../../core/src/kems/dhkem.ts";
 import { X448 } from "./dhkemPrimitives/x448.ts";
 
 /**

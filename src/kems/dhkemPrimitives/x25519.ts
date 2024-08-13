@@ -1,22 +1,22 @@
 // @ts-ignore: for "npm:"
 import { x25519 } from "npm:@noble/curves@1.4.2/ed25519";
 
-import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
-import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
+import type { DhkemPrimitives } from "../../../core/src/interfaces/dhkemPrimitives.ts";
+import type { KdfInterface } from "../../../core/src/interfaces/kdfInterface.ts";
 
-import { EMPTY } from "../../consts.ts";
+import { EMPTY } from "../../../core/src/consts.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
   NotSupportedError,
   SerializeError,
-} from "../../errors.ts";
+} from "../../../core/src/errors.ts";
 import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../interfaces/dhkemPrimitives.ts";
-import { base64UrlToBytes } from "../../utils/misc.ts";
+} from "../../../core/src/interfaces/dhkemPrimitives.ts";
+import { base64UrlToBytes } from "../../../core/src/utils/misc.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 const ALG_NAME = "X25519";

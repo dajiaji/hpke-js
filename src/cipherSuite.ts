@@ -1,10 +1,10 @@
-import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
-import type { KemInterface } from "./interfaces/kemInterface.ts";
+import type { CipherSuiteParams } from "../core/src/interfaces/cipherSuiteParams.ts";
+import type { KemInterface } from "../core/src/interfaces/kemInterface.ts";
 
-import { Aes128Gcm, Aes256Gcm } from "./aeads/aesGcm.ts";
-import { ExportOnly } from "./aeads/exportOnly.ts";
+import { Aes128Gcm, Aes256Gcm } from "../core/src/aeads/aesGcm.ts";
+import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
 import { Chacha20Poly1305 } from "./aeads/chacha20Poly1305.ts";
-import { InvalidParamError } from "./errors.ts";
+import { InvalidParamError } from "../core/src/errors.ts";
 import { HkdfSha256 } from "./kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "./kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "./kdfs/hkdfSha512.ts";
@@ -13,8 +13,8 @@ import { DhkemP384HkdfSha384 } from "./kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
 import { DhkemX25519HkdfSha256 } from "./kems/dhkemX25519.ts";
 import { DhkemX448HkdfSha512 } from "./kems/dhkemX448.ts";
-import { AeadId, KdfId, KemId } from "./identifiers.ts";
-import { CipherSuiteNative } from "./cipherSuiteNative.ts";
+import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
+import { CipherSuiteNative } from "../core/src/cipherSuiteNative.ts";
 
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,

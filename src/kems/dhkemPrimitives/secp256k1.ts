@@ -1,21 +1,21 @@
 // @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.4.2/secp256k1";
 
-import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
-import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
+import type { DhkemPrimitives } from "../../../core/src/interfaces/dhkemPrimitives.ts";
+import type { KdfInterface } from "../../../core/src/interfaces/kdfInterface.ts";
 
-import { EMPTY } from "../../consts.ts";
+import { EMPTY } from "../../../core/src/consts.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
   NotSupportedError,
   SerializeError,
-} from "../../errors.ts";
+} from "../../../core/src/errors.ts";
 import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../interfaces/dhkemPrimitives.ts";
+} from "../../../core/src/interfaces/dhkemPrimitives.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 const ALG_NAME = "ECDH";

@@ -8,25 +8,25 @@ import {
   KdfId,
   KemId,
 } from "../mod.ts";
-import { Aes128Gcm, Aes256Gcm } from "../src/aeads/aesGcm.ts";
+import { Aes128Gcm, Aes256Gcm } from "../core/src/aeads/aesGcm.ts";
 import { Chacha20Poly1305 } from "../src/aeads/chacha20Poly1305.ts";
-import { ExportOnly } from "../src/aeads/exportOnly.ts";
-import { CipherSuiteNative } from "../src/cipherSuiteNative.ts";
+import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
+import { CipherSuiteNative } from "../core/src/cipherSuiteNative.ts";
 import {
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
-} from "../src/kdfs/hkdf.ts";
+} from "../core/src/kdfs/hkdf.ts";
 import {
   DhkemP256HkdfSha256Native,
   DhkemP384HkdfSha384Native,
   DhkemP521HkdfSha512Native,
-} from "../src/kems/dhkemNative.ts";
+} from "../core/src/kems/dhkemNative.ts";
 import { DhkemX25519HkdfSha256 } from "../src/kems/dhkemX25519.ts";
 import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
-import { isDeno } from "../src/utils/misc.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
 
-import { concat, hexToBytes, loadCrypto } from "./utils.ts";
+import { concat, hexToBytes, loadCrypto } from "../core/test/utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.

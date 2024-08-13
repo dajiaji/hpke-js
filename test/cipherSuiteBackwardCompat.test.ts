@@ -2,13 +2,13 @@ import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 
 import { describe, it } from "@std/testing/bdd";
 
-import { Aead, Kdf, Kem } from "../src/identifiers.ts"; // deprecated identifiers as the test target.
+import { Aead, Kdf, Kem } from "../core/src/identifiers.ts"; // deprecated identifiers as the test target.
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { isDeno } from "../src/utils/misc.ts";
+import { isDeno } from "../core/src/utils/misc.ts";
 
-import * as errors from "../src/errors.ts";
+import * as errors from "../core/src/errors.ts";
 
-import { concat, hexToBytes, loadCrypto } from "./utils.ts";
+import { concat, hexToBytes, loadCrypto } from "../core/test/utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.

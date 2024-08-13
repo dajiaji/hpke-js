@@ -2,7 +2,7 @@ import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
-import { hexToBytes, loadCrypto } from "../../../test/utils.ts";
+import { hexToBytes, loadCrypto } from "../../../core/test/utils.ts";
 import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
 
 describe("DhkemSecp256k1Hkdf256", () => {
