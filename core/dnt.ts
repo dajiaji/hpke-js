@@ -1,6 +1,9 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("./npm");
+await emptyDir("./test/runtimes/browsers/node_modules");
+await emptyDir("./test/runtimes/bun/node_modules");
+await emptyDir("./test/runtimes/cloudflare/node_modules");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -11,7 +14,7 @@ await build({
   scriptModule: "umd",
   importMap: "./deno.json",
   compilerOptions: {
-    lib: ["es2022", "dom"],
+    lib: ["ES2022", "DOM"],
   },
   shims: {
     deno: "dev",
@@ -25,9 +28,9 @@ await build({
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
     },
-    homepage: "https://github.com/dajiaji/hpke-js#readme",
+    homepage: "https://github.com/dajiaji/hpke-js/tree/main/core#readme",
     license: "MIT",
-    main: "./esm/mod.js",
+    module: "./esm/mod.js",
     main: "./script/mod.js",
     types: "./esm/mod.d.ts",
     sideEffects: false,
@@ -57,5 +60,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("../LICENSE", "npm/LICENSE");
+Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");
