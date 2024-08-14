@@ -8,5 +8,8 @@
   "scripts": {
     "start": "wrangler dev --port 8789",
     "deploy": "wrangler publish"
+  },
+  "dependencies": {
+    "@hpke/core": "file:../../../npm/hpke-core-0.0.0.tgz"
   }
 }
