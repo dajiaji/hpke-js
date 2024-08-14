@@ -49,18 +49,22 @@ jobs:
       - working-directory: ./core
         run: |
           deno task dnt
-          deno task minify > test/runtimes/hpke-core.js
+          deno run -A dnt.ts 0.0.0
           deno task minify > ../x/dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../x/chacha20poly1305/test/runtimes/hpke-core.js
           deno task minify > ../x/hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
           deno task minify > ../x/dhkem-secp256k1/test/runtimes/hpke-core.js
+      - name: Run npm pack for core
+        working-directory: ./core/npm
+        run: npm pack
       - name: Run test for core
         working-directory: ./core/test/runtimes/bun
         run: |
-          nohup bun src/index.js &
+          bun install
+          nohup bun src/index.ts &
           sleep 3
-          deno test core.spec.ts --allow-net
+          deno test core.spec.ts --allow-net --config ../../../deno.json
       - working-directory: ./x/dhkem-x25519
         run: |
           deno task dnt

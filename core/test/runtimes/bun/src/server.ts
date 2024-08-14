@@ -12,9 +12,9 @@ import {
   HkdfSha512,
   KdfId,
   KemId,
-} from "./hpke-core.js";
+} from "@hpke/core";
 
-function createKem(id) {
+function createKem(id: KemId) {
   switch (id) {
     case KemId.DhkemP256HkdfSha256:
       return new DhkemP256HkdfSha256();
@@ -28,7 +28,7 @@ function createKem(id) {
   throw new Error("ng: invalid kem");
 }
 
-function createKdf(id) {
+function createKdf(id: KdfId) {
   switch (id) {
     case KdfId.HkdfSha256:
       return new HkdfSha256();
@@ -42,7 +42,7 @@ function createKdf(id) {
   throw new Error("ng: invalid kdf");
 }
 
-function createAead(id) {
+function createAead(id: AeadId) {
   switch (id) {
     case AeadId.Aes128Gcm:
       return new Aes128Gcm();
@@ -58,7 +58,7 @@ function createAead(id) {
   throw new Error("ng: invalid aead");
 }
 
-export async function testServer(request) {
+export async function testServer(request: Request): Promise<Response> {
   const url = new URL(request.url);
   if (url.pathname !== "/test") {
     return new Response("ng: invalid path");
@@ -95,8 +95,8 @@ export async function testServer(request) {
     if ("hello world!" !== new TextDecoder().decode(pt)) {
       return new Response("ng");
     }
-  } catch (e) {
-    return new Response("ng: " + e.message);
+  } catch (e: unknown) {
+    return new Response("ng: " + (e as Error).message);
   }
   return new Response("ok");
 }
