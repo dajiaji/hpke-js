@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-describe("Cloudflare Workers", () => {
+describe("Bun", () => {
   describe("GET /test?kem=0x0010", () => {
     it("should return ok", async () => {
       for (const kdf of ["0x0001", "0x0002", "0x0003"]) {
