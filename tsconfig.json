@@ -2,11 +2,21 @@
   "compilerOptions": {
     "module": "es2022",
     "target": "es2022",
+    "paths": {
+      "@hpke/core": ["./core/mod.ts"],
+    },
     "noEmit": true,
     "allowImportingTsExtensions": true
   }, 
   "include": [
+    "core/**/*",
     "mod.ts",
     "src/**/*"
-  ]
+  ],
+  "exclude": [
+    "core/dnt.ts",
+    "core/samples/**/*",
+    "core/test/**/*",
+    "src/test/**/*"
+  ],
 }

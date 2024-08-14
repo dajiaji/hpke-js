@@ -9,7 +9,7 @@ import {
   KemId,
 } from "../mod.ts";
 import { Aes128Gcm, Aes256Gcm } from "../core/src/aeads/aesGcm.ts";
-import { Chacha20Poly1305 } from "../src/aeads/chacha20Poly1305.ts";
+import { Chacha20Poly1305 } from "../x/chacha20poly1305/mod.ts";
 import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
 import { CipherSuiteNative } from "../core/src/cipherSuiteNative.ts";
 import {
