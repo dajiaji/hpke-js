@@ -22,7 +22,7 @@ await build({
   test: true,
   declaration: "inline",
   scriptModule: "umd",
-  importMap: "./deno.json",
+  importMap: "./import_map_for_dnt.json",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },

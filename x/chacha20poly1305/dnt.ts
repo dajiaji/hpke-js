@@ -1,6 +1,7 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("./npm");
+await emptyDir("./test/runtimes/browsers/node_modules");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -9,7 +10,7 @@ await build({
   test: true,
   declaration: true,
   scriptModule: "umd",
-  importMap: "./deno.json",
+  importMap: "../../import_map_for_dnt.json",
   compilerOptions: {
     lib: ["es2022", "dom"],
   },

@@ -1,7 +1,15 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
+import {
+  AeadId,
+  Aes128Gcm,
+  CipherSuite,
+  ExportOnly,
+  HkdfSha256,
+  KdfId,
+  KemId,
+} from "../../../core/mod.ts";
 import { hexToBytes, loadCrypto } from "../../../core/test/utils.ts";
 import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
 
@@ -152,8 +160,8 @@ describe("CipherSuite", () => {
     it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
         kem: new DhkemSecp256k1HkdfSha256(),
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.ExportOnly,
+        kdf: new HkdfSha256(),
+        aead: new ExportOnly(),
       });
       assertEquals(suite.kem.secretSize, 32);
       assertEquals(suite.kem.encSize, 33);
@@ -176,8 +184,8 @@ describe("CipherSuite", () => {
       const kem = new DhkemSecp256k1HkdfSha256();
       const suite = new CipherSuite({
         kem: kem,
-        kdf: KdfId.HkdfSha256,
-        aead: AeadId.Aes128Gcm,
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
       });
 
       const rkp = await suite.kem.generateKeyPair();

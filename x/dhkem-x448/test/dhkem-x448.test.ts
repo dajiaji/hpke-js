@@ -1,7 +1,15 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
+import {
+  AeadId,
+  Aes128Gcm,
+  CipherSuite,
+  ExportOnly,
+  HkdfSha512,
+  KdfId,
+  KemId,
+} from "../../../core/mod.ts";
 import { loadCrypto } from "../../../core/test/utils.ts";
 import { DhkemX448HkdfSha512 } from "../mod.ts";
 
@@ -151,8 +159,8 @@ describe("CipherSuite", () => {
     it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
         kem: new DhkemX448HkdfSha512(),
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.ExportOnly,
+        kdf: new HkdfSha512(),
+        aead: new ExportOnly(),
       });
       assertEquals(suite.kem.secretSize, 64);
       assertEquals(suite.kem.encSize, 56);
@@ -175,8 +183,8 @@ describe("CipherSuite", () => {
       const kem = new DhkemX448HkdfSha512();
       const suite = new CipherSuite({
         kem: kem,
-        kdf: KdfId.HkdfSha512,
-        aead: AeadId.Aes128Gcm,
+        kdf: new HkdfSha512(),
+        aead: new Aes128Gcm(),
       });
 
       const rkp = await suite.kem.generateKeyPair();

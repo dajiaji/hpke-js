@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "@playwright/test": "^1.45.3"
+  },
+  "dependencies": {
+    "@hpke/core": "npm:@jsr/hpke__core@^1.2.9"
   }
 }
