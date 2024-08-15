@@ -1,7 +1,13 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { AeadId, CipherSuite, KdfId, KemId } from "../../../mod.ts";
+import { AeadId } from "../../../core/src/identifiers.ts";
+import {
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "../../../mod_core.ts";
+
 import { loadCrypto } from "../../../core/test/utils.ts";
 
 import { Chacha20Poly1305 } from "../mod.ts";
@@ -52,8 +58,8 @@ describe("CipherSuite", () => {
   describe("constructor with Chacha20Poly1305", () => {
     it("should have a correct ciphersuite", () => {
       const suite: CipherSuite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
         aead: new Chacha20Poly1305(),
       });
 
@@ -69,8 +75,8 @@ describe("CipherSuite", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuite({
-        kem: KemId.DhkemP256HkdfSha256,
-        kdf: KdfId.HkdfSha256,
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
         aead: new Chacha20Poly1305(),
       });
 
