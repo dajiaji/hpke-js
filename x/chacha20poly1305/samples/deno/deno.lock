@@ -1,0 +1,36 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@hpke/chacha20poly1305@^1.2.9": "jsr:@hpke/chacha20poly1305@1.2.9",
+      "jsr:@hpke/core@^1.2.9": "jsr:@hpke/core@1.2.9",
+      "npm:@noble/ciphers@0.5.3": "npm:@noble/ciphers@0.5.3"
+    },
+    "jsr": {
+      "@hpke/chacha20poly1305@1.2.9": {
+        "integrity": "61e9fa9da0e50571af6866eabb870e7b90451abdcc64f7b82905d52d50e1d656",
+        "dependencies": [
+          "jsr:@hpke/core@^1.2.9",
+          "npm:@noble/ciphers@0.5.3"
+        ]
+      },
+      "@hpke/core@1.2.9": {
+        "integrity": "428de3f8885bd7305956d272cafa8759fb98f17ad465e57acd33bbdc0e18998e"
+      }
+    },
+    "npm": {
+      "@noble/ciphers@0.5.3": {
+        "integrity": "sha512-B0+6IIHiqEs3BPMT0hcRmHvEj2QHOLu+uwt+tqDDeVd0oyVzh7BPrDcPjRnV1PV/5LaknXJJQvOuRGR0zQJz+w==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@hpke/chacha20poly1305@^1.2.9",
+      "jsr:@hpke/core@^1.2.9",
+      "jsr:@std/assert@1"
+    ]
+  }
+}
