@@ -12,7 +12,7 @@ await build({
   scriptModule: "umd",
   importMap: "../../import_map_for_dnt.json",
   compilerOptions: {
-    lib: ["es2022", "dom"],
+    lib: ["ES2022", "DOM"],
   },
   shims: {
     deno: "dev",
@@ -26,7 +26,8 @@ await build({
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
     },
-    homepage: "https://github.com/dajiaji/hpke-js#readme",
+    homepage:
+      "https://github.com/dajiaji/hpke-js/tree/main/x/chacha20poly1305#readme",
     license: "MIT",
     module: "./esm/x/chacha20poly1305/mod.js",
     main: "./script/x/chacha20poly1305/mod.js",
@@ -59,5 +60,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
+Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");
