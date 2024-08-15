@@ -31,39 +31,38 @@
   },
   "fmt": {
     "include": [
-      "README.md",
-      "CHANGES.md",
-      "deno.json",
+      "**/*.md",
+      "**/*.json",
+      "core/",
       "dnt.ts",
       "mod.ts",
       "samples/",
       "src/",
+      "x/",
       "test/"
     ],
     "exclude": [
-      "core",
-      "x",
-      "**/*/hpke*.js",
-      "samples/node/node_modules",
-      "samples/ts-node/node_modules",
-      "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
-      "test/runtimes/cloudflare"
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
     ]
   },
   "lint": {
-    "include": ["mod.ts", "samples/", "src/", "test/"],
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "core/",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "x/",
+      "test/"
+    ],
     "exclude": [
-      "core",
-      "x",
-      "**/*/hpke*.js",
-      "samples/node/node_modules",
-      "samples/ts-node/node_modules",
-      "samples/ts-webpack/*.js",
-      "samples/ts-webpack/dist",
-      "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
-      "test/runtimes/cloudflare"
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
     ]
   },
   "tasks": {
