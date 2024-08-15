@@ -6,7 +6,7 @@
       "@hpke/core": ["../../core/mod.ts"]
     },
     "allowImportingTsExtensions": true
-  }, 
+  },
   "include": [
     "mod.ts",
     "./src/chacha20Poly1305.ts"
