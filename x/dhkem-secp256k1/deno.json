@@ -9,27 +9,34 @@
   },
   "fmt": {
     "include": [
-      "README.md",
-      "deno.json",
+      "**/*.md",
+      "**/*.json",
       "dnt.ts",
       "mod.ts",
+      "samples/",
       "src/",
       "test/"
     ],
     "exclude": [
-      "**/*/hpke*.js",
-      "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
-      "test/runtimes/cloudflare"
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
     ]
   },
   "lint": {
-    "include": ["mod.ts", "test/"],
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
     "exclude": [
-      "**/*/hpke*.js",
-      "test/runtimes/bun",
-      "test/runtimes/browsers/node_modules",
-      "test/runtimes/cloudflare"
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
     ]
   },
   "tasks": {
