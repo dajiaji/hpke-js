@@ -15,6 +15,7 @@
       "deno.json",
       "deno.lock",
       "mod.ts",
+      "mod_core.ts",
       "src/",
       "x/chacha20poly1305/src/"
     ],
@@ -36,6 +37,7 @@
       "core/",
       "dnt.ts",
       "mod.ts",
+      "mod_core.ts",
       "samples/",
       "src/",
       "x/",
