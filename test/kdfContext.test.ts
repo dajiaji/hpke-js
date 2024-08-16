@@ -2,12 +2,13 @@ import { assertEquals, assertRejects } from "@std/assert";
 
 import { describe, it } from "@std/testing/bdd";
 
-import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 import { HkdfSha512 } from "../src/kdfs/hkdfSha512.ts";
 import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
 import { i2Osp } from "../core/src/utils/misc.ts";
 import { loadCrypto } from "../core/test/utils.ts";
+
+import { HkdfSha256 } from "../x/dhkem-x25519/src/hkdfSha256.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

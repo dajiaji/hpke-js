@@ -1,24 +1,21 @@
 // @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.4.2/secp256k1";
 
-import type { DhkemPrimitives } from "../../../core/src/interfaces/dhkemPrimitives.ts";
-import type { KdfInterface } from "../../../core/src/interfaces/kdfInterface.ts";
+import type { DhkemPrimitives, KdfInterface } from "../../../mod_core.ts";
 
-import { EMPTY } from "../../../core/src/consts.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
-  NotSupportedError,
-  SerializeError,
-} from "../../../core/src/errors.ts";
-import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../../core/src/interfaces/dhkemPrimitives.ts";
-import { XCryptoKey } from "../../xCryptoKey.ts";
+  NotSupportedError,
+  SerializeError,
+  XCryptoKey,
+} from "../../../mod_core.ts";
 
 const ALG_NAME = "ECDH";
+const EMPTY = new Uint8Array();
 
 export class Secp256k1 implements DhkemPrimitives {
   private _hkdf: KdfInterface;

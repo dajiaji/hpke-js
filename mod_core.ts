@@ -3,6 +3,8 @@
 export type { AeadEncryptionContext } from "./core/src/interfaces/aeadEncryptionContext.ts";
 export type { AeadInterface } from "./core/src/interfaces/aeadInterface.ts";
 export type { CipherSuiteParams } from "./core/src/interfaces/cipherSuiteParams.ts";
+export type { DhkemInterface } from "./core/src/interfaces/dhkemInterface.ts";
+export type { DhkemPrimitives } from "./core/src/interfaces/dhkemPrimitives.ts";
 export type {
   EncryptionContext,
   RecipientContext,
@@ -15,11 +17,31 @@ export type { RecipientContextParams } from "./core/src/interfaces/recipientCont
 export type { CipherSuiteSealResponse } from "./core/src/interfaces/responses.ts";
 export type { SenderContextParams } from "./core/src/interfaces/senderContextParams.ts";
 
+export {
+  KEM_USAGES,
+  LABEL_DKP_PRK,
+  LABEL_SK,
+} from "./core/src/interfaces/dhkemPrimitives.ts";
+export { SUITE_ID_HEADER_KEM } from "./core/src/interfaces/kemInterface.ts";
+
 export { Aes128Gcm, Aes256Gcm } from "./core/src/aeads/aesGcm.ts";
 export { ExportOnly } from "./core/src/aeads/exportOnly.ts";
+export {
+  HkdfSha256Native,
+  HkdfSha384Native,
+  HkdfSha512Native,
+} from "./core/src/kdfs/hkdf.ts";
+export { Dhkem } from "./core/src/kems/dhkem.ts";
+export {
+  base64UrlToBytes,
+  concat,
+  i2Osp,
+  isCryptoKeyPair,
+} from "./core/src/utils/misc.ts";
+
+export { INPUT_LENGTH_LIMIT } from "./core/src/consts.ts";
 export * from "./core/src/errors.ts";
 export { AeadId, KdfId, KemId } from "./core/src/identifiers.ts";
-
 export {
   CipherSuite,
   DhkemP256HkdfSha256,
@@ -29,3 +51,4 @@ export {
   HkdfSha384,
   HkdfSha512,
 } from "./core/src/native.ts";
+export { XCryptoKey } from "./core/src/xCryptoKey.ts";

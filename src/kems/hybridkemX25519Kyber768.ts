@@ -1,10 +1,9 @@
-import type { DhkemInterface } from "../../core/src/interfaces/dhkemInterface.ts";
+import type { DhkemInterface } from "../../mod_core.ts";
 
-import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha256 } from "../kdfs/hkdfSha256.ts";
+import { Dhkem, KemId } from "../../mod_core.ts";
+import { HkdfSha256 } from "../../x/dhkem-x25519/src/hkdfSha256.ts";
+import { X25519 } from "../../x/dhkem-x25519/src/x25519.ts";
 
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
-import { X25519 } from "./dhkemPrimitives/x25519.ts";
 import { Hybridkem } from "./hybridkem.ts";
 import { KemKyber768 } from "./kemKyber768.ts";
 

@@ -17,7 +17,7 @@ import {
   LABEL_SK,
 } from "../../../core/src/interfaces/dhkemPrimitives.ts";
 import { base64UrlToBytes } from "../../../core/src/utils/misc.ts";
-import { XCryptoKey } from "../../xCryptoKey.ts";
+import { XCryptoKey } from "../../../core/src/xCryptoKey.ts";
 
 const ALG_NAME = "X448";
 

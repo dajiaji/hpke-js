@@ -7,9 +7,10 @@ import { CipherSuite } from "../src/cipherSuite.ts";
 import { EncryptionContextImpl } from "../core/src/encryptionContext.ts";
 import * as errors from "../core/src/errors.ts";
 import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
-import { HkdfSha256 } from "../src/kdfs/hkdfSha256.ts";
 import { i2Osp } from "../core/src/utils/misc.ts";
 import { loadSubtleCrypto } from "../core/test/utils.ts";
+
+import { HkdfSha256 } from "../x/dhkem-x25519/src/hkdfSha256.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([
