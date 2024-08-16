@@ -22,7 +22,7 @@ import {
   DhkemP384HkdfSha384Native,
   DhkemP521HkdfSha512Native,
 } from "../core/src/kems/dhkemNative.ts";
-import { DhkemX25519HkdfSha256 } from "../src/kems/dhkemX25519.ts";
+import { DhkemX25519HkdfSha256 } from "../x/dhkem-x25519/src/dhkemX25519.ts";
 import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
 import { isDeno } from "../core/src/utils/misc.ts";
 

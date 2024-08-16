@@ -1,6 +1,6 @@
-import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha256 } from "../kdfs/hkdfSha256.ts";
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
+import { Dhkem, KemId } from "../../mod_core.ts";
+import { HkdfSha256 } from "../../x/dhkem-x25519/mod.ts";
+
 import { Secp256k1 } from "./dhkemPrimitives/secp256k1.ts";
 
 /**

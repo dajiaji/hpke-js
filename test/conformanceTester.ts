@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 
 import type { PreSharedKey } from "../core/src/interfaces/preSharedKey.ts";
-import type { XCryptoKey } from "../src/xCryptoKey.ts";
+import type { XCryptoKey } from "../core/src/xCryptoKey.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";

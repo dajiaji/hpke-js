@@ -1,5 +1,5 @@
 import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha256 } from "../kdfs/hkdfSha256.ts";
+import { HkdfSha256 } from "../../x/dhkem-x25519/src/hkdfSha256.ts";
 import { Dhkem } from "../../core/src/kems/dhkem.ts";
 import { Ec } from "../../core/src/kems/dhkemPrimitives/ec.ts";
 

@@ -1,7 +1,6 @@
-import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha256 } from "../kdfs/hkdfSha256.ts";
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
-import { X25519 } from "./dhkemPrimitives/x25519.ts";
+import { Dhkem, KemId } from "../../../mod_core.ts";
+import { HkdfSha256 } from "./hkdfSha256.ts";
+import { X25519 } from "./x25519.ts";
 
 /**
  * The DHKEM(X25519, HKDF-SHA256) for HPKE KEM implementing {@link KemInterface}.

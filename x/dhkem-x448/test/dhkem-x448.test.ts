@@ -9,7 +9,7 @@ import {
   HkdfSha512,
   KdfId,
   KemId,
-} from "../../../core/mod.ts";
+} from "../../../mod_core.ts";
 import { loadCrypto } from "../../../core/test/utils.ts";
 import { DhkemX448HkdfSha512 } from "../mod.ts";
 
