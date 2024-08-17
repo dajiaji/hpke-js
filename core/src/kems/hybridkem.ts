@@ -1,27 +1,21 @@
-import type {
-  DhkemInterface,
-  KdfInterface,
-  KemInterface,
-  RecipientContextParams,
-  SenderContextParams,
-} from "../../mod_core.ts";
+import type { DhkemInterface } from "../interfaces/dhkemInterface.ts";
+import type { KdfInterface } from "../interfaces/kdfInterface.ts";
+import type { KemInterface } from "../interfaces/kemInterface.ts";
+import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
+import type { RecipientContextParams } from "../interfaces/recipientContextParams.ts";
 
+import { EMPTY } from "../consts.ts";
 import {
-  concat,
   DeserializeError,
-  i2Osp,
   InvalidParamError,
-  isCryptoKeyPair,
-  KemId,
-  LABEL_DKP_PRK,
-  LABEL_SK,
   NotSupportedError,
   SerializeError,
-  SUITE_ID_HEADER_KEM,
-  XCryptoKey,
-} from "../../mod_core.ts";
-
-const EMPTY = new Uint8Array();
+} from "../errors.ts";
+import { KemId } from "../identifiers.ts";
+import { LABEL_DKP_PRK, LABEL_SK } from "../interfaces/dhkemPrimitives.ts";
+import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
+import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
+import { XCryptoKey } from "../xCryptoKey.ts";
 
 export class Hybridkem implements KemInterface {
   public readonly id: KemId = KemId.NotAssigned;

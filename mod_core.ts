@@ -33,6 +33,7 @@ export {
 } from "./core/src/kdfs/hkdf.ts";
 export { Dhkem } from "./core/src/kems/dhkem.ts";
 export { Ec } from "./core/src/kems/dhkemPrimitives/ec.ts";
+export { Hybridkem } from "./core/src/kems/hybridkem.ts";
 export {
   base64UrlToBytes,
   concat,
