@@ -1,7 +1,7 @@
-import { Dhkem, KemId } from "../../mod_core.ts";
-import { HkdfSha256 } from "../../x/dhkem-x25519/mod.ts";
+import { Dhkem, KemId } from "../../../mod_core.ts";
+import { HkdfSha256 } from "../../../x/dhkem-x25519/mod.ts";
 
-import { Secp256k1 } from "./dhkemPrimitives/secp256k1.ts";
+import { Secp256k1 } from "./secp256k1.ts";
 
 /**
  * The DHKEM(secp256k1, HKDF-SHA256) for HPKE KEM implementing {@link KemInterface}.
