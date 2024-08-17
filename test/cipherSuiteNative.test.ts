@@ -23,7 +23,7 @@ import {
   DhkemP521HkdfSha512Native,
 } from "../core/src/kems/dhkemNative.ts";
 import { DhkemX25519HkdfSha256 } from "../x/dhkem-x25519/src/dhkemX25519.ts";
-import { DhkemX448HkdfSha512 } from "../src/kems/dhkemX448.ts";
+import { DhkemX448HkdfSha512 } from "../x/dhkem-x448/src/dhkemX448.ts";
 import { isDeno } from "../core/src/utils/misc.ts";
 
 import { concat, hexToBytes, loadCrypto } from "../core/test/utils.ts";

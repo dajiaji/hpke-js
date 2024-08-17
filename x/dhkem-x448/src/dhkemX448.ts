@@ -1,7 +1,6 @@
-import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha512 } from "../kdfs/hkdfSha512.ts";
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
-import { X448 } from "./dhkemPrimitives/x448.ts";
+import { Dhkem, KemId } from "../../../mod_core.ts";
+import { HkdfSha512 } from "./hkdfSha512.ts";
+import { X448 } from "./x448.ts";
 
 /**
  * The DHKEM(X448, HKDF-SHA512) for HPKE KEM implementing {@link KemInterface}.
