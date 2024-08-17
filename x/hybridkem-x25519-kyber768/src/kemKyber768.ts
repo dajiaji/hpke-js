@@ -5,7 +5,7 @@ import type {
   KemInterface,
   RecipientContextParams,
   SenderContextParams,
-} from "../../mod_core.ts";
+} from "../../../mod_core.ts";
 
 import {
   DecapError,
@@ -19,9 +19,9 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "../../mod_core.ts";
+} from "../../../mod_core.ts";
 
-import { Kyber768 } from "./primitives/kyber/kyber768.ts";
+import { Kyber768 } from "./kyber/kyber768.ts";
 
 const ALG_NAME = "Keyber768";
 
