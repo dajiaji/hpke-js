@@ -27,7 +27,8 @@
       "core/dnt.ts",
       "core/samples/",
       "core/test/",
-      "core/tsconfig.json"
+      "core/tsconfig.json",
+      "tsconfig.json"
     ]
   },
   "fmt": {

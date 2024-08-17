@@ -12,7 +12,8 @@
     "exclude": [
       "dnt.ts",
       "samples/",
-      "test/"
+      "test/",
+      "tsconfig.json"
     ]
   },
   "fmt": {
