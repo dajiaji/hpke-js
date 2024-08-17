@@ -30,6 +30,7 @@ export {
   HkdfSha512Native,
 } from "./src/kdfs/hkdf.ts";
 export { Dhkem } from "./src/kems/dhkem.ts";
+export { Ec } from "./src/kems/dhkemPrimitives/ec.ts";
 export {
   base64UrlToBytes,
   concat,
