@@ -4,7 +4,6 @@
     "specifiers": {
       "jsr:@deno/cache-dir@^0.8.0": "jsr:@deno/cache-dir@0.8.0",
       "jsr:@deno/dnt@^0.41.2": "jsr:@deno/dnt@0.41.2",
-      "jsr:@hpke/core@^1.2.9": "jsr:@hpke/core@1.2.9",
       "jsr:@std/assert@1.0.0": "jsr:@std/assert@1.0.0",
       "jsr:@std/assert@^0.218.2": "jsr:@std/assert@0.218.2",
       "jsr:@std/bytes@^0.218.2": "jsr:@std/bytes@0.218.2",
@@ -40,9 +39,6 @@
           "npm:@ts-morph/bootstrap@0.22",
           "npm:code-block-writer@^13.0.1"
         ]
-      },
-      "@hpke/core@1.2.9": {
-        "integrity": "428de3f8885bd7305956d272cafa8759fb98f17ad465e57acd33bbdc0e18998e"
       },
       "@std/assert@0.218.2": {
         "integrity": "7f0a5a1a8cf86607cd6c2c030584096e1ffad27fc9271429a8cb48cfbdee5eaf"
@@ -251,9 +247,17 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@^0.41.2",
-      "jsr:@hpke/core@^1.2.9",
       "jsr:@std/assert@1.0.0",
       "jsr:@std/testing@^1.0.0"
-    ]
+    ],
+    "members": {
+      "core": {
+        "dependencies": [
+          "jsr:@deno/dnt@^0.41.2",
+          "jsr:@std/assert@1.0.0",
+          "jsr:@std/testing@^1.0.0"
+        ]
+      }
+    }
   }
 }

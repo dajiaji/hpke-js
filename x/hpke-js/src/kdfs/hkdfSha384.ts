@@ -3,7 +3,7 @@ import { hmac } from "npm:@noble/hashes@1.4.0/hmac";
 // @ts-ignore: for "npm:"
 import { sha384 } from "npm:@noble/hashes@1.4.0/sha512";
 
-import { HkdfSha384Native } from "../../core/src/kdfs/hkdf.ts";
+import { HkdfSha384Native } from "@hpke/core";
 
 export class HkdfSha384 extends HkdfSha384Native {
   public override async extract(

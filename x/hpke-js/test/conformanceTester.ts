@@ -1,17 +1,25 @@
 import { assertEquals, assertRejects } from "@std/assert";
 
-import type { PreSharedKey } from "../core/src/interfaces/preSharedKey.ts";
-import type { XCryptoKey } from "../core/src/xCryptoKey.ts";
+import type { PreSharedKey, XCryptoKey } from "@hpke/core";
+
+import {
+  AeadId,
+  DecapError,
+  DeserializeError,
+  KdfId,
+  KemId,
+  NotSupportedError,
+} from "@hpke/core";
+
 import type { TestVector } from "./testVector.ts";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import * as errors from "../core/src/errors.ts";
-import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
+
 import {
   hexToBytes,
   kemToKeyGenAlgorithm,
   loadSubtleCrypto,
-} from "../core/test/utils.ts";
+} from "../../../core/test/utils.ts";
 
 export class ConformanceTester {
   protected _api: SubtleCrypto;
@@ -173,7 +181,7 @@ export class ConformanceTester {
     });
     await assertRejects(
       () => sender.open(new Uint8Array([1, 2, 3, 4])),
-      errors.NotSupportedError,
+      NotSupportedError,
     );
 
     if (pkb.length < nPk) {
@@ -188,7 +196,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.NotSupportedError,
+      NotSupportedError,
     );
     this._count++;
   }
@@ -221,7 +229,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => suite.kem.importKey("raw", pkb),
-      errors.DeserializeError,
+      DeserializeError,
     );
     await assertRejects(
       () => suite.kem.importKey("raw", pkb),
@@ -231,7 +239,7 @@ export class ConformanceTester {
       suite.createRecipientContext({
         recipientKey: rkp,
         enc: pkb,
-      }), errors.DeserializeError);
+      }), DeserializeError);
     await assertRejects(() =>
       suite.createRecipientContext({
         recipientKey: rkp,
@@ -258,7 +266,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.NotSupportedError,
+      NotSupportedError,
     );
     this._count++;
   }
@@ -278,7 +286,7 @@ export class ConformanceTester {
       suite.createRecipientContext({
         recipientKey: rkp,
         enc: pkb,
-      }), errors.DecapError);
+      }), DecapError);
     this._count++;
   }
 
@@ -300,7 +308,7 @@ export class ConformanceTester {
     // assert
     await assertRejects(
       () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
-      errors.NotSupportedError,
+      NotSupportedError,
     );
     this._count++;
   }
@@ -321,13 +329,13 @@ export class ConformanceTester {
         suite.createRecipientContext({
           recipientKey: rkp,
           enc: pkb,
-        }), errors.DeserializeError);
+        }), DeserializeError);
     } else {
       await assertRejects(() =>
         suite.createRecipientContext({
           recipientKey: rkp,
           enc: pkb,
-        }), errors.DecapError);
+        }), DecapError);
     }
     this._count++;
   }

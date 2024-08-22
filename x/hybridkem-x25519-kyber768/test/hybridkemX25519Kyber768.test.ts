@@ -8,7 +8,7 @@ import {
   HkdfSha256,
   KdfId,
   KemId,
-} from "../../../core/mod.ts";
+} from "@hpke/core";
 import { HybridkemX25519Kyber768 } from "../mod.ts";
 
 describe("constructor", () => {

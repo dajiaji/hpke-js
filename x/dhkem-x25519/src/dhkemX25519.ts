@@ -1,4 +1,5 @@
-import { Dhkem, KemId } from "../../../mod_core.ts";
+import { Dhkem, KemId } from "@hpke/core";
+
 import { HkdfSha256 } from "./hkdfSha256.ts";
 import { X25519 } from "./x25519.ts";
 

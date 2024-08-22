@@ -1,7 +1,5 @@
-import { KemId } from "../../core/src/identifiers.ts";
-import { HkdfSha256 } from "../../x/dhkem-x25519/src/hkdfSha256.ts";
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
-import { Ec } from "../../core/src/kems/dhkemPrimitives/ec.ts";
+import { Dhkem, Ec, KemId } from "@hpke/core";
+import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
 export class DhkemP256HkdfSha256 extends Dhkem {
   public readonly id: KemId = KemId.DhkemP256HkdfSha256;

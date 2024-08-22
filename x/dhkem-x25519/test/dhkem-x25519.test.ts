@@ -9,7 +9,8 @@ import {
   HkdfSha256,
   KdfId,
   KemId,
-} from "../../../core/mod.ts";
+} from "@hpke/core";
+
 import { loadCrypto } from "../../../core/test/utils.ts";
 import { DhkemX25519HkdfSha256 } from "../mod.ts";
 

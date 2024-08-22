@@ -1,6 +1,6 @@
-import { Dhkem, Ec, KemId } from "../../mod_core.ts";
+import { Dhkem, Ec, KemId } from "@hpke/core";
 
-import { HkdfSha512 } from "../../x/dhkem-x448/mod.ts";
+import { HkdfSha512 } from "@hpke/dhkem-x448";
 
 export class DhkemP521HkdfSha512 extends Dhkem {
   public readonly id: KemId = KemId.DhkemP521HkdfSha512;

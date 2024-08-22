@@ -1,16 +1,26 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { Aes128Gcm } from "../core/src/aeads/aesGcm.ts";
-import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
-import { CipherSuite } from "../src/cipherSuite.ts";
-import { EncryptionContextImpl } from "../core/src/encryptionContext.ts";
-import * as errors from "../core/src/errors.ts";
-import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
-import { i2Osp } from "../core/src/utils/misc.ts";
-import { loadSubtleCrypto } from "../core/test/utils.ts";
+import {
+  AeadId,
+  Aes128Gcm,
+  DecapError,
+  DeserializeError,
+  EncapError,
+  ExportError,
+  ExportOnly,
+  i2Osp,
+  InvalidParamError,
+  KdfId,
+  KemId,
+  NotSupportedError,
+  OpenError,
+} from "@hpke/core";
+import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
-import { HkdfSha256 } from "../x/dhkem-x25519/src/hkdfSha256.ts";
+import { EncryptionContextImpl } from "../../../core/src/encryptionContext.ts";
+import { CipherSuite } from "../src/cipherSuite.ts";
+import { loadSubtleCrypto } from "../../../core/test/utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([
@@ -112,7 +122,7 @@ describe("open", () => {
       );
 
       // assert
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -151,10 +161,10 @@ describe("open", () => {
       await assertRejects(() =>
         recipient1.seal(
           new TextEncoder().encode("my-secret-message"),
-        ), errors.NotSupportedError);
+        ), NotSupportedError);
 
       // assert
-      await assertRejects(() => recipient2.open(ct1), errors.OpenError);
+      await assertRejects(() => recipient2.open(ct1), OpenError);
     });
   });
 
@@ -192,11 +202,11 @@ describe("open", () => {
       );
       await assertRejects(
         () => recipient1.seal(new TextEncoder().encode("my-secret-message")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
 
       // assert
-      await assertRejects(() => recipient2.open(ct1), errors.OpenError);
+      await assertRejects(() => recipient2.open(ct1), OpenError);
     });
   });
 });
@@ -221,7 +231,7 @@ describe("export", () => {
       // assert
       await assertRejects(
         () => sender.export(te.encode("info"), -1),
-        errors.ExportError,
+        ExportError,
       );
     });
   });
@@ -245,7 +255,7 @@ describe("export", () => {
       // assert
       await assertRejects(
         () => sender.export(te.encode("info"), -1),
-        errors.ExportError,
+        ExportError,
       );
     });
   });
@@ -267,7 +277,7 @@ describe("export", () => {
       // assert
       await assertRejects(
         () => sender.export(new Uint8Array(8193), 32),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long exporter context",
       );
     });
@@ -297,7 +307,7 @@ describe("createSenderContext", () => {
           suite.createSenderContext({
             recipientPublicKey: rkpX.publicKey,
           }),
-        errors.EncapError,
+        EncapError,
       );
     });
   });
@@ -332,7 +342,7 @@ describe("createRecipientContext", () => {
             recipientKey: rkp,
             enc: senderX.enc,
           }),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -365,7 +375,7 @@ describe("createRecipientContext", () => {
             recipientKey: rkp,
             enc: senderX.enc,
           }),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -399,7 +409,7 @@ describe("createRecipientContext", () => {
             recipientKey: rkpX,
             enc: sender.enc,
           }),
-        errors.DecapError,
+        DecapError,
       );
     });
   });
@@ -476,6 +486,6 @@ describe("createRecipientContext", () => {
 //     const ec = new EncryptionContext(api, kdf, params);
 //     let ki = { key: createEncryptionContext(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
 //     ec.incrementSeq(ki);
-//     assertThrows(() => { ec.incrementSeq(ki); }, errors.MessageLimitReachedError, 'Message limit reached');
+//     assertThrows(() => { ec.incrementSeq(ki); }, MessageLimitReachedError, 'Message limit reached');
 //   });
 // });

@@ -9,9 +9,9 @@ await build({
   test: true,
   declaration: true,
   scriptModule: "umd",
-  importMap: "./deno.json",
+  importMap: "./import_map.json",
   compilerOptions: {
-    lib: ["es2022", "dom"],
+    lib: ["ES2022", "DOM"],
   },
   shims: {
     deno: "dev",
@@ -59,5 +59,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
+Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("README.md", "npm/README.md");

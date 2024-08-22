@@ -4,7 +4,7 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { testVectorPath } from "../core/test/utils.ts";
+import { testVectorPath } from "../../../core/test/utils.ts";
 
 describe("X25519 key validation", () => {
   let totalCount: number;

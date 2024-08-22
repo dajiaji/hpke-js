@@ -15,12 +15,12 @@ export type { RecipientContextParams } from "./src/interfaces/recipientContextPa
 export type { CipherSuiteSealResponse } from "./src/interfaces/responses.ts";
 export type { SenderContextParams } from "./src/interfaces/senderContextParams.ts";
 
-// export {
-//   KEM_USAGES,
-//   LABEL_DKP_PRK,
-//   LABEL_SK,
-// } from "./src/interfaces/dhkemPrimitives.ts";
-// export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";
+export {
+  KEM_USAGES,
+  LABEL_DKP_PRK,
+  LABEL_SK,
+} from "./src/interfaces/dhkemPrimitives.ts";
+export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";
 
 export { Aes128Gcm, Aes256Gcm } from "./src/aeads/aesGcm.ts";
 export { ExportOnly } from "./src/aeads/exportOnly.ts";

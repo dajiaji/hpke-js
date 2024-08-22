@@ -3,30 +3,31 @@ import { describe, it } from "@std/testing/bdd";
 
 import {
   AeadId,
+  Aes128Gcm,
+  Aes256Gcm,
+  CipherSuite as CipherSuiteNative,
   DeserializeError,
-  InvalidParamError,
-  KdfId,
-  KemId,
-} from "../mod.ts";
-import { Aes128Gcm, Aes256Gcm } from "../core/src/aeads/aesGcm.ts";
-import { Chacha20Poly1305 } from "../x/chacha20poly1305/mod.ts";
-import { ExportOnly } from "../core/src/aeads/exportOnly.ts";
-import { CipherSuiteNative } from "../core/src/cipherSuiteNative.ts";
-import {
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
+  ExportOnly,
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
-} from "../core/src/kdfs/hkdf.ts";
-import {
-  DhkemP256HkdfSha256Native,
-  DhkemP384HkdfSha384Native,
-  DhkemP521HkdfSha512Native,
-} from "../core/src/kems/dhkemNative.ts";
-import { DhkemX25519HkdfSha256 } from "../x/dhkem-x25519/src/dhkemX25519.ts";
-import { DhkemX448HkdfSha512 } from "../x/dhkem-x448/src/dhkemX448.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
+  InvalidParamError,
+  KdfId,
+  KemId,
+} from "@hpke/core";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 
-import { concat, hexToBytes, loadCrypto } from "../core/test/utils.ts";
+import {
+  concat,
+  hexToBytes,
+  isDeno,
+  loadCrypto,
+} from "../../../core/test/utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.
@@ -78,7 +79,7 @@ describe("constructor", () => {
   describe("with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -96,7 +97,7 @@ describe("constructor", () => {
   describe("with DhkemP384HkdfSha384/HkdfSha384/Aes128Gcm", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP384HkdfSha384Native(),
+        kem: new DhkemP384HkdfSha384(),
         kdf: new HkdfSha384Native(),
         aead: new Aes128Gcm(),
       });
@@ -115,7 +116,7 @@ describe("constructor", () => {
   describe("with DhkemP256HkdfSha256/HkdfSha512/Aes128Gcm", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha512Native(),
         aead: new Aes128Gcm(),
       });
@@ -134,7 +135,7 @@ describe("constructor", () => {
   describe("with DhkemP256HkdfSha256/HkdfSha256/ChaCha20Poly1305", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Chacha20Poly1305(),
       });
@@ -153,7 +154,7 @@ describe("constructor", () => {
   describe("with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP521HkdfSha512Native(),
+        kem: new DhkemP521HkdfSha512(),
         kdf: new HkdfSha512Native(),
         aead: new Aes256Gcm(),
       });
@@ -172,7 +173,7 @@ describe("constructor", () => {
   describe("with DhkemP256HkdfSha256/HkdfSha256/ExportOnly", () => {
     it("should have ciphersuites", () => {
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new ExportOnly(),
       });
@@ -209,7 +210,7 @@ describe("constructor", () => {
       await assertThrows(
         () =>
           new CipherSuiteNative({
-            kem: new DhkemP256HkdfSha256Native(),
+            kem: new DhkemP256HkdfSha256(),
             kdf: KdfId.HkdfSha256,
             aead: new ExportOnly(),
           }),
@@ -225,7 +226,7 @@ describe("constructor", () => {
       await assertThrows(
         () =>
           new CipherSuiteNative({
-            kem: new DhkemP256HkdfSha256Native(),
+            kem: new DhkemP256HkdfSha256(),
             kdf: new HkdfSha256Native(),
             aead: AeadId.ExportOnly,
           }),
@@ -241,7 +242,7 @@ describe("createRecipientContext", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -274,7 +275,7 @@ describe("createRecipientContext", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -299,7 +300,7 @@ describe("createSenderContext", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -335,7 +336,7 @@ describe("createSenderContext", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -361,7 +362,7 @@ describe("createSenderContext", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -387,7 +388,7 @@ describe("createSenderContext", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -415,7 +416,7 @@ describe("seal/open", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -481,7 +482,7 @@ describe("seal/open", () => {
     it("should work normally", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -562,7 +563,7 @@ describe("deriveKeyPair", () => {
       );
 
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -583,7 +584,7 @@ describe("deriveKeyPair", () => {
     it("should throw InvalidParamError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -602,7 +603,7 @@ describe("importKey", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -622,7 +623,7 @@ describe("importKey", () => {
     it("should throw DeserializeError", async () => {
       // setup
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });
@@ -726,7 +727,7 @@ describe("Oblivious HTTP", () => {
       const cryptoApi = await loadCrypto();
 
       const suite = new CipherSuiteNative({
-        kem: new DhkemP256HkdfSha256Native(),
+        kem: new DhkemP256HkdfSha256(),
         kdf: new HkdfSha256Native(),
         aead: new Aes128Gcm(),
       });

@@ -1,11 +1,16 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../core/src/errors.ts";
-import { AeadId, KdfId, KemId } from "../core/src/identifiers.ts";
+import {
+  AeadId,
+  DeserializeError,
+  InvalidParamError,
+  KdfId,
+  KemId,
+} from "@hpke/core";
+
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
-import { hexToBytes } from "../core/test/utils.ts";
+import { hexToBytes, isDeno } from "../../../core/test/utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.
@@ -158,7 +163,7 @@ describe("constructor", () => {
             kdf: KdfId.HkdfSha256,
             aead: AeadId.ExportOnly,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "The KEM (19) cannot be specified by KemId. Use submodule for the KEM",
       );
     });
@@ -216,7 +221,7 @@ describe("createRecipientContext", () => {
             info: (new Uint8Array(8193)).buffer,
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long info",
       );
     });
@@ -280,7 +285,7 @@ describe("createSenderContext", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long psk.key",
       );
     });
@@ -306,7 +311,7 @@ describe("createSenderContext", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "PSK must have at least 32 bytes",
       );
     });
@@ -332,7 +337,7 @@ describe("createSenderContext", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long psk.id",
       );
     });
@@ -519,7 +524,7 @@ describe("deriveKeyPair", () => {
 
       await assertRejects(
         () => suite.deriveKeyPair((new Uint8Array(8193)).buffer),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long ikm",
       );
     });
@@ -542,7 +547,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -562,7 +567,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -582,7 +587,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -602,7 +607,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -622,7 +627,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -642,7 +647,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });

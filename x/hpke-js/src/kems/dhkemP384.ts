@@ -1,7 +1,5 @@
-import { KemId } from "../../core/src/identifiers.ts";
+import { Dhkem, Ec, KemId } from "@hpke/core";
 import { HkdfSha384 } from "../kdfs/hkdfSha384.ts";
-import { Dhkem } from "../../core/src/kems/dhkem.ts";
-import { Ec } from "../../core/src/kems/dhkemPrimitives/ec.ts";
 
 export class DhkemP384HkdfSha384 extends Dhkem {
   public readonly id: KemId = KemId.DhkemP384HkdfSha384;

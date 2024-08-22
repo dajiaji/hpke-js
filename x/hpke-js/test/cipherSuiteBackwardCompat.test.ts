@@ -1,14 +1,22 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
-
 import { describe, it } from "@std/testing/bdd";
 
-import { Aead, Kdf, Kem } from "../core/src/identifiers.ts"; // deprecated identifiers as the test target.
+import {
+  DeserializeError,
+  InvalidParamError,
+  NotSupportedError,
+} from "@hpke/core";
+
+import { Aead, Kdf, Kem } from "../mod.ts"; // deprecated identifiers as the test target.
+
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
 
-import * as errors from "../core/src/errors.ts";
-
-import { concat, hexToBytes, loadCrypto } from "../core/test/utils.ts";
+import {
+  concat,
+  hexToBytes,
+  isDeno,
+  loadCrypto,
+} from "../../../core/test/utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
@@ -158,7 +166,7 @@ describe("CipherSuite(backward-compat)", () => {
             kdf: Kdf.HkdfSha256,
             aead: Aead.ExportOnly,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "The KEM (19) cannot be specified by KemId. Use submodule for the KEM",
       );
     });
@@ -194,8 +202,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
 
     it("should work normally with importKey('jwk')", async () => {
@@ -245,8 +253,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -329,8 +337,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -421,8 +429,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -503,8 +511,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -585,8 +593,8 @@ describe("CipherSuite(backward-compat)", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -620,11 +628,11 @@ describe("CipherSuite(backward-compat)", () => {
       // other functions are disabled.
       await assertRejects(
         () => sender.seal(te.encode("my-secret-message")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
       await assertRejects(
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
     });
   });
@@ -659,11 +667,11 @@ describe("CipherSuite(backward-compat)", () => {
       // other functions are disabled.
       await assertRejects(
         () => sender.seal(te.encode("my-secret-message")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
       await assertRejects(
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
     });
   });
@@ -1052,7 +1060,7 @@ describe("CipherSuite(backward-compat)", () => {
 
       await assertRejects(
         () => suite.deriveKeyPair((new Uint8Array(8193)).buffer),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long ikm",
       );
     });
@@ -1075,7 +1083,7 @@ describe("CipherSuite(backward-compat)", () => {
             info: (new Uint8Array(8193)).buffer,
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long info",
       );
     });
@@ -1101,7 +1109,7 @@ describe("CipherSuite(backward-compat)", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long psk.key",
       );
     });
@@ -1127,7 +1135,7 @@ describe("CipherSuite(backward-compat)", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "PSK must have at least 32 bytes",
       );
     });
@@ -1153,7 +1161,7 @@ describe("CipherSuite(backward-compat)", () => {
             },
             recipientPublicKey: rkp.publicKey,
           }),
-        errors.InvalidParamError,
+        InvalidParamError,
         "Too long psk.id",
       );
     });
@@ -1174,7 +1182,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -1194,7 +1202,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -1214,7 +1222,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -1234,7 +1242,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -1254,7 +1262,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -1274,7 +1282,7 @@ describe("CipherSuite(backward-compat)", () => {
       // assert
       await assertRejects(
         () => suite.importKey("raw", k, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });

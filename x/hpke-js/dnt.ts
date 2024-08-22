@@ -8,13 +8,6 @@ await emptyDir("./test/runtimes/browsers/node_modules");
 await emptyDir("./test/runtimes/bun/node_modules");
 await emptyDir("./test/runtimes/cloudflare/node_modules");
 
-await emptyDir("./core/npm");
-await emptyDir("./x/chacha20poly1305/npm");
-await emptyDir("./x/dhkem-secp256k1/npm");
-await emptyDir("./x/dhkem-x25519/npm");
-await emptyDir("./x/dhkem-x448/npm");
-await emptyDir("./x/hybridkem-x25519-kyber768/npm");
-
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
@@ -22,7 +15,7 @@ await build({
   test: true,
   declaration: "inline",
   scriptModule: "umd",
-  importMap: "./import_map_for_dnt.json",
+  importMap: "./import_map.json",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },
@@ -32,15 +25,6 @@ await build({
   package: {
     name: "hpke-js",
     version: Deno.args[0],
-    workspaces: [
-      "core",
-      "x/chacha20poly1305",
-      "x/dhkem-secp256k1",
-      "x/dhkem-x25519",
-      "x/dhkem-x448",
-      "x/hybridkem-x25519-kyber768",
-      "x/hpke-js",
-    ],
     description:
       "A Hybrid Public Key Encryption (HPKE) module for various JavaScript runtimes",
     repository: {
@@ -49,14 +33,14 @@ await build({
     },
     homepage: "https://github.com/dajiaji/hpke-js#readme",
     license: "MIT",
-    module: "./esm/mod.js",
-    main: "./script/mod.js",
-    types: "./esm/mod.d.ts",
+    module: "./esm/x/hpke-js/mod.js",
+    main: "./script/x/hpke-js/mod.js",
+    types: "./esm/x/hpke-js/mod.d.ts",
     sideEffects: false,
     exports: {
       ".": {
-        "import": "./esm/mod.js",
-        "require": "./script/mod.js",
+        "import": "./esm/x/hpke-js/mod.js",
+        "require": "./script/x/hpke-js/mod.js",
       },
       "./package.json": "./package.json",
     },
@@ -85,5 +69,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "npm/LICENSE");
-Deno.copyFileSync("README.md", "npm/README.md");
+Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
+Deno.copyFileSync("../../README.md", "npm/README.md");

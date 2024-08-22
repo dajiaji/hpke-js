@@ -1,16 +1,20 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../core/src/errors.ts";
-import { KemId } from "../core/src/identifiers.ts";
+import {
+  DeriveKeyPairError,
+  DeserializeError,
+  KemId,
+  SerializeError,
+} from "@hpke/core";
+
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
-import { loadCrypto } from "../core/test/utils.ts";
+import { isNode, loadCrypto } from "../../../core/test/utils.ts";
 
-import { DhkemX25519HkdfSha256 } from "../x/dhkem-x25519/src/dhkemX25519.ts";
-import { DhkemX448HkdfSha512 } from "../x/dhkem-x448/src/dhkemX448.ts";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 
 describe("constructor", () => {
   describe("with valid parameters", () => {
@@ -149,7 +153,7 @@ describe("generateKeyPair", () => {
 describe("deriveKeyPair", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance with DhkemP256HkdfSha256", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -173,7 +177,7 @@ describe("deriveKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemP384HkdfSha384", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -197,7 +201,7 @@ describe("deriveKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -277,7 +281,7 @@ describe("deriveKeyPair", () => {
 
   describe("with invalid parameters", () => {
     it("should throw NotSupportedError with DhkemP256HkdfSha256", async () => {
-      if (!isDeno()) {
+      if (isNode()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -288,7 +292,7 @@ describe("deriveKeyPair", () => {
       const kemContext = new DhkemP256HkdfSha256();
       await assertRejects(
         () => kemContext.deriveKeyPair(ikm.buffer),
-        errors.DeriveKeyPairError,
+        DeriveKeyPairError,
       );
     });
   });
@@ -323,7 +327,7 @@ describe("serialize/deserializePublicKey", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -374,7 +378,7 @@ describe("serialize/deserializePublicKey", () => {
       const kemContext = new DhkemP256HkdfSha256();
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -385,7 +389,7 @@ describe("serialize/deserializePublicKey", () => {
       const kemContext = new DhkemP384HkdfSha384();
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -396,7 +400,7 @@ describe("serialize/deserializePublicKey", () => {
       const kemContext = new DhkemP521HkdfSha512();
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -407,7 +411,7 @@ describe("serialize/deserializePublicKey", () => {
       const kemContext = new DhkemX25519HkdfSha256();
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -418,7 +422,7 @@ describe("serialize/deserializePublicKey", () => {
       const kemContext = new DhkemX448HkdfSha512();
       await assertRejects(
         () => kemContext.serializePublicKey(kp.publicKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -430,7 +434,7 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -442,7 +446,7 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -454,7 +458,7 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -466,7 +470,7 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -478,7 +482,7 @@ describe("serialize/deserializePublicKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePublicKey(rawKey.buffer),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -487,7 +491,7 @@ describe("serialize/deserializePublicKey", () => {
 describe("serialize/deserializePrivateKey", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance with DhkemP256HkdfSha256", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -505,7 +509,7 @@ describe("serialize/deserializePrivateKey", () => {
     });
 
     it("should return a proper instance with DhkemP384HkdfSha384", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -522,7 +526,7 @@ describe("serialize/deserializePrivateKey", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -574,7 +578,7 @@ describe("serialize/deserializePrivateKey", () => {
       const kemContext = new DhkemP256HkdfSha256();
       await assertRejects(
         () => kemContext.serializePrivateKey(kp.privateKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -585,7 +589,7 @@ describe("serialize/deserializePrivateKey", () => {
       const kemContext = new DhkemP384HkdfSha384();
       await assertRejects(
         () => kemContext.serializePrivateKey(kp.privateKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -596,7 +600,7 @@ describe("serialize/deserializePrivateKey", () => {
       const kemContext = new DhkemP521HkdfSha512();
       await assertRejects(
         () => kemContext.serializePrivateKey(kp.privateKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -607,7 +611,7 @@ describe("serialize/deserializePrivateKey", () => {
       const kemContext = new DhkemX25519HkdfSha256();
       await assertRejects(
         () => kemContext.serializePrivateKey(kp.privateKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -618,7 +622,7 @@ describe("serialize/deserializePrivateKey", () => {
       const kemContext = new DhkemX448HkdfSha512();
       await assertRejects(
         () => kemContext.serializePrivateKey(kp.privateKey),
-        errors.SerializeError,
+        SerializeError,
       );
     });
 
@@ -630,7 +634,7 @@ describe("serialize/deserializePrivateKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -642,7 +646,7 @@ describe("serialize/deserializePrivateKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -654,7 +658,7 @@ describe("serialize/deserializePrivateKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -666,7 +670,7 @@ describe("serialize/deserializePrivateKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -678,7 +682,7 @@ describe("serialize/deserializePrivateKey", () => {
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
         () => kemContext.deserializePrivateKey(rawKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
@@ -759,7 +763,7 @@ describe("importKey", () => {
     });
 
     it("should return a valid private key for DhkemP521HkdfSha512 from JWK", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const kemContext = new DhkemP521HkdfSha512();
@@ -877,7 +881,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", rawKey.buffer, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -897,7 +901,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("raw", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -917,7 +921,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -937,7 +941,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -957,7 +961,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -977,7 +981,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -997,7 +1001,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1011,7 +1015,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", rawKey.buffer, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1030,7 +1034,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("raw", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1049,7 +1053,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1068,7 +1072,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1087,7 +1091,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1106,7 +1110,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1125,7 +1129,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1139,7 +1143,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", rawKey.buffer, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1158,7 +1162,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("raw", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1177,7 +1181,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1196,7 +1200,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1215,7 +1219,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, false),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1234,7 +1238,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -1253,7 +1257,7 @@ describe("importKey", () => {
       // assert
       await assertRejects(
         () => kemContext.importKey("jwk", jwk, true),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });

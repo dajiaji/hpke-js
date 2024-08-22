@@ -1,7 +1,7 @@
 // @ts-ignore: for "npm:"
 import { secp256k1 } from "npm:@noble/curves@1.4.2/secp256k1";
 
-import type { DhkemPrimitives, KdfInterface } from "../../../mod_core.ts";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
 
 import {
   DeriveKeyPairError,
@@ -12,7 +12,7 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "../../../mod_core.ts";
+} from "@hpke/core";
 
 const ALG_NAME = "ECDH";
 const EMPTY = new Uint8Array();

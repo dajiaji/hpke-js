@@ -1,22 +1,17 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { AeadId, CipherSuite, KdfId, KemId } from "../mod.ts";
-import { Aes128Gcm } from "../core/src/aeads/aesGcm.ts";
-import * as errors from "../core/src/errors.ts";
+import { AeadId, Aes128Gcm, KdfId, KemId, NotSupportedError } from "@hpke/core";
+import { DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/dhkem-x25519";
+import { DhkemX448HkdfSha512, HkdfSha512 } from "@hpke/dhkem-x448";
+
+import { CipherSuite } from "../mod.ts";
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
 
-import { DhkemX25519HkdfSha256 } from "../x/dhkem-x25519/src/dhkemX25519.ts";
-import { HkdfSha256 } from "../x/dhkem-x25519/src/hkdfSha256.ts";
-
-import { DhkemX448HkdfSha512 } from "../x/dhkem-x448/src/dhkemX448.ts";
-import { HkdfSha512 } from "../x/dhkem-x448/src/hkdfSha512.ts";
-
-import { concat, loadCrypto } from "../core/test/utils.ts";
+import { concat, isDeno, loadCrypto } from "../../../core/test/utils.ts";
 
 describe("README examples", () => {
   describe("Base mode with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
@@ -49,8 +44,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
 
     it("should work normally with instances", async () => {
@@ -82,8 +77,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
 
     it("should work normally with importKey('jwk')", async () => {
@@ -133,8 +128,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -248,8 +243,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -375,8 +370,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -488,8 +483,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -601,8 +596,8 @@ describe("README examples", () => {
 
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-      await assertRejects(() => recipient.seal(pt), errors.NotSupportedError);
-      await assertRejects(() => sender.open(ct), errors.NotSupportedError);
+      await assertRejects(() => recipient.seal(pt), NotSupportedError);
+      await assertRejects(() => sender.open(ct), NotSupportedError);
     });
   });
 
@@ -636,11 +631,11 @@ describe("README examples", () => {
       // other functions are disabled.
       await assertRejects(
         () => sender.seal(te.encode("my-secret-message")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
       await assertRejects(
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
     });
   });
@@ -675,11 +670,11 @@ describe("README examples", () => {
       // other functions are disabled.
       await assertRejects(
         () => sender.seal(te.encode("my-secret-message")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
       await assertRejects(
         () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
-        errors.NotSupportedError,
+        NotSupportedError,
       );
     });
   });

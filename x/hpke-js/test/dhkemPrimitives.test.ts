@@ -1,17 +1,12 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import * as errors from "../core/src/errors.ts";
-import { KemId } from "../core/src/identifiers.ts";
+import { DeserializeError, Ec, KemId } from "@hpke/core";
+import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
+import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
+
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { Ec } from "../core/src/kems/dhkemPrimitives/ec.ts";
-import { isDeno } from "../core/src/utils/misc.ts";
-
-import { HkdfSha256 } from "../x/dhkem-x25519/src/hkdfSha256.ts";
-import { X25519 } from "../x/dhkem-x25519/src/x25519.ts";
-
-import { HkdfSha512 } from "../x/dhkem-x448/src/hkdfSha512.ts";
-import { X448 } from "../x/dhkem-x448/src/x448.ts";
+import { isDeno } from "../../../core/test/utils.ts";
 
 describe("derivePublicKey", () => {
   describe("with valid parameters", () => {
@@ -114,7 +109,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -130,7 +125,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -143,7 +138,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -156,7 +151,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -167,7 +162,7 @@ describe("derivePublicKey", () => {
 
     //   await assertRejects(
     //     () => prim.derivePublicKey(kp.publicKey),
-    //     errors.DeserializeError,
+    //     DeserializeError,
     //   );
     // });
 
@@ -180,7 +175,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -193,7 +188,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -209,7 +204,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -222,7 +217,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -235,7 +230,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -248,7 +243,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -264,7 +259,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
 
@@ -277,7 +272,7 @@ describe("derivePublicKey", () => {
 
       await assertRejects(
         () => prim.derivePublicKey(kp.privateKey),
-        errors.DeserializeError,
+        DeserializeError,
       );
     });
   });
