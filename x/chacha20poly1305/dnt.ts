@@ -1,11 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("./npm");
-await emptyDir("./test/runtimes/browsers/node_modules");
+await emptyDir("../../npm/x/chacha20poly1305");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "./npm",
+  outDir: "../../npm/x/chacha20poly1305",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -60,5 +59,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "npm/LICENSE");
-Deno.copyFileSync("README.md", "npm/README.md");
+Deno.copyFileSync("LICENSE", "../../npm/x/chacha20poly1305/LICENSE");
+Deno.copyFileSync("README.md", "../../npm/x/chacha20poly1305/README.md");

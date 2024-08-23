@@ -1,16 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("./npm");
-await emptyDir("./samples/node/node_modules");
-await emptyDir("./samples/ts-node/node_modules");
-await emptyDir("./samples/ts-webpack/node_modules");
-await emptyDir("./test/runtimes/browsers/node_modules");
-await emptyDir("./test/runtimes/bun/node_modules");
-await emptyDir("./test/runtimes/cloudflare/node_modules");
+await emptyDir("../../npm/x/hpke-js");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "./npm",
+  outDir: "../../npm/x/hpke-js",
   typeCheck: "both",
   test: true,
   declaration: "inline",
@@ -69,5 +63,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
-Deno.copyFileSync("../../README.md", "npm/README.md");
+Deno.copyFileSync("LICENSE", "../../npm/x/hpke-js/LICENSE");
+Deno.copyFileSync("README.md", "../../npm/x/hpke-js/README.md");

@@ -1,13 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("./npm");
-await emptyDir("./test/runtimes/browsers/node_modules");
-await emptyDir("./test/runtimes/bun/node_modules");
-await emptyDir("./test/runtimes/cloudflare/node_modules");
+await emptyDir("../../npm/core");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "./npm",
+  outDir: "../../npm/core",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -60,5 +57,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "npm/LICENSE");
-Deno.copyFileSync("README.md", "npm/README.md");
+Deno.copyFileSync("LICENSE", "../../npm/core/LICENSE");
+Deno.copyFileSync("README.md", "../../npm/core/README.md");
