@@ -1,5 +1,13 @@
 {
   "name": "hpke-js",
   "private": true,
-  "workspaces": ["x/*"]
+  "workspaces": [
+    "x/core",
+    "x/chacha20poly1305",
+    "x/dhkem-x25519",
+    "x/dhkem-x448",
+    "x/dhkem-secp256k1",
+    "x/hybridkem-x25519-kyber768",
+    "x/hpke-js"
+  ]
 }
