@@ -1,6 +1,6 @@
 {
   "workspace": [
-    "./core",
+    "./x/core",
     "./x/chacha20poly1305",
     "./x/dhkem-secp256k1",
     "./x/dhkem-x25519",
@@ -13,33 +13,10 @@
     "@std/assert": "jsr:@std/assert@1.0.0",
     "@std/testing": "jsr:@std/testing@^1.0.0"
   },
-  "publish": {
-    "include": [
-      "README.md",
-      "core/",
-      "deno.json",
-      "deno.lock",
-      "mod.ts",
-      "mod_core.ts",
-      "src/"
-    ],
-    "exclude": [
-      "core/LICENSE",
-      "core/README.md",
-      "core/deno.json",
-      "core/deno.lock",
-      "core/dnt.ts",
-      "core/samples/",
-      "core/test/",
-      "core/tsconfig.json",
-      "tsconfig.json"
-    ]
-  },
   "fmt": {
     "include": [
       "**/*.md",
       "**/*.json",
-      "core/",
       "dnt.ts",
       "mod.ts",
       "mod_core.ts",
@@ -58,7 +35,6 @@
     "include": [
       "**/*.md",
       "**/*.json",
-      "core/",
       "dnt.ts",
       "mod.ts",
       "samples/",
@@ -74,7 +50,6 @@
   },
   "test": {
     "include": [
-      "core/test",
       "x/**/test"
     ],
     "exclude": [

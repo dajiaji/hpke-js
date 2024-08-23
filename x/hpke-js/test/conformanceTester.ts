@@ -19,7 +19,7 @@ import {
   hexToBytes,
   kemToKeyGenAlgorithm,
   loadSubtleCrypto,
-} from "../../../core/test/utils.ts";
+} from "../../core/test/utils.ts";
 
 export class ConformanceTester {
   protected _api: SubtleCrypto;

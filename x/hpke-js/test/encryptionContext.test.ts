@@ -18,9 +18,9 @@ import {
 } from "@hpke/core";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
-import { EncryptionContextImpl } from "../../../core/src/encryptionContext.ts";
+import { EncryptionContextImpl } from "../../core/src/encryptionContext.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { loadSubtleCrypto } from "../../../core/test/utils.ts";
+import { loadSubtleCrypto } from "../../core/test/utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

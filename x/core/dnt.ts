@@ -1,10 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../npm-packages/core");
+await emptyDir("../../npm-packages/x/core");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../npm-packages/core",
+  outDir: "../../npm-packages/x/core",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -57,5 +57,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../npm-packages/core/LICENSE");
-Deno.copyFileSync("README.md", "../npm-packages/core/README.md");
+Deno.copyFileSync("LICENSE", "../../npm-packages/x/core/LICENSE");
+Deno.copyFileSync("README.md", "../../npm-packages/x/core/README.md");

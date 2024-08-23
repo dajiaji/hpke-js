@@ -16,7 +16,7 @@ import {
   hexToBytes,
   isDeno,
   loadCrypto,
-} from "../../../core/test/utils.ts";
+} from "../../core/test/utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.

@@ -4,7 +4,7 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { isDeno, testVectorPath } from "../../../core/test/utils.ts";
+import { isDeno, testVectorPath } from "../../core/test/utils.ts";
 
 describe("EC key validation", () => {
   let totalCount: number;

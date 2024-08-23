@@ -11,7 +11,7 @@ import {
 import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
-import { isNode, loadCrypto } from "../../../core/test/utils.ts";
+import { isNode, loadCrypto } from "../../core/test/utils.ts";
 
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";

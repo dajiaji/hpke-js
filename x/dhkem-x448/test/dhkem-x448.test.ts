@@ -10,7 +10,7 @@ import {
   KdfId,
   KemId,
 } from "@hpke/core";
-import { loadCrypto } from "../../../core/test/utils.ts";
+import { loadCrypto } from "../../core/test/utils.ts";
 import { DhkemX448HkdfSha512 } from "../mod.ts";
 
 describe("DhkemX448HkdfSha512", () => {

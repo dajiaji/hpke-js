@@ -33,7 +33,7 @@ await build({
     name: "hpke-js",
     version: Deno.args[0],
     workspaces: [
-      "core",
+      "x/core",
       "x/chacha20poly1305",
       "x/dhkem-secp256k1",
       "x/dhkem-x25519",

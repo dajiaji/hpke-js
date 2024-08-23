@@ -11,7 +11,7 @@ import {
   KemId,
 } from "@hpke/core";
 
-import { loadCrypto } from "../../../core/test/utils.ts";
+import { loadCrypto } from "../../core/test/utils.ts";
 import { DhkemX25519HkdfSha256 } from "../mod.ts";
 
 describe("DhkemX25519HkdfSha256", () => {

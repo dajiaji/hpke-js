@@ -6,7 +6,7 @@ import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
 
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { isDeno } from "../../../core/test/utils.ts";
+import { isDeno } from "../../core/test/utils.ts";
 
 describe("derivePublicKey", () => {
   describe("with valid parameters", () => {

@@ -1,8 +1,5 @@
 {
   "name": "hpke-js",
   "private": true,
-  "workspaces": [
-    "core",
-    "x/*"
-  ]
+  "workspaces": ["x/*"]
 }

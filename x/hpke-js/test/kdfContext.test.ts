@@ -6,7 +6,7 @@ import { HkdfSha256 } from "@hpke/dhkem-x25519";
 import { HkdfSha512 } from "@hpke/dhkem-x448";
 
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { loadCrypto } from "../../../core/test/utils.ts";
+import { loadCrypto } from "../../core/test/utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

@@ -5,7 +5,7 @@ import type { PreSharedKey } from "@hpke/core";
 
 import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 
-import { hexToBytes } from "../../../core/test/utils.ts";
+import { hexToBytes } from "../../core/test/utils.ts";
 import { HybridkemX25519Kyber768 } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
 

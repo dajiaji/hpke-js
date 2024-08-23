@@ -329,7 +329,7 @@
       "jsr:@std/testing@^1.0.0"
     ],
     "members": {
-      "core": {
+      "x/core": {
         "dependencies": [
           "jsr:@deno/dnt@^0.41.2",
           "jsr:@std/assert@1.0.0",
