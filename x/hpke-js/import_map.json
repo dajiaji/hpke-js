@@ -1,7 +1,8 @@
 {
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.2",
-    "@hpke/core": "npm:@hpke/core@^1.2.9",
+    // "@hpke/core": "npm:@hpke/core@^1.2.9",
+    "@hpke/core": "../core/mod.ts",
     // "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.2.9",
     "@hpke/chacha20poly1305": "../chacha20poly1305/mod.ts",
     // "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.2.9",
