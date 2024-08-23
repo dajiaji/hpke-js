@@ -72,8 +72,19 @@
       "coverage/*.json"
     ]
   },
+  "test": {
+    "include": [
+      "core/test",
+      "x/**/test"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
   "tasks": {
-    "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
     "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
