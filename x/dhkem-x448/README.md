@@ -152,9 +152,9 @@ try {
 
 ### Deno
 
-```js
-import { KdfId, AeadId, CipherSuite } from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
-import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke@1.2.9/x/dhkem-x448/mod.ts";
+```ts
+import { Aes256Gcm, CipherSuite, HkdfSha512 } from "@hpke/core";
+import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 
 async function doHpke() {
   // setup

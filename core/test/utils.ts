@@ -1,6 +1,8 @@
 import { KemId } from "../src/identifiers.ts";
 
+// deno-lint-ignore no-explicit-any
 export const isDeno = () => (globalThis as any).Deno?.version?.deno !== null;
+// deno-lint-ignore no-explicit-any
 export const isNode = () => (globalThis as any).process?.versions?.node != null;
 export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
   const ret = new Uint8Array(a.length + b.length);
