@@ -1,10 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm/x/hybridkem-x25519-kyber768");
+await emptyDir("../../npm-packages/x/hybridkem-x25519-kyber768");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm/x/hybridkem-x25519-kyber768",
+  outDir: "../../npm-packages/x/hybridkem-x25519-kyber768",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -59,8 +59,11 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm/x/hybridkem-x25519-kyber768/LICENSE");
+Deno.copyFileSync(
+  "LICENSE",
+  "../../npm-packages/x/hybridkem-x25519-kyber768/LICENSE",
+);
 Deno.copyFileSync(
   "README.md",
-  "../../npm/x/hybridkem-x25519-kyber768/README.md",
+  "../../npm-packages/x/hybridkem-x25519-kyber768/README.md",
 );

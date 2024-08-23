@@ -1,10 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm/x/dhkem-x448");
+await emptyDir("../../npm-packages/x/dhkem-x448");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm/x/dhkem-x448",
+  outDir: "../../npm-packages/x/dhkem-x448",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -59,5 +59,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm/x/dhkem-x448/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/x/dhkem-x448/README.md");
+Deno.copyFileSync("LICENSE", "../../npm-packages/x/dhkem-x448/LICENSE");
+Deno.copyFileSync("README.md", "../../npm-packages/x/dhkem-x448/README.md");

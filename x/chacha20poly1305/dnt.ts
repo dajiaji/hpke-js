@@ -1,10 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm/x/chacha20poly1305");
+await emptyDir("../../npm-packages/x/chacha20poly1305");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm/x/chacha20poly1305",
+  outDir: "../../npm-packages/x/chacha20poly1305",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -59,5 +59,8 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm/x/chacha20poly1305/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/x/chacha20poly1305/README.md");
+Deno.copyFileSync("LICENSE", "../../npm-packages/x/chacha20poly1305/LICENSE");
+Deno.copyFileSync(
+  "README.md",
+  "../../npm-packages/x/chacha20poly1305/README.md",
+);
