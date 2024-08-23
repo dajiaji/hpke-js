@@ -15,7 +15,7 @@ export function testVectorPath(): string {
   if (isNode()) {
     return "../../../../test/vectors";
   }
-  return "../../test/vectors";
+  return "./test/vectors";
 }
 
 export function hexToBytes(v: string): Uint8Array {
