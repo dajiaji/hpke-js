@@ -25,7 +25,7 @@ export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";
 export { Aes128Gcm, Aes256Gcm } from "./src/aeads/aesGcm.ts";
 export { ExportOnly } from "./src/aeads/exportOnly.ts";
 export {
-  HkdfSha256Native,
+  // HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
 } from "./src/kdfs/hkdf.ts";
