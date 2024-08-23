@@ -9,6 +9,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/core": "file:../../../npm/hpke-core-0.0.0.tgz"
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-0.0.0.tgz"
   }
 }
