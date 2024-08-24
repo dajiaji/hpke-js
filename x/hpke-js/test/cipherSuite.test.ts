@@ -10,7 +10,7 @@ import {
 } from "@hpke/core";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { hexToBytes, isDeno } from "../../core/test/utils.ts";
+import { hexToBytes, isNode } from "../../core/test/utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.
@@ -479,7 +479,7 @@ describe("deriveKeyPair", () => {
 
   describe("with official test-vector for DhkemP256HkdfSha256.", () => {
     it("should derive a proper key pair.", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const ikmR = hexToBytes(

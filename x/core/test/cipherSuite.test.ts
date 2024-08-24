@@ -18,11 +18,8 @@ import {
   KdfId,
   KemId,
 } from "../mod.ts";
-// import { Chacha20Poly1305 } from "../../src/aeads/chacha20Poly1305.ts";
-// import { DhkemX25519HkdfSha256 } from "../../src/kems/dhkemX25519.ts";
-// import { DhkemX448HkdfSha512 } from "../../src/kems/dhkemX448.ts";
-import { isDeno } from "../src/utils/misc.ts";
-import { hexToBytes } from "./utils.ts";
+
+import { hexToBytes, isNode } from "./utils.ts";
 
 describe("constructor", () => {
   describe("with DhkemP384HkdfSha384/HkdfSha384/Aes128Gcm", () => {
@@ -519,7 +516,7 @@ describe("deriveKeyPair", () => {
 
   describe("with official test-vector for DhkemP256HkdfSha256.", () => {
     it("should derive a proper key pair.", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const ikmR = hexToBytes(

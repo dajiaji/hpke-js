@@ -1,11 +1,6 @@
 declare const Deno: undefined;
 
 /**
- * Checks whether the execution env is Deno or not.
- */
-export const isDeno = () => typeof Deno !== "undefined";
-
-/**
  * Checks whetehr the type of input is CryptoKeyPair or not.
  */
 export const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>

@@ -11,7 +11,7 @@ import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
 
-import { concat, isDeno, loadCrypto } from "../../core/test/utils.ts";
+import { concat, isNode, loadCrypto } from "../../core/test/utils.ts";
 
 describe("README examples", () => {
   describe("Base mode with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
@@ -250,7 +250,7 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemP521HkdfSha512/HkdfSha512/Aes128Gcm", () => {
     it("should work normally with ids", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -285,7 +285,7 @@ describe("README examples", () => {
     });
 
     it("should work normally with instances", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -320,7 +320,7 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -1035,7 +1035,7 @@ describe("README examples", () => {
 
   describe("Oblivious HTTP with DhkemP384HkdfSha384/HkdfSha384/Aes256Gcm", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const te = new TextEncoder();
@@ -1122,7 +1122,7 @@ describe("README examples", () => {
 
   describe("Oblivious HTTP with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const te = new TextEncoder();

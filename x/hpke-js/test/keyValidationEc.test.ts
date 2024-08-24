@@ -4,7 +4,7 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { isDeno, testVectorPath } from "../../core/test/utils.ts";
+import { isNode, testVectorPath } from "../../core/test/utils.ts";
 
 describe("EC key validation", () => {
   let totalCount: number;
@@ -22,7 +22,7 @@ describe("EC key validation", () => {
 
   describe("P-256", () => {
     it("should validate properly", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -47,7 +47,7 @@ describe("EC key validation", () => {
 
   describe("P-384", () => {
     it("should validate properly", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -72,7 +72,7 @@ describe("EC key validation", () => {
 
   describe("P-521", () => {
     it("should validate properly", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
