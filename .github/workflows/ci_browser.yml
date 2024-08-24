@@ -87,7 +87,7 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./test/runtimes/browsers/pages
+          publish_dir: ./x/hpke-js/test/runtimes/browsers/pages
 
   playwright-test:
     needs: pages
