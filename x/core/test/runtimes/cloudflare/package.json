@@ -10,6 +10,6 @@
     "deploy": "wrangler publish"
   },
   "dependencies": {
-    "@hpke/core": "file:../../../npm/hpke-core-0.0.0.tgz"
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-0.0.0.tgz"
   }
 }
