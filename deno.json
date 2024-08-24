@@ -40,7 +40,7 @@
   "tasks": {
     "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
+    "dnt": "./scripts/run_dnt.sh",
     "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
   }
 }
