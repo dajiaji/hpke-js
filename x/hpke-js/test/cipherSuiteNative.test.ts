@@ -25,7 +25,7 @@ import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 import {
   concat,
   hexToBytes,
-  isDeno,
+  isNode,
   loadCrypto,
 } from "../../core/test/utils.ts";
 
@@ -546,7 +546,7 @@ describe("deriveKeyPair", () => {
 
   describe("with official test-vector for DhkemP256HkdfSha256.", () => {
     it("should derive a proper key pair.", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const ikmR = hexToBytes(

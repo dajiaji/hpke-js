@@ -14,7 +14,7 @@ import { CipherSuite } from "../src/cipherSuite.ts";
 import {
   concat,
   hexToBytes,
-  isDeno,
+  isNode,
   loadCrypto,
 } from "../../core/test/utils.ts";
 
@@ -344,7 +344,7 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Base mode (Kem.DhkemP521HkdfSha512/Kdf.HkdfSha512)", () => {
     it("should work normally with generateKeyPair", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -379,7 +379,7 @@ describe("CipherSuite(backward-compat)", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
 
@@ -1375,7 +1375,7 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Oblivious HTTP (HKDF-SHA384)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const te = new TextEncoder();
@@ -1464,7 +1464,7 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Oblivious HTTP (HKDF-SHA512)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const te = new TextEncoder();

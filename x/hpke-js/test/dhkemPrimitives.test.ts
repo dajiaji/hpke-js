@@ -6,7 +6,7 @@ import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
 
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { isDeno } from "../../core/test/utils.ts";
+import { isNode } from "../../core/test/utils.ts";
 
 describe("derivePublicKey", () => {
   describe("with valid parameters", () => {
@@ -45,7 +45,7 @@ describe("derivePublicKey", () => {
     });
 
     it("should return a proper public key with Ec(DhkemP521HkdfSha512)", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const kdf = new HkdfSha512();
@@ -114,7 +114,7 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on Ec(DhkemP256HkdfSha256) with a P-521 private key", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const kdf = new HkdfSha256();
@@ -193,7 +193,7 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on X25519 with a P-521 private key", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const kdf = new HkdfSha256();
@@ -248,7 +248,7 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on X448 with a P-521 private key", async () => {
-      if (isDeno()) {
+      if (!isNode()) {
         return;
       }
       const kdf = new HkdfSha512();
