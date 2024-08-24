@@ -2,10 +2,13 @@
   "compilerOptions": {
     "module": "es2022",
     "target": "es2022",
+    "paths": {
+      "@hpke/core": ["../core/mod.ts"]
+    },
     "allowImportingTsExtensions": true
   },
   "include": [
     "mod.ts",
-    "../../src/kems/dhkemX25519.ts"
+    "src/**/*"
   ]
 }
