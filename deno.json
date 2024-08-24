@@ -14,45 +14,24 @@
     "@std/testing": "jsr:@std/testing@^1.0.0"
   },
   "fmt": {
-    "include": [
-      "**/*.md",
-      "**/*.json",
-      "dnt.ts",
-      "mod.ts",
-      "mod_core.ts",
-      "samples/",
-      "src/",
-      "x/",
-      "test/"
-    ],
     "exclude": [
+      "npm-packages/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
     ]
   },
   "lint": {
-    "include": [
-      "**/*.md",
-      "**/*.json",
-      "dnt.ts",
-      "mod.ts",
-      "samples/",
-      "src/",
-      "x/",
-      "test/"
-    ],
     "exclude": [
+      "npm-packages/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
     ]
   },
   "test": {
-    "include": [
-      "x/**/test"
-    ],
     "exclude": [
+      "npm-packages/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
