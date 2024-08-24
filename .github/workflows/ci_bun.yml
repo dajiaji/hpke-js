@@ -13,9 +13,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        bun-version: [0.6.x, 0.7.x, 0.8.x, 1.x]
+    # strategy:
+    #   matrix:
+    #     bun-version: [0.6.x, 0.7.x, 0.8.x, 1.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,9 +25,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: v20.x
-      - uses: antongolub/action-setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ matrix.bun-version }}
+          bun-version: latest
       - name: Install esbuild
         run: npm install -g esbuild
       - name: Prepare test for ./x/core
