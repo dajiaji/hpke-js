@@ -3,7 +3,10 @@
     "module": "es2022",
     "target": "es2022",
     "paths": {
-      "@hpke/core": ["../../core/mod.ts"]
+      "@hpke/core": ["../core/mod.ts"],
+      "@hpke/chacha20poly1305": ["../chacha20poly1305/mod.ts"],
+      "@hpke/dhkem-x25519": ["../dhkem-x25519/mod.ts"],
+      "@hpke/dhkem-x448": ["../dhkem-x448/mod.ts"]
     },
     "allowImportingTsExtensions": true
   },
