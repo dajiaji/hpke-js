@@ -1,0 +1,15 @@
+{
+  "name": "wrangler",
+  "version": "0.1.0",
+  "devDependencies": {
+    "wrangler": "^3.68.0"
+  },
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev --port 8789",
+    "deploy": "wrangler publish"
+  },
+  "dependencies": {
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-0.0.0.tgz"
+  }
+}

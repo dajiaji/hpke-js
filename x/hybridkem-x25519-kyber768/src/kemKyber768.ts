@@ -5,7 +5,7 @@ import type {
   KemInterface,
   RecipientContextParams,
   SenderContextParams,
-} from "../../../mod_core.ts";
+} from "@hpke/core";
 
 import {
   DecapError,
@@ -19,7 +19,7 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "../../../mod_core.ts";
+} from "@hpke/core";
 
 import { Kyber768 } from "./kyber/kyber768.ts";
 

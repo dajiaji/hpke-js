@@ -1,0 +1,52 @@
+{
+  "name": "@hpke/hpke-js",
+  "version": "1.2.9",
+  "exports": "./mod.ts",
+  "publish": {
+    "exclude": [
+      "dnt.ts",
+      "import_map.json",
+      "samples/",
+      "test/",
+      "tsconfig.json"
+    ]
+  },
+  "fmt": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "lint": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "tasks": {
+    "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "dnt": "deno run -A dnt.ts $(git describe --tags $(git rev-list --tags --max-count=1))",
+    "minify": "esbuild ../../npm-packages/x/hpke-js/esm/hpke-js/mod.js --bundle --format=esm --minify"
+  }
+}

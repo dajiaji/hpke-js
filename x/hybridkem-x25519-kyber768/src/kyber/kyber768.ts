@@ -12,6 +12,8 @@ import { KyberBase } from "./kyberBase.ts";
  * @example
  *
  * ```ts
+ * import { Kyber768 } from "./kyber768.ts";
+ *
  * const recipient = new Kyber768();
  * const [pkR, skR] = await recipient.generateKeyPair();
 

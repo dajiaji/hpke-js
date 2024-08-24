@@ -150,9 +150,11 @@ try {
 
 ### Deno
 
-```js
+```ts
 import {
-  CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
 } from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
 import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.2.9/x/chacha20poly1305/mod.ts";
 

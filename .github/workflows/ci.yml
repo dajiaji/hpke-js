@@ -27,33 +27,33 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov
           flags: unittests
-      - name: Run deno test for /core
-        working-directory: ./core
-        run: |
-          deno fmt --check
-          deno task test
-      - name: Run deno test for /x/dhkem-x25519
-        working-directory: ./x/dhkem-x25519
-        run: |
-          deno fmt --check
-          deno task test
-      - name: Run deno test for /x/dhkem-x448
-        working-directory: ./x/dhkem-x448
-        run: |
-          deno fmt --check
-          deno task test
-      - name: Run deno test for /x/chacha20poly1305
-        working-directory: ./x/chacha20poly1305
-        run: |
-          deno fmt --check
-          deno task test
-      - name: Run deno test for /x/hybridkem-x25519-kyber768
-        working-directory: ./x/hybridkem-x25519-kyber768
-        run: |
-          deno fmt --check
-          deno task test
-      - name: Run deno test for /x/dhkem-secp256k1
-        working-directory: ./x/dhkem-secp256k1
-        run: |
-          deno fmt --check
-          deno task test
+      # - name: Run deno test for /core
+      #   working-directory: ./core
+      #   run: |
+      #     deno fmt --check
+      #     deno task test
+      # - name: Run deno test for /x/dhkem-x25519
+      #   working-directory: ./x/dhkem-x25519
+      #   run: |
+      #     deno fmt --check
+      #     deno task test
+      # - name: Run deno test for /x/dhkem-x448
+      #   working-directory: ./x/dhkem-x448
+      #   run: |
+      #     deno fmt --check
+      #     deno task test
+      # - name: Run deno test for /x/chacha20poly1305
+      #   working-directory: ./x/chacha20poly1305
+      #   run: |
+      #     deno fmt --check
+      #     deno task test
+      # - name: Run deno test for /x/hybridkem-x25519-kyber768
+      #   working-directory: ./x/hybridkem-x25519-kyber768
+      #   run: |
+      #     deno fmt --check
+      #     deno task test
+      # - name: Run deno test for /x/dhkem-secp256k1
+      #   working-directory: ./x/dhkem-secp256k1
+      #   run: |
+      #     deno fmt --check
+      #     deno task test

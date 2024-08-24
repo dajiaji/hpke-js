@@ -1,7 +1,7 @@
 // @ts-ignore: for "npm:"
 import { x25519 } from "npm:@noble/curves@1.4.2/ed25519";
 
-import type { DhkemPrimitives, KdfInterface } from "../../../mod_core.ts";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
 
 import {
   base64UrlToBytes,
@@ -13,7 +13,7 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "../../../mod_core.ts";
+} from "@hpke/core";
 
 const ALG_NAME = "X25519";
 const EMPTY = new Uint8Array();

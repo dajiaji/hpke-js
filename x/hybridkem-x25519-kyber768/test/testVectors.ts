@@ -1,4 +1,4 @@
-import type { AeadId, KdfId, KemId } from "../../../core/src/identifiers.ts";
+import type { AeadId, KdfId, KemId } from "@hpke/core";
 
 interface TestVectorEncryption {
   aad: string;

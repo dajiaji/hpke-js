@@ -9,14 +9,10 @@
     "allowImportingTsExtensions": true
   },
   "include": [
-    "core/**/*",
-    "mod.ts",
-    "src/**/*"
+    "x/**/*"
   ],
   "exclude": [
-    "core/dnt.ts",
-    "core/samples/**/*",
-    "core/test/**/*",
-    "src/test/**/*"
+    "x/**/samples/**/*",
+    "x/**/test/**/*"
   ]
 }

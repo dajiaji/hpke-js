@@ -1,0 +1,14 @@
+{
+  "name": "bun",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-0.0.0.tgz"
+  }
+}

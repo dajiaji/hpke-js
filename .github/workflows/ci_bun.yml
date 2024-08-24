@@ -30,91 +30,94 @@ jobs:
           bun-version: ${{ matrix.bun-version }}
       - name: Install esbuild
         run: npm install -g esbuild
-      - name: Prepare test for hpke-js
-        working-directory: ./
-        run: |
-          pwd
-          deno run -A dnt.ts 0.0.0
-          deno task minify > test/runtimes/hpke.js
-      - name: Run npm pack for hpke-js
-        working-directory: ./npm
-        run: npm pack
-      - name: Prepare test for core
-        working-directory: ./core
+      - name: Prepare test for ./x/core
+        working-directory: ./x/core
         run: |
           deno run -A dnt.ts 0.0.0
-          deno task minify > ../x/dhkem-x25519/test/runtimes/hpke-core.js
-          deno task minify > ../x/dhkem-x448/test/runtimes/hpke-core.js
-          deno task minify > ../x/hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
-          deno task minify > ../x/dhkem-secp256k1/test/runtimes/hpke-core.js
-      - name: Run npm pack for core
-        working-directory: ./core/npm
+          deno task minify > ../dhkem-x25519/test/runtimes/hpke-core.js
+          deno task minify > ../dhkem-x448/test/runtimes/hpke-core.js
+          deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
+          deno task minify > ../dhkem-secp256k1/test/runtimes/hpke-core.js
+      - name: Run npm pack for ./x/core
+        working-directory: ./npm-packages/x/core
         run: npm pack
-      - name: Run test for core
-        working-directory: ./core/test/runtimes/bun
+      - name: Run test for ./x/core
+        working-directory: ./x/core/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
           deno test core.spec.ts --allow-net --config ../../../deno.json
-      - name: Run test for hpke-js
-        working-directory: ./test/runtimes/bun
+      - name: Prepare test for ./x/chacha20poly1305
+        working-directory: ./x/chacha20poly1305
         run: |
-          bun install
-          nohup bun run src/index.ts &
-          sleep 3
-          deno test hpke.spec.ts --allow-net --config ../../../deno.json
-      - working-directory: ./x/dhkem-x25519
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-x25519.js
-      - name: Run test for dhkem-x25519
-        working-directory: ./x/dhkem-x25519/test/runtimes/bun
-        run: |
-          nohup bun src/index.js &
-          sleep 3
-          deno test dhkem-x25519.spec.ts --allow-net
-      - working-directory: ./x/dhkem-x448
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-x448.js
-      - name: Run test for dhkem-x448
-        working-directory: ./x/dhkem-x448/test/runtimes/bun
-        run: |
-          nohup bun src/index.js &
-          sleep 3
-          deno test dhkem-x448.spec.ts --allow-net
-      - working-directory: ./x/chacha20poly1305
-        run: |
-          deno task dnt
           deno run -A dnt.ts 0.0.0
-      - name: Run npm pack for chacha20poly1305
-        working-directory: ./x/chacha20poly1305/npm
+      - name: Run npm pack for ./x/chacha20poly1305
+        working-directory: ./npm-packages/x/chacha20poly1305
         run: npm pack
-      - name: Run test for chacha20poly1305
+      - name: Run test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
           deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
-      - working-directory: ./x/hybridkem-x25519-kyber768
+      - name: Prepare test for ./x/dhkem-x25519
+        working-directory: ./x/dhkem-x25519
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-dhkem-x25519.js
+      - name: Run test for ./x/dhkem-x25519
+        working-directory: ./x/dhkem-x25519/test/runtimes/bun
+        run: |
+          nohup bun src/index.js &
+          sleep 3
+          deno test dhkem-x25519.spec.ts --allow-net
+      - name: Prepare test for ./x/dhkem-x448
+        working-directory: ./x/dhkem-x448
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-dhkem-x448.js
+      - name: Run test for ./x/dhkem-x448
+        working-directory: ./x/dhkem-x448/test/runtimes/bun
+        run: |
+          nohup bun src/index.js &
+          sleep 3
+          deno test dhkem-x448.spec.ts --allow-net
+      - name: Prepare test for ./x/hybridkem-x25519-kyber768
+        working-directory: ./x/hybridkem-x25519-kyber768
         run: |
           deno task dnt
           deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
-      - name: Run test for hybridkem-x25519-kyber768
+      - name: Run test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/bun
         run: |
           nohup bun src/index.js &
           sleep 3
           deno test hybridkem-x25519-kyber768.spec.ts --allow-net
-      - working-directory: ./x/dhkem-secp256k1/
+      - name: Prepare test for ./x/dhkem-secp256k1
+        working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
           deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
-      - name: Run test for dhkem-secp256k1
+      - name: Run test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1/test/runtimes/bun
         run: |
           nohup bun src/index.js &
           sleep 3
           deno test dhkem-secp256k1.spec.ts --allow-net
+      - name: Prepare test for ./x/hpke-js
+        working-directory: ./x/hpke-js
+        run: |
+          deno run -A dnt.ts 0.0.0
+          deno task minify > test/runtimes/hpke.js
+      - name: Run npm pack for ./x/hpke-js
+        working-directory: ./npm-packages/x/hpke-js
+        run: npm pack
+      - name: Run test for ./x/hpke-js
+        working-directory: ./x/hpke-js/test/runtimes/bun
+        run: |
+          bun install
+          nohup bun run src/index.ts &
+          sleep 3
+          deno test hpke.spec.ts --allow-net --config ../../../deno.json

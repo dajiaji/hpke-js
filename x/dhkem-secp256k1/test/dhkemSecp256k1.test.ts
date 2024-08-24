@@ -9,8 +9,9 @@ import {
   HkdfSha256,
   KdfId,
   KemId,
-} from "../../../core/mod.ts";
-import { hexToBytes, loadCrypto } from "../../../core/test/utils.ts";
+} from "@hpke/core";
+
+import { hexToBytes, loadCrypto } from "../../core/test/utils.ts";
 import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
 
 describe("DhkemSecp256k1Hkdf256", () => {

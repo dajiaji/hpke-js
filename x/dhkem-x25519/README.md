@@ -152,8 +152,12 @@ try {
 
 ### Deno
 
-```js
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
+```ts
+import {
+  Aes128Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
 import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.9/x/dhkem-x25519/mod.ts";
 
 async function doHpke() {

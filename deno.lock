@@ -4,7 +4,6 @@
     "specifiers": {
       "jsr:@deno/cache-dir@^0.8.0": "jsr:@deno/cache-dir@0.8.0",
       "jsr:@deno/dnt@^0.41.2": "jsr:@deno/dnt@0.41.2",
-      "jsr:@hpke/core@^1.2.9": "jsr:@hpke/core@1.2.9",
       "jsr:@std/assert@1.0.0": "jsr:@std/assert@1.0.0",
       "jsr:@std/assert@^0.218.2": "jsr:@std/assert@0.218.2",
       "jsr:@std/bytes@^0.218.2": "jsr:@std/bytes@0.218.2",
@@ -40,9 +39,6 @@
           "npm:@ts-morph/bootstrap@0.22",
           "npm:code-block-writer@^13.0.1"
         ]
-      },
-      "@hpke/core@1.2.9": {
-        "integrity": "428de3f8885bd7305956d272cafa8759fb98f17ad465e57acd33bbdc0e18998e"
       },
       "@std/assert@0.218.2": {
         "integrity": "7f0a5a1a8cf86607cd6c2c030584096e1ffad27fc9271429a8cb48cfbdee5eaf"
@@ -247,13 +243,99 @@
       }
     }
   },
-  "remote": {},
+  "redirects": {
+    "http://deno.land/x/hpke/core/mod.ts": "https://deno.land/x/hpke/core/mod.ts",
+    "http://deno.land/x/hpke/mod.ts": "https://deno.land/x/hpke/mod.ts",
+    "https://deno.land/x/hpke/core/mod.ts": "https://deno.land/x/hpke@1.2.9/core/mod.ts",
+    "https://deno.land/x/hpke/mod.ts": "https://deno.land/x/hpke@1.2.9/mod.ts",
+    "https://deno.land/x/hpke/x/chacha20poly1305/mod.ts": "https://deno.land/x/hpke@1.2.9/x/chacha20poly1305/mod.ts",
+    "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts": "https://deno.land/x/hpke@1.2.9/x/dhkem-secp256k1/mod.ts",
+    "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts": "https://deno.land/x/hpke@1.2.9/x/dhkem-x25519/mod.ts",
+    "https://deno.land/x/hpke/x/dhkem-x448/mod.ts": "https://deno.land/x/hpke@1.2.9/x/dhkem-x448/mod.ts",
+    "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts": "https://deno.land/x/hpke@1.2.9/x/hybridkem-x25519-kyber768/mod.ts"
+  },
+  "remote": {
+    "https://deno.land/x/hpke@1.2.9/core/mod.ts": "1d9e01ab541105cc8cc79c9e6ffebbeaa0be98af195039d8714ba5ce7a24cee2",
+    "https://deno.land/x/hpke@1.2.9/core/src/native.ts": "0c33d835431528384810e248f9df86559c84f9c2b80b4190d78eed0166a81c1f",
+    "https://deno.land/x/hpke@1.2.9/mod.ts": "b9d0c076cfdf6be46257979a89812004f04f99e843faeca895a94373fcff1848",
+    "https://deno.land/x/hpke@1.2.9/src/aeads/aesGcm.ts": "7d1fca5cdd116b9801535b72941e9bfbcf1540b304d0bcc5a93e103465495885",
+    "https://deno.land/x/hpke@1.2.9/src/aeads/chacha20Poly1305.ts": "18304aa1797341eb8082220ee17ffe57f6f873ddc30b177baa9630271771e3ec",
+    "https://deno.land/x/hpke@1.2.9/src/aeads/exportOnly.ts": "387c2d6a882bd65ab9087348e659c090b9d455b5acb4c01852bccc6be39aa64a",
+    "https://deno.land/x/hpke@1.2.9/src/algorithm.ts": "ff0bbf9adbc0636c39c2c30e0c87951cba82da482f20740f6f0e07c71b4b7460",
+    "https://deno.land/x/hpke@1.2.9/src/cipherSuite.ts": "b85fa6aa870f6ec45256523c737a0dfcf529d6a7ee05ce507de27385e3ea4656",
+    "https://deno.land/x/hpke@1.2.9/src/cipherSuiteNative.ts": "9193141e3fbd4fd2644d7b53f7212238e1363845d8adf90a7e25ca98909ab54a",
+    "https://deno.land/x/hpke@1.2.9/src/consts.ts": "8d5c087b2a3514c6053b83fe47e8ccf99fc6b4c43145336bba28d43bd89735e1",
+    "https://deno.land/x/hpke@1.2.9/src/encryptionContext.ts": "3f769671dea0c39a1df3b362161415b963ff1c69a8fa9d63bf73199dce131daa",
+    "https://deno.land/x/hpke@1.2.9/src/errors.ts": "28059eeae7100b4e0af3fceb6a83adaa844daf73040d7ea6adb642e4e24a9fdd",
+    "https://deno.land/x/hpke@1.2.9/src/exporterContext.ts": "b293b3c4325a3ceb9e4378fe3ba1224e3e361ec7065fb7e3b90d61ec4fc26eaa",
+    "https://deno.land/x/hpke@1.2.9/src/identifiers.ts": "2d0e8e49dddd168fd67e1f294193136eff82dfe5ca427b0a8f343a63fedf63a5",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/aeadEncryptionContext.ts": "e39e7d96678ec033baff4d925ef601ef34420c5b2b18e1863426bb21b9d60d3d",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/aeadInterface.ts": "f5152a25fb695009902cafd1b78dd86ff0930ac3ca4efd738dceeea8f6568557",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/aeadParams.ts": "c541e24d11f2ceef2830dd3aba28c316a884bdc02ac0e9c66d95bc2a23b92292",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/cipherSuiteParams.ts": "086399a73e04e6c0e40eff56fbd373e5f67aca02373e261f533d506dae78163b",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/dhkemInterface.ts": "e3366ed87ea61e7b6112b844dd7868af43839da5b78bd284fba3d1028bc407af",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/dhkemPrimitives.ts": "0f6934452670ae0555cce21439c5133df367ccafb96ed103767b79abaa8cf037",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/encapsulator.ts": "6a81362683e1eb9f7406bb974b6b7bd5554bc6c93eed3ab3e955a9dda9beca48",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/encryptionContext.ts": "6b5ca09fa3645e4a40cd6428d4950e4cf8e9159bf4e30fc27314e858742c64bd",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/exporter.ts": "6667607ba48f02ec447f143d1e0050adbe11cd7857c8dce3670dd5a8a9298e91",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/kdfInterface.ts": "12e2c305c09cd8d334cb43443b86e4ee652302ccb4db122bbc9c75d53574cd41",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/kemInterface.ts": "c9ccbeadc2af9053cb74cdde203cad506820e362b9401886bf2edf10d72bd900",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/keyInfo.ts": "e8dedffc2e25d75772e04fc44afce953ae3cc834315b68d12b96f39354967ae7",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/keyScheduleParams.ts": "e0a698815eb123c914de499de71bde80a79b4488e6ce681fbb394037ba2a9645",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/preSharedKey.ts": "98543f61362b5f77675f4f5f13af4efdf58183c3c309f539d6c6c9cb62124090",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/recipientContextParams.ts": "02194c133714506d12524c7828ff80464e089534ac8c1a08eb1e7913c6f24ce2",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/responses.ts": "35d2bf77ab4d32cfe90bf96d3a61bf92a10a3979e90be74f64965da019c46531",
+    "https://deno.land/x/hpke@1.2.9/src/interfaces/senderContextParams.ts": "177285e07f3445deb66ffff7c7ac4e3465f2e70f6c2bf2c3b1bfaf210e6aa0ab",
+    "https://deno.land/x/hpke@1.2.9/src/kdfs/hkdf.ts": "2b3c14ce3c9a4eb48d64bfa75d76bab8ef6d3e45e5f68ae2bedc85d7527bcc6d",
+    "https://deno.land/x/hpke@1.2.9/src/kdfs/hkdfSha256.ts": "ab283b4234f1fee503c7dac306988bc662100767cb9a1e347bec7f6a7a5c7f27",
+    "https://deno.land/x/hpke@1.2.9/src/kdfs/hkdfSha384.ts": "a0c9846c4bac1d103df61f4c327715b45c62389aa38fa2e0180b0085529df147",
+    "https://deno.land/x/hpke@1.2.9/src/kdfs/hkdfSha512.ts": "27acd55b364d09c6f9cbd96994849764359fb01c1eebe97e180bba80e012e15c",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkem.ts": "50e29066266f4af94e3ea1d5ea1c1633ea336b5fdf45b488c5b2311c758d0f02",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemNative.ts": "e8f5ee7ceda2d2eb65d1e20fc5d4400ea3c40f65831f9b123c62cb3182479719",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemP256.ts": "449266bf7f9b97a289adee5b4f581f423463f458f24b11e6f4d797ff2bb12ca1",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemP384.ts": "16a999cce7a96c5799959d33da288de6945424a6ec3bce74e72962647b8aed00",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemP521.ts": "0006c91099c14000d8d23008da4382b8e5bba80b39bf47e8ab9d1905da3ed079",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemPrimitives/ec.ts": "f3965a5a97972949cbde851b32d669d214f3a44bdc5e242b891aee8a2c1e95c8",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemPrimitives/secp256k1.ts": "b0f709abbefd84c3c231ac3bc362f26c52b367a0e708ef2a863afbc1604b4417",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemPrimitives/x25519.ts": "f839354d975670c120038c34d84689cbd9c35df7e0f2a252806657a9a28f4a7c",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemPrimitives/x448.ts": "505d54867e89f8d1c0a5f25aa00dd3f45a24c760ad1745c960ff9863faed6ee2",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemSecp256k1.ts": "3f9a16c1103901901586a4c46f643751a7e442b7f0bf911d548914f9eb4d821e",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemX25519.ts": "8cc3bcf6734b7d95f58a70b71d54de8e5b9c89abfc6088196acd463c85693d7f",
+    "https://deno.land/x/hpke@1.2.9/src/kems/dhkemX448.ts": "f7552ab7ca8f282360e919c23b9c0c6aca6cd76e6471aa21c8f2cde4dcae9a95",
+    "https://deno.land/x/hpke@1.2.9/src/kems/hybridkem.ts": "906ca3291e434b0d447269de7aee38222d74596308ebc6e8f7e781bec9e9c7d8",
+    "https://deno.land/x/hpke@1.2.9/src/kems/hybridkemX25519Kyber768.ts": "e52901c64e2e77688201c5404f29b47c2f1d2aeda347f4356ed4d96814e83cae",
+    "https://deno.land/x/hpke@1.2.9/src/kems/kemKyber768.ts": "b1c19170afaa8e062251da04a66bd6b855d8d8b38ec1d535576b14ee9eee723c",
+    "https://deno.land/x/hpke@1.2.9/src/kems/primitives/kyber/consts.ts": "17b7b0cbdd77859a8a3b91fa90b0dd2c2f2c78ce314a4a2f61a11b408d955f64",
+    "https://deno.land/x/hpke@1.2.9/src/kems/primitives/kyber/errors.ts": "c57b0c15d5cf7a0bc01b940b5e8a6acb7dc052915ea56895c8bd95c31fab051c",
+    "https://deno.land/x/hpke@1.2.9/src/kems/primitives/kyber/kyber768.ts": "5b073b4269be8be5ca0180caad8e601149a87b7a90d21db8e0e9693c4025d432",
+    "https://deno.land/x/hpke@1.2.9/src/kems/primitives/kyber/kyberBase.ts": "72e39a80283e2d09058898bb93efda2c7bc70b3bcac261382014851ae92186f3",
+    "https://deno.land/x/hpke@1.2.9/src/kems/primitives/kyber/utils.ts": "3c64853736d9edb735ff8dc5455bcc21f560374ce57e9d5e2b0f320e4306d9c6",
+    "https://deno.land/x/hpke@1.2.9/src/recipientContext.ts": "182ba41549742ff1b274b940f32824b580551b559a263438a9188999cec90643",
+    "https://deno.land/x/hpke@1.2.9/src/senderContext.ts": "4ac61b1ce937b68a0497520814aad3ce406b633dea68200a062b28d59f1dab98",
+    "https://deno.land/x/hpke@1.2.9/src/utils/bignum.ts": "2e8749a21cde3ec81e4d353ec001732d60c22d56a717f83bec4c9ddf8227f75c",
+    "https://deno.land/x/hpke@1.2.9/src/utils/emitNotSupported.ts": "f1dda8ed65d3827a26ab1a7a3b138737f90ed2dde1d8ecc6009c38e5c1a53344",
+    "https://deno.land/x/hpke@1.2.9/src/utils/misc.ts": "246385479f7001d0ee1e3ec22941694a7eea1faae3623ccbf156a3d4d5f1a39b",
+    "https://deno.land/x/hpke@1.2.9/src/xCryptoKey.ts": "1c80ae84f3a1c6ef99af29af3fba21c294034ec758c757bd0244529684eb5b44",
+    "https://deno.land/x/hpke@1.2.9/x/chacha20poly1305/mod.ts": "05fab179849de5ae928bbc883442f1661de07f05caed2da34f42ed57aa5e2372",
+    "https://deno.land/x/hpke@1.2.9/x/dhkem-secp256k1/mod.ts": "19664e112e31649fc19a4e08ffe858725202603e9d0245c34b732e748ab6c02f",
+    "https://deno.land/x/hpke@1.2.9/x/dhkem-x25519/mod.ts": "5ab707c2ea4d099ef74b8f2ab14a6aecc771ba5e05072f7ca6fb459c8ab60c99",
+    "https://deno.land/x/hpke@1.2.9/x/dhkem-x448/mod.ts": "33b0f584e0646569bbe52d1c8ce3e4498e91be5eaaaca5454db6eb6ea06e6665",
+    "https://deno.land/x/hpke@1.2.9/x/hybridkem-x25519-kyber768/mod.ts": "4e2f654c400cae7dd5f0ba9657733f46059d57212a02064d48a4b855f2123189"
+  },
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@^0.41.2",
-      "jsr:@hpke/core@^1.2.9",
       "jsr:@std/assert@1.0.0",
       "jsr:@std/testing@^1.0.0"
-    ]
+    ],
+    "members": {
+      "x/core": {
+        "dependencies": [
+          "jsr:@deno/dnt@^0.41.2",
+          "jsr:@std/assert@1.0.0",
+          "jsr:@std/testing@^1.0.0"
+        ]
+      }
+    }
   }
 }

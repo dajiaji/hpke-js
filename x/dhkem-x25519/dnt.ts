@@ -1,17 +1,17 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("./npm");
+await emptyDir("../../npm-packages/x/dhkem-x25519");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "./npm",
+  outDir: "../../npm-packages/x/dhkem-x25519",
   typeCheck: "both",
   test: true,
   declaration: true,
   scriptModule: "umd",
-  importMap: "./deno.json",
+  importMap: "./import_map.json",
   compilerOptions: {
-    lib: ["es2022", "dom"],
+    lib: ["ES2022", "DOM"],
   },
   shims: {
     deno: "dev",
@@ -59,5 +59,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("../../LICENSE", "npm/LICENSE");
-Deno.copyFileSync("README.md", "npm/README.md");
+Deno.copyFileSync("LICENSE", "../../npm-packages/x/dhkem-x25519/LICENSE");
+Deno.copyFileSync("README.md", "../../npm-packages/x/dhkem-x25519/README.md");

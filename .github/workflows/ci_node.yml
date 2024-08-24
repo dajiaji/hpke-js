@@ -25,35 +25,38 @@ jobs:
       - name: Run dnt & minify
         run: |
           npm install -g esbuild
-          deno task dnt
-          deno task minify > ./npm/hpke.min.js
       - name: Run dnt & minify for /core
-        working-directory: ./core
+        working-directory: ./x/core
         run: |
           deno task dnt
-          deno task minify > ./npm/hpke-core.min.js
-      - name: Run dnt & minify for /x/dhkem-x25519
-        working-directory: ./x/dhkem-x25519
-        run: |
-          deno task dnt
-          deno task minify > ./npm/hpke-dhkem-x25519.min.js
-      - name: Run dnt & minify for /x/dhkem-x448
-        working-directory: ./x/dhkem-x448
-        run: |
-          deno task dnt
-          deno task minify > ./npm/hpke-dhkem-x448.min.js
+          deno task minify > ../../npm-packages/x/core/hpke-core.min.js
       - name: Run dnt & minify for /x/chacha20poly1305
         working-directory: ./x/chacha20poly1305
         run: |
           deno task dnt
-          deno task minify > ./npm/hpke-chacha20poly1305.min.js
+          deno task minify > ../../npm-packages/x/chacha20poly1305/hpke-chacha20poly1305.min.js
+      - name: Run dnt & minify for /x/dhkem-x25519
+        working-directory: ./x/dhkem-x25519
+        run: |
+          deno task dnt
+          deno task minify > ../../npm-packages/x/dhkem-x25519/hpke-dhkem-x25519.min.js
+      - name: Run dnt & minify for /x/dhkem-x448
+        working-directory: ./x/dhkem-x448
+        run: |
+          deno task dnt
+          deno task minify > ../../npm-packages/x/dhkem-x448/hpke-dhkem-x448.min.js
       - name: Run dnt & minify for /x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768
         run: |
           deno task dnt
-          deno task minify > ./npm/hpke-hybridkem-x25519-kyber768.min.js
+          deno task minify > ../../npm-packages/x/hybridkem-x25519-kyber768/hpke-hybridkem-x25519-kyber768.min.js
       - name: Run dnt & minify for /x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
-          deno task minify > ./npm/hpke-dhkem-secp256k1.min.js
+          deno task minify > ../../npm-packages/x/dhkem-secp256k1/hpke-dhkem-secp256k1.min.js
+      - name: Run dnt & minify for /x/hpke-js
+        working-directory: ./x/hpke-js
+        run: |
+          deno task dnt
+          deno task minify > ../../npm-packages/x/hpke-js/hpke.min.js

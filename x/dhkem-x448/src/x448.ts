@@ -1,25 +1,22 @@
 // @ts-ignore: for "npm:"
 import { x448 } from "npm:@noble/curves@1.4.2/ed448";
 
-import type { DhkemPrimitives } from "../../../core/src/interfaces/dhkemPrimitives.ts";
-import type { KdfInterface } from "../../../core/src/interfaces/kdfInterface.ts";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
 
-import { EMPTY } from "../../../core/src/consts.ts";
 import {
+  base64UrlToBytes,
   DeriveKeyPairError,
   DeserializeError,
-  NotSupportedError,
-  SerializeError,
-} from "../../../core/src/errors.ts";
-import {
   KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
-} from "../../../core/src/interfaces/dhkemPrimitives.ts";
-import { base64UrlToBytes } from "../../../core/src/utils/misc.ts";
-import { XCryptoKey } from "../../../core/src/xCryptoKey.ts";
+  NotSupportedError,
+  SerializeError,
+  XCryptoKey,
+} from "@hpke/core";
 
 const ALG_NAME = "X448";
+const EMPTY = new Uint8Array();
 
 export class X448 implements DhkemPrimitives {
   private _hkdf: KdfInterface;

@@ -1,0 +1,15 @@
+{
+  "name": "wrangler",
+  "version": "0.1.0",
+  "devDependencies": {
+    "wrangler": "^3.68.0"
+  },
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish"
+  },
+  "dependencies": {
+    "@hpke/hpke-js": "file:../../../../../npm-packages/x/hpke-js/hpke-js-0.0.0.tgz"
+  }
+}
