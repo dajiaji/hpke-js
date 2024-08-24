@@ -2,6 +2,8 @@ import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm-packages/x/hpke-js");
 
+const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "../../npm-packages/x/hpke-js",
@@ -18,7 +20,7 @@ await build({
   },
   package: {
     name: "hpke-js",
-    version: Deno.args[0],
+    version: denoPkg.version,
     description:
       "A Hybrid Public Key Encryption (HPKE) module for various JavaScript runtimes",
     repository: {

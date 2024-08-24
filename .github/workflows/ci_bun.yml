@@ -33,7 +33,7 @@ jobs:
       - name: Prepare test for ./x/core
         working-directory: ./x/core
         run: |
-          deno run -A dnt.ts 0.0.0
+          deno run -A dnt.ts
           deno task minify > ../dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
@@ -51,7 +51,7 @@ jobs:
       - name: Prepare test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305
         run: |
-          deno run -A dnt.ts 0.0.0
+          deno run -A dnt.ts
       - name: Run npm pack for ./x/chacha20poly1305
         working-directory: ./npm-packages/x/chacha20poly1305
         run: npm pack
@@ -109,7 +109,7 @@ jobs:
       - name: Prepare test for ./x/hpke-js
         working-directory: ./x/hpke-js
         run: |
-          deno run -A dnt.ts 0.0.0
+          deno run -A dnt.ts
           deno task minify > test/runtimes/hpke.js
       - name: Run npm pack for ./x/hpke-js
         working-directory: ./npm-packages/x/hpke-js
