@@ -2,6 +2,8 @@ import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm-packages/x/dhkem-secp256k1");
 
+const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
 await build({
   entryPoints: ["./mod.ts"],
   outDir: "../../npm-packages/x/dhkem-secp256k1",
@@ -17,8 +19,8 @@ await build({
     deno: "dev",
   },
   package: {
-    name: "@hpke/dhkem-secp256k1",
-    version: Deno.args[0],
+    name: denoPkg.name,
+    version: denoPkg.version,
     description:
       "A Hybrid Public Key Encryption (HPKE) module extension for secp256k1 curve (EXPERIMENTAL)",
     repository: {
