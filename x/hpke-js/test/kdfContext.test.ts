@@ -1,11 +1,13 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { AeadId, i2Osp, KdfId, KemId } from "@hpke/core";
+import { AeadId, KdfId, KemId } from "@hpke/core";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 import { HkdfSha512 } from "@hpke/dhkem-x448";
 
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
+
+import { i2Osp } from "../../core/src/utils/misc.ts";
 import { loadCrypto } from "../../core/test/utils.ts";
 
 // deno-fmt-ignore

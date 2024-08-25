@@ -4,12 +4,8 @@ import { x448 } from "npm:@noble/curves@1.4.2/ed448";
 import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
 
 import {
-  base64UrlToBytes,
   DeriveKeyPairError,
   DeserializeError,
-  KEM_USAGES,
-  LABEL_DKP_PRK,
-  LABEL_SK,
   NotSupportedError,
   SerializeError,
   XCryptoKey,
@@ -17,6 +13,24 @@ import {
 
 const ALG_NAME = "X448";
 const EMPTY = new Uint8Array();
+// The key usages for KEM.
+const KEM_USAGES: KeyUsage[] = ["deriveBits"];
+// b"dkp_prk" deno-fmt-ignore
+const LABEL_DKP_PRK: Uint8Array = new Uint8Array([
+  100, 107, 112, 95, 112, 114, 107,
+]);
+// b"sk"
+const LABEL_SK: Uint8Array = new Uint8Array([115, 107]);
+
+function base64UrlToBytes(v: string): Uint8Array {
+  const base64 = v.replace(/-/g, "+").replace(/_/g, "/");
+  const byteString = atob(base64);
+  const ret = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ret[i] = byteString.charCodeAt(i);
+  }
+  return ret;
+}
 
 export class X448 implements DhkemPrimitives {
   private _hkdf: KdfInterface;

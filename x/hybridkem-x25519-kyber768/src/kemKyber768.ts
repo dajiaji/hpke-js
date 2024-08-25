@@ -14,7 +14,6 @@ import {
   EncapError,
   INPUT_LENGTH_LIMIT,
   InvalidParamError,
-  isCryptoKeyPair,
   KemId,
   NotSupportedError,
   SerializeError,
@@ -24,6 +23,12 @@ import {
 import { Kyber768 } from "./kyber/kyber768.ts";
 
 const ALG_NAME = "Keyber768";
+
+const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
+  typeof x === "object" &&
+  x !== null &&
+  typeof (x as CryptoKeyPair).privateKey === "object" &&
+  typeof (x as CryptoKeyPair).publicKey === "object";
 
 export class KemKyber768 implements KemInterface {
   public readonly id: KemId = KemId.NotAssigned;
