@@ -35,7 +35,6 @@ jobs:
         run: |
           deno run -A dnt.ts
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
-          deno task minify > ../dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run npm pack for ./x/core
         working-directory: ./npm-packages/x/core
         run: npm pack
@@ -88,6 +87,19 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
+      - name: Prepare test for ./x/dhkem-secp256k1
+        working-directory: ./x/dhkem-secp256k1
+        run: |
+          deno task dnt
+      - name: Run npm pack for ./x/dhkem-secp256k1
+        working-directory: ./npm-packages/x/dhkem-secp256k1
+        run: npm pack
+      - name: Run test for ./x/dhkem-secp256k1
+        working-directory: ./x/dhkem-secp256k1/test/runtimes/bun
+        run: |
+          nohup bun src/index.ts &
+          sleep 3
+          deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768
         run: |
@@ -99,17 +111,6 @@ jobs:
           nohup bun src/index.js &
           sleep 3
           deno test hybridkem-x25519-kyber768.spec.ts --allow-net
-      - name: Prepare test for ./x/dhkem-secp256k1
-        working-directory: ./x/dhkem-secp256k1
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
-      - name: Run test for ./x/dhkem-secp256k1
-        working-directory: ./x/dhkem-secp256k1/test/runtimes/bun
-        run: |
-          nohup bun src/index.js &
-          sleep 3
-          deno test dhkem-secp256k1.spec.ts --allow-net
       - name: Prepare test for ./x/hpke-js
         working-directory: ./x/hpke-js
         run: |
