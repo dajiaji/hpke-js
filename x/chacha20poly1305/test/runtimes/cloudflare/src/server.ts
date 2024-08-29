@@ -1,20 +1,16 @@
 import {
-  // AeadId,
-  // Aes128Gcm,
-  // Aes256Gcm,
   CipherSuite,
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
-  // ExportOnly,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
   KdfId,
   KemId,
-} from "./hpke-core.js";
+} from "@hpke/core";
 
-import { Chacha20Poly1305 } from "./hpke-chacha20poly1305.js";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 
 function createKem(id) {
   switch (id) {

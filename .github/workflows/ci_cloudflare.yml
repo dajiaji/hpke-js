@@ -25,8 +25,7 @@ jobs:
       - name: Prepare test for ./x/core
         working-directory: ./x/core
         run: |
-          deno run -A dnt.ts
-          deno task minify > ../chacha20poly1305/test/runtimes/hpke-core.js
+          deno task dnt
           deno task minify > ../dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
@@ -43,10 +42,11 @@ jobs:
           deno test core.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-chacha20poly1305.js
-      - name: Run test for chacha20poly1305
+        run: deno task dnt
+      - name: Run npm pack for ./x/chacha20poly1305
+        working-directory: ./npm-packages/x/chacha20poly1305
+        run: npm pack
+      - name: Run test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305/test/runtimes/cloudflare
         run: |
           npm install
