@@ -26,7 +26,6 @@ jobs:
         working-directory: ./x/core
         run: |
           deno task dnt
-          deno task minify > ../dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
           deno task minify > ../dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run npm pack for ./x/core
@@ -67,9 +66,10 @@ jobs:
           deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/dhkem-x448
         working-directory: ./x/dhkem-x448
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-x448.js
+        run: deno task dnt
+      - name: Run npm pack for ./x/dhkem-x448
+        working-directory: ./npm-packages/x/dhkem-x448
+        run: npm pack
       - name: Run test for ./x/dhkem-x448
         working-directory: ./x/dhkem-x448/test/runtimes/cloudflare
         run: |
@@ -82,13 +82,6 @@ jobs:
         run: |
           deno task dnt
           deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
-      - name: Run test for ./x/hybridkem-x25519-kyber768
-        working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/cloudflare
-        run: |
-          npm install
-          nohup npm start &
-          sleep 3
-          deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
@@ -101,6 +94,13 @@ jobs:
           nohup npm start &
           sleep 3
           deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
+      - name: Run test for ./x/hybridkem-x25519-kyber768
+        working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/cloudflare
+        run: |
+          npm install
+          nohup npm start &
+          sleep 3
+          deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for hpke-js
         working-directory: ./x/hpke-js
         run: deno run -A dnt.ts
