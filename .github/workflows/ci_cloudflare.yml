@@ -26,7 +26,6 @@ jobs:
         working-directory: ./x/core
         run: |
           deno task dnt
-          deno task minify > ../dhkem-x25519/test/runtimes/hpke-core.js
           deno task minify > ../dhkem-x448/test/runtimes/hpke-core.js
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
           deno task minify > ../dhkem-secp256k1/test/runtimes/hpke-core.js
@@ -55,9 +54,10 @@ jobs:
           deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/dhkem-x25519
         working-directory: ./x/dhkem-x25519
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-x25519.js
+        run: deno task dnt
+      - name: Run npm pack for ./x/dhkem-x25519
+        working-directory: ./npm-packages/x/dhkem-x25519
+        run: npm pack
       - name: Run test for ./x/dhkem-x25519
         working-directory: ./x/dhkem-x25519/test/runtimes/cloudflare
         run: |
