@@ -1,33 +1,30 @@
 import {
-  AeadId,
-  Aes128Gcm,
-  Aes256Gcm,
   CipherSuite,
-  // DhkemP256HkdfSha256,
-  // DhkemP384HkdfSha384,
-  // DhkemP521HkdfSha512,
-  ExportOnly,
+  DhkemP256HkdfSha256,
+  DhkemP384HkdfSha384,
+  DhkemP521HkdfSha512,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
   KdfId,
-} from "./hpke-core.js";
+  KemId,
+} from "@hpke/core";
 
-import { DhkemX25519HkdfSha256 } from "./hpke-dhkem-x25519.js";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 
-// function createKem(id) {
-//   switch (id) {
-//     case KemId.DhkemP256HkdfSha256:
-//       return new DhkemP256HkdfSha256();
-//     case KemId.DhkemP384HkdfSha384:
-//       return new DhkemP384HkdfSha384();
-//     case KemId.DhkemP521HkdfSha512:
-//       return new DhkemP521HkdfSha512();
-//     default:
-//       break;
-//   }
-//   throw new Error("ng: invalid kem");
-// }
+function createKem(id) {
+  switch (id) {
+    case KemId.DhkemP256HkdfSha256:
+      return new DhkemP256HkdfSha256();
+    case KemId.DhkemP384HkdfSha384:
+      return new DhkemP384HkdfSha384();
+    case KemId.DhkemP521HkdfSha512:
+      return new DhkemP521HkdfSha512();
+    default:
+      break;
+  }
+  throw new Error("ng: invalid kem");
+}
 
 function createKdf(id) {
   switch (id) {
@@ -43,45 +40,29 @@ function createKdf(id) {
   throw new Error("ng: invalid kdf");
 }
 
-function createAead(id) {
-  switch (id) {
-    case AeadId.Aes128Gcm:
-      return new Aes128Gcm();
-    case AeadId.Aes256Gcm:
-      return new Aes256Gcm();
-    // case AeadId.Chacha20Poly1305:
-    //   return new Chacha20Poly1305();
-    case AeadId.ExportOnly:
-      return new ExportOnly();
-    default:
-      break;
-  }
-  throw new Error("ng: invalid aead");
-}
-
 export async function testServer(request) {
   const url = new URL(request.url);
   if (url.pathname !== "/test") {
     return new Response("ng: invalid path");
   }
   const params = url.searchParams;
+  const kemStr = params.get("kem");
   const kdfStr = params.get("kdf");
-  const aeadStr = params.get("aead");
-  if (kdfStr === null || aeadStr === null) {
+  if (kemStr === null || kdfStr === null) {
     return new Response("ng: invalid params");
   }
-  const kem = new DhkemX25519HkdfSha256();
+  const kem = Number.parseInt(kemStr);
   const kdf = Number.parseInt(kdfStr);
-  const aead = Number.parseInt(aeadStr);
-  if (Number.isNaN(kdf) || Number.isNaN(aead)) {
+  const aead = new Chacha20Poly1305();
+  if (Number.isNaN(kem) || Number.isNaN(kdf)) {
     return new Response("ng: invalid params");
   }
 
   try {
     const suite = new CipherSuite({
-      kem: kem,
+      kem: createKem(kem),
       kdf: createKdf(kdf),
-      aead: createAead(aead),
+      aead: aead,
     });
     const rkp = await suite.kem.generateKeyPair();
     const sender = await suite.createSenderContext({

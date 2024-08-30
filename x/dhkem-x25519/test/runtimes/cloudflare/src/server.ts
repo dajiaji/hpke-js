@@ -3,31 +3,14 @@ import {
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
-  // DhkemP256HkdfSha256,
-  // DhkemP384HkdfSha384,
-  // DhkemP521HkdfSha512,
   ExportOnly,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
   KdfId,
-} from "./hpke-core.js";
+} from "@hpke/core";
 
-import { DhkemSecp256k1HkdfSha256 } from "./hpke-dhkem-secp256k1.js";
-
-// function createKem(id) {
-//   switch (id) {
-//     case KemId.DhkemP256HkdfSha256:
-//       return new DhkemP256HkdfSha256();
-//     case KemId.DhkemP384HkdfSha384:
-//       return new DhkemP384HkdfSha384();
-//     case KemId.DhkemP521HkdfSha512:
-//       return new DhkemP521HkdfSha512();
-//     default:
-//       break;
-//   }
-//   throw new Error("ng: invalid kem");
-// }
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 
 function createKdf(id) {
   switch (id) {
@@ -70,7 +53,7 @@ export async function testServer(request) {
   if (kdfStr === null || aeadStr === null) {
     return new Response("ng: invalid params");
   }
-  const kem = new DhkemSecp256k1HkdfSha256();
+  const kem = new DhkemX25519HkdfSha256();
   const kdf = Number.parseInt(kdfStr);
   const aead = Number.parseInt(aeadStr);
   if (Number.isNaN(kdf) || Number.isNaN(aead)) {
