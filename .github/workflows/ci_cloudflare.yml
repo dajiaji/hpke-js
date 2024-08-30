@@ -27,7 +27,6 @@ jobs:
         run: |
           deno task dnt
           deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
-          deno task minify > ../dhkem-secp256k1/test/runtimes/hpke-core.js
       - name: Run npm pack for ./x/core
         working-directory: ./npm-packages/x/core
         run: npm pack
@@ -77,16 +76,12 @@ jobs:
           nohup npm start &
           sleep 3
           deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/hybridkem-x25519-kyber768
-        working-directory: ./x/hybridkem-x25519-kyber768
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
       - name: Prepare test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-dhkem-secp256k1.js
+        run: deno task dnt
+      - name: Run npm pack for ./x/dhkem-secp256k1
+        working-directory: ./npm-packages/x/dhkem-secp256k1
+        run: npm pack
       - name: Run test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1/test/runtimes/cloudflare
         run: |
@@ -94,6 +89,11 @@ jobs:
           nohup npm start &
           sleep 3
           deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
+      - name: Prepare test for ./x/hybridkem-x25519-kyber768
+        working-directory: ./x/hybridkem-x25519-kyber768
+        run: |
+          deno task dnt
+          deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
       - name: Run test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/cloudflare
         run: |
