@@ -24,9 +24,7 @@ jobs:
         run: npm install -g esbuild
       - name: Prepare test for ./x/core
         working-directory: ./x/core
-        run: |
-          deno task dnt
-          deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/hpke-core.js
+        run: deno task dnt
       - name: Run npm pack for ./x/core
         working-directory: ./npm-packages/x/core
         run: npm pack
@@ -91,9 +89,10 @@ jobs:
           deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
       - name: Prepare test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768
-        run: |
-          deno task dnt
-          deno task minify > test/runtimes/hpke-hybridkem-x25519-kyber768.js
+        run: deno task dnt
+      - name: Run npm pack for ./x/hybridkem-x25519-kyber768
+        working-directory: ./npm-packages/x/hybridkem-x25519-kyber768
+        run: npm pack
       - name: Run test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/cloudflare
         run: |

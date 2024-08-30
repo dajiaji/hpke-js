@@ -3,31 +3,14 @@ import {
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
-  // DhkemP256HkdfSha256,
-  // DhkemP384HkdfSha384,
-  // DhkemP521HkdfSha512,
   ExportOnly,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
   KdfId,
-} from "./hpke-core.js";
+} from "@hpke/core";
 
-import { HybridkemX25519Kyber768 } from "./hpke-hybridkem-x25519-kyber768.js";
-
-// function createKem(id) {
-//   switch (id) {
-//     case KemId.DhkemP256HkdfSha256:
-//       return new DhkemP256HkdfSha256();
-//     case KemId.DhkemP384HkdfSha384:
-//       return new DhkemP384HkdfSha384();
-//     case KemId.DhkemP521HkdfSha512:
-//       return new DhkemP521HkdfSha512();
-//     default:
-//       break;
-//   }
-//   throw new Error("ng: invalid kem");
-// }
+import { HybridkemX25519Kyber768 } from "@hpke/hybridkem-x25519-kyber768";
 
 function createKdf(id) {
   switch (id) {
@@ -49,8 +32,6 @@ function createAead(id) {
       return new Aes128Gcm();
     case AeadId.Aes256Gcm:
       return new Aes256Gcm();
-    // case AeadId.Chacha20Poly1305:
-    //   return new Chacha20Poly1305();
     case AeadId.ExportOnly:
       return new ExportOnly();
     default:
