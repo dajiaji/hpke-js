@@ -20,10 +20,8 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./npm
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Run deno publish
+        run: deno publish
 
   publish-core:
     runs-on: ubuntu-latest
@@ -37,11 +35,12 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./core
+        working-directory: ./x/core
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./core/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/core
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -62,7 +61,8 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./x/dhkem-x25519/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/dhkem-x25519
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -83,7 +83,8 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./x/dhkem-x448/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/dhkem-x448
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -104,7 +105,8 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./x/chacha20poly1305/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/chacha20poly1305
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -125,7 +127,8 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./x/hybridkem-x25519-kyber768/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/hybridkem-x25519-kyber768
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -146,7 +149,30 @@ jobs:
         run: |
           npm install -g esbuild
           deno task dnt
-      - working-directory: ./x/dhkem-secp256k1/npm
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/dhkem-secp256k1
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+  publish-hpke-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run dnt
+        working-directory: ./x/hpke-js
+        run: |
+          npm install -g esbuild
+          deno task dnt
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/hpke-js
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
