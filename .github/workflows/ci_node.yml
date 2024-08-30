@@ -30,33 +30,54 @@ jobs:
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/core/hpke-core.min.js
+      - name: Publish to npm (dry) for /x/core
+        working-directory: ./npm-packages/x/core
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/chacha20poly1305
         working-directory: ./x/chacha20poly1305
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/chacha20poly1305/hpke-chacha20poly1305.min.js
+      - name: Publish to npm (dry) for /x/chacha20poly1305
+        working-directory: ./npm-packages/x/chacha20poly1305
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/dhkem-x25519
         working-directory: ./x/dhkem-x25519
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/dhkem-x25519/hpke-dhkem-x25519.min.js
+      - name: Publish to npm (dry) for /x/dhkem-x25519
+        working-directory: ./npm-packages/x/dhkem-x25519
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/dhkem-x448
         working-directory: ./x/dhkem-x448
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/dhkem-x448/hpke-dhkem-x448.min.js
+      - name: Publish to npm (dry) for /x/dhkem-x448
+        working-directory: ./npm-packages/x/dhkem-x448
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/hybridkem-x25519-kyber768/hpke-hybridkem-x25519-kyber768.min.js
+      - name: Publish to npm (dry) for /x/hybridkem-x25519-kyber768
+        working-directory: ./npm-packages/x/hybridkem-x25519-kyber768
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/dhkem-secp256k1/hpke-dhkem-secp256k1.min.js
+      - name: Publish to npm (dry) for /x/dhkem-secp256k1
+        working-directory: ./npm-packages/x/dhkem-secp256k1
+        run: npm publish --dry-run
       - name: Run dnt & minify for /x/hpke-js
         working-directory: ./x/hpke-js
         run: |
           deno task dnt
           deno task minify > ../../npm-packages/x/hpke-js/hpke.min.js
+      - name: Publish to npm (dry) for /x/hpke-js
+        working-directory: ./npm-packages/x/hpke-js
+        run: npm publish --dry-run
