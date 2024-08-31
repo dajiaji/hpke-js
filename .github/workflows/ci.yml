@@ -28,7 +28,7 @@ jobs:
           files: ./coverage.lcov
           flags: unittests
       - name: Run deno publish (dry)
-        run: deno publish --dry-run
+        run: deno publish --dry-run --allow-dirty
       # - name: Run deno test for /core
       #   working-directory: ./core
       #   run: |
