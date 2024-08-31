@@ -1,9 +1,4 @@
-import {
-  Aes128Gcm,
-  CipherSuite,
-  DhkemP256HkdfSha256,
-  HkdfSha256,
-} from "@hpke/core";
+import { Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "@hpke/core";
 
 async function doHpke() {
   // setup
@@ -36,6 +31,6 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (_err: unknown) {
-  console.log("doHPKE() failed.");
+} catch (err: unknown) {
+  console.log("Error: ", err as Error);
 }
