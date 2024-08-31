@@ -1,5 +1,16 @@
 # Changes
 
+## Version 1.3.0
+
+Released 2024-08-31
+
+- [(#358) Move (deprecated)Kem, Kdf and Aead from core to hpke-js.](https://github.com/dajiaji/hpke-js/pull/358)
+- [(#355) Add support for Node 22.](https://github.com/dajiaji/hpke-js/pull/355)
+- [(#345) Disclose common functions on @hpke/core for hpke-js extensions.](https://github.com/dajiaji/hpke-js/pull/345)
+- [(#314, etc.) Add support for deno workspace and JSR registry.](https://github.com/dajiaji/hpke-js/pull/314)
+- Update devDependencies:
+  - [(#351) Bump webpack to 5.94.0.](https://github.com/dajiaji/hpke-js/pull/351)
+
 ## Version 1.2.9
 
 Released 2024-08-05
