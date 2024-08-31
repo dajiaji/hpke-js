@@ -1,12 +1,10 @@
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-// import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
+import { KemId, KdfId, AeadId, CipherSuite } from "hpke-js";
 
 async function doHpke() {
   const suite = new CipherSuite({
-    kem: new DhkemX25519HkdfSha256(),
-    kdf: new HkdfSha256(),
-    aead: new Aes128Gcm(),
+    kem: KemId.DhkemX25519HkdfSha256,
+    kdf: KdfId.HkdfSha256,
+    aead: AeadId.Aes128Gcm,
   });
 
   const rkp = await suite.kem.generateKeyPair();
