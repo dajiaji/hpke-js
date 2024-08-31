@@ -2,46 +2,64 @@
   "version": "3",
   "packages": {
     "specifiers": {
-      "jsr:@deno/cache-dir@^0.8.0": "jsr:@deno/cache-dir@0.8.0",
-      "jsr:@deno/dnt@^0.41.2": "jsr:@deno/dnt@0.41.2",
+      "jsr:@david/code-block-writer@^13.0.2": "jsr:@david/code-block-writer@13.0.2",
+      "jsr:@deno/cache-dir@^0.10.3": "jsr:@deno/cache-dir@0.10.3",
+      "jsr:@deno/dnt@^0.41.2": "jsr:@deno/dnt@0.41.3",
+      "jsr:@deno/dnt@^0.41.3": "jsr:@deno/dnt@0.41.3",
       "jsr:@std/assert@1.0.0": "jsr:@std/assert@1.0.0",
-      "jsr:@std/assert@^0.218.2": "jsr:@std/assert@0.218.2",
-      "jsr:@std/bytes@^0.218.2": "jsr:@std/bytes@0.218.2",
-      "jsr:@std/fmt@^0.218.2": "jsr:@std/fmt@0.218.2",
-      "jsr:@std/fs@^0.218.2": "jsr:@std/fs@0.218.2",
-      "jsr:@std/internal@^1.0.1": "jsr:@std/internal@1.0.1",
-      "jsr:@std/io@^0.218.2": "jsr:@std/io@0.218.2",
-      "jsr:@std/path@^0.218.2": "jsr:@std/path@0.218.2",
-      "jsr:@std/testing@^1.0.0": "jsr:@std/testing@1.0.0",
+      "jsr:@std/assert@^0.223.0": "jsr:@std/assert@0.223.0",
+      "jsr:@std/assert@^0.226.0": "jsr:@std/assert@0.226.0",
+      "jsr:@std/assert@^1.0.3": "jsr:@std/assert@1.0.3",
+      "jsr:@std/bytes@^0.223.0": "jsr:@std/bytes@0.223.0",
+      "jsr:@std/fmt@1": "jsr:@std/fmt@1.0.1",
+      "jsr:@std/fmt@^0.223": "jsr:@std/fmt@0.223.0",
+      "jsr:@std/fs@1": "jsr:@std/fs@1.0.2",
+      "jsr:@std/fs@^0.223": "jsr:@std/fs@0.223.0",
+      "jsr:@std/fs@^0.229.3": "jsr:@std/fs@0.229.3",
+      "jsr:@std/internal@^1.0.1": "jsr:@std/internal@1.0.2",
+      "jsr:@std/internal@^1.0.2": "jsr:@std/internal@1.0.2",
+      "jsr:@std/io@^0.223": "jsr:@std/io@0.223.0",
+      "jsr:@std/path@1": "jsr:@std/path@1.0.3",
+      "jsr:@std/path@1.0.0-rc.1": "jsr:@std/path@1.0.0-rc.1",
+      "jsr:@std/path@^0.223": "jsr:@std/path@0.223.0",
+      "jsr:@std/path@^0.225.2": "jsr:@std/path@0.225.2",
+      "jsr:@std/path@^1.0.3": "jsr:@std/path@1.0.3",
+      "jsr:@std/testing@^1.0.0": "jsr:@std/testing@1.0.1",
+      "jsr:@ts-morph/bootstrap@^0.24.0": "jsr:@ts-morph/bootstrap@0.24.0",
+      "jsr:@ts-morph/common@^0.24.0": "jsr:@ts-morph/common@0.24.0",
       "npm:@noble/ciphers@0.5.3": "npm:@noble/ciphers@0.5.3",
       "npm:@noble/curves@1.4.2": "npm:@noble/curves@1.4.2",
-      "npm:@noble/hashes@1.4.0": "npm:@noble/hashes@1.4.0",
-      "npm:@ts-morph/bootstrap@0.22": "npm:@ts-morph/bootstrap@0.22.0",
-      "npm:code-block-writer@^13.0.1": "npm:code-block-writer@13.0.2"
+      "npm:@noble/hashes@1.4.0": "npm:@noble/hashes@1.4.0"
     },
     "jsr": {
-      "@deno/cache-dir@0.8.0": {
-        "integrity": "e87e80a404958f6350d903e6238b72afb92468378b0b32111f7a1e4916ac7fe7",
+      "@david/code-block-writer@13.0.2": {
+        "integrity": "14dd3baaafa3a2dea8bf7dfbcddeccaa13e583da2d21d666c01dc6d681cd74ad"
+      },
+      "@deno/cache-dir@0.10.3": {
+        "integrity": "eb022f84ecc49c91d9d98131c6e6b118ff63a29e343624d058646b9d50404776",
         "dependencies": [
-          "jsr:@std/fmt@^0.218.2",
-          "jsr:@std/fs@^0.218.2",
-          "jsr:@std/io@^0.218.2",
-          "jsr:@std/path@^0.218.2"
+          "jsr:@std/fmt@^0.223",
+          "jsr:@std/fs@^0.223",
+          "jsr:@std/io@^0.223",
+          "jsr:@std/path@^0.223"
         ]
       },
-      "@deno/dnt@0.41.2": {
-        "integrity": "27bd0b42ab92ec1e892cb1f95e4b3bce84151dad89dadb422ccf5b3d7d026e9c",
+      "@deno/dnt@0.41.3": {
+        "integrity": "b2ef2c8a5111eef86cb5bfcae103d6a2938e8e649e2461634a7befb7fc59d6d2",
         "dependencies": [
-          "jsr:@deno/cache-dir@^0.8.0",
-          "jsr:@std/fmt@^0.218.2",
-          "jsr:@std/fs@^0.218.2",
-          "jsr:@std/path@^0.218.2",
-          "npm:@ts-morph/bootstrap@0.22",
-          "npm:code-block-writer@^13.0.1"
+          "jsr:@david/code-block-writer@^13.0.2",
+          "jsr:@deno/cache-dir@^0.10.3",
+          "jsr:@std/fmt@1",
+          "jsr:@std/fs@1",
+          "jsr:@std/path@1",
+          "jsr:@ts-morph/bootstrap@^0.24.0"
         ]
       },
-      "@std/assert@0.218.2": {
-        "integrity": "7f0a5a1a8cf86607cd6c2c030584096e1ffad27fc9271429a8cb48cfbdee5eaf"
+      "@std/assert@0.223.0": {
+        "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
+      },
+      "@std/assert@0.226.0": {
+        "integrity": "0dfb5f7c7723c18cec118e080fec76ce15b4c31154b15ad2bd74822603ef75b3"
       },
       "@std/assert@1.0.0": {
         "integrity": "0e4f6d873f7f35e2a1e6194ceee39686c996b9e5d134948e644d35d4c4df2008",
@@ -49,37 +67,79 @@
           "jsr:@std/internal@^1.0.1"
         ]
       },
-      "@std/bytes@0.218.2": {
-        "integrity": "91fe54b232dcca73856b79a817247f4a651dbb60d51baafafb6408c137241670"
-      },
-      "@std/fmt@0.218.2": {
-        "integrity": "99526449d2505aa758b6cbef81e7dd471d8b28ec0dcb1491d122b284c548788a"
-      },
-      "@std/fs@0.218.2": {
-        "integrity": "dd9431453f7282e8c577cc22c9e6d036055a9a980b5549f887d6012969fabcca",
+      "@std/assert@1.0.3": {
+        "integrity": "b0d03ce1ced880df67132eea140623010d415848df66f6aa5df76507ca7c26d8",
         "dependencies": [
-          "jsr:@std/assert@^0.218.2",
-          "jsr:@std/path@^0.218.2"
+          "jsr:@std/internal@^1.0.2"
         ]
       },
-      "@std/internal@1.0.1": {
-        "integrity": "6f8c7544d06a11dd256c8d6ba54b11ed870aac6c5aeafff499892662c57673e6"
+      "@std/bytes@0.223.0": {
+        "integrity": "84b75052cd8680942c397c2631318772b295019098f40aac5c36cead4cba51a8"
       },
-      "@std/io@0.218.2": {
-        "integrity": "c64fbfa087b7c9d4d386c5672f291f607d88cb7d44fc299c20c713e345f2785f",
+      "@std/fmt@0.223.0": {
+        "integrity": "6deb37794127dfc7d7bded2586b9fc6f5d50e62a8134846608baf71ffc1a5208"
+      },
+      "@std/fmt@1.0.1": {
+        "integrity": "ef76c37faa7720faa8c20fd8cc74583f9b1e356dfd630c8714baa716a45856ab"
+      },
+      "@std/fs@0.223.0": {
+        "integrity": "3b4b0550b2c524cbaaa5a9170c90e96cbb7354e837ad1bdaf15fc9df1ae9c31c"
+      },
+      "@std/fs@0.229.3": {
+        "integrity": "783bca21f24da92e04c3893c9e79653227ab016c48e96b3078377ebd5222e6eb",
         "dependencies": [
-          "jsr:@std/assert@^0.218.2",
-          "jsr:@std/bytes@^0.218.2"
+          "jsr:@std/path@1.0.0-rc.1"
         ]
       },
-      "@std/path@0.218.2": {
-        "integrity": "b568fd923d9e53ad76d17c513e7310bda8e755a3e825e6289a0ce536404e2662",
+      "@std/fs@1.0.2": {
+        "integrity": "af57555c7a224a6f147d5cced5404692974f7a628ced8eda67e0d22d92d474ec",
         "dependencies": [
-          "jsr:@std/assert@^0.218.2"
+          "jsr:@std/path@^1.0.3"
         ]
       },
-      "@std/testing@1.0.0": {
-        "integrity": "27cfc06392c69c2acffe54e6d0bcb5f961cf193f519255372bd4fff1481bfef8"
+      "@std/internal@1.0.2": {
+        "integrity": "f4cabe2021352e8bfc24e6569700df87bf070914fc38d4b23eddd20108ac4495"
+      },
+      "@std/io@0.223.0": {
+        "integrity": "2d8c3c2ab3a515619b90da2c6ff5ea7b75a94383259ef4d02116b228393f84f1",
+        "dependencies": [
+          "jsr:@std/assert@^0.223.0",
+          "jsr:@std/bytes@^0.223.0"
+        ]
+      },
+      "@std/path@0.223.0": {
+        "integrity": "593963402d7e6597f5a6e620931661053572c982fc014000459edc1f93cc3989",
+        "dependencies": [
+          "jsr:@std/assert@^0.223.0"
+        ]
+      },
+      "@std/path@0.225.2": {
+        "integrity": "0f2db41d36b50ef048dcb0399aac720a5348638dd3cb5bf80685bf2a745aa506",
+        "dependencies": [
+          "jsr:@std/assert@^0.226.0"
+        ]
+      },
+      "@std/path@1.0.0-rc.1": {
+        "integrity": "b8c00ae2f19106a6bb7cbf1ab9be52aa70de1605daeb2dbdc4f87a7cbaf10ff6"
+      },
+      "@std/path@1.0.3": {
+        "integrity": "cd89d014ce7eb3742f2147b990f6753ee51d95276bfc211bc50c860c1bc7df6f"
+      },
+      "@std/testing@1.0.1": {
+        "integrity": "9c25841137ee818933e1722091bb9ed5fdc251c35e84c97979a52196bdb6c5c3"
+      },
+      "@ts-morph/bootstrap@0.24.0": {
+        "integrity": "a826a2ef7fa8a7c3f1042df2c034d20744d94da2ee32bf29275bcd4dffd3c060",
+        "dependencies": [
+          "jsr:@ts-morph/common@^0.24.0"
+        ]
+      },
+      "@ts-morph/common@0.24.0": {
+        "integrity": "12b625b8e562446ba658cdbe9ad77774b4bd96b992ae8bd34c60dbf24d06c1f3",
+        "dependencies": [
+          "jsr:@std/fs@^0.229.3",
+          "jsr:@std/path@^0.225.2"
+        ]
       }
     },
     "npm": {
@@ -96,150 +156,6 @@
       "@noble/hashes@1.4.0": {
         "integrity": "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==",
         "dependencies": {}
-      },
-      "@nodelib/fs.scandir@2.1.5": {
-        "integrity": "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==",
-        "dependencies": {
-          "@nodelib/fs.stat": "@nodelib/fs.stat@2.0.5",
-          "run-parallel": "run-parallel@1.2.0"
-        }
-      },
-      "@nodelib/fs.stat@2.0.5": {
-        "integrity": "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==",
-        "dependencies": {}
-      },
-      "@nodelib/fs.walk@1.2.8": {
-        "integrity": "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==",
-        "dependencies": {
-          "@nodelib/fs.scandir": "@nodelib/fs.scandir@2.1.5",
-          "fastq": "fastq@1.17.1"
-        }
-      },
-      "@ts-morph/bootstrap@0.22.0": {
-        "integrity": "sha512-MI5q7pid4swAlE2lcHwHRa6rcjoIMyT6fy8uuZm8BGg7DHGi/H5bQ0GMZzbk3N0r/LfStMdOYPkl+3IwvfIQ2g==",
-        "dependencies": {
-          "@ts-morph/common": "@ts-morph/common@0.22.0"
-        }
-      },
-      "@ts-morph/common@0.22.0": {
-        "integrity": "sha512-HqNBuV/oIlMKdkLshXd1zKBqNQCsuPEsgQOkfFQ/eUKjRlwndXW1AjN9LVkBEIukm00gGXSRmfkl0Wv5VXLnlw==",
-        "dependencies": {
-          "fast-glob": "fast-glob@3.3.2",
-          "minimatch": "minimatch@9.0.5",
-          "mkdirp": "mkdirp@3.0.1",
-          "path-browserify": "path-browserify@1.0.1"
-        }
-      },
-      "balanced-match@1.0.2": {
-        "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
-        "dependencies": {}
-      },
-      "brace-expansion@2.0.1": {
-        "integrity": "sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==",
-        "dependencies": {
-          "balanced-match": "balanced-match@1.0.2"
-        }
-      },
-      "braces@3.0.3": {
-        "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
-        "dependencies": {
-          "fill-range": "fill-range@7.1.1"
-        }
-      },
-      "code-block-writer@13.0.2": {
-        "integrity": "sha512-XfXzAGiStXSmCIwrkdfvc7FS5Dtj8yelCtyOf2p2skCAfvLd6zu0rGzuS9NSCO3bq1JKpFZ7tbKdKlcd5occQA==",
-        "dependencies": {}
-      },
-      "fast-glob@3.3.2": {
-        "integrity": "sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==",
-        "dependencies": {
-          "@nodelib/fs.stat": "@nodelib/fs.stat@2.0.5",
-          "@nodelib/fs.walk": "@nodelib/fs.walk@1.2.8",
-          "glob-parent": "glob-parent@5.1.2",
-          "merge2": "merge2@1.4.1",
-          "micromatch": "micromatch@4.0.7"
-        }
-      },
-      "fastq@1.17.1": {
-        "integrity": "sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==",
-        "dependencies": {
-          "reusify": "reusify@1.0.4"
-        }
-      },
-      "fill-range@7.1.1": {
-        "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
-        "dependencies": {
-          "to-regex-range": "to-regex-range@5.0.1"
-        }
-      },
-      "glob-parent@5.1.2": {
-        "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
-        "dependencies": {
-          "is-glob": "is-glob@4.0.3"
-        }
-      },
-      "is-extglob@2.1.1": {
-        "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
-        "dependencies": {}
-      },
-      "is-glob@4.0.3": {
-        "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
-        "dependencies": {
-          "is-extglob": "is-extglob@2.1.1"
-        }
-      },
-      "is-number@7.0.0": {
-        "integrity": "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==",
-        "dependencies": {}
-      },
-      "merge2@1.4.1": {
-        "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==",
-        "dependencies": {}
-      },
-      "micromatch@4.0.7": {
-        "integrity": "sha512-LPP/3KorzCwBxfeUuZmaR6bG2kdeHSbe0P2tY3FLRU4vYrjYz5hI4QZwV0njUx3jeuKe67YukQ1LSPZBKDqO/Q==",
-        "dependencies": {
-          "braces": "braces@3.0.3",
-          "picomatch": "picomatch@2.3.1"
-        }
-      },
-      "minimatch@9.0.5": {
-        "integrity": "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==",
-        "dependencies": {
-          "brace-expansion": "brace-expansion@2.0.1"
-        }
-      },
-      "mkdirp@3.0.1": {
-        "integrity": "sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==",
-        "dependencies": {}
-      },
-      "path-browserify@1.0.1": {
-        "integrity": "sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==",
-        "dependencies": {}
-      },
-      "picomatch@2.3.1": {
-        "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-        "dependencies": {}
-      },
-      "queue-microtask@1.2.3": {
-        "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==",
-        "dependencies": {}
-      },
-      "reusify@1.0.4": {
-        "integrity": "sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==",
-        "dependencies": {}
-      },
-      "run-parallel@1.2.0": {
-        "integrity": "sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==",
-        "dependencies": {
-          "queue-microtask": "queue-microtask@1.2.3"
-        }
-      },
-      "to-regex-range@5.0.1": {
-        "integrity": "sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==",
-        "dependencies": {
-          "is-number": "is-number@7.0.0"
-        }
       }
     }
   },
@@ -324,11 +240,22 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@deno/dnt@^0.41.2",
-      "jsr:@std/assert@1.0.0",
+      "jsr:@deno/dnt@^0.41.3",
+      "jsr:@std/assert@^1.0.3",
       "jsr:@std/testing@^1.0.0"
     ],
     "members": {
+      "samples/deno-hpke-core": {
+        "dependencies": [
+          "jsr:@hpke/chacha20poly1305@^1.3.0",
+          "jsr:@hpke/core@^1.3.0"
+        ]
+      },
+      "samples/deno-hpke-js": {
+        "dependencies": [
+          "jsr:@hpke/hpke-js@^1.3.0"
+        ]
+      },
       "x/core": {
         "dependencies": [
           "jsr:@deno/dnt@^0.41.2",
