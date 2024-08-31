@@ -45,16 +45,35 @@ yarn add @hpke/dhkem-x25519
 
 ### Deno
 
-Using deno.land:
+Starting from version 1.3.0, hpke-js packages are available from the JSR
+registry. From this version onwards, please use JSR import instead of HTTPS
+import in Deno.
 
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
-import * as x25519 from "https://deno.land/x/hpke@1.2.9/x/dhkem-x25519/mod.ts";
+**JSR imoprt (recommended on `>=1.3.0`):**
 
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as x25519 from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+Add hpke-js packages using the commands below:
+
+```sh
+deno add @hpke/core
+deno add @hpke/dhkem-x25519
+```
+
+Then, you can use the module from code like this:
+
+```ts
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+```
+
+**HTTPS imoprt (deprecated):**
+
+```ts
+import {
+  Aes128Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://deno.land/x/hpke/core/mod.ts";
+import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
 ```
 
 ### Web Browsers
@@ -67,8 +86,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.9";
-  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@1.2.9";
+  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
+  import * as x25519 from "https://esm.sh/@hpke/dhkem-x25519@1.3.0";
   // ...
 </script>
 
@@ -85,8 +104,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.9/esm/mod.js";
-  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@1.2.9/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
+  import * as x25519 from "https://unpkg.com/@hpke/dhkem-x25519@1.3.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -151,12 +170,8 @@ try {
 ### Deno
 
 ```ts
-import {
-  Aes128Gcm,
-  CipherSuite,
-  HkdfSha256,
-} from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
-import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke@1.2.9/x/dhkem-x25519/mod.ts";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 
 async function doHpke() {
   // setup
@@ -201,8 +216,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.2.9";
-      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.2.9";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.3.0";
+      import { DhkemX25519HkdfSha256 } from "https://esm.sh/@hpke/dhkem-x25519@1.3.0";
 
       globalThis.doHpke = async () => {
         try {

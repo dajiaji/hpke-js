@@ -10,7 +10,7 @@
     "deploy": "wrangler publish"
   },
   "dependencies": {
-    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-1.2.9.tgz",
-    "@hpke/dhkem-x25519": "file:../../../../../npm-packages/x/dhkem-x25519/hpke-dhkem-x25519-1.2.9.tgz"
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-1.3.0.tgz",
+    "@hpke/dhkem-x25519": "file:../../../../../npm-packages/x/dhkem-x25519/hpke-dhkem-x25519-1.3.0.tgz"
   }
 }

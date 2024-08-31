@@ -45,16 +45,31 @@ yarn add @hpke/dhkem-x448
 
 ### Deno
 
-Using deno.land:
+Starting from version 1.3.0, hpke-js packages are available from the JSR
+registry. From this version onwards, please use JSR import instead of HTTPS
+import in Deno.
 
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.2.9/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke@1.2.9/x/dhkem-x448/mod.ts";
+**JSR imoprt (recommended on `>=1.3.0`):**
 
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as x448 from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
+Add hpke-js packages using the commands below:
+
+```sh
+deno add @hpke/core
+deno add @hpke/dhkem-x448
+```
+
+Then, you can use the module from code like this:
+
+```ts
+import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
+```
+
+**HTTPS imoprt (deprecated):**
+
+```ts
+import { CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke/core/mod.ts";
+import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
 ```
 
 ### Web Browsers
@@ -67,8 +82,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.2.9";
-  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.2.9";
+  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
+  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.3.0";
   // ...
 </script>
 
@@ -85,8 +100,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.2.9/esm/mod.js";
-  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.2.9/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
+  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.3.0/esm/mod.js";
   // ...
 </script>
 ```
@@ -197,8 +212,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.2.9";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.2.9";
+      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.3.0";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.3.0";
 
       globalThis.doHpke = async () => {
         try {
