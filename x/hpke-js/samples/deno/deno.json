@@ -1,9 +1,5 @@
 {
   "tasks": {
     "dev": "deno run --watch main.ts"
-  },
-  "imports": {
-    "@dajiaji/hpke": "jsr:@dajiaji/hpke@^1.2.9",
-    "@std/assert": "jsr:@std/assert@1"
   }
 }
