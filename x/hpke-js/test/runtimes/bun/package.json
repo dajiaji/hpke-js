@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/hpke-js": "file:../../../../../npm-packages/x/hpke-js/hpke-js-1.2.9.tgz",
-    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-1.2.9.tgz"
+    "@hpke/hpke-js": "file:../../../../../npm-packages/x/hpke-js/hpke-js-1.3.0.tgz",
+    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-1.3.0.tgz"
   }
 }
