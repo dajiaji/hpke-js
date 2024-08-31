@@ -45,16 +45,35 @@ yarn add @hpke/chacha20poly1305
 
 ### Deno
 
-Using deno.land:
+Starting from version 1.3.0, hpke-js packages are available from the JSR
+registry. From this version onwards, please use JSR import instead of HTTPS
+import in Deno.
 
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.3.0/core/mod.ts";
-import * as chacha20 from "https://deno.land/x/hpke@1.3.0/x/chacha20poly1305/mod.ts";
+**JSR imoprt (recommended on `>=1.3.0`):**
 
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as chacha20 from "https://deno.land/x/hpke/x/chacha20poly1305/mod.ts";
+Add hpke-js packages using the commands below:
+
+```sh
+deno add @hpke/core
+deno add @hpke/chacha20poly1305
+```
+
+Then, you can use the module from code like this:
+
+```ts
+import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "@hpke/core";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
+```
+
+**HTTPS imoprt (deprecated):**
+
+```ts
+import {
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://deno.land/x/hpke/core/mod.ts";
+import { Chacha20Poly1305 } from "https://deno.land/x/hpke/x/chacha20poly1305/mod.ts";
 ```
 
 ### Web Browsers
@@ -151,12 +170,8 @@ try {
 ### Deno
 
 ```ts
-import {
-  CipherSuite,
-  DhkemP256HkdfSha256,
-  HkdfSha256,
-} from "https://deno.land/x/hpke@1.3.0/core/mod.ts";
-import { Chacha20Poly1305 } from "https://deno.land/x/hpke@1.3.0/x/chacha20poly1305/mod.ts";
+import { CipherSuite, DhkemP256HkdfSha256, HkdfSha256 } from "@hpke/core";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 
 async function doHpke() {
   // setup

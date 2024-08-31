@@ -33,6 +33,6 @@ export {
   ValidationError,
 } from "@hpke/core";
 
-export { Aead, Kdf, Kem } from "../core/src/identifiers.ts";
+export { Aead, Kdf, Kem } from "./src/identifiers.ts";
 
 export { CipherSuite } from "./src/cipherSuite.ts";

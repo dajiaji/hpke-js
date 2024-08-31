@@ -54,12 +54,6 @@ import {
 } from "@hpke/core";
 
 async function doHpke() {
-  // When using "hpke-js", specify the cryptographic algorithm as follows:
-  // const suite = new CipherSuite({
-  //   kem: KemId.DhkemP256HkdfSha256,
-  //   kdf: KdfId.HkdfSha256,
-  //   aead: AeadId.Aes128Gcm,
-  // });
   // When using "@hpke/core", specify the cryptographic algorithm instances
   // as follows, instead of identities above:
   const suite = new CipherSuite({
@@ -67,6 +61,12 @@ async function doHpke() {
     kdf: new HkdfSha256(),
     aead: new Aes128Gcm(),
   });
+  // When using "hpke-js", specify the cryptographic algorithm as follows:
+  // const suite = new CipherSuite({
+  //   kem: KemId.DhkemP256HkdfSha256,
+  //   kdf: KdfId.HkdfSha256,
+  //   aead: AeadId.Aes128Gcm,
+  // });
 
   // A recipient generates a key pair.
   const rkp = await suite.kem.generateKeyPair();
@@ -220,18 +220,38 @@ yarn add hpke-js
 
 ### Deno
 
-Using deno.land:
+Starting from version 1.3.0, hpke-js packages are available from the JSR
+registry. From this version onwards, please use JSR import instead of HTTPS
+import in Deno.
+
+**JSR imoprt (recommended on `>=1.3.0`):**
+
+Add an hpke-js package using the commands below:
+
+```sh
+deno add @hpke/core
+```
+
+Then, you can use the module from code like this:
 
 ```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.3.0/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.3.0/core/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke@1.3.0/x/dhkem-x25519/mod.ts";
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "@hpke/core";
+```
 
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-// import * as hpke from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+**HTTPS imoprt (deprecated):**
+
+```js
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://deno.land/x/hpke/core/mod.ts";
 ```
 
 ### Web Browsers

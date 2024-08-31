@@ -46,16 +46,37 @@ yarn add @hpke/hybridkem-x25519-kyber768
 
 ### Deno
 
-Using deno.land:
+### Deno
 
-```js
-// use a specific version
-import * as hpke from "https://deno.land/x/hpke@1.3.0/core/mod.ts";
-import * as kyber from "https://deno.land/x/hpke@1.3.0/x/hybridkem-x25519-kyber768/mod.ts";
+Starting from version 1.3.0, hpke-js packages are available from the JSR
+registry. From this version onwards, please use JSR import instead of HTTPS
+import in Deno.
 
-// use the latest stable version
-import * as hpke from "https://deno.land/x/hpke/core/mod.ts";
-import * as kyber from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+**JSR imoprt (recommended on `>=1.3.0`):**
+
+Add hpke-js packages using the commands below:
+
+```sh
+deno add @hpke/core
+deno add @hpke/hybridkem-x25519-kyber768
+```
+
+Then, you can use the module from code like this:
+
+```ts
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { HybridkemX25519Kyber768 } from "@hpke/hybridkem-x25519-kyber768";
+```
+
+**HTTPS imoprt (deprecated):**
+
+```ts
+import {
+  Aes128Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://deno.land/x/hpke/core/mod.ts";
+import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
 ```
 
 ### Web Browsers
@@ -152,12 +173,8 @@ try {
 ### Deno
 
 ```ts
-import {
-  Aes128Gcm,
-  CipherSuite,
-  HkdfSha256,
-} from "https://deno.land/x/hpke@1.3.0/core/mod.ts";
-import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke@1.3.0/x/hybridkem-x25519-kyber768/mod.ts";
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { HybridkemX25519Kyber768 } from "@hpke/hybridkem-x25519-kyber768";
 
 async function doHpke() {
   // setup
