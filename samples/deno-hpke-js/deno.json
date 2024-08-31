@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@hpke/hpke-js": "jsr:@hpke/hpke-js@^1.3.0"
+  }
+}
