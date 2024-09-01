@@ -1,4 +1,4 @@
-import { CipherSuite } from "@hpke/hpke-js";
+import { CipherSuite } from "hpke-js";
 
 export async function testServer(request: Request): Promise<Response> {
   const url = new URL(request.url);
