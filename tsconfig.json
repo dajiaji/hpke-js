@@ -6,10 +6,10 @@
     "allowImportingTsExtensions": true
   },
   "include": [
-    "x/**/*"
+    "packages/**/*"
   ],
   "exclude": [
-    "x/**/samples/**/*",
-    "x/**/test/**/*"
+    "packages/**/samples/**/*",
+    "packages/**/test/**/*"
   ]
 }

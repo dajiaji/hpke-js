@@ -34,28 +34,28 @@ jobs:
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /x/dhkem-x25519
-      #   working-directory: ./x/dhkem-x25519
+      # - name: Run deno test for /packages/dhkem-x25519
+      #   working-directory: ./packages/dhkem-x25519
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /x/dhkem-x448
-      #   working-directory: ./x/dhkem-x448
+      # - name: Run deno test for /packages/dhkem-x448
+      #   working-directory: ./packages/dhkem-x448
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /x/chacha20poly1305
-      #   working-directory: ./x/chacha20poly1305
+      # - name: Run deno test for /packages/chacha20poly1305
+      #   working-directory: ./packages/chacha20poly1305
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /x/hybridkem-x25519-kyber768
-      #   working-directory: ./x/hybridkem-x25519-kyber768
+      # - name: Run deno test for /packages/hybridkem-x25519-kyber768
+      #   working-directory: ./packages/hybridkem-x25519-kyber768
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /x/dhkem-secp256k1
-      #   working-directory: ./x/dhkem-secp256k1
+      # - name: Run deno test for /packages/dhkem-secp256k1
+      #   working-directory: ./packages/dhkem-secp256k1
       #   run: |
       #     deno fmt --check
       #     deno task test

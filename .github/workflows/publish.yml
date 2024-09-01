@@ -30,7 +30,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/core
+        working-directory: ./packages/core
         run: |
           npm install -g esbuild
           deno task dnt
@@ -53,7 +53,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/chacha20poly1305
+        working-directory: ./packages/chacha20poly1305
         run: |
           npm install -g esbuild
           deno task dnt
@@ -76,7 +76,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/dhkem-x25519
+        working-directory: ./packages/dhkem-x25519
         run: |
           npm install -g esbuild
           deno task dnt
@@ -99,7 +99,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/dhkem-x448
+        working-directory: ./packages/dhkem-x448
         run: |
           npm install -g esbuild
           deno task dnt
@@ -122,7 +122,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/hybridkem-x25519-kyber768
+        working-directory: ./packages/hybridkem-x25519-kyber768
         run: |
           npm install -g esbuild
           deno task dnt
@@ -145,7 +145,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/dhkem-secp256k1
+        working-directory: ./packages/dhkem-secp256k1
         run: |
           npm install -g esbuild
           deno task dnt
@@ -168,7 +168,7 @@ jobs:
         with:
           deno-version: v1.x
       - name: Run dnt
-        working-directory: ./x/hpke-js
+        working-directory: ./packages/hpke-js
         run: |
           npm install -g esbuild
           deno task dnt
