@@ -3,13 +3,7 @@
  * which was deveploped under the MIT licence below:
  * https://github.com/antontutoveanu/crystals-kyber-javascript/blob/main/LICENSE
  */
-import {
-  sha3_256,
-  sha3_512,
-  shake128,
-  shake256,
-  // @ts-ignore: for "npm:"
-} from "npm:@noble/hashes@1.4.0/sha3";
+import { sha3_256, sha3_512, shake128, shake256 } from "@noble/hashes/sha3";
 
 import { N, NTT_ZETAS, NTT_ZETAS_INV, Q, Q_INV } from "./consts.ts";
 import { KyberError } from "./errors.ts";

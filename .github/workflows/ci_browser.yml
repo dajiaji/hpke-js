@@ -25,12 +25,14 @@ jobs:
           npm install -g typescript
           npm install -g typedoc
           npm install -g esbuild
-      - name: Build docs for @hpke/hpke-js
+      - name: Run dnt
+        run: deno task dnt
+      - name: Run npm install
+        working-directory: ./npm-packages
+        run: npm install
+      - name: Create pages directory
         working-directory: ./x/hpke-js
         run: |
-          npx typedoc --name "@hpke/hpke-js $(git describe --tags --abbrev=0)" --out test/runtimes/browsers/pages/docs mod.ts
-          deno task dnt
-          deno task minify > test/runtimes/browsers/pages/src/hpke.js
           mkdir test/runtimes/browsers/pages/core
           cp -rf ../core/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/core
           mkdir test/runtimes/browsers/pages/chacha20poly1305
@@ -47,7 +49,6 @@ jobs:
         working-directory: ./x/core
         run: |
           npx typedoc --name "@hpke/core $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/core/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/core/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x25519/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/src/hpke-core.js
@@ -58,32 +59,32 @@ jobs:
         working-directory: ./x/chacha20poly1305
         run: |
           npx typedoc --name "@hpke/chacha20poly1305 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/chacha20poly1305/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/chacha20poly1305/src/hpke-chacha20poly1305.js
       - name: Build docs for @hpke/dhkem-x25519
         working-directory: ./x/dhkem-x25519
         run: |
           npx typedoc --name "@hpke/dhkem-x25519 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/dhkem-x25519/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x25519/src/hpke-dhkem-x25519.js
       - name: Build docs for @hpke/dhkem-x448
         working-directory: ./x/dhkem-x448
         run: |
           npx typedoc --name "@hpke/dhkem-x448 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/src/hpke-dhkem-x448.js
       - name: Build docs for @hpke/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768
         run: |
           npx typedoc --name "@hpke/hybridkem-x25519-kyber768 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-hybridkem-x25519-kyber768.js
       - name: Build docs for @hpke/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1
         run: |
           npx typedoc --name "@hpke/dhkem-secp256k1 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/docs mod.ts
-          deno task dnt
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-dhkem-secp256k1.js
+      - name: Build docs for @hpke/hpke-js
+        working-directory: ./x/hpke-js
+        run: |
+          npx typedoc --name "@hpke/hpke-js $(git describe --tags --abbrev=0)" --out test/runtimes/browsers/pages/docs mod.ts
+          deno task minify > test/runtimes/browsers/pages/src/hpke.js
       - uses: peaceiris/actions-gh-pages@v3
         with:
           deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}

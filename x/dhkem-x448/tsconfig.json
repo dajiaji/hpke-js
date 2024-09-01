@@ -3,7 +3,8 @@
     "module": "es2022",
     "target": "es2022",
     "paths": {
-      "@hpke/core": ["../core/mod.ts"]
+      "@hpke/core": ["../core/mod.ts"],
+      "@noble/*": ["../../npm-packages/node_modules/@noble/*"]
     },
     "allowImportingTsExtensions": true
   },

@@ -4,7 +4,8 @@
     "target": "es2022",
     "paths": {
       "@hpke/core": ["../core/mod.ts"],
-      "@hpke/dhkem-x25519": ["../dhkem-x25519/mod.ts"]
+      "@hpke/dhkem-x25519": ["../dhkem-x25519/mod.ts"],
+      "@noble/*": ["../../npm-packages/node_modules/@noble/*"]
     },
     "allowImportingTsExtensions": true
   },

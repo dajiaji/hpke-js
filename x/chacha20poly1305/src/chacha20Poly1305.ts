@@ -1,5 +1,4 @@
-// @ts-ignore: for "npm:"
-import { chacha20poly1305 } from "npm:@noble/ciphers@0.5.3/chacha";
+import { chacha20poly1305 } from "@noble/ciphers/chacha";
 
 import type { AeadEncryptionContext, AeadInterface } from "@hpke/core";
 import { AeadId } from "@hpke/core";

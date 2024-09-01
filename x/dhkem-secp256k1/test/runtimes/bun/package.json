@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/core": "file:../../../../../npm-packages/x/core/hpke-core-1.3.0.tgz",
-    "@hpke/dhkem-secp256k1": "file:../../../../../npm-packages/x/dhkem-secp256k1/hpke-dhkem-secp256k1-1.3.0.tgz"
+    "@hpke/core": "../../../../../npm-packages/x/core/hpke-core-1.3.0.tgz",
+    "@hpke/dhkem-secp256k1": "../../../../../npm-packages/x/dhkem-secp256k1/hpke-dhkem-secp256k1-1.3.0.tgz"
   }
 }
