@@ -1,5 +1,32 @@
 # Changes
 
+## Version 1.3.1
+
+Released 2024-09-01
+
+- [(#379) Fix link to doc from deno.land to jsr.io.](https://github.com/dajiaji/hpke-js/pull/379)
+- [(#378) Use npx jsr publish.](https://github.com/dajiaji/hpke-js/pull/378)
+- [(#377) Add needs for npm publish.](https://github.com/dajiaji/hpke-js/pull/377)
+- [(#376) Use bun link.](https://github.com/dajiaji/hpke-js/pull/376)
+- [(#375) Refine dependencies for bun test.](https://github.com/dajiaji/hpke-js/pull/375)
+- [(#374) Fix use of npm link.](https://github.com/dajiaji/hpke-js/pull/374)
+- [(#373) Add package-lock.json.](https://github.com/dajiaji/hpke-js/pull/373)
+- [(#372) Remove node_modules before dnt.](https://github.com/dajiaji/hpke-js/pull/372)
+- [(#371) Use npm link on cloudflare CI.](https://github.com/dajiaji/hpke-js/pull/371)
+- [(#370) Refine dependencies for cloudflare test.](https://github.com/dajiaji/hpke-js/pull/370)
+- [(#369) Add deno task npm-pack.](https://github.com/dajiaji/hpke-js/pull/369)
+- [(#368) Add deno task npm-link and npm.](https://github.com/dajiaji/hpke-js/pull/368)
+- [(#367) Remove scripts/.](https://github.com/dajiaji/hpke-js/pull/367)
+- [(#366) Add samples for Node.](https://github.com/dajiaji/hpke-js/pull/366)
+- [(#365) Set noEmit true for tsconfig.json.](https://github.com/dajiaji/hpke-js/pull/365)
+- [(#364) Refine dependencies on import-map for npm.](https://github.com/dajiaji/hpke-js/pull/364)
+- [(#363) Move samples to x/.](https://github.com/dajiaji/hpke-js/pull/363)
+- [(#362) Update Node sample of hpke-js.](https://github.com/dajiaji/hpke-js/pull/362)
+- [(#360) Add Deno sample using JSR.](https://github.com/dajiaji/hpke-js/pull/360)
+- Update devDependencies:
+  - [(#361) Bump @deno/dnt to 0.41.3.](https://github.com/dajiaji/hpke-js/pull/361)
+  - [(#361) Bump @std/assert to 1.0.3.](https://github.com/dajiaji/hpke-js/pull/361)
+
 ## Version 1.3.0
 
 Released 2024-08-31
