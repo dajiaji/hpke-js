@@ -47,6 +47,7 @@
   "tasks": {
     "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "npm": "deno task dnt && deno task npm-link",
     "dnt": "deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
     "dnt:core": "cd x/core && deno task dnt",
     "dnt:chacha20poly1305": "cd x/chacha20poly1305 && deno task dnt",
@@ -55,6 +56,14 @@
     "dnt:dhkem-secp256k1": "cd x/dhkem-secp256k1 && deno task dnt",
     "dnt:hybridkem-x25519-kyber768": "cd x/hybridkem-x25519-kyber768 && deno task dnt",
     "dnt:hpke-js": "cd x/hpke-js && deno task dnt",
+    "npm-link": "deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x25519-kyber768 && deno task npm-link:hpke-js",
+    "npm-link:core": "cd npm-packages/x/core && npm link",
+    "npm-link:chacha20poly1305": "cd npm-packages/x/chacha20poly1305 && npm link",
+    "npm-link:dhkem-x25519": "cd npm-packages/x/dhkem-x25519 && npm link",
+    "npm-link:dhkem-x448": "cd npm-packages/x/dhkem-x448 && npm link",
+    "npm-link:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm link",
+    "npm-link:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm link",
+    "npm-link:hpke-js": "cd npm-packages/x/hpke-js && npm link",
     "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
   }
 }
