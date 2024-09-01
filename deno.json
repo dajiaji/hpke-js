@@ -71,7 +71,6 @@
     "npm-pack:dhkem-x448": "cd npm-packages/x/dhkem-x448 && npm pack --dry-run",
     "npm-pack:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm pack --dry-run",
     "npm-pack:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm pack --dry-run",
-    "npm-pack:hpke-js": "cd npm-packages/x/hpke-js && npm pack --dry-run",
-    "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
+    "npm-pack:hpke-js": "cd npm-packages/x/hpke-js && npm pack --dry-run"
   }
 }
