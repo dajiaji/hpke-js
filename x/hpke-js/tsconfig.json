@@ -9,6 +9,7 @@
       "@hpke/dhkem-x448": ["../dhkem-x448/mod.ts"],
       "@noble/*": ["../../npm-packages/node_modules/@noble/*"]
     },
+    "noEmit": true,
     "allowImportingTsExtensions": true
   },
   "include": [
