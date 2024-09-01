@@ -10,9 +10,7 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation:
-[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/chacha20poly1305/mod.ts)
-|
+Documentation: [jsr.io](https://jsr.io/@hpke/chacha20poly1305/doc) |
 [pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/chacha20poly1305/docs/)
 
 </div>
@@ -86,8 +84,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
-  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@1.3.0";
+  import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
+  import * as chacha20 from "https://esm.sh/@hpke/chacha20poly1305@<SEMVER>";
   // ...
 </script>
 
@@ -104,8 +102,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
-  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@1.3.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+  import * as chacha20 from "https://unpkg.com/@hpke/chacha20poly1305@<SEMVER>/esm/mod.js";
   // ...
 </script>
 ```
@@ -216,11 +214,11 @@ try {
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.3.0";
+      // import * as hpke from "https://esm.sh/hpke-js@<SEMVER>";
       import {
         CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      } from "https://esm.sh/@hpke/core@1.3.0";
-      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@1.3.0";
+      } from "https://esm.sh/@hpke/core@<SEMVER>";
+      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@<SEMVER>";
 
       globalThis.doHpke = async () => {
         try {
