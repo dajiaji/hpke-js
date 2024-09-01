@@ -30,12 +30,8 @@ jobs:
           bun-version: latest
       - name: Install esbuild
         run: npm install -g esbuild
-      - name: Prepare test for ./x/core
-        working-directory: ./x/core
-        run: deno task dnt
-      - name: Run npm pack for ./x/core
-        working-directory: ./npm-packages/x/core
-        run: npm pack
+      - name: Prepare test
+        run: deno task npm
       - name: Run test for ./x/core
         working-directory: ./x/core/test/runtimes/bun
         run: |
@@ -43,12 +39,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test core.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/chacha20poly1305
-        working-directory: ./x/chacha20poly1305
-        run: deno task dnt
-      - name: Run npm pack for ./x/chacha20poly1305
-        working-directory: ./npm-packages/x/chacha20poly1305
-        run: npm pack
       - name: Run test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305/test/runtimes/bun
         run: |
@@ -56,12 +46,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/dhkem-x25519
-        working-directory: ./x/dhkem-x25519
-        run: deno task dnt
-      - name: Run npm pack for ./x/dhkem-x25519
-        working-directory: ./npm-packages/x/dhkem-x25519
-        run: npm pack
       - name: Run test for ./x/dhkem-x25519
         working-directory: ./x/dhkem-x25519/test/runtimes/bun
         run: |
@@ -69,12 +53,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/dhkem-x448
-        working-directory: ./x/dhkem-x448
-        run: deno task dnt
-      - name: Run npm pack for ./x/dhkem-x448
-        working-directory: ./npm-packages/x/dhkem-x448
-        run: npm pack
       - name: Run test for ./x/dhkem-x448
         working-directory: ./x/dhkem-x448/test/runtimes/bun
         run: |
@@ -82,12 +60,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/dhkem-secp256k1
-        working-directory: ./x/dhkem-secp256k1
-        run: deno task dnt
-      - name: Run npm pack for ./x/dhkem-secp256k1
-        working-directory: ./npm-packages/x/dhkem-secp256k1
-        run: npm pack
       - name: Run test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1/test/runtimes/bun
         run: |
@@ -95,12 +67,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/hybridkem-x25519-kyber768
-        working-directory: ./x/hybridkem-x25519-kyber768
-        run: deno task dnt
-      - name: Run npm pack for ./x/hybridkem-x25519-kyber768
-        working-directory: ./npm-packages/x/hybridkem-x25519-kyber768
-        run: npm pack
       - name: Run test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/bun
         run: |
@@ -108,12 +74,6 @@ jobs:
           nohup bun src/index.ts &
           sleep 3
           deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
-      - name: Prepare test for ./x/hpke-js
-        working-directory: ./x/hpke-js
-        run: deno task dnt
-      - name: Run npm pack for ./x/hpke-js
-        working-directory: ./npm-packages/x/hpke-js
-        run: npm pack
       - name: Run test for ./x/hpke-js
         working-directory: ./x/hpke-js/test/runtimes/bun
         run: |
