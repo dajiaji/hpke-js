@@ -1,6 +1,9 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm-packages/x/chacha20poly1305");
+await emptyDir("test/runtimes/browsers/node_modules");
+await emptyDir("test/runtimes/bun/node_modules");
+await emptyDir("test/runtimes/cloudflare/node_modules");
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
