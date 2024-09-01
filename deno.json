@@ -79,6 +79,6 @@
     "bun-link:dhkem-x448": "cd npm-packages/x/dhkem-x448 && bun link",
     "bun-link:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && bun link",
     "bun-link:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && bun link",
-    "bun-link:hpke-js": "cd npm-packages/x/hpke-js && bun link",
+    "bun-link:hpke-js": "cd npm-packages/x/hpke-js && bun link"
   }
 }
