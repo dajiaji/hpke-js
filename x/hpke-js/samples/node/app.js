@@ -29,5 +29,5 @@ async function doHpke() {
 try {
   doHpke();
 } catch (e) {
-  console.log("failed:", e.message);
+  console.log("Error:", e.message);
 }
