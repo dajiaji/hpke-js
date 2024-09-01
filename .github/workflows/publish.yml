@@ -9,19 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
       - name: Run dnt
         run: |
-          npm install -g esbuild
-          deno task dnt
+          deno task test
       - name: Run deno publish
-        run: deno publish
+        run: npx jsr publish
 
   publish-core:
     runs-on: ubuntu-latest
@@ -45,8 +40,32 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
+  publish-chacha20poly1305:
+    runs-on: ubuntu-latest
+    needs: publish-core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - name: Run dnt
+        working-directory: ./x/chacha20poly1305
+        run: |
+          npm install -g esbuild
+          deno task dnt
+      - name: Publish to npm
+        working-directory: ./npm-packages/x/chacha20poly1305
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
   publish-dhkem-x25519:
     runs-on: ubuntu-latest
+    needs: publish-core
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -69,6 +88,7 @@ jobs:
 
   publish-dhkem-x448:
     runs-on: ubuntu-latest
+    needs: publish-core
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -89,30 +109,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-  publish-chacha20poly1305:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./x/chacha20poly1305
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
-        working-directory: ./npm-packages/x/chacha20poly1305
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
   publish-hybridkem-x25519-kyber768:
     runs-on: ubuntu-latest
+    needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -135,6 +134,7 @@ jobs:
 
   publish-dhkem-secp256k1:
     runs-on: ubuntu-latest
+    needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -157,6 +157,7 @@ jobs:
 
   publish-hpke-js:
     runs-on: ubuntu-latest
+    needs: [publish-chacha20poly1305, publish-dhkem-x25519, publish-dhkem-x448]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
