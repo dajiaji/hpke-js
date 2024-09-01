@@ -80,8 +80,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
-  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@1.3.0";
+  import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
+  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
   // ...
 </script>
 
@@ -98,8 +98,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
-  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@1.3.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@<SEMVER>/esm/mod.js";
   // ...
 </script>
 ```
@@ -210,8 +210,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@1.3.0";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@1.3.0";
+      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@<SEMVER>";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
 
       globalThis.doHpke = async () => {
         try {

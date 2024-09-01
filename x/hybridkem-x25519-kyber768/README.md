@@ -87,8 +87,8 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
-  import * as kyber from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.3.0";
+  import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
+  import * as kyber from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@<SEMVER>";
   // ...
 </script>
 
@@ -105,8 +105,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
-  import * as kyber from "https://unpkg.com/@hpke/hybridkem-x25519-kyber768@1.3.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+  import * as kyber from "https://unpkg.com/@hpke/hybridkem-x25519-kyber768@<SEMVER>/esm/mod.js";
   // ...
 </script>
 ```
@@ -217,8 +217,8 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@1.3.0";
-      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@1.3.0";
+      import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core@<SEMVER>";
+      import { HybridkemX25519Kyber768 } from "https://esm.sh/@hpke/hybridkem-x25519-kyber768@<SEMVER>";
 
       globalThis.doHpke = async () => {
         try {

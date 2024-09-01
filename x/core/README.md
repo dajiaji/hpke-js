@@ -87,7 +87,7 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@1.3.0";
+  import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
   // ...
 </script>
 
@@ -103,7 +103,7 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@1.3.0/esm/mod.js";
+  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
   // ...
 </script>
 ```
@@ -224,10 +224,10 @@ try {
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@1.3.0";
+      // import * as hpke from "https://esm.sh/hpke-js@<SEMVER>";
       import {
         Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
-      } from "https://esm.sh/@hpke/core@1.3.0";
+      } from "https://esm.sh/@hpke/core@<SEMVER>";
 
       globalThis.doHpke = async () => {
 
