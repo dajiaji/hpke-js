@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/core": "^1.3.0",
-    "@hpke/dhkem-x448": "^1.3.0"
+    "@hpke/core": "link:@hpke/core",
+    "@hpke/dhkem-x448": "link:@hpke/dhkem-x448"
   }
 }

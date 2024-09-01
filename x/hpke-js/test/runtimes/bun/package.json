@@ -9,6 +9,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "hpke-js": "^1.3.0"
+    "hpke-js": "link:hpke-js"
   }
 }
