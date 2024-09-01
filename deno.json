@@ -47,8 +47,8 @@
   "tasks": {
     "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "npm": "deno task dnt && deno task npm-link",
     "dnt": "deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
+    "npm": "deno task dnt && deno task npm-link && deno task npm-pack",
     "dnt:core": "cd x/core && deno task dnt",
     "dnt:chacha20poly1305": "cd x/chacha20poly1305 && deno task dnt",
     "dnt:dhkem-x25519": "cd x/dhkem-x25519 && deno task dnt",
@@ -64,6 +64,14 @@
     "npm-link:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm link",
     "npm-link:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm link",
     "npm-link:hpke-js": "cd npm-packages/x/hpke-js && npm link",
+    "npm-pack": "deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x25519-kyber768 && deno task npm-pack:hpke-js",
+    "npm-pack:core": "cd npm-packages/x/core && npm pack --dry-run",
+    "npm-pack:chacha20poly1305": "cd npm-packages/x/chacha20poly1305 && npm pack --dry-run",
+    "npm-pack:dhkem-x25519": "cd npm-packages/x/dhkem-x25519 && npm pack --dry-run",
+    "npm-pack:dhkem-x448": "cd npm-packages/x/dhkem-x448 && npm pack --dry-run",
+    "npm-pack:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm pack --dry-run",
+    "npm-pack:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm pack --dry-run",
+    "npm-pack:hpke-js": "cd npm-packages/x/hpke-js && npm pack --dry-run",
     "minify": "esbuild npm/esm/mod.js --bundle --format=esm --minify"
   }
 }
