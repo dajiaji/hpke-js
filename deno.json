@@ -48,7 +48,7 @@
     "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
-    "npm": "deno task dnt && deno task npm-link && deno task npm-pack && deno task bun-link",
+    "npm": "deno task dnt && deno task npm-link && deno task npm-pack",
     "dnt:core": "cd x/core && deno task dnt",
     "dnt:chacha20poly1305": "cd x/chacha20poly1305 && deno task dnt",
     "dnt:dhkem-x25519": "cd x/dhkem-x25519 && deno task dnt",

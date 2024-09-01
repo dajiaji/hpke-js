@@ -31,7 +31,9 @@ jobs:
       - name: Install esbuild
         run: npm install -g esbuild
       - name: Prepare test
-        run: deno task npm
+        run: |
+          deno task npm
+          deno task bun-link
       - name: Run test for ./x/core
         working-directory: ./x/core/test/runtimes/bun
         run: |
