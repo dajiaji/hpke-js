@@ -11,9 +11,7 @@ A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Publ
 
 <div align="center">
 
-Documentation:
-[deno.land](https://doc.deno.land/https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts)
-|
+Documentation: [jsr.io](https://jsr.io/@hpke/hybridkem-x25519-kyber768/doc) |
 [pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/hybridkem-x25519-kyber768/docs/)
 
 </div>
