@@ -51,6 +51,6 @@
     "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run -A dnt.ts",
-    "minify": "esbuild ../../npm-packages/x/dhkem-x448/esm/dhkem-x448/mod.js --bundle --format=esm --minify"
+    "minify": "esbuild ../../npm/packages/dhkem-x448/esm/dhkem-x448/mod.js --bundle --format=esm --minify"
   }
 }

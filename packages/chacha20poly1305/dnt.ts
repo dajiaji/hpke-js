@@ -1,6 +1,6 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm-packages/x/chacha20poly1305");
+await emptyDir("../../npm/packages/chacha20poly1305");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -9,7 +9,7 @@ const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm-packages/x/chacha20poly1305",
+  outDir: "../../npm/packages/chacha20poly1305",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -31,7 +31,7 @@ await build({
       url: "git+https://github.com/dajiaji/hpke-js.git",
     },
     homepage:
-      "https://github.com/dajiaji/hpke-js/tree/main/x/chacha20poly1305#readme",
+      "https://github.com/dajiaji/hpke-js/tree/main/packages/chacha20poly1305#readme",
     license: "MIT",
     module: "./esm/chacha20poly1305/mod.js",
     main: "./script/chacha20poly1305/mod.js",
@@ -64,8 +64,8 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm-packages/x/chacha20poly1305/LICENSE");
+Deno.copyFileSync("LICENSE", "../../npm/packages/chacha20poly1305/LICENSE");
 Deno.copyFileSync(
   "README.md",
-  "../../npm-packages/x/chacha20poly1305/README.md",
+  "../../npm/packages/chacha20poly1305/README.md",
 );

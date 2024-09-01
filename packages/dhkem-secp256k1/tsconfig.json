@@ -5,7 +5,7 @@
     "paths": {
       "@hpke/core": ["../core/mod.ts"],
       "@hpke/dhkem-x25519": ["../dhkem-x25519/mod.ts"],
-      "@noble/*": ["../../npm-packages/node_modules/@noble/*"]
+      "@noble/*": ["../../npm/node_modules/@noble/*"]
     },
     "noEmit": true,
     "allowImportingTsExtensions": true

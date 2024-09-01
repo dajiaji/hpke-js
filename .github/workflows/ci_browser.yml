@@ -28,7 +28,7 @@ jobs:
       - name: Run dnt
         run: deno task dnt
       - name: Run npm install
-        working-directory: ./npm-packages
+        working-directory: ./npm
         run: npm install
       - name: Create pages directory
         working-directory: ./packages/hpke-js

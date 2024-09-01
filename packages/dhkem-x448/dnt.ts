@@ -1,6 +1,6 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm-packages/x/dhkem-x448");
+await emptyDir("../../npm/packages/dhkem-x448");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -9,7 +9,7 @@ const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm-packages/x/dhkem-x448",
+  outDir: "../../npm/packages/dhkem-x448",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -64,5 +64,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm-packages/x/dhkem-x448/LICENSE");
-Deno.copyFileSync("README.md", "../../npm-packages/x/dhkem-x448/README.md");
+Deno.copyFileSync("LICENSE", "../../npm/packages/dhkem-x448/LICENSE");
+Deno.copyFileSync("README.md", "../../npm/packages/dhkem-x448/README.md");

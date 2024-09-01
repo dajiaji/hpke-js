@@ -1,0 +1,13 @@
+{
+  "name": "hpke-js",
+  "private": true,
+  "workspaces": [
+    "packages/core",
+    "packages/chacha20poly1305",
+    "packages/dhkem-x25519",
+    "packages/dhkem-x448",
+    "packages/dhkem-secp256k1",
+    "packages/hybridkem-x25519-kyber768",
+    "packages/hpke-js"
+  ]
+}

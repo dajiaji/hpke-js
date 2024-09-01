@@ -1,6 +1,6 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm-packages/x/core");
+await emptyDir("../../npm/packages/core");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -9,7 +9,7 @@ const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm-packages/x/core",
+  outDir: "../../npm/packages/core",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -62,5 +62,5 @@ await build({
 });
 
 // post build steps
-Deno.copyFileSync("LICENSE", "../../npm-packages/x/core/LICENSE");
-Deno.copyFileSync("README.md", "../../npm-packages/x/core/README.md");
+Deno.copyFileSync("LICENSE", "../../npm/packages/core/LICENSE");
+Deno.copyFileSync("README.md", "../../npm/packages/core/README.md");
