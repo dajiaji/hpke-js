@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/chacha20poly1305": "^1.3.0",
-    "@hpke/core": "^1.3.0"
+    "@hpke/chacha20poly1305": "link:@hpke/chacha20poly1305",
+    "@hpke/core": "link:@hpke/core"
   }
 }

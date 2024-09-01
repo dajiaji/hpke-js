@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hpke/core": "^1.3.0",
-    "@hpke/hybridkem-x25519-kyber768": "^1.3.0"
+    "@hpke/core": "link:@hpke/core",
+    "@hpke/hybridkem-x25519-kyber768": "link:@hpke/hybridkem-x25519-kyber768"
   }
 }
