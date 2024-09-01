@@ -1,7 +1,7 @@
 <h1 align="center">hpke-js</h1>
 
 <div align="center">
-<a href="https://jsr.io/@dajiaji/hpke"><img src="https://jsr.io/badges/@dajiaji/hpke" alt="JSR"/></a>
+<a href="https://jsr.io/@hpke/hpke-js"><img src="https://jsr.io/badges/@hpke/hpke-js" alt="JSR"/></a>
 <a href="https://doc.deno.land/https/deno.land/x/hpke/mod.ts"><img src="https://doc.deno.land/badge.svg" alt="deno doc"/></a>
 <img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_browser.yml/badge.svg" alt="Browser CI" />
 <img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg" alt="Node.js CI" />
