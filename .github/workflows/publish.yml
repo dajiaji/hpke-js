@@ -35,7 +35,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/core
+        working-directory: ./npm/packages/core
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -58,7 +58,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/chacha20poly1305
+        working-directory: ./npm/packages/chacha20poly1305
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -81,7 +81,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/dhkem-x25519
+        working-directory: ./npm/packages/dhkem-x25519
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -104,7 +104,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/dhkem-x448
+        working-directory: ./npm/packages/dhkem-x448
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -127,7 +127,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/hybridkem-x25519-kyber768
+        working-directory: ./npm/packages/hybridkem-x25519-kyber768
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -150,7 +150,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/dhkem-secp256k1
+        working-directory: ./npm/packages/dhkem-secp256k1
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
@@ -173,7 +173,7 @@ jobs:
           npm install -g esbuild
           deno task dnt
       - name: Publish to npm
-        working-directory: ./npm-packages/x/hpke-js
+        working-directory: ./npm/packages/hpke-js
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

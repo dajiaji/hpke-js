@@ -22,7 +22,7 @@
   },
   "fmt": {
     "exclude": [
-      "npm-packages/",
+      "npm/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
@@ -30,7 +30,7 @@
   },
   "lint": {
     "exclude": [
-      "npm-packages/",
+      "npm/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
@@ -38,7 +38,7 @@
   },
   "test": {
     "exclude": [
-      "npm-packages/",
+      "npm/",
       "**/*/*.js",
       "**/*/npm/",
       "coverage/*.json"
@@ -57,28 +57,28 @@
     "dnt:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task dnt",
     "dnt:hpke-js": "cd packages/hpke-js && deno task dnt",
     "npm-link": "deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x25519-kyber768 && deno task npm-link:hpke-js",
-    "npm-link:core": "cd npm-packages/x/core && npm link",
-    "npm-link:chacha20poly1305": "cd npm-packages/x/chacha20poly1305 && npm link",
-    "npm-link:dhkem-x25519": "cd npm-packages/x/dhkem-x25519 && npm link",
-    "npm-link:dhkem-x448": "cd npm-packages/x/dhkem-x448 && npm link",
-    "npm-link:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm link",
-    "npm-link:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm link",
-    "npm-link:hpke-js": "cd npm-packages/x/hpke-js && npm link",
+    "npm-link:core": "cd npm/packages/core && npm link",
+    "npm-link:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm link",
+    "npm-link:dhkem-x25519": "cd npm/packages/dhkem-x25519 && npm link",
+    "npm-link:dhkem-x448": "cd npm/packages/dhkem-x448 && npm link",
+    "npm-link:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm link",
+    "npm-link:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && npm link",
+    "npm-link:hpke-js": "cd npm/packages/hpke-js && npm link",
     "npm-pack": "deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x25519-kyber768 && deno task npm-pack:hpke-js",
-    "npm-pack:core": "cd npm-packages/x/core && npm pack --dry-run",
-    "npm-pack:chacha20poly1305": "cd npm-packages/x/chacha20poly1305 && npm pack --dry-run",
-    "npm-pack:dhkem-x25519": "cd npm-packages/x/dhkem-x25519 && npm pack --dry-run",
-    "npm-pack:dhkem-x448": "cd npm-packages/x/dhkem-x448 && npm pack --dry-run",
-    "npm-pack:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && npm pack --dry-run",
-    "npm-pack:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && npm pack --dry-run",
-    "npm-pack:hpke-js": "cd npm-packages/x/hpke-js && npm pack --dry-run",
+    "npm-pack:core": "cd npm/packages/core && npm pack --dry-run",
+    "npm-pack:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm pack --dry-run",
+    "npm-pack:dhkem-x25519": "cd npm/packages/dhkem-x25519 && npm pack --dry-run",
+    "npm-pack:dhkem-x448": "cd npm/packages/dhkem-x448 && npm pack --dry-run",
+    "npm-pack:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm pack --dry-run",
+    "npm-pack:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && npm pack --dry-run",
+    "npm-pack:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
     "bun-link": "deno task bun-link:core && deno task bun-link:chacha20poly1305 && deno task bun-link:dhkem-x25519 && deno task bun-link:dhkem-x448 && deno task bun-link:dhkem-secp256k1 && deno task bun-link:hybridkem-x25519-kyber768 && deno task bun-link:hpke-js",
-    "bun-link:core": "cd npm-packages/x/core && bun link",
-    "bun-link:chacha20poly1305": "cd npm-packages/x/chacha20poly1305 && bun link",
-    "bun-link:dhkem-x25519": "cd npm-packages/x/dhkem-x25519 && bun link",
-    "bun-link:dhkem-x448": "cd npm-packages/x/dhkem-x448 && bun link",
-    "bun-link:dhkem-secp256k1": "cd npm-packages/x/dhkem-secp256k1 && bun link",
-    "bun-link:hybridkem-x25519-kyber768": "cd npm-packages/x/hybridkem-x25519-kyber768 && bun link",
-    "bun-link:hpke-js": "cd npm-packages/x/hpke-js && bun link"
+    "bun-link:core": "cd npm/packages/core && bun link",
+    "bun-link:chacha20poly1305": "cd npm/packages/chacha20poly1305 && bun link",
+    "bun-link:dhkem-x25519": "cd npm/packages/dhkem-x25519 && bun link",
+    "bun-link:dhkem-x448": "cd npm/packages/dhkem-x448 && bun link",
+    "bun-link:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && bun link",
+    "bun-link:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && bun link",
+    "bun-link:hpke-js": "cd npm/packages/hpke-js && bun link"
   }
 }

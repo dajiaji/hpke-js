@@ -1,6 +1,6 @@
 import { build, emptyDir } from "@deno/dnt";
 
-await emptyDir("../../npm-packages/x/hybridkem-x25519-kyber768");
+await emptyDir("../../npm/packages/hybridkem-x25519-kyber768");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -9,7 +9,7 @@ const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm-packages/x/hybridkem-x25519-kyber768",
+  outDir: "../../npm/packages/hybridkem-x25519-kyber768",
   typeCheck: "both",
   test: true,
   declaration: true,
@@ -66,9 +66,9 @@ await build({
 // post build steps
 Deno.copyFileSync(
   "LICENSE",
-  "../../npm-packages/x/hybridkem-x25519-kyber768/LICENSE",
+  "../../npm/packages/hybridkem-x25519-kyber768/LICENSE",
 );
 Deno.copyFileSync(
   "README.md",
-  "../../npm-packages/x/hybridkem-x25519-kyber768/README.md",
+  "../../npm/packages/hybridkem-x25519-kyber768/README.md",
 );
