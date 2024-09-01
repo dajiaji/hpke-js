@@ -27,61 +27,61 @@ jobs:
       - name: Run test for ./x/core
         working-directory: ./x/core/test/runtimes/cloudflare
         run: |
-          npm link @hpke/core
           npm install
+          npm link @hpke/core
           nohup npm start &
           sleep 3
           deno test core.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/chacha20poly1305
         working-directory: ./x/chacha20poly1305/test/runtimes/cloudflare
         run: |
+          npm install
           npm link @hpke/core
           npm link @hpke/chacha20poly1305
-          npm install
           nohup npm start &
           sleep 3
           deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/dhkem-x25519
         working-directory: ./x/dhkem-x25519/test/runtimes/cloudflare
         run: |
+          npm install
           npm link @hpke/core
           npm link @hpke/dhkem-x25519
-          npm install
           nohup npm start &
           sleep 3
           deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/dhkem-x448
         working-directory: ./x/dhkem-x448/test/runtimes/cloudflare
         run: |
+          npm install
           npm link @hpke/core
           npm link @hpke/dhkem-x448
-          npm install
           nohup npm start &
           sleep 3
           deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/dhkem-secp256k1
         working-directory: ./x/dhkem-secp256k1/test/runtimes/cloudflare
         run: |
+          npm install
           npm link @hpke/core
           npm link @hpke/dhkem-secp256k1
-          npm install
           nohup npm start &
           sleep 3
           deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/hybridkem-x25519-kyber768
         working-directory: ./x/hybridkem-x25519-kyber768/test/runtimes/cloudflare
         run: |
+          npm install
           npm link @hpke/core
           npm link @hpke/hybridkem-x25519-kyber768
-          npm install
           nohup npm start &
           sleep 3
           deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./x/hpke-js
         working-directory: ./x/hpke-js/test/runtimes/cloudflare
         run: |
-          npm link hpke-js
           npm install
+          npm link hpke-js
           nohup npm start &
           sleep 3
           deno test hpke.spec.ts --allow-net --config ../../../deno.json
