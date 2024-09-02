@@ -10,7 +10,8 @@ import {
 } from "@hpke/core";
 
 import { CipherSuite } from "../src/cipherSuite.ts";
-import { hexToBytes, isNode } from "../../core/test/utils.ts";
+import { hexToBytes } from "../../core/test/utils.ts";
+import { isNode } from "./utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.
