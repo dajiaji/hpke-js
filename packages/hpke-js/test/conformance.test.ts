@@ -4,7 +4,7 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { isNode, testVectorPath } from "../../core/test/utils.ts";
+import { getPath, isNode } from "./utils.ts";
 
 describe("RFC9180 conformance", () => {
   let testVectors: TestVector[];
@@ -12,7 +12,9 @@ describe("RFC9180 conformance", () => {
 
   beforeAll(async () => {
     testVectors = JSON.parse(
-      await Deno.readTextFile(testVectorPath() + "/test-vectors.json"),
+      await Deno.readTextFile(
+        getPath("../../../test/vectors/test-vectors.json"),
+      ),
     );
     tester = await createConformanceTester();
   });

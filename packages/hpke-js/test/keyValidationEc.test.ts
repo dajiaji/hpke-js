@@ -4,7 +4,7 @@ import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { isNode, testVectorPath } from "../../core/test/utils.ts";
+import { getPath, isNode } from "./utils.ts";
 
 describe("EC key validation", () => {
   let totalCount: number;
@@ -29,7 +29,7 @@ describe("EC key validation", () => {
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
         await Deno.readTextFile(
-          testVectorPath() + "/ecdh_secp256r1_ecpoint_test.json",
+          getPath("../../../test/vectors/ecdh_secp256r1_ecpoint_test.json"),
         ),
       );
 
@@ -54,7 +54,7 @@ describe("EC key validation", () => {
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
         await Deno.readTextFile(
-          testVectorPath() + "/ecdh_secp384r1_ecpoint_test.json",
+          getPath("../../../test/vectors/ecdh_secp384r1_ecpoint_test.json"),
         ),
       );
 
@@ -79,7 +79,7 @@ describe("EC key validation", () => {
       // Use test vectors quoted from https://github.com/google/wycheproof under Apache-2.0 license.
       const tv: WycheproofTestVector = JSON.parse(
         await Deno.readTextFile(
-          testVectorPath() + "/ecdh_secp521r1_ecpoint_test.json",
+          getPath("../../../test/vectors/ecdh_secp521r1_ecpoint_test.json"),
         ),
       );
 

@@ -22,12 +22,9 @@ import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 
-import {
-  concat,
-  hexToBytes,
-  isNode,
-  loadCrypto,
-} from "../../core/test/utils.ts";
+import { concat, hexToBytes, loadCrypto } from "../../core/test/utils.ts";
+
+import { isNode } from "./utils.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.

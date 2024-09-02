@@ -11,12 +11,9 @@ import { Aead, Kdf, Kem } from "../mod.ts"; // deprecated identifiers as the tes
 
 import { CipherSuite } from "../src/cipherSuite.ts";
 
-import {
-  concat,
-  hexToBytes,
-  isNode,
-  loadCrypto,
-} from "../../core/test/utils.ts";
+import { concat, hexToBytes, loadCrypto } from "../../core/test/utils.ts";
+
+import { isNode } from "./utils.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
