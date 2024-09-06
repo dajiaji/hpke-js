@@ -9,7 +9,6 @@
   "publish": {
     "exclude": [
       "dnt.ts",
-      "import_map.json",
       "samples/",
       "test/",
       "tsconfig.json"
