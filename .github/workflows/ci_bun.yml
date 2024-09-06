@@ -40,46 +40,46 @@ jobs:
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test core.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json core.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/chacha20poly1305
         working-directory: ./packages/chacha20poly1305/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-x25519
         working-directory: ./packages/dhkem-x25519/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-x448
         working-directory: ./packages/dhkem-x448/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-x448.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-secp256k1
         working-directory: ./packages/dhkem-secp256k1/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/hybridkem-x25519-kyber768
         working-directory: ./packages/hybridkem-x25519-kyber768/test/runtimes/bun
         run: |
           bun install
           nohup bun src/index.ts &
           sleep 3
-          deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/hpke-js
         working-directory: ./packages/hpke-js/test/runtimes/bun
         run: |
           bun install
           nohup bun run src/index.ts &
           sleep 3
-          deno test hpke.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json hpke.spec.ts --allow-net --config ../../../deno.json
