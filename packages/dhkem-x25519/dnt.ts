@@ -1,4 +1,4 @@
-import { build, emptyDir } from "@deno/dnt";
+import { build, emptyDir } from "jsr:@deno/dnt";
 
 await emptyDir("../../npm/packages/dhkem-x25519");
 await emptyDir("test/runtimes/browsers/node_modules");
@@ -14,7 +14,7 @@ await build({
   test: true,
   declaration: true,
   scriptModule: "umd",
-  importMap: "./import_map.json",
+  importMap: "../../import_map.json",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },

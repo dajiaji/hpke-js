@@ -15,12 +15,6 @@
     "./packages/hybridkem-x25519-kyber768/samples/deno",
     "./packages/hpke-js/samples/deno"
   ],
-  "imports": {
-    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
-    "@std/assert": "jsr:@std/assert@^1.0.3",
-    "@std/path": "jsr:@std/path@^1.0.3",
-    "@std/testing": "jsr:@std/testing@^1.0.0"
-  },
   "fmt": {
     "exclude": [
       "npm/",
@@ -46,7 +40,7 @@
     ]
   },
   "tasks": {
-    "test": "deno fmt && deno lint && deno test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno test --import-map=./import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
     "npm": "deno task dnt && deno task npm-link && deno task npm-pack",

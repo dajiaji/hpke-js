@@ -47,9 +47,9 @@
     ]
   },
   "tasks": {
-    "test": "deno fmt && deno lint && deno test test -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno test --import-map=../../import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "dnt": "deno run -A dnt.ts",
+    "dnt": "deno run --import-map=../../import_map.json -A dnt.ts",
     "minify": "esbuild ../../npm/packages/dhkem-secp256k1/esm/dhkem-secp256k1/mod.js --bundle --format=esm --minify"
   }
 }

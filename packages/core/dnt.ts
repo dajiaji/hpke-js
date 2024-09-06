@@ -14,7 +14,7 @@ await build({
   test: true,
   declaration: true,
   scriptModule: "umd",
-  importMap: "./deno.json",
+  importMap: "../../import_map.json",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },
