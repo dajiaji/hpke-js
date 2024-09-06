@@ -31,7 +31,7 @@ jobs:
           npm link @hpke/core
           nohup npm start &
           sleep 3
-          deno test core.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json core.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/chacha20poly1305
         working-directory: ./packages/chacha20poly1305/test/runtimes/cloudflare
         run: |
@@ -40,7 +40,7 @@ jobs:
           npm link @hpke/chacha20poly1305
           nohup npm start &
           sleep 3
-          deno test chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json chacha20poly1305.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-x25519
         working-directory: ./packages/dhkem-x25519/test/runtimes/cloudflare
         run: |
@@ -49,7 +49,7 @@ jobs:
           npm link @hpke/dhkem-x25519
           nohup npm start &
           sleep 3
-          deno test dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-x25519.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-x448
         working-directory: ./packages/dhkem-x448/test/runtimes/cloudflare
         run: |
@@ -58,7 +58,7 @@ jobs:
           npm link @hpke/dhkem-x448
           nohup npm start &
           sleep 3
-          deno test dhkem-x448.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-x448.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/dhkem-secp256k1
         working-directory: ./packages/dhkem-secp256k1/test/runtimes/cloudflare
         run: |
@@ -67,7 +67,7 @@ jobs:
           npm link @hpke/dhkem-secp256k1
           nohup npm start &
           sleep 3
-          deno test dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json dhkem-secp256k1.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/hybridkem-x25519-kyber768
         working-directory: ./packages/hybridkem-x25519-kyber768/test/runtimes/cloudflare
         run: |
@@ -76,7 +76,7 @@ jobs:
           npm link @hpke/hybridkem-x25519-kyber768
           nohup npm start &
           sleep 3
-          deno test hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json hybridkem-x25519-kyber768.spec.ts --allow-net --config ../../../deno.json
       - name: Run test for ./packages/hpke-js
         working-directory: ./packages/hpke-js/test/runtimes/cloudflare
         run: |
@@ -84,4 +84,4 @@ jobs:
           npm link hpke-js
           nohup npm start &
           sleep 3
-          deno test hpke.spec.ts --allow-net --config ../../../deno.json
+          deno test --import-map=../../../../../import_map.json hpke.spec.ts --allow-net --config ../../../deno.json

@@ -14,7 +14,7 @@ await build({
   test: true,
   declaration: "inline",
   scriptModule: "umd",
-  importMap: "./import_map.json",
+  importMap: "../../import_map.json",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },
