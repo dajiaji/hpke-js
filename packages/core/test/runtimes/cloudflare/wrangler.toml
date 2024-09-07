@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "cloudflare"
 main = "src/index.ts"
-compatibility_date = "2024-09-03"
+compatibility_date = "2024-08-21"
 compatibility_flags = ["nodejs_compat"]
 
 # Automatically place your workloads in an optimal location to minimize latency.
