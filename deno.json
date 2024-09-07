@@ -41,6 +41,13 @@
   },
   "tasks": {
     "test": "deno fmt && deno lint && deno test --import-map=./import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test:core": "cd packages/core && deno task test",
+    "test:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test",
+    "test:dhkem-x25519": "cd packages/dhkem-x25519 && deno task test",
+    "test:dhkem-x448": "cd packages/dhkem-x448 && deno task test",
+    "test:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task test",
+    "test:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task test",
+    "test:hpke-js": "cd packages/hpke-js && deno task test",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
     "npm": "deno task dnt && deno task npm-link && deno task npm-pack",
