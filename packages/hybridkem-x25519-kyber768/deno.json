@@ -49,7 +49,7 @@
     "test": "deno fmt && deno lint && deno test --import-map=../../import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:cloudflare": "cd test/runtimes/cloudflare && npm install && npm link @hpke/core @hpke/hybridkem-x25519-kyber768 && npm run test",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "dnt": "deno run --import-map=../../import_map.json -A dnt.ts",
+    "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
     "minify": "esbuild ../../npm/packages/hybridkem-x25519-kyber768/esm/hybridkem-x25519-kyber768/mod.js --bundle --format=esm --minify"
   }
 }
