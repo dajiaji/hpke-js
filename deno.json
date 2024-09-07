@@ -20,6 +20,7 @@
       "npm/",
       "**/*/*.js",
       "**/*/npm/",
+      "**/*/.wrangler/",
       "coverage/*.json"
     ]
   },
@@ -28,6 +29,7 @@
       "npm/",
       "**/*/*.js",
       "**/*/npm/",
+      "**/*/.wrangler/",
       "coverage/*.json"
     ]
   },
@@ -36,6 +38,7 @@
       "npm/",
       "**/*/*.js",
       "**/*/npm/",
+      "**/*/.wrangler/",
       "coverage/*.json"
     ]
   },
