@@ -17,8 +17,8 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 </div>
 <p></p>
 <div align="center">
-<p>Documentation: <a href="https://jsr.io/@hpke/hpke-js/doc">jsr.io</a> |
-<a href="https://dajiaji.github.io/hpke-js/docs/">pages (only for the latest ver.)</a></p>
+<p>Documentation: <a href="https://jsr.io/@hpke/hpke-js/doc" target="_blank" class="external">jsr.io</a> |
+<a href="https://dajiaji.github.io/hpke-js/docs/" target="_blank" class="external">pages (only for the latest ver.)</a></p>
 </div>
 <p>For Node.js, you can install <code>hpke-js</code> via npm/yarn:</p>
 <pre><code class="sh"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@hpke/core</span><br/><span class="hl-3"># if necessary...</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@hpke/dhkem-x25519</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@hpke/dhkem-x448</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">@hpke/chacha20poly1305</span><br/><span class="hl-3"># ...or you can use the v0.x-compatible all-in-one package below.</span><br/><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span><span class="hl-1"> </span><span class="hl-2">hpke-js</span>
@@ -67,37 +67,37 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 <tr>
 <td>hpke-js</td>
 <td>v0.1.0-</td>
-<td>The HPKE module supporting all of the ciphersuites defined in <a href="https://datatracker.ietf.org/doc/html/rfc9180">RFC9180</a>, which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.</td>
+<td>The HPKE module supporting all of the ciphersuites defined in <a href="https://datatracker.ietf.org/doc/html/rfc9180" target="_blank" class="external">RFC9180</a>, which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.</td>
 </tr>
 <tr>
 <td>@hpke/core</td>
 <td>v1.0.0-</td>
-<td>The HPKE core module implemented using only <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>. It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly. See <a href="https://github.com/dajiaji/hpke-js/blob/main/core/README.md">/core/README</a>.</td>
+<td>The HPKE core module implemented using only <a href="https://www.w3.org/TR/WebCryptoAPI/" target="_blank" class="external">Web Cryptography API</a>. It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly. See <a href="https://github.com/dajiaji/hpke-js/blob/main/core/README.md" target="_blank" class="external">/core/README</a>.</td>
 </tr>
 <tr>
 <td>@hpke/chacha20poly1305</td>
 <td>v1.0.0-</td>
-<td>The HPKE module extension for ChaCha20Poly1305 AEAD. See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md">/x/chacha20poly1305/README</a>.</td>
+<td>The HPKE module extension for ChaCha20Poly1305 AEAD. See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md" target="_blank" class="external">/x/chacha20poly1305/README</a>.</td>
 </tr>
 <tr>
 <td>@hpke/dhkem-x25519</td>
 <td>v1.0.0-</td>
-<td>The HPKE module extension for DHKEM(X25519, HKDF-SHA256). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md">/x/dhkem-x25519/README</a>.</td>
+<td>The HPKE module extension for DHKEM(X25519, HKDF-SHA256). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md" target="_blank" class="external">/x/dhkem-x25519/README</a>.</td>
 </tr>
 <tr>
 <td>@hpke/dhkem-x448</td>
 <td>v1.0.0-</td>
-<td>The HPKE module extension for DHKEM(X448, HKDF-SHA512). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md">/x/dhkem-x448/README</a>.</td>
+<td>The HPKE module extension for DHKEM(X448, HKDF-SHA512). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md" target="_blank" class="external">/x/dhkem-x448/README</a>.</td>
 </tr>
 <tr>
 <td>@hpke/hybridkem-x25519-kyber768</td>
 <td>v1.2.1-</td>
-<td><strong>EXPERIMENTAL AND NOT STANDARDIZED</strong> The HPKE module extension for the hybrid post-quantum KEM currently named <a href="https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/">X25519Kyber768Draft00</a>. See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md">/x/hybridkem-x25519-kyber768/README</a>.</td>
+<td><strong>EXPERIMENTAL AND NOT STANDARDIZED</strong> The HPKE module extension for the hybrid post-quantum KEM currently named <a href="https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/" target="_blank" class="external">X25519Kyber768Draft00</a>. See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md" target="_blank" class="external">/x/hybridkem-x25519-kyber768/README</a>.</td>
 </tr>
 <tr>
 <td>@hpke/dhkem-secp256k1</td>
 <td>v1.0.0-</td>
-<td><strong>EXPERIMENTAL AND NOT STANDARDIZED</strong> The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md">/x/dhkem-secp256k1/README</a>.</td>
+<td><strong>EXPERIMENTAL AND NOT STANDARDIZED</strong> The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256). See <a href="https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md" target="_blank" class="external">/x/dhkem-secp256k1/README</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -279,7 +279,7 @@ use <code>hpke-js</code>.</li>
 </tbody>
 </table>
 <a id="md:supported-environments" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Supported Environments<a href="#md:supported-environments" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
-<li><strong>Web Browser</strong>: <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>
+<li><strong>Web Browser</strong>: <a href="https://www.w3.org/TR/WebCryptoAPI/" target="_blank" class="external">Web Cryptography API</a>
 supported browsers
 <ul>
 <li>Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave</li>
@@ -294,8 +294,8 @@ supported browsers
 <li>Although this library has been passed the following test vectors, it has not
 been formally audited.
 <ul>
-<li><a href="https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json">RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke</a></li>
-<li><a href="https://github.com/google/wycheproof">ECDH/X25519/X448 test vectors provided on Project Wycheproof</a></li>
+<li><a href="https://github.com/cfrg/draft-irtf-cfrg-hpke/blob/5f503c564da00b0687b3de75f1dfbdfc4079ad31/test-vectors.json" target="_blank" class="external">RFC9180 official test vectors provided on github.com/cfrg/draft-irtf-cfrg-hpke</a></li>
+<li><a href="https://github.com/google/wycheproof" target="_blank" class="external">ECDH/X25519/X448 test vectors provided on Project Wycheproof</a></li>
 </ul>
 </li>
 <li>The upper limit of the AEAD sequence number is further rounded to JavaScript's
@@ -327,7 +327,7 @@ import in Deno.</p>
 
 <a id="md:web-browsers" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Web Browsers<a href="#md:web-browsers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Followings are how to use the module with typical CDNs. Other CDNs can be used
 as well.</p>
-<p>Using <a href="http://esm.sh">esm.sh</a>:</p>
+<p>Using <a href="http://esm.sh" target="_blank" class="external">esm.sh</a>:</p>
 <pre><code class="html"><span class="hl-3">&lt;!-- use a specific version --&gt;</span><br/><span class="hl-8">&lt;</span><span class="hl-9">script</span><span class="hl-10"> </span><span class="hl-11">type</span><span class="hl-10">=</span><span class="hl-12">&quot;module&quot;</span><span class="hl-8">&gt;</span><br/><span class="hl-10">  </span><span class="hl-4">import</span><span class="hl-10"> </span><span class="hl-6">*</span><span class="hl-10"> </span><span class="hl-4">as</span><span class="hl-10"> </span><span class="hl-5">hpke</span><span class="hl-10"> </span><span class="hl-4">from</span><span class="hl-10"> </span><span class="hl-2">&quot;https://esm.sh/hpke-js@&lt;SEMVER&gt;&quot;</span><span class="hl-10">;</span><br/><span class="hl-10">  </span><span class="hl-3">// import * as hpke from &quot;https://esm.sh/@hpke/core@&lt;SEMVER&gt;&quot;;</span><br/><span class="hl-10">  </span><span class="hl-3">// ...</span><br/><span class="hl-8">&lt;/</span><span class="hl-9">script</span><span class="hl-8">&gt;</span><br/><br/><span class="hl-3">&lt;!-- use the latest stable version --&gt;</span><br/><span class="hl-8">&lt;</span><span class="hl-9">script</span><span class="hl-10"> </span><span class="hl-11">type</span><span class="hl-10">=</span><span class="hl-12">&quot;module&quot;</span><span class="hl-8">&gt;</span><br/><span class="hl-10">  </span><span class="hl-4">import</span><span class="hl-10"> </span><span class="hl-6">*</span><span class="hl-10"> </span><span class="hl-4">as</span><span class="hl-10"> </span><span class="hl-5">hpke</span><span class="hl-10"> </span><span class="hl-4">from</span><span class="hl-10"> </span><span class="hl-2">&quot;https://esm.sh/hpke-js&quot;</span><span class="hl-10">;</span><br/><span class="hl-10">  </span><span class="hl-3">// import * as hpke from &quot;https://esm.sh/@hpke/core&quot;;</span><br/><span class="hl-10">  </span><span class="hl-3">// ...</span><br/><span class="hl-8">&lt;/</span><span class="hl-9">script</span><span class="hl-8">&gt;</span>
 </code><button type="button">Copy</button></pre>
 
@@ -374,7 +374,7 @@ as well.</p>
 <a id="md:contributing" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Contributing<a href="#md:contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>We welcome all kind of contributions, filing issues, suggesting new features or
 sending PRs.</p>
 <a id="md:references" class="tsd-anchor"></a><h2 class="tsd-anchor-link">References<a href="#md:references" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><ul>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc9180">RFC9180: Hybrid Public Key Encryption</a></li>
-<li><a href="https://wicg.github.io/webcrypto-secure-curves/">W3C/WICG: Secure Curves in the Web Cryptography API</a></li>
+<li><a href="https://datatracker.ietf.org/doc/html/rfc9180" target="_blank" class="external">RFC9180: Hybrid Public Key Encryption</a></li>
+<li><a href="https://wicg.github.io/webcrypto-secure-curves/" target="_blank" class="external">W3C/WICG: Secure Curves in the Web Cryptography API</a></li>
 </ul>
 </div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#md:index"><span>Index</span></a><a href="#md:packages"><span>Packages</span></a><a href="#md:supported-features"><span>Supported <wbr/>Features</span></a><ul><li><a href="#md:hpke-modes"><span>HPKE <wbr/>Modes</span></a></li><li><a href="#md:key-encapsulation-machanisms-kems"><span>Key <wbr/>Encapsulation <wbr/>Machanisms (KEMs)</span></a></li><li><a href="#md:key-derivation-functions-kdfs"><span>Key <wbr/>Derivation <wbr/>Functions (KDFs)</span></a></li><li><a href="#md:authenticated-encryption-with-associated-data-aead-functions"><span>Authenticated <wbr/>Encryption with <wbr/>Associated <wbr/>Data (AEAD) <wbr/>Functions</span></a></li></ul><a href="#md:supported-environments"><span>Supported <wbr/>Environments</span></a><a href="#md:warnings-and-restrictions"><span>Warnings and <wbr/>Restrictions</span></a><a href="#md:installation"><span>Installation</span></a><ul><li><a href="#md:nodejs"><span>Node.js</span></a></li><li><a href="#md:deno"><span>Deno</span></a></li><li><a href="#md:web-browsers"><span>Web <wbr/>Browsers</span></a></li><li><a href="#md:cloudflare-workers"><span>Cloudflare <wbr/>Workers</span></a></li></ul><a href="#md:usage"><span>Usage</span></a><ul><li><a href="#md:base-mode"><span>Base mode</span></a></li><li><a href="#md:base-mode-with-single-shot-apis"><span>Base mode with <wbr/>Single-<wbr/>Shot APIs</span></a></li><li><a href="#md:base-mode-with-export-only-aead"><span>Base mode with export-<wbr/>only AEAD</span></a></li><li><a href="#md:psk-mode"><span>PSK mode</span></a></li><li><a href="#md:auth-mode"><span>Auth mode</span></a></li><li><a href="#md:authpsk-mode"><span>AuthPSK mode</span></a></li></ul><a href="#md:contributing"><span>Contributing</span></a><a href="#md:references"><span>References</span></a></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="assets/icons.svg#icon-1"></use></svg><span>@hpke/hpke-js </span></a><ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="."><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
