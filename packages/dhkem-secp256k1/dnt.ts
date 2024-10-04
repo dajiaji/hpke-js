@@ -21,6 +21,7 @@ await build({
   shims: {
     deno: "dev",
   },
+  testPattern: "test/**/*.test.ts",
   package: {
     name: denoPkg.name,
     version: denoPkg.version,

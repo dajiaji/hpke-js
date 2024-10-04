@@ -21,6 +21,7 @@ await build({
   shims: {
     deno: "dev",
   },
+  testPattern: "test/**/*.test.ts",
   package: {
     name: "hpke-js",
     version: denoPkg.version,
