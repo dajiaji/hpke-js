@@ -1,10 +1,11 @@
-import { Dhkem, Ec, KemId } from "@hpke/common";
-
 import {
+  Dhkem,
+  Ec,
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
-} from "../kdfs/hkdf.ts";
+  KemId,
+} from "@hpke/common";
 
 export class DhkemP256HkdfSha256Native extends Dhkem {
   public readonly id: KemId = KemId.DhkemP256HkdfSha256;

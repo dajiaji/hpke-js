@@ -17,6 +17,12 @@ export { Ec } from "./src/kems/dhkemPrimitives/ec.ts";
 export { Hybridkem } from "./src/kems/hybridkem.ts";
 export { XCryptoKey } from "./src/xCryptoKey.ts";
 
+export {
+  HkdfSha256Native,
+  HkdfSha384Native,
+  HkdfSha512Native,
+} from "./src/kdfs/hkdf.ts";
+
 export { AEAD_USAGES } from "./src/interfaces/aeadEncryptionContext.ts";
 export { LABEL_DKP_PRK, LABEL_SK } from "./src/interfaces/dhkemPrimitives.ts";
 export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";

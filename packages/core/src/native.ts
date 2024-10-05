@@ -1,9 +1,10 @@
-import { CipherSuiteNative } from "./cipherSuiteNative.ts";
 import {
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
-} from "./kdfs/hkdf.ts";
+} from "@hpke/common";
+
+import { CipherSuiteNative } from "./cipherSuiteNative.ts";
 import {
   DhkemP256HkdfSha256Native,
   DhkemP384HkdfSha384Native,

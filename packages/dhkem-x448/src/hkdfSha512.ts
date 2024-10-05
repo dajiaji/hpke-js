@@ -1,7 +1,7 @@
 import { hmac } from "@noble/hashes/hmac";
 import { sha512 } from "@noble/hashes/sha512";
 
-import { HkdfSha512 as HkdfSha512Native } from "@hpke/core";
+import { HkdfSha512Native } from "@hpke/common";
 
 export class HkdfSha512 extends HkdfSha512Native {
   public override async extract(
