@@ -1,4 +1,4 @@
-import { Dhkem, Ec, KemId } from "@hpke/core";
+import { Dhkem, Ec, KemId } from "@hpke/common";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
 export class DhkemP256HkdfSha256 extends Dhkem {

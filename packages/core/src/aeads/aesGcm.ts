@@ -1,7 +1,6 @@
-import type { AeadEncryptionContext } from "@hpke/common";
-import type { AeadInterface } from "@hpke/common";
+import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
 
-import { NativeAlgorithm } from "../algorithm.ts";
+import { NativeAlgorithm } from "@hpke/common";
 import { AeadId } from "@hpke/common";
 import { AEAD_USAGES } from "@hpke/common";
 

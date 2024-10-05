@@ -1,4 +1,5 @@
-import type { CipherSuiteParams, KemInterface } from "@hpke/core";
+import type { KemInterface } from "@hpke/common";
+import type { CipherSuiteParams } from "@hpke/core";
 
 import {
   AeadId,

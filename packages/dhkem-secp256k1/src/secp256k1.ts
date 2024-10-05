@@ -1,6 +1,6 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
 
-import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
 import {
   DeriveKeyPairError,

@@ -1,5 +1,5 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
-import type { KemId } from "@hpke/common";
+import type { KemId } from "../identifiers.ts";
 import type { KemInterface } from "../interfaces/kemInterface.ts";
 import type { DhkemPrimitives } from "../interfaces/dhkemPrimitives.ts";
 import type { SenderContextParams } from "../interfaces/senderContextParams.ts";

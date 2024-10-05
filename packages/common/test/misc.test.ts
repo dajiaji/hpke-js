@@ -1,8 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { xor } from "../src/encryptionContext.ts";
-import { i2Osp } from "../src/utils/misc.ts";
+import { i2Osp, xor } from "../src/utils/misc.ts";
 
 describe("i2Osp", () => {
   describe("with valid params (5, 1)", () => {

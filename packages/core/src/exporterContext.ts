@@ -1,9 +1,13 @@
+import type { KdfInterface } from "@hpke/common";
+import {
+  ExportError,
+  INPUT_LENGTH_LIMIT,
+  InvalidParamError,
+} from "@hpke/common";
+
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
-import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
-import { INPUT_LENGTH_LIMIT } from "./consts.ts";
-import { ExportError, InvalidParamError } from "./errors.ts";
 import { emitNotSupported } from "./utils/emitNotSupported.ts";
 
 // b"sec"

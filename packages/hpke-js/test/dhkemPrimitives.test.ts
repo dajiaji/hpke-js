@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DeserializeError, Ec, KemId } from "@hpke/core";
+import { DeserializeError, Ec, KemId } from "@hpke/common";
 import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
 

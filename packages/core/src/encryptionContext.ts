@@ -1,22 +1,10 @@
-import type { AeadInterface } from "@hpke/common";
+import type { AeadInterface, KdfInterface } from "@hpke/common";
+import { i2Osp, MessageLimitReachedError, xor } from "@hpke/common";
+
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
-import type { KdfInterface } from "./interfaces/kdfInterface.ts";
 
-import { MessageLimitReachedError } from "./errors.ts";
 import { ExporterContextImpl } from "./exporterContext.ts";
-import { i2Osp } from "./utils/misc.ts";
-
-export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
-  if (a.byteLength !== b.byteLength) {
-    throw new Error("xor: different length inputs");
-  }
-  const buf = new Uint8Array(a.byteLength);
-  for (let i = 0; i < a.byteLength; i++) {
-    buf[i] = a[i] ^ b[i];
-  }
-  return buf;
-}
 
 export class EncryptionContextImpl extends ExporterContextImpl {
   // AEAD id.

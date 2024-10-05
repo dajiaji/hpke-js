@@ -17,8 +17,9 @@ import {
   KemId,
   NotSupportedError,
   SerializeError,
-  XCryptoKey,
-} from "@hpke/core";
+} from "@hpke/common";
+
+import { XCryptoKey } from "@hpke/core";
 
 import { Kyber768 } from "./kyber/kyber768.ts";
 

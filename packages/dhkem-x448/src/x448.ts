@@ -1,6 +1,6 @@
 import { x448 } from "@noble/curves/ed448";
 
-import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
 import {
   DeriveKeyPairError,

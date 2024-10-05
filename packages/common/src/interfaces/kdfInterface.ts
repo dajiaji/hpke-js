@@ -1,4 +1,4 @@
-import type { KdfId } from "@hpke/common";
+import type { KdfId } from "../identifiers.ts";
 
 /**
  * The KDF interface.

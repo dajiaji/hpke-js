@@ -3,21 +3,21 @@ import { describe, it } from "@std/testing/bdd";
 
 import {
   AeadId,
-  Aes128Gcm,
   DecapError,
   DeserializeError,
   EncapError,
   ExportError,
-  ExportOnly,
+  i2Osp,
   InvalidParamError,
   KdfId,
   KemId,
   NotSupportedError,
   OpenError,
-} from "@hpke/core";
+} from "@hpke/common";
+
+import { Aes128Gcm, ExportOnly } from "@hpke/core";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
-import { i2Osp } from "../../core/src/utils/misc.ts";
 import { EncryptionContextImpl } from "../../core/src/encryptionContext.ts";
 import { CipherSuite } from "../src/cipherSuite.ts";
 import { loadSubtleCrypto } from "../../core/test/utils.ts";
