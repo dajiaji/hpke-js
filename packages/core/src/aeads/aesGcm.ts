@@ -1,8 +1,8 @@
-import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-
-import { NativeAlgorithm } from "@hpke/common";
-import { AeadId } from "@hpke/common";
-import { AEAD_USAGES } from "@hpke/common";
+import type {
+  AeadEncryptionContext,
+  AeadInterface,
+} from "@hpke/common";
+import { AeadId, AEAD_USAGES, NativeAlgorithm } from "@hpke/common";
 
 export class AesGcmContext extends NativeAlgorithm
   implements AeadEncryptionContext {
