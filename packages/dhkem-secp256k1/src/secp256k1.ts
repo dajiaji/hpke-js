@@ -6,6 +6,7 @@ import {
   DeriveKeyPairError,
   DeserializeError,
   EMPTY,
+  KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
   NotSupportedError,
@@ -14,8 +15,6 @@ import {
 } from "@hpke/common";
 
 const ALG_NAME = "ECDH";
-// The key usages for KEM.
-const KEM_USAGES: KeyUsage[] = ["deriveBits"];
 
 export class Secp256k1 implements DhkemPrimitives {
   private _hkdf: KdfInterface;

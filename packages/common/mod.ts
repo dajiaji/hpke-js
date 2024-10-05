@@ -24,6 +24,7 @@ export {
 } from "./src/kdfs/hkdf.ts";
 
 export { AEAD_USAGES } from "./src/interfaces/aeadEncryptionContext.ts";
+export { KEM_USAGES } from "./src/interfaces/dhkemPrimitives.ts";
 export { LABEL_DKP_PRK, LABEL_SK } from "./src/interfaces/dhkemPrimitives.ts";
 export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";
 export { EMPTY, INPUT_LENGTH_LIMIT, MINIMUM_PSK_LENGTH } from "./src/consts.ts";

@@ -6,6 +6,7 @@ import {
   DeriveKeyPairError,
   DeserializeError,
   EMPTY,
+  KEM_USAGES,
   LABEL_DKP_PRK,
   LABEL_SK,
   NotSupportedError,
@@ -14,8 +15,6 @@ import {
 } from "@hpke/common";
 
 const ALG_NAME = "X25519";
-// The key usages for KEM.
-const KEM_USAGES: KeyUsage[] = ["deriveBits"];
 
 function base64UrlToBytes(v: string): Uint8Array {
   const base64 = v.replace(/-/g, "+").replace(/_/g, "/");
