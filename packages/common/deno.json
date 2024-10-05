@@ -5,6 +5,7 @@
   "publish": {
     "exclude": [
       "dnt.ts",
+      "test/",
       "tsconfig.json"
     ]
   },
@@ -14,7 +15,8 @@
       "**/*.json",
       "dnt.ts",
       "mod.ts",
-      "src/"
+      "src/",
+      "test/"
     ],
     "exclude": [
       "**/*/*.js",
@@ -28,7 +30,8 @@
       "**/*.json",
       "dnt.ts",
       "mod.ts",
-      "src/"
+      "src/",
+      "test/"
     ],
     "exclude": [
       "**/*/*.js",
