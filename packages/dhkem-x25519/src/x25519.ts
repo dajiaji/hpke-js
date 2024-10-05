@@ -8,7 +8,7 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "@hpke/core";
+} from "@hpke/common";
 
 const ALG_NAME = "X25519";
 const EMPTY = new Uint8Array();

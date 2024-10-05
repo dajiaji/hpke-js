@@ -46,7 +46,3 @@ export {
   HkdfSha384,
   HkdfSha512,
 } from "./src/native.ts";
-
-// Followings are disclosed for hpke-js family modules
-export { Hybridkem } from "./src/kems/hybridkem.ts";
-export { XCryptoKey } from "./src/xCryptoKey.ts";
