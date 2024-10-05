@@ -5,21 +5,17 @@ import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 import {
   DeriveKeyPairError,
   DeserializeError,
+  EMPTY,
+  LABEL_DKP_PRK,
+  LABEL_SK,
   NotSupportedError,
   SerializeError,
   XCryptoKey,
 } from "@hpke/common";
 
 const ALG_NAME = "X448";
-const EMPTY = new Uint8Array();
 // The key usages for KEM.
 const KEM_USAGES: KeyUsage[] = ["deriveBits"];
-// b"dkp_prk" deno-fmt-ignore
-const LABEL_DKP_PRK: Uint8Array = new Uint8Array([
-  100, 107, 112, 95, 112, 114, 107,
-]);
-// b"sk"
-const LABEL_SK: Uint8Array = new Uint8Array([115, 107]);
 
 function base64UrlToBytes(v: string): Uint8Array {
   const base64 = v.replace(/-/g, "+").replace(/_/g, "/");
