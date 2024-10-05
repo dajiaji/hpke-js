@@ -99,6 +99,14 @@
     "bun-link:dhkem-x448": "cd npm/packages/dhkem-x448 && bun link",
     "bun-link:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && bun link",
     "bun-link:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && bun link",
-    "bun-link:hpke-js": "cd npm/packages/hpke-js && bun link"
+    "bun-link:hpke-js": "cd npm/packages/hpke-js && bun link",
+    "update:cloudflare": "deno task update:cloudflare:core || deno task update:cloudflare:chacha20poly1305 || deno task update:cloudflare:dhkem-x25519 || deno task update:cloudflare:dhkem-x448 || deno task update:cloudflare:dhkem-secp256k1 || deno task update:cloudflare:hybridkem-x25519-kyber768 || deno task update:cloudflare:hpke-js",
+    "update:cloudflare:core": "cd packages/core/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:dhkem-x25519": "cd packages/dhkem-x25519/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:dhkem-x448": "cd packages/dhkem-x448/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768/test/runtimes/cloudflare && npm audit fix",
+    "update:cloudflare:hpke-js": "cd packages/hpke-js/test/runtimes/cloudflare && npm audit fix"
   }
 }
