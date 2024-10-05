@@ -1,6 +1,5 @@
 {
   "imports": {
-    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^0.5.3/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.4.2/ed25519",
     "@noble/curves/ed448": "npm:@noble/curves@^1.4.2/ed448",
