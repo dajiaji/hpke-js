@@ -2,6 +2,9 @@
   "compilerOptions": {
     "module": "es2022",
     "target": "es2022",
+    "paths": {
+      "@hpke/common": ["../common/mod.ts"]
+    },
     "noEmit": true,
     "allowImportingTsExtensions": true
   },

@@ -1,0 +1,45 @@
+{
+  "name": "@hpke/common",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "exclude": [
+      "dnt.ts",
+      "tsconfig.json"
+    ]
+  },
+  "fmt": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "src/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "lint": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "src/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "tasks": {
+    "test": "deno fmt && deno lint && deno test --import-map=../../import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "dnt": "deno run --import-map=../../import_map.json -A dnt.ts",
+    "minify": "esbuild ../../npm/packages/common/esm/mod.js --bundle --format=esm --minify"
+  }
+}

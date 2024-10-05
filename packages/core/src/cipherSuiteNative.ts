@@ -1,4 +1,4 @@
-import type { AeadInterface } from "./interfaces/aeadInterface.ts";
+import type { AeadInterface } from "@hpke/common";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import type {
@@ -19,7 +19,7 @@ import {
   RecipientExporterContextImpl,
   SenderExporterContextImpl,
 } from "./exporterContext.ts";
-import { AeadId, Mode } from "./identifiers.ts";
+import { AeadId, Mode } from "@hpke/common";
 import { RecipientContextImpl } from "./recipientContext.ts";
 import { SenderContextImpl } from "./senderContext.ts";
 import { i2Osp } from "./utils/misc.ts";

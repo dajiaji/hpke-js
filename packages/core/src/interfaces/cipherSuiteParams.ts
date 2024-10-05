@@ -1,5 +1,5 @@
-import type { AeadId, KdfId, KemId } from "../identifiers.ts";
-import type { AeadInterface } from "./aeadInterface.ts";
+import type { AeadId, KdfId, KemId } from "@hpke/common";
+import type { AeadInterface } from "@hpke/common";
 import type { KdfInterface } from "./kdfInterface.ts";
 import type { KemInterface } from "./kemInterface.ts";
 

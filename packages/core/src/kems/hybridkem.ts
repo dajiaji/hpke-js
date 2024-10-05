@@ -11,7 +11,7 @@ import {
   NotSupportedError,
   SerializeError,
 } from "../errors.ts";
-import { KemId } from "../identifiers.ts";
+import { KemId } from "@hpke/common";
 import { LABEL_DKP_PRK, LABEL_SK } from "../interfaces/dhkemPrimitives.ts";
 import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
 import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";

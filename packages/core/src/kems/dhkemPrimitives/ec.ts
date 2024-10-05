@@ -9,7 +9,7 @@ import {
   NotSupportedError,
   SerializeError,
 } from "../../errors.ts";
-import { KemId } from "../../identifiers.ts";
+import { KemId } from "@hpke/common";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/dhkemPrimitives.ts";
 import { Bignum } from "../../utils/bignum.ts";
 import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";

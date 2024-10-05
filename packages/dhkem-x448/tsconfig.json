@@ -3,6 +3,7 @@
     "module": "es2022",
     "target": "es2022",
     "paths": {
+      "@hpke/common": ["../common/mod.ts"],
       "@hpke/core": ["../core/mod.ts"],
       "@noble/*": ["../../npm/node_modules/@noble/*"]
     },

@@ -2,6 +2,7 @@
   "name": "hpke-js",
   "private": true,
   "workspaces": [
+    "packages/common",
     "packages/core",
     "packages/chacha20poly1305",
     "packages/dhkem-x25519",

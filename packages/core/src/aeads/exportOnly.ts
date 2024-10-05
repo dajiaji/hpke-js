@@ -1,7 +1,7 @@
-import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
-import type { AeadInterface } from "../interfaces/aeadInterface.ts";
+import type { AeadEncryptionContext } from "@hpke/common";
+import type { AeadInterface } from "@hpke/common";
 
-import { AeadId } from "../identifiers.ts";
+import { AeadId } from "@hpke/common";
 
 import { NotSupportedError } from "../errors.ts";
 

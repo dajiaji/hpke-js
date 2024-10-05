@@ -1,4 +1,4 @@
-import type { AeadInterface } from "./aeadInterface.ts";
+import type { AeadInterface } from "@hpke/common";
 
 /**
  * The AEAD parameters for building a encryption context.

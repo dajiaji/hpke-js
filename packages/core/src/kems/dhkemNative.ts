@@ -1,4 +1,4 @@
-import { KemId } from "../identifiers.ts";
+import { KemId } from "@hpke/common";
 import {
   HkdfSha256Native,
   HkdfSha384Native,

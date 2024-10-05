@@ -1,5 +1,5 @@
-export type { AeadEncryptionContext } from "./src/interfaces/aeadEncryptionContext.ts";
-export type { AeadInterface } from "./src/interfaces/aeadInterface.ts";
+export type { AeadEncryptionContext } from "@hpke/common";
+export type { AeadInterface } from "@hpke/common";
 export type { CipherSuiteParams } from "./src/interfaces/cipherSuiteParams.ts";
 export type {
   EncryptionContext,
@@ -16,7 +16,7 @@ export type { SenderContextParams } from "./src/interfaces/senderContextParams.t
 export { Aes128Gcm, Aes256Gcm } from "./src/aeads/aesGcm.ts";
 export { ExportOnly } from "./src/aeads/exportOnly.ts";
 export * from "./src/errors.ts";
-export { AeadId, KdfId, KemId } from "./src/identifiers.ts";
+export { AeadId, KdfId, KemId } from "@hpke/common";
 
 export {
   CipherSuite,

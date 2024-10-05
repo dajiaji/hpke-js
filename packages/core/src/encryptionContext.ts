@@ -1,4 +1,4 @@
-import type { AeadInterface } from "./interfaces/aeadInterface.ts";
+import type { AeadInterface } from "@hpke/common";
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import type { KdfInterface } from "./interfaces/kdfInterface.ts";

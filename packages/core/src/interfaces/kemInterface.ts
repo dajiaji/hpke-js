@@ -1,6 +1,6 @@
 import type { RecipientContextParams } from "./recipientContextParams.ts";
 import type { SenderContextParams } from "./senderContextParams.ts";
-import type { KemId } from "../identifiers.ts";
+import type { KemId } from "@hpke/common";
 
 // b"KEM"
 export const SUITE_ID_HEADER_KEM: Uint8Array = new Uint8Array([
