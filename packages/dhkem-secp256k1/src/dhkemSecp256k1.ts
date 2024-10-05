@@ -1,4 +1,4 @@
-import { Dhkem, KemId } from "@hpke/core";
+import { Dhkem, KemId } from "@hpke/common";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
 import { Secp256k1 } from "./secp256k1.ts";

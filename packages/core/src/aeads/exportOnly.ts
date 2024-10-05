@@ -1,9 +1,5 @@
-import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
-import type { AeadInterface } from "../interfaces/aeadInterface.ts";
-
-import { AeadId } from "../identifiers.ts";
-
-import { NotSupportedError } from "../errors.ts";
+import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
+import { AeadId, NotSupportedError } from "@hpke/common";
 
 /**
  * The ExportOnly mode for HPKE AEAD implementing {@link AeadInterface}.

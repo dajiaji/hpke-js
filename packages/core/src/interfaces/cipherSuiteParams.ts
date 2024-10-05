@@ -1,7 +1,11 @@
-import type { AeadId, KdfId, KemId } from "../identifiers.ts";
-import type { AeadInterface } from "./aeadInterface.ts";
-import type { KdfInterface } from "./kdfInterface.ts";
-import type { KemInterface } from "./kemInterface.ts";
+import type {
+  AeadId,
+  AeadInterface,
+  KdfId,
+  KdfInterface,
+  KemId,
+  KemInterface,
+} from "@hpke/common";
 
 /**
  * The parameters used to configure the `CipherSuite`.

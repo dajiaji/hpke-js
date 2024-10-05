@@ -5,7 +5,7 @@ import type {
   KemInterface,
   RecipientContextParams,
   SenderContextParams,
-} from "@hpke/core";
+} from "@hpke/common";
 
 import {
   DecapError,
@@ -18,7 +18,7 @@ import {
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "@hpke/core";
+} from "@hpke/common";
 
 import { Kyber768 } from "./kyber/kyber768.ts";
 

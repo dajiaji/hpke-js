@@ -1,9 +1,5 @@
-import type { AeadEncryptionContext } from "../interfaces/aeadEncryptionContext.ts";
-import type { AeadInterface } from "../interfaces/aeadInterface.ts";
-
-import { NativeAlgorithm } from "../algorithm.ts";
-import { AeadId } from "../identifiers.ts";
-import { AEAD_USAGES } from "../interfaces/aeadEncryptionContext.ts";
+import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
+import { AEAD_USAGES, AeadId, NativeAlgorithm } from "@hpke/common";
 
 export class AesGcmContext extends NativeAlgorithm
   implements AeadEncryptionContext {

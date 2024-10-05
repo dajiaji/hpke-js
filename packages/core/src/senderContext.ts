@@ -1,9 +1,8 @@
+import type { KdfInterface } from "@hpke/common";
+import { EMPTY, SealError } from "@hpke/common";
+
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
-import type { KdfInterface } from "./interfaces/kdfInterface.ts";
-
-import { EMPTY } from "./consts.ts";
-import { SealError } from "./errors.ts";
 import { EncryptionContextImpl } from "./encryptionContext.ts";
 
 export class SenderContextImpl extends EncryptionContextImpl

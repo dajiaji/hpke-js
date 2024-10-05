@@ -1,4 +1,4 @@
-import { KemId } from "../src/identifiers.ts";
+import { KemId } from "@hpke/common";
 
 // deno-lint-ignore no-explicit-any
 export const isNode = () => (globalThis as any).process?.versions?.node != null;

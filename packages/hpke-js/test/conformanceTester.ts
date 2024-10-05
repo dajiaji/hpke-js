@@ -1,6 +1,6 @@
 import { assertEquals, assertRejects } from "@std/assert";
 
-import type { PreSharedKey, XCryptoKey } from "@hpke/core";
+import type { PreSharedKey, XCryptoKey } from "@hpke/common";
 
 import {
   AeadId,
@@ -9,7 +9,7 @@ import {
   KdfId,
   KemId,
   NotSupportedError,
-} from "@hpke/core";
+} from "@hpke/common";
 
 import type { TestVector } from "./testVector.ts";
 

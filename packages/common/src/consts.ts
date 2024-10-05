@@ -5,4 +5,4 @@ export const INPUT_LENGTH_LIMIT = 8192;
 export const MINIMUM_PSK_LENGTH = 32;
 
 // b""
-export const EMPTY = new Uint8Array(0);
+export const EMPTY: Uint8Array = new Uint8Array(0);

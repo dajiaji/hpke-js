@@ -1,4 +1,4 @@
-import type { AeadEncryptionContext } from "./aeadEncryptionContext.ts";
+import type { AeadEncryptionContext } from "@hpke/common";
 
 export interface KeyInfo {
   key: AeadEncryptionContext;

@@ -1,4 +1,4 @@
-import { Dhkem, Ec, KemId } from "@hpke/core";
+import { Dhkem, Ec, KemId } from "@hpke/common";
 import { HkdfSha384 } from "../kdfs/hkdfSha384.ts";
 
 export class DhkemP384HkdfSha384 extends Dhkem {

@@ -1,5 +1,5 @@
-import { EMPTY } from "./consts.ts";
-import { OpenError } from "./errors.ts";
+import { EMPTY, OpenError } from "@hpke/common";
+
 import { EncryptionContextImpl } from "./encryptionContext.ts";
 
 export class RecipientContextImpl extends EncryptionContextImpl {

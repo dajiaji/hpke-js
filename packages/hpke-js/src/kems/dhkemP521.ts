@@ -1,4 +1,4 @@
-import { Dhkem, Ec, KemId } from "@hpke/core";
+import { Dhkem, Ec, KemId } from "@hpke/common";
 
 import { HkdfSha512 } from "@hpke/dhkem-x448";
 

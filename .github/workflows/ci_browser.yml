@@ -45,6 +45,16 @@ jobs:
           cp -rf ../hybridkem-x25519-kyber768/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/hybridkem-x25519-kyber768
           mkdir test/runtimes/browsers/pages/dhkem-secp256k1
           cp -rf ../dhkem-secp256k1/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-secp256k1
+      - name: Build docs for @hpke/common
+        working-directory: ./packages/common
+        run: |
+          npx typedoc --name "@hpke/common" --out ../hpke-js/test/runtimes/browsers/pages/common/docs mod.ts
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/core/src/hpke-common.js
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x25519/src/hpke-common.js
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/src/hpke-common.js
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/chacha20poly1305/src/hpke-common.js
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-common.js
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-common.js
       - name: Build docs for @hpke/core
         working-directory: ./packages/core
         run: |

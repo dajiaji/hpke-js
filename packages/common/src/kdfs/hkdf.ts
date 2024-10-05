@@ -1,9 +1,9 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
-import { NativeAlgorithm } from "../algorithm.ts";
 import { EMPTY } from "../consts.ts";
 import { InvalidParamError } from "../errors.ts";
 import { KdfId } from "../identifiers.ts";
+import { NativeAlgorithm } from "../algorithm.ts";
 
 // b"HPKE-v1"
 const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);

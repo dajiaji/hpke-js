@@ -1,25 +1,20 @@
 import { secp256k1 } from "@noble/curves/secp256k1";
 
-import type { DhkemPrimitives, KdfInterface } from "@hpke/core";
+import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
 import {
   DeriveKeyPairError,
   DeserializeError,
+  EMPTY,
+  KEM_USAGES,
+  LABEL_DKP_PRK,
+  LABEL_SK,
   NotSupportedError,
   SerializeError,
   XCryptoKey,
-} from "@hpke/core";
+} from "@hpke/common";
 
 const ALG_NAME = "ECDH";
-const EMPTY = new Uint8Array();
-// The key usages for KEM.
-const KEM_USAGES: KeyUsage[] = ["deriveBits"];
-// b"dkp_prk" deno-fmt-ignore
-const LABEL_DKP_PRK: Uint8Array = new Uint8Array([
-  100, 107, 112, 95, 112, 114, 107,
-]);
-// b"sk"
-const LABEL_SK: Uint8Array = new Uint8Array([115, 107]);
 
 export class Secp256k1 implements DhkemPrimitives {
   private _hkdf: KdfInterface;
