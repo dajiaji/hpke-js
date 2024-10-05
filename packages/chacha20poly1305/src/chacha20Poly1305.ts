@@ -1,7 +1,7 @@
 import { chacha20poly1305 } from "@noble/ciphers/chacha";
 
-import type { AeadEncryptionContext, AeadInterface } from "@hpke/core";
-import { AeadId } from "@hpke/core";
+import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
+import { AeadId } from "@hpke/common";
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;
