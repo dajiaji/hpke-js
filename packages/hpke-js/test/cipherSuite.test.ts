@@ -1,6 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { hexToBytes, isNode } from "@hpke/common";
 import {
   AeadId,
   DeserializeError,
@@ -9,9 +10,7 @@ import {
   KemId,
 } from "@hpke/core";
 
-import { CipherSuite } from "../src/cipherSuite.ts";
-import { hexToBytes } from "../../core/test/utils.ts";
-import { isNode } from "./utils.ts";
+import { CipherSuite } from "../mod.ts";
 
 describe("constructor", () => {
   // RFC9180 A.1.

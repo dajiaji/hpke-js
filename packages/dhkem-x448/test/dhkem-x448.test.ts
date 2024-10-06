@@ -1,6 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { loadCrypto } from "@hpke/common";
 import {
   AeadId,
   Aes128Gcm,
@@ -10,7 +11,7 @@ import {
   KdfId,
   KemId,
 } from "@hpke/core";
-import { loadCrypto } from "../../core/test/utils.ts";
+
 import { DhkemX448HkdfSha512 } from "../mod.ts";
 
 describe("DhkemX448HkdfSha512", () => {

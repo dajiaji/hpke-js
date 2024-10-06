@@ -29,4 +29,14 @@ export { LABEL_DKP_PRK, LABEL_SK } from "./src/interfaces/dhkemPrimitives.ts";
 export { SUITE_ID_HEADER_KEM } from "./src/interfaces/kemInterface.ts";
 export { EMPTY, INPUT_LENGTH_LIMIT, MINIMUM_PSK_LENGTH } from "./src/consts.ts";
 
-export { concat, i2Osp, isCryptoKeyPair, xor } from "./src/utils/misc.ts";
+export {
+  concat,
+  hexToBytes,
+  i2Osp,
+  isCryptoKeyPair,
+  isNode,
+  kemToKeyGenAlgorithm,
+  loadCrypto,
+  loadSubtleCrypto,
+  xor,
+} from "./src/utils/misc.ts";

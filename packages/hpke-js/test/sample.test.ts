@@ -1,6 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { concat, isNode, loadCrypto } from "@hpke/common";
 import { AeadId, Aes128Gcm, KdfId, KemId, NotSupportedError } from "@hpke/core";
 import { DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/dhkem-x25519";
 import { DhkemX448HkdfSha512, HkdfSha512 } from "@hpke/dhkem-x448";
@@ -10,9 +11,6 @@ import { DhkemP256HkdfSha256 } from "../src/kems/dhkemP256.ts";
 import { DhkemP384HkdfSha384 } from "../src/kems/dhkemP384.ts";
 import { DhkemP521HkdfSha512 } from "../src/kems/dhkemP521.ts";
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-
-import { concat, loadCrypto } from "../../core/test/utils.ts";
-import { isNode } from "./utils.ts";
 
 describe("README examples", () => {
   describe("Base mode with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {

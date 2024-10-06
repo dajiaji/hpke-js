@@ -1,25 +1,20 @@
 import { assertEquals, assertRejects } from "@std/assert";
 
 import type { PreSharedKey, XCryptoKey } from "@hpke/common";
-
 import {
   AeadId,
   DecapError,
   DeserializeError,
+  hexToBytes,
   KdfId,
   KemId,
-  NotSupportedError,
-} from "@hpke/common";
-
-import type { TestVector } from "./testVector.ts";
-
-import { CipherSuite } from "../src/cipherSuite.ts";
-
-import {
-  hexToBytes,
   kemToKeyGenAlgorithm,
   loadSubtleCrypto,
-} from "../../core/test/utils.ts";
+  NotSupportedError,
+} from "@hpke/common";
+import type { TestVector } from "./testVector.ts";
+
+import { CipherSuite } from "../mod.ts";
 
 export class ConformanceTester {
   protected _api: SubtleCrypto;

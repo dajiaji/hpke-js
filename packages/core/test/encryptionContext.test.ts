@@ -1,23 +1,107 @@
-import { assertRejects } from "@std/assert";
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import { i2Osp, loadSubtleCrypto } from "@hpke/common";
 
 import {
+  AeadId,
   Aes128Gcm,
   CipherSuite,
   DecapError,
-  DeserializeError,
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   EncapError,
   ExportError,
+  ExportOnly,
   HkdfSha256,
   HkdfSha384,
   InvalidParamError,
+  KdfId,
+  KemId,
   NotSupportedError,
   OpenError,
-} from "@hpke/core";
+} from "../mod.ts";
+import { EncryptionContextImpl } from "../src/encryptionContext.ts";
+
+// deno-fmt-ignore
+const SUITE_ID_HEADER_HPKE = new Uint8Array([
+  72, 80, 75, 69, 0, 0, 0, 0, 0, 0,
+]);
+const DUMMY_BYTES_12 = new Uint8Array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+const DUMMY_BYTES_16 = new Uint8Array(
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+);
+
+describe("constructor", () => {
+  describe("with valid parameters", () => {
+    it("should return a proper instance", async () => {
+      const api = await loadSubtleCrypto();
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
+      const kdf = new HkdfSha256();
+      kdf.init(suiteId);
+
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
+      const seq = 0;
+
+      const params = {
+        aead: new Aes128Gcm(),
+        nK: 16,
+        nN: 12,
+        nT: 16,
+        exporterSecret: DUMMY_BYTES_16.buffer,
+        key: key,
+        baseNonce: baseNonce,
+        seq: seq,
+      };
+
+      // assert
+      assertEquals(
+        typeof new EncryptionContextImpl(api, kdf, params),
+        "object",
+      );
+    });
+  });
+
+  describe("with invalid aead id", () => {
+    it("should throw Error", async () => {
+      const api = await loadSubtleCrypto();
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
+      const kdf = new HkdfSha256();
+      kdf.init(suiteId);
+
+      const key = DUMMY_BYTES_16.buffer;
+      const baseNonce = DUMMY_BYTES_12;
+      const seq = 0;
+
+      const params = {
+        aead: new ExportOnly(), // invalid
+        nK: 16,
+        nN: 12,
+        nT: 16,
+        exporterSecret: DUMMY_BYTES_16.buffer,
+        key: key,
+        baseNonce: baseNonce,
+        seq: seq,
+      };
+
+      // assert
+      assertThrows(
+        () => {
+          new EncryptionContextImpl(api, kdf, params);
+        },
+        Error,
+        "Export only",
+      );
+    });
+  });
+});
 
 describe("open", () => {
   describe("by sender", () => {
@@ -231,72 +315,6 @@ describe("createSenderContext", () => {
 });
 
 describe("createRecipientContext", () => {
-  describe("with invalid enc", () => {
-    it("should throw DeserializeError", async () => {
-      const suite = new CipherSuite({
-        kem: new DhkemP256HkdfSha256(),
-        kdf: new HkdfSha256(),
-        aead: new Aes128Gcm(),
-      });
-
-      const suiteX = new CipherSuite({
-        kem: new DhkemX25519HkdfSha256(),
-        kdf: new HkdfSha256(),
-        aead: new Aes128Gcm(),
-      });
-
-      const rkp = await suite.kem.generateKeyPair();
-      const rkpX = await suiteX.kem.generateKeyPair();
-
-      const senderX = await suiteX.createSenderContext({
-        recipientPublicKey: rkpX.publicKey,
-      });
-
-      // assert
-      await assertRejects(
-        () =>
-          suite.createRecipientContext({
-            recipientKey: rkp,
-            enc: senderX.enc,
-          }),
-        DeserializeError,
-      );
-    });
-  });
-
-  describe("with invalid enc (X25519)", () => {
-    it("should throw DeserializeError", async () => {
-      const suite = new CipherSuite({
-        kem: new DhkemX25519HkdfSha256(),
-        kdf: new HkdfSha256(),
-        aead: new Aes128Gcm(),
-      });
-
-      const suiteX = new CipherSuite({
-        kem: new DhkemP256HkdfSha256(),
-        kdf: new HkdfSha256(),
-        aead: new Aes128Gcm(),
-      });
-
-      const rkp = await suite.kem.generateKeyPair();
-      const rkpX = await suiteX.kem.generateKeyPair();
-
-      const senderX = await suiteX.createSenderContext({
-        recipientPublicKey: rkpX.publicKey,
-      });
-
-      // assert
-      await assertRejects(
-        () =>
-          suite.createRecipientContext({
-            recipientKey: rkp,
-            enc: senderX.enc,
-          }),
-        DeserializeError,
-      );
-    });
-  });
-
   describe("with invalid recipientKey", () => {
     it("should throw DecapError", async () => {
       // setup
@@ -330,4 +348,79 @@ describe("createRecipientContext", () => {
       );
     });
   });
+
+  describe("without key info", () => {
+    it("should throw Error", async () => {
+      const api = await loadSubtleCrypto();
+      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
+      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
+      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
+      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
+      const kdf = new HkdfSha256();
+      kdf.init(suiteId);
+      const params = {
+        aead: new Aes128Gcm(),
+        nK: 16,
+        nN: 12,
+        nT: 16,
+        exporterSecret: new Uint8Array([
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+        ]),
+      };
+
+      // assert
+      assertThrows(
+        () => {
+          new EncryptionContextImpl(api, kdf, params);
+        },
+        Error,
+        "Required parameters are missing",
+      );
+    });
+  });
 });
+
+// describe('incrementSeq reaches upper limit', () => {
+//   it('should throw Error', async () => {
+//     const api = await loadSubtleCrypto();
+//     const kdf = new KdfContext(api, {
+//       kem: KemId.DhkemP256HkdfSha256,
+//       kdf: KdfId.HkdfSha256,
+//       aead: AeadId.Aes128Gcm,
+//     });
+
+//     const key = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer;
+//     const baseNonce = new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1]);
+//     const seq = Number.MAX_SAFE_INTEGER;
+
+//     const params = {
+//       aead: AeadId.Aes128Gcm,
+//       nK: 16,
+//       nN: 12,
+//       nT: 16,
+//       exporterSecret: new Uint8Array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).buffer,
+//       key: key,
+//       baseNonce: baseNonce,
+//       seq: seq,
+//     };
+//     const ec = new EncryptionContext(api, kdf, params);
+//     let ki = { key: createEncryptionContext(AeadId.Aes128Gcm, key, api), baseNonce: baseNonce, seq: seq };
+//     ec.incrementSeq(ki);
+//     assertThrows(() => { ec.incrementSeq(ki); }, MessageLimitReachedError, 'Message limit reached');
+//   });
+// });
