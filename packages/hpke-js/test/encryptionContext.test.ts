@@ -1,8 +1,6 @@
 import { assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-
 import {
   Aes128Gcm,
   CipherSuite,
@@ -18,6 +16,7 @@ import {
   NotSupportedError,
   OpenError,
 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
 
 describe("open", () => {
   describe("by sender", () => {
