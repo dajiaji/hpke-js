@@ -7,6 +7,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
@@ -20,6 +23,9 @@ jobs:
 
   publish-common:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,12 +42,16 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/common
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-core:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs: publish-common
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -58,12 +68,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/core
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-chacha20poly1305:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -81,12 +94,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/chacha20poly1305
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-dhkem-x25519:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -104,12 +120,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-x25519
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-dhkem-x448:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -127,12 +146,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-x448
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-hybridkem-x25519-kyber768:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
@@ -150,12 +172,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/hybridkem-x25519-kyber768
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-dhkem-secp256k1:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
@@ -173,12 +198,15 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-secp256k1
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
   publish-hpke-js:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: [publish-chacha20poly1305, publish-dhkem-x25519, publish-dhkem-x448]
     steps:
       - uses: actions/checkout@v4
@@ -196,6 +224,6 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/hpke-js
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
