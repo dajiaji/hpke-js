@@ -1,6 +1,8 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { hexToBytes, isNode } from "@hpke/common";
+
 import {
   AeadId,
   Aes128Gcm,
@@ -18,8 +20,6 @@ import {
   KdfId,
   KemId,
 } from "../mod.ts";
-
-import { hexToBytes, isNode } from "./utils.ts";
 
 describe("constructor", () => {
   describe("with DhkemP384HkdfSha384/HkdfSha384/Aes128Gcm", () => {
