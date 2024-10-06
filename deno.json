@@ -44,7 +44,7 @@
     ]
   },
   "tasks": {
-    "test:all": "deno task test && deno task test:cloudflare",
+    "test:all": "deno task test && deno task test:cloudflare && deno task test:bun",
     "test": "deno fmt && deno lint && deno test --import-map=./import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:common": "cd packages/common && deno task test",
     "test:core": "cd packages/core && deno task test",
@@ -62,6 +62,14 @@
     "test:cloudflare:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task test:cloudflare",
     "test:cloudflare:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task test:cloudflare",
     "test:cloudflare:hpke-js": "cd packages/hpke-js && deno task test:cloudflare",
+    "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x25519-kyber768 && deno task test:bun:hpke-js",
+    "test:bun:core": "cd packages/core && deno task test:bun",
+    "test:bun:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test:bun",
+    "test:bun:dhkem-x25519": "cd packages/dhkem-x25519 && deno task test:bun",
+    "test:bun:dhkem-x448": "cd packages/dhkem-x448 && deno task test:bun",
+    "test:bun:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task test:bun",
+    "test:bun:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task test:bun",
+    "test:bun:hpke-js": "cd packages/hpke-js && deno task test:bun",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "npm": "deno task dnt && deno task npm-link && deno task npm-pack",
     "dnt": "deno task dnt:common && deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",

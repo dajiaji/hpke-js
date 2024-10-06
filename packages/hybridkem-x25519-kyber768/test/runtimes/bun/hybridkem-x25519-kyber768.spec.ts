@@ -1,17 +1,75 @@
-import { assertEquals } from "@std/assert";
-import { describe, it } from "@std/testing/bdd";
+import { expect, test } from "bun:test";
 
-describe("Bun", () => {
-  describe("GET /test", () => {
-    it("should return ok", async () => {
-      for (const kdf of ["0x0001", "0x0002", "0x0003"]) {
-        for (const aead of ["0x0001", "0x0002"]) {
-          const res = await fetch(
-            `http://localhost:3006/test?kdf=${kdf}&aead=${aead}`,
-          );
-          assertEquals("ok", await res.text());
-        }
+import type { AeadInterface, KdfInterface } from "@hpke/core";
+
+import {
+  AeadId,
+  Aes128Gcm,
+  Aes256Gcm,
+  CipherSuite,
+  ExportOnly,
+  HkdfSha256,
+  HkdfSha384,
+  HkdfSha512,
+  KdfId,
+} from "@hpke/core";
+
+import { HybridkemX25519Kyber768 } from "@hpke/hybridkem-x25519-kyber768";
+
+function createKdf(id: number): KdfInterface {
+  switch (id) {
+    case KdfId.HkdfSha256:
+      return new HkdfSha256();
+    case KdfId.HkdfSha384:
+      return new HkdfSha384();
+    case KdfId.HkdfSha512:
+      return new HkdfSha512();
+    default:
+      break;
+  }
+  throw new Error("ng: invalid kdf");
+}
+
+function createAead(id: number): AeadInterface {
+  switch (id) {
+    case AeadId.Aes128Gcm:
+      return new Aes128Gcm();
+    case AeadId.Aes256Gcm:
+      return new Aes256Gcm();
+    // case AeadId.Chacha20Poly1305:
+    //   return new Chacha20Poly1305();
+    case AeadId.ExportOnly:
+      return new ExportOnly();
+    default:
+      break;
+  }
+  throw new Error("ng: invalid aead");
+}
+
+test("bun - normal cases", async () => {
+  const kem = new HybridkemX25519Kyber768();
+  for (const kdf of [0x0001, 0x0002, 0x0003]) {
+    for (const aead of [0x0001, 0x0002]) {
+      try {
+        const suite = new CipherSuite({
+          kem: kem,
+          kdf: createKdf(kdf),
+          aead: createAead(aead),
+        });
+        const rkp = await suite.kem.generateKeyPair();
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey,
+        });
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp,
+          enc: sender.enc,
+        });
+        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
+        const pt = await recipient.open(ct);
+        expect(new TextDecoder().decode(pt)).toBe("hello world!");
+      } catch (e: unknown) {
+        expect().fail("ng: " + (e as Error).message);
       }
-    });
-  });
+    }
+  }
 });
