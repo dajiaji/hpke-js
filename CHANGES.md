@@ -1,5 +1,29 @@
 # Changes
 
+## Version 1.4.0
+
+Released 2024-10-06
+
+- [(#409) Refine publish workflow.](https://github.com/dajiaji/hpke-js/pull/409)
+- [(#407) Refine deno task test:all.](https://github.com/dajiaji/hpke-js/pull/407)
+- [(#406) Merge test utils to @hpke/common.](https://github.com/dajiaji/hpke-js/pull/406)
+- [(#405) Update bun test.](https://github.com/dajiaji/hpke-js/pull/405)
+- [(#403) Add deno task update.](https://github.com/dajiaji/hpke-js/pull/403)
+- [(#401) Refine import_map.](https://github.com/dajiaji/hpke-js/pull/401)
+- [(#400) Introduce @hpke/common as an internal-use module.](https://github.com/dajiaji/hpke-js/pull/400)
+- [(#399) Add testPattern.](https://github.com/dajiaji/hpke-js/pull/399)
+- [(#398) Apply npm audit fix.](https://github.com/dajiaji/hpke-js/pull/398)
+- [(#388) Separate the import-map for Dnt from the top-level import-map.](https://github.com/dajiaji/hpke-js/pull/388)
+- [(#386) Add deno task test:cloudflare.](https://github.com/dajiaji/hpke-js/pull/386)
+- [(#385) Refine dependencies.](https://github.com/dajiaji/hpke-js/pull/385)
+- [(#384) Add getPath.](https://github.com/dajiaji/hpke-js/pull/384)
+- [(#383) Rename npm-packages/x to npm/packages.](https://github.com/dajiaji/hpke-js/pull/383)
+- [(#382) Rename x to packages.](https://github.com/dajiaji/hpke-js/pull/382)
+- [(#381) Update samples for node.](https://github.com/dajiaji/hpke-js/pull/381)
+- Update devDependencies:
+  - [(#397) Bump vite to 5.4.8.](https://github.com/dajiaji/hpke-js/pull/397)
+  - [(#395) Bump rollup to 4.22.4.](https://github.com/dajiaji/hpke-js/pull/395)
+
 ## Version 1.3.1
 
 Released 2024-09-01

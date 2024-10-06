@@ -1,6 +1,6 @@
 {
   "name": "@hpke/common",
-  "version": "0.6.0",
+  "version": "1.4.0",
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
