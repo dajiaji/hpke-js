@@ -1,26 +1,26 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { i2Osp, loadSubtleCrypto } from "@hpke/common";
 import {
   AeadId,
+  Aes128Gcm,
   DecapError,
   DeserializeError,
   EncapError,
   ExportError,
-  i2Osp,
+  ExportOnly,
   InvalidParamError,
   KdfId,
   KemId,
   NotSupportedError,
   OpenError,
-} from "@hpke/common";
-
-import { Aes128Gcm, ExportOnly } from "@hpke/core";
+} from "@hpke/core";
 import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
+import { CipherSuite } from "../mod.ts";
+
 import { EncryptionContextImpl } from "../../core/src/encryptionContext.ts";
-import { CipherSuite } from "../src/cipherSuite.ts";
-import { loadSubtleCrypto } from "../../core/test/utils.ts";
 
 // deno-fmt-ignore
 const SUITE_ID_HEADER_HPKE = new Uint8Array([

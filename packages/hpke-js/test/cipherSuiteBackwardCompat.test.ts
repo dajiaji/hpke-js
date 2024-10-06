@@ -1,6 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { concat, hexToBytes, isNode, loadCrypto } from "@hpke/common";
 import {
   DeserializeError,
   InvalidParamError,
@@ -8,12 +9,7 @@ import {
 } from "@hpke/core";
 
 import { Aead, Kdf, Kem } from "../mod.ts"; // deprecated identifiers as the test target.
-
-import { CipherSuite } from "../src/cipherSuite.ts";
-
-import { concat, hexToBytes, loadCrypto } from "../../core/test/utils.ts";
-
-import { isNode } from "./utils.ts";
+import { CipherSuite } from "../mod.ts";
 
 describe("CipherSuite(backward-compat)", () => {
   // RFC9180 A.1.
