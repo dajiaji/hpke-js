@@ -5,7 +5,7 @@ on:
     types: [created]
 
 jobs:
-  publish:
+  publish-to-jsr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,7 +21,7 @@ jobs:
       - name: Run deno publish
         run: npx jsr publish
 
-  publish-common:
+  publish-to-npm:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -35,194 +35,46 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/common
+      - name: Run deno task npm
         run: |
           npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+          deno task npm
+      - name: Publish @hpke/common to npm
         working-directory: ./npm/packages/common
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-core:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-common
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/core
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/core to npm
         working-directory: ./npm/packages/core
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-chacha20poly1305:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-core
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/chacha20poly1305
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/chacha20poly1305 to npm
         working-directory: ./npm/packages/chacha20poly1305
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-dhkem-x25519:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-core
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/dhkem-x25519
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/dhkem-x25519 to npm
         working-directory: ./npm/packages/dhkem-x25519
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-dhkem-x448:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-core
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/dhkem-x448
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/dhkem-x448 to npm
         working-directory: ./npm/packages/dhkem-x448
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-hybridkem-x25519-kyber768:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-dhkem-x25519
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/hybridkem-x25519-kyber768
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/hybridkem-x25519-kyber768 to npm
         working-directory: ./npm/packages/hybridkem-x25519-kyber768
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-dhkem-secp256k1:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: publish-dhkem-x25519
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/dhkem-secp256k1
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish @hpke/dhkem-secp256k1 to npm
         working-directory: ./npm/packages/dhkem-secp256k1
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-  publish-hpke-js:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs: [publish-chacha20poly1305, publish-dhkem-x25519, publish-dhkem-x448]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
-      - name: Run dnt
-        working-directory: ./packages/hpke-js
-        run: |
-          npm install -g esbuild
-          deno task dnt
-      - name: Publish to npm
+      - name: Publish hpke-js to npm
         working-directory: ./npm/packages/hpke-js
         run: npm publish --provenance
         env:
