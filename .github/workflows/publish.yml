@@ -7,6 +7,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
@@ -20,6 +23,9 @@ jobs:
 
   publish-common:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -42,6 +48,10 @@ jobs:
 
   publish-core:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs: publish-common
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,6 +74,9 @@ jobs:
 
   publish-chacha20poly1305:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -87,6 +100,9 @@ jobs:
 
   publish-dhkem-x25519:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -110,6 +126,9 @@ jobs:
 
   publish-dhkem-x448:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-core
     steps:
       - uses: actions/checkout@v4
@@ -133,6 +152,9 @@ jobs:
 
   publish-hybridkem-x25519-kyber768:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
@@ -156,6 +178,9 @@ jobs:
 
   publish-dhkem-secp256k1:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: publish-dhkem-x25519
     steps:
       - uses: actions/checkout@v4
@@ -179,6 +204,9 @@ jobs:
 
   publish-hpke-js:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: [publish-chacha20poly1305, publish-dhkem-x25519, publish-dhkem-x448]
     steps:
       - uses: actions/checkout@v4
