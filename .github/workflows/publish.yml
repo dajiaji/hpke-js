@@ -42,7 +42,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/common
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -68,7 +68,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/core
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -94,7 +94,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/chacha20poly1305
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -120,7 +120,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-x25519
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -146,7 +146,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-x448
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -172,7 +172,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/hybridkem-x25519-kyber768
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -198,7 +198,7 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/dhkem-secp256k1
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -224,6 +224,6 @@ jobs:
           deno task dnt
       - name: Publish to npm
         working-directory: ./npm/packages/hpke-js
-        run: npm publish
+        run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
