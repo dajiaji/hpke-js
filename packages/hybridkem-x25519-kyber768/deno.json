@@ -1,6 +1,6 @@
 {
   "name": "@hpke/hybridkem-x25519-kyber768",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "exports": "./mod.ts",
   "imports": {
     "@noble/hashes": "npm:@noble/hashes@^1.4.0"
