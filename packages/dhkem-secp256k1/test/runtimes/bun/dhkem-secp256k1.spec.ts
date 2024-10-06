@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test";
 
+import type { AeadInterface, KdfInterface } from "@hpke/core";
+
 import {
   AeadId,
-  AeadInterface,
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
@@ -11,7 +12,6 @@ import {
   HkdfSha384,
   HkdfSha512,
   KdfId,
-  KdfInterface,
 } from "@hpke/core";
 
 import { DhkemSecp256k1HkdfSha256 } from "@hpke/dhkem-secp256k1";

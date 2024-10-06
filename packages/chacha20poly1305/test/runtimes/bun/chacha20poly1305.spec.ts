@@ -1,5 +1,7 @@
 import { expect, test } from "bun:test";
 
+import type { KdfInterface, KemInterface } from "@hpke/core";
+
 import {
   // AeadId,
   // Aes128Gcm,
@@ -13,9 +15,7 @@ import {
   HkdfSha384,
   HkdfSha512,
   KdfId,
-  KdfInterface,
   KemId,
-  KemInterface,
 } from "@hpke/core";
 
 import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";

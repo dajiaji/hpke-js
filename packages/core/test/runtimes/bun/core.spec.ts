@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test";
 
+import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/core";
+
 import {
   AeadId,
-  AeadInterface,
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
@@ -14,9 +15,7 @@ import {
   HkdfSha384,
   HkdfSha512,
   KdfId,
-  KdfInterface,
   KemId,
-  KemInterface,
 } from "@hpke/core";
 
 function createKem(id: number): KemInterface {
@@ -81,7 +80,9 @@ test("bun - normal cases", async () => {
             recipientKey: rkp,
             enc: sender.enc,
           });
-          const ct = await sender.seal(new TextEncoder().encode("hello world!"));
+          const ct = await sender.seal(
+            new TextEncoder().encode("hello world!"),
+          );
           const pt = await recipient.open(ct);
           expect(new TextDecoder().decode(pt)).toBe("hello world!");
         } catch (e: unknown) {

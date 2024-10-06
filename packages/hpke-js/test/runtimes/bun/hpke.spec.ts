@@ -16,7 +16,9 @@ test("bun - normal cases", async () => {
             recipientKey: rkp,
             enc: sender.enc,
           });
-          const ct = await sender.seal(new TextEncoder().encode("hello world!"));
+          const ct = await sender.seal(
+            new TextEncoder().encode("hello world!"),
+          );
           const pt = await recipient.open(ct);
           expect(new TextDecoder().decode(pt)).toBe("hello world!");
         } catch (e: unknown) {
