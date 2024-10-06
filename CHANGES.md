@@ -1,5 +1,17 @@
 # Changes
 
+## Version 1.4.2
+
+Released 2024-10-06
+
+- [(#412) Refine publish workflow for npm packages.](https://github.com/dajiaji/hpke-js/pull/412)
+- [(#412) Add @hpke modules to import_map for dnt.](https://github.com/dajiaji/hpke-js/pull/412)
+- [(#412) Use npm/import_map for dnt.](https://github.com/dajiaji/hpke-js/pull/412)
+
+## Version 1.4.1
+
+Reverted to 1.3.1 2024-10-06
+
 ## Version 1.4.0
 
 Released 2024-10-06
