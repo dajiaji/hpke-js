@@ -62,7 +62,3 @@ await build({
 // post build steps
 Deno.copyFileSync("LICENSE", "../../npm/packages/common/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/common/README.md");
-await emptyDir("../../npm/packages/common/esm/deps");
-await emptyDir("../../npm/packages/common/esm/test");
-await emptyDir("../../npm/packages/common/script/deps");
-await emptyDir("../../npm/packages/common/script/test");
