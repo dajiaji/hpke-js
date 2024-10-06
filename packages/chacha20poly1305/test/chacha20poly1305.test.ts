@@ -1,6 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
+import { loadCrypto } from "@hpke/common";
 import {
   AeadId,
   CipherSuite,
@@ -8,7 +9,6 @@ import {
   HkdfSha256,
 } from "@hpke/core";
 
-import { loadCrypto } from "../../core/test/utils.ts";
 import { Chacha20Poly1305 } from "../mod.ts";
 
 describe("Chacha20Poly1305", () => {
