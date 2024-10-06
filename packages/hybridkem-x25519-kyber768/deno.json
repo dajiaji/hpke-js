@@ -51,6 +51,6 @@
     "test:bun": "cd test/runtimes/bun && bun install && bun test",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
-    "minify": "esbuild ../../npm/packages/hybridkem-x25519-kyber768/esm/hybridkem-x25519-kyber768/mod.js --bundle --format=esm --minify"
+    "minify": "esbuild ../../npm/packages/hybridkem-x25519-kyber768/esm/mod.js --bundle --format=esm --minify"
   }
 }
