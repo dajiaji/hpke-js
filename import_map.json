@@ -1,5 +1,10 @@
 {
   "imports": {
+    "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.4.1",
+    "@hpke/common": "npm:@hpke/common@^1.4.1",
+    "@hpke/core": "npm:@hpke/core@^1.4.1",
+    "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.4.1",
+    "@hpke/dhkem-x448": "npm:@hpke/dhkem-x448@^1.4.1",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^0.5.3/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.4.2/ed25519",
     "@noble/curves/ed448": "npm:@noble/curves@^1.4.2/ed448",
