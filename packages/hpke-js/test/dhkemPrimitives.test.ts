@@ -1,12 +1,11 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DeserializeError, Ec, KemId } from "@hpke/common";
+import { DeserializeError, Ec, isNode, KemId } from "@hpke/common";
 import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
 
 import { HkdfSha384 } from "../src/kdfs/hkdfSha384.ts";
-import { isNode } from "./utils.ts";
 
 describe("derivePublicKey", () => {
   describe("with valid parameters", () => {
