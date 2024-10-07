@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
+import { isNode } from "@hpke/common";
+
 import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { getPath, isNode } from "./utils.ts";
+import { getPath } from "./utils.ts";
 
 describe("EC key validation", () => {
   let totalCount: number;

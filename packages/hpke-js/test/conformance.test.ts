@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
+import { isNode } from "@hpke/common";
+
 import type { ConformanceTester } from "./conformanceTester.ts";
 import type { TestVector } from "./testVector.ts";
 
 import { createConformanceTester } from "./conformanceTester.ts";
-import { getPath, isNode } from "./utils.ts";
+import { getPath } from "./utils.ts";
 
 describe("RFC9180 conformance", () => {
   let testVectors: TestVector[];
