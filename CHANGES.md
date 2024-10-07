@@ -1,5 +1,15 @@
 # Changes
 
+## Version 1.4.3
+
+Released 2024-10-07
+
+- [(#417) Use @hpke/common for HkdfSha384.](https://github.com/dajiaji/hpke-js/pull/417)
+- [(#416) Remove duplicated isNode.](https://github.com/dajiaji/hpke-js/pull/416)
+- [(#415) Fix import-map path.](https://github.com/dajiaji/hpke-js/pull/415)
+- [(#414) Add deno task sample:deno.](https://github.com/dajiaji/hpke-js/pull/414)
+- [(#413) Add deno task sample:node.](https://github.com/dajiaji/hpke-js/pull/413)
+
 ## Version 1.4.2
 
 Released 2024-10-06
