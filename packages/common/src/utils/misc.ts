@@ -1,7 +1,5 @@
 import { KemId } from "../identifiers.ts";
 
-declare const Deno: undefined;
-
 export const isNode = (): boolean =>
   // deno-lint-ignore no-explicit-any
   (globalThis as any).process?.versions?.node != null;
