@@ -37,6 +37,7 @@
   "test": {
     "exclude": [
       "npm/",
+      "**/*.md",
       "**/*/*.js",
       "**/*/npm/",
       "**/*/.wrangler/",
@@ -45,7 +46,7 @@
   },
   "tasks": {
     "test:all": "deno task test && deno task npm && deno task test:cloudflare && deno task bun-link && deno task test:bun",
-    "test": "deno fmt && deno lint && deno test --import-map=./import_map.json -A --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno test --import-map=./import_map.json --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:common": "cd packages/common && deno task test",
     "test:core": "cd packages/core && deno task test",
     "test:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test",

@@ -26,11 +26,11 @@ import { KyberBase } from "./kyberBase.ts";
  * ```
  */
 export class Kyber768 extends KyberBase {
-  protected _k = 3;
-  protected _du = 10;
-  protected _dv = 4;
-  protected _eta1 = 2;
-  protected _eta2 = 2;
+  override _k = 3;
+  override _du = 10;
+  override _dv = 4;
+  override _eta1 = 2;
+  override _eta2 = 2;
 
   constructor() {
     super();

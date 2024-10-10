@@ -3,11 +3,11 @@ import { Dhkem, Ec, KemId } from "@hpke/common";
 import { HkdfSha512 } from "@hpke/dhkem-x448";
 
 export class DhkemP521HkdfSha512 extends Dhkem {
-  public readonly id: KemId = KemId.DhkemP521HkdfSha512;
-  public readonly secretSize: number = 64;
-  public readonly encSize: number = 133;
-  public readonly publicKeySize: number = 133;
-  public readonly privateKeySize: number = 64;
+  override id: KemId = KemId.DhkemP521HkdfSha512;
+  override secretSize: number = 64;
+  override encSize: number = 133;
+  override publicKeySize: number = 133;
+  override privateKeySize: number = 64;
 
   constructor() {
     const kdf = new HkdfSha512();

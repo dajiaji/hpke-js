@@ -8,11 +8,11 @@ import {
 } from "@hpke/common";
 
 export class DhkemP256HkdfSha256Native extends Dhkem {
-  public readonly id: KemId = KemId.DhkemP256HkdfSha256;
-  public readonly secretSize: number = 32;
-  public readonly encSize: number = 65;
-  public readonly publicKeySize: number = 65;
-  public readonly privateKeySize: number = 32;
+  override id: KemId = KemId.DhkemP256HkdfSha256;
+  override secretSize: number = 32;
+  override encSize: number = 65;
+  override publicKeySize: number = 65;
+  override privateKeySize: number = 32;
 
   constructor() {
     const kdf = new HkdfSha256Native();
@@ -22,11 +22,11 @@ export class DhkemP256HkdfSha256Native extends Dhkem {
 }
 
 export class DhkemP384HkdfSha384Native extends Dhkem {
-  public readonly id: KemId = KemId.DhkemP384HkdfSha384;
-  public readonly secretSize: number = 48;
-  public readonly encSize: number = 97;
-  public readonly publicKeySize: number = 97;
-  public readonly privateKeySize: number = 48;
+  override id: KemId = KemId.DhkemP384HkdfSha384;
+  override secretSize: number = 48;
+  override encSize: number = 97;
+  override publicKeySize: number = 97;
+  override privateKeySize: number = 48;
 
   constructor() {
     const kdf = new HkdfSha384Native();
@@ -36,11 +36,11 @@ export class DhkemP384HkdfSha384Native extends Dhkem {
 }
 
 export class DhkemP521HkdfSha512Native extends Dhkem {
-  public readonly id: KemId = KemId.DhkemP521HkdfSha512;
-  public readonly secretSize: number = 64;
-  public readonly encSize: number = 133;
-  public readonly publicKeySize: number = 133;
-  public readonly privateKeySize: number = 64;
+  override id: KemId = KemId.DhkemP521HkdfSha512;
+  override secretSize: number = 64;
+  override encSize: number = 133;
+  override publicKeySize: number = 133;
+  override privateKeySize: number = 64;
 
   constructor() {
     const kdf = new HkdfSha512Native();

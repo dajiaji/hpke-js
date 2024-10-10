@@ -51,15 +51,15 @@ import { Secp256k1 } from "./secp256k1.ts";
  */
 export class DhkemSecp256k1HkdfSha256 extends Dhkem {
   /** KemId.DhkemSecp256k1HkdfSha256 (0x0013) EXPERIMENTAL */
-  public readonly id: KemId = KemId.DhkemSecp256k1HkdfSha256;
+  override id: KemId = KemId.DhkemSecp256k1HkdfSha256;
   /** 32 */
-  public readonly secretSize: number = 32;
+  override secretSize: number = 32;
   /** 33 */
-  public readonly encSize: number = 33;
+  override encSize: number = 33;
   /** 33 */
-  public readonly publicKeySize: number = 33;
+  override publicKeySize: number = 33;
   /** 32 */
-  public readonly privateKeySize: number = 32;
+  override privateKeySize: number = 32;
 
   constructor() {
     const kdf = new HkdfSha256();

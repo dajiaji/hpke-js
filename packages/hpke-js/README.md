@@ -42,8 +42,6 @@ npm install hpke-js
 Then, you can use it as follows:
 
 ```js
-// import { AeadId, CipherSuite, KdfId, KemId } from "hpke-js";
-// const { AeadId, CipherSuite, KdfId, KemId } = require("@hpke/hpke-js");
 import {
   Aes128Gcm,
   CipherSuite,
@@ -52,32 +50,42 @@ import {
 } from "@hpke/core";
 
 async function doHpke() {
-  // When using "hpke-js", specify the cryptographic algorithm as follows:
-  // const suite = new CipherSuite({
-  //   kem: KemId.DhkemP256HkdfSha256,
-  //   kdf: KdfId.HkdfSha256,
-  //   aead: AeadId.Aes128Gcm,
-  // });
-  // When using "@hpke/core", specify the cryptographic algorithm instances
-  // as follows, instead of identities above:
   const suite = new CipherSuite({
     kem: new DhkemP256HkdfSha256(),
     kdf: new HkdfSha256(),
     aead: new Aes128Gcm(),
   });
 
-  // A recipient generates a key pair.
-  const rkp = await suite.kem.generateKeyPair();
+  const jwkPkR = {
+    kty: "EC",
+    crv: "P-256",
+    kid: "P-256-01",
+    x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+    y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+    key_ops: [],
+  };
+  const pkR = await suite.kem.importKey("jwk", jwkPkR, true);
 
-  // A sender encrypts a message with the recipient public key.
+  // The sender encrypts a message.
   const sender = await suite.createSenderContext({
-    recipientPublicKey: rkp.publicKey,
+    recipientPublicKey: pkR,
   });
   const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
 
+  const jwkSkR = {
+    kty: "EC",
+    crv: "P-256",
+    kid: "P-256-01",
+    x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+    y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+    d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+    key_ops: ["deriveBits"],
+  };
+  const skR = await suite.kem.importKey("jwk", jwkSkR, false);
+
   // The recipient decrypts it.
   const recipient = await suite.createRecipientContext({
-    recipientKey: rkp.privateKey,
+    recipientKey: skR,
     enc: sender.enc,
   });
   const pt = await recipient.open(ct);
@@ -448,7 +456,12 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@<SEMVER>";
+      import {
+        AeadId,
+        CipherSuite,
+        KdfId,
+        KemId,
+      } from "https://esm.sh/hpke-js@<SEMVER>";
       // import {
       //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
       // } from "https://esm.sh/@hpke/core@<SEMVER>";
@@ -458,18 +471,17 @@ Browsers:
           const suite = new CipherSuite({
             kem: KemId.DhkemP256HkdfSha256,
             kdf: KdfId.HkdfSha256,
-            aead: AeadId.Aes128Gcm
+            aead: AeadId.Aes128Gcm,
           });
- 
+
           const rkp = await suite.kem.generateKeyPair();
-      
+
           const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
+            recipientPublicKey: rkp.publicKey,
           });
-      
+
           // encrypt
           const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
@@ -484,8 +496,7 @@ Browsers:
         } catch (err) {
           alert("failed:", err.message);
         }
-      }
-      
+      };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>
@@ -524,8 +535,8 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (err) {
-  console.log("failed:", err.message);
+} catch (err: unknown) {
+  console.log("failed:", (err as Error).message);
 }
 ```
 
@@ -565,14 +576,14 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (err) {
-  console.log("failed:", err.message);
+} catch (err: unknown) {
+  console.log("failed:", (err as Error).message);
 }
 ```
 
 ### PSK mode
 
-Node.js:
+Deno:
 
 ```ts
 import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/hpke-js";
@@ -617,8 +628,8 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (err) {
-  console.log("failed:", err.message);
+} catch (err: unknown) {
+  console.log("failed:", (err as Error).message);
 }
 ```
 
@@ -662,8 +673,8 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (err) {
-  console.log("failed:", err.message);
+} catch (err: unknown) {
+  console.log("failed:", (err as Error).message);
 }
 ```
 
@@ -717,8 +728,8 @@ async function doHpke() {
 
 try {
   doHpke();
-} catch (err) {
-  console.log("failed:", err.message);
+} catch (err: unknown) {
+  console.log("failed:", (err as Error).message);
 }
 ```
 

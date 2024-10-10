@@ -43,15 +43,15 @@ import { X448 } from "./x448.ts";
  */
 export class DhkemX448HkdfSha512 extends Dhkem {
   /** KemId.DhkemX448HkdfSha512 (0x0021) */
-  public readonly id: KemId = KemId.DhkemX448HkdfSha512;
+  override id: KemId = KemId.DhkemX448HkdfSha512;
   /** 64 */
-  public readonly secretSize: number = 64;
+  override secretSize: number = 64;
   /** 56 */
-  public readonly encSize: number = 56;
+  override encSize: number = 56;
   /** 56 */
-  public readonly publicKeySize: number = 56;
+  override publicKeySize: number = 56;
   /** 56 */
-  public readonly privateKeySize: number = 56;
+  override privateKeySize: number = 56;
 
   constructor() {
     const kdf = new HkdfSha512();

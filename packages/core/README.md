@@ -226,21 +226,23 @@ try {
     <script type="module">
       // import * as hpke from "https://esm.sh/hpke-js@<SEMVER>";
       import {
-        Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
+        Aes128Gcm,
+        CipherSuite,
+        DhkemP256HkdfSha256,
+        HkdfSha256,
       } from "https://esm.sh/@hpke/core@<SEMVER>";
 
       globalThis.doHpke = async () => {
-
         const suite = new CipherSuite({
           kem: new DhkemP256HkdfSha256(),
           kdf: new HkdfSha256(),
           aead: new Aes128Gcm(),
         });
- 
+
         const rkp = await suite.kem.generateKeyPair();
-      
+
         const sender = await suite.createSenderContext({
-          recipientPublicKey: rkp.publicKey
+          recipientPublicKey: rkp.publicKey,
         });
 
         const recipient = await suite.createRecipientContext({
@@ -250,7 +252,7 @@ try {
 
         // encrypt
         const ct = await sender.seal(new TextEncoder().encode("hello world!"));
-      
+
         // decrypt
         try {
           const pt = await recipient.open(ct);
@@ -260,8 +262,7 @@ try {
         } catch (err) {
           alert("failed to decrypt.");
         }
-      }
-      
+      };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

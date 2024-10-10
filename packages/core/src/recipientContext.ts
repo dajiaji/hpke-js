@@ -3,7 +3,7 @@ import { EMPTY, OpenError } from "@hpke/common";
 import { EncryptionContextImpl } from "./encryptionContext.ts";
 
 export class RecipientContextImpl extends EncryptionContextImpl {
-  public async open(
+  override async open(
     data: ArrayBuffer,
     aad: ArrayBuffer = EMPTY,
   ): Promise<ArrayBuffer> {
