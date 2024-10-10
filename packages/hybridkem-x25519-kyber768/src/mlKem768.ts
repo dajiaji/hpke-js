@@ -1,6 +1,3 @@
-// @ts-ignore: for "npm:"
-// import * as kyber from "npm:crystals-kyber@5.1.0";
-
 import type {
   KemInterface,
   RecipientContextParams,
@@ -20,7 +17,7 @@ import {
   XCryptoKey,
 } from "@hpke/common";
 
-import { Kyber768 } from "./kyber/kyber768.ts";
+import { MlKem768 as MlKem768Native } from "@dajiaji/mlkem";
 
 const ALG_NAME = "Keyber768";
 
@@ -30,16 +27,16 @@ const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
   typeof (x as CryptoKeyPair).privateKey === "object" &&
   typeof (x as CryptoKeyPair).publicKey === "object";
 
-export class KemKyber768 implements KemInterface {
+export class MlKem768 implements KemInterface {
   public readonly id: KemId = KemId.NotAssigned;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1088;
   public readonly publicKeySize: number = 1184;
   public readonly privateKeySize: number = 2400;
-  private _prim: Kyber768;
+  private _prim: MlKem768Native;
 
   constructor() {
-    this._prim = new Kyber768();
+    this._prim = new MlKem768Native();
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {

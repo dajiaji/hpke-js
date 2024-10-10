@@ -3,7 +3,7 @@ import { Dhkem, Hybridkem, KemId } from "@hpke/common";
 
 import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 
-import { KemKyber768 } from "./kemKyber768.ts";
+import { MlKem768 } from "./mlKem768.ts";
 
 class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
   public readonly id: KemId = KemId.DhkemX25519HkdfSha256;
@@ -56,7 +56,7 @@ export class HybridkemX25519Kyber768 extends Hybridkem {
     super(
       KemId.HybridkemX25519Kyber768,
       new DhkemX25519HkdfSha256(),
-      new KemKyber768(),
+      new MlKem768(),
       new HkdfSha256(),
     );
   }
