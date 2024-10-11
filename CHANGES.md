@@ -1,5 +1,15 @@
 # Changes
 
+## Version 1.5.0
+
+Released 2024-10-12
+
+- [(#427) Introduce isDeno utility instead of isNode.](https://github.com/dajiaji/hpke-js/pull/427)
+- [(#425) Use codecove only to Deno v2.](https://github.com/dajiaji/hpke-js/pull/425)
+- [(#424) Add isDenoV1 for testing.](https://github.com/dajiaji/hpke-js/pull/424)
+- [(#423) Fix deno task test:* for Deno v2.](https://github.com/dajiaji/hpke-js/pull/423)
+- [(#422) Bump base deno version to v2.0.0.](https://github.com/dajiaji/hpke-js/pull/422)
+
 ## Version 1.4.3
 
 Released 2024-10-07

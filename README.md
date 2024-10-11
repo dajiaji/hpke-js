@@ -42,8 +42,6 @@ npm install hpke-js
 Then, you can use it as follows:
 
 ```js
-// import { AeadId, CipherSuite, KdfId, KemId } from "hpke-js";
-// const { AeadId, CipherSuite, KdfId, KemId } = require("@hpke/hpke-js");
 import {
   Aes128Gcm,
   CipherSuite,
@@ -52,19 +50,11 @@ import {
 } from "@hpke/core";
 
 async function doHpke() {
-  // When using "@hpke/core", specify the cryptographic algorithm instances
-  // as follows, instead of identities above:
   const suite = new CipherSuite({
     kem: new DhkemP256HkdfSha256(),
     kdf: new HkdfSha256(),
     aead: new Aes128Gcm(),
   });
-  // When using "hpke-js", specify the cryptographic algorithm as follows:
-  // const suite = new CipherSuite({
-  //   kem: KemId.DhkemP256HkdfSha256,
-  //   kdf: KdfId.HkdfSha256,
-  //   aead: AeadId.Aes128Gcm,
-  // });
 
   // A recipient generates a key pair.
   const rkp = await suite.kem.generateKeyPair();
@@ -118,15 +108,16 @@ try {
 
 The hpke-js includes the following packages.
 
-| name                            | since   | description                                                                                                                                                                                                                                                                                                                                                        |
-| ------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| hpke-js                         | v0.1.0- | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the following @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.                                                                                                                                       |
-| @hpke/core                      | v1.0.0- | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly. See [/core/README](https://github.com/dajiaji/hpke-js/blob/main/core/README.md). |
-| @hpke/chacha20poly1305          | v1.0.0- | The HPKE module extension for ChaCha20Poly1305 AEAD. See [/x/chacha20poly1305/README](https://github.com/dajiaji/hpke-js/blob/main/x/chacha20poly1305/README.md).                                                                                                                                                                                                  |
-| @hpke/dhkem-x25519              | v1.0.0- | The HPKE module extension for DHKEM(X25519, HKDF-SHA256). See [/x/dhkem-x25519/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x25519/README.md).                                                                                                                                                                                                     |
-| @hpke/dhkem-x448                | v1.0.0- | The HPKE module extension for DHKEM(X448, HKDF-SHA512). See [/x/dhkem-x448/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-x448/README.md).                                                                                                                                                                                                           |
-| @hpke/hybridkem-x25519-kyber768 | v1.2.1- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE module extension for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/). See [/x/hybridkem-x25519-kyber768/README](https://github.com/dajiaji/hpke-js/blob/main/x/hybridkem-x25519-kyber768/README.md).                  |
-| @hpke/dhkem-secp256k1           | v1.0.0- | **EXPERIMENTAL AND NOT STANDARDIZED** The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256). See [/x/dhkem-secp256k1/README](https://github.com/dajiaji/hpke-js/blob/main/x/dhkem-secp256k1/README.md).                                                                                                                                                      |
+| name                            | since                                                                                                                                                                                                                                                | description                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| @hpke/core                      | [![npm](https://img.shields.io/npm/v/@hpke/core?color=%23EE3214)](https://www.npmjs.com/package/@hpke/core)<br/>[![JSR](https://jsr.io/badges/@hpke/core)](https://jsr.io/@hpke/core)                                                                | The HPKE core module implemented using only [Web Cryptography API](https://www.w3.org/TR/WebCryptoAPI/). It does not support the X25519/X448-based KEMs and the ChaCha20/Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly.<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/core/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/core/samples) |
+| @hpke/chacha20poly1305          | [![npm](https://img.shields.io/npm/v/@hpke/chacha20poly1305?color=%23EE3214)](https://www.npmjs.com/package/@hpke/chacha20poly1305)<br/>[![JSR](https://jsr.io/badges/@hpke/chacha20poly1305)](https://jsr.io/@hpke/chacha20poly1305)                | The HPKE module extension for ChaCha20Poly1305 AEAD.<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/chacha20poly1305/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/chacha20poly1305/samples)                                                                                                                                                                                                      |
+| @hpke/dhkem-x25519              | [![npm](https://img.shields.io/npm/v/@hpke/dhkem-x25519?color=%23EE3214)](https://www.npmjs.com/package/@hpke/dhkem-x25519)<br/>[![JSR](https://jsr.io/badges/@hpke/dhkem-x25519)](https://jsr.io/@hpke/dhkem-x25519)                                | The HPKE module extension for DHKEM(X25519, HKDF-SHA256).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/dhkem-x25519/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/dhkem-x25519/samples)                                                                                                                                                                                                         |
+| @hpke/dhkem-x448                | [![npm](https://img.shields.io/npm/v/@hpke/dhkem-x448?color=%23EE3214)](https://www.npmjs.com/package/@hpke/dhkem-x448)<br/>[![JSR](https://jsr.io/badges/@hpke/dhkem-x448)](https://jsr.io/@hpke/dhkem-x448)                                        | The HPKE module extension for DHKEM(X448, HKDF-SHA512).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/dhkem-x448/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/dhkem-x448/samples)                                                                                                                                                                                                               |
+| hpke-js                         | [![npm](https://img.shields.io/npm/v/hpke-js?color=%23EE3214)](https://www.npmjs.com/package/hpke-js)                                                                                                                                                | The HPKE module supporting all of the ciphersuites defined in [RFC9180](https://datatracker.ietf.org/doc/html/rfc9180), which consists of the above @hpke/{core, dhkem-x25519, dhkem-x448, chacha20poly1305} internally.<br/>[README](https://github.com/dajiaji/hpke-js/tree/main/packages/hpke-js/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/hpke-js/samples)                                                    |
+| @hpke/hpke-js                   | [![JSR](https://jsr.io/badges/@hpke/hpke-js)](https://jsr.io/@hpke/hpke-js)                                                                                                                                                                          | The JSR version of the above `hpke-js`.<br/>[README](https://github.com/dajiaji/hpke-js/tree/main/packages/hpke-js/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/hpke-js/samples)                                                                                                                                                                                                                                     |
+| @hpke/hybridkem-x25519-kyber768 | [![npm](https://img.shields.io/npm/v/@hpke/hybridkem-x25519-kyber768?color=%23EE3214)](https://www.npmjs.com/package/@hpke/hybridkem-x25519-kyber768)<br/>[![JSR](https://jsr.io/badges/@hpke/hybridkem-x25519-kyber768)](https://jsr.io/@hpke/core) | **EXPERIMENTAL AND NOT STANDARDIZED**<br/>The HPKE module extension for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/hybridkem-x25519-kyber768/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/hybridkem-x25519-kyber768/samples)                  |
+| @hpke/dhkem-secp256k1           | [![npm](https://img.shields.io/npm/v/@hpke/dhkem-secp256k1?color=%23EE3214)](https://www.npmjs.com/package/@hpke/dhkem-secp256k1)<br/>[![JSR](https://jsr.io/badges/@hpke/dhkem-secp256k1)](https://jsr.io/@hpke/dhkem-secp256k1)                    | **EXPERIMENTAL AND NOT STANDARDIZED**<br/>The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/dhkem-secp256k1/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/dhkem-secp256k1/samples)                                                                                                                                                      |
 
 ## Supported Features
 
@@ -175,7 +166,7 @@ The hpke-js includes the following packages.
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x, 21.x, 22.x
-- **Deno**: 1.x (1.25-)
+- **Deno**: 1.x, 2.x
 - **Cloudflare Workers**
 - **bun**: 0.x (0.6.0-), 1.x
 

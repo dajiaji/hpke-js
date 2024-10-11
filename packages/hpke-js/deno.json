@@ -1,6 +1,6 @@
 {
   "name": "@hpke/hpke-js",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "exports": "./mod.ts",
   "imports": {
     "@noble/hashes": "npm:@noble/hashes@^1.4.0"
