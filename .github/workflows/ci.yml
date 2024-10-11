@@ -26,6 +26,7 @@ jobs:
           deno task test
           deno task cov > coverage.lcov
       - uses: codecov/codecov-action@v2
+        if: matrix.deno-version == '2.x'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.lcov
