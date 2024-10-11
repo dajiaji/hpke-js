@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isNode, loadCrypto } from "@hpke/common";
+import { isDenoV1, isNode, loadCrypto } from "@hpke/common";
 import {
   DeriveKeyPairError,
   DeserializeError,
@@ -152,7 +152,7 @@ describe("generateKeyPair", () => {
 describe("deriveKeyPair", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance with DhkemP256HkdfSha256", async () => {
-      if (!isNode()) {
+      if (isDenoV1()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -176,7 +176,7 @@ describe("deriveKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemP384HkdfSha384", async () => {
-      if (!isNode()) {
+      if (isDenoV1()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -280,8 +280,7 @@ describe("deriveKeyPair", () => {
 
   describe("with invalid parameters", () => {
     it("should throw NotSupportedError with DhkemP256HkdfSha256", async () => {
-      // deno-lint-ignore no-explicit-any
-      if ((globalThis as any).process !== undefined) {
+      if (!isDenoV1()) {
         return;
       }
       const cryptoApi = await loadCrypto();
@@ -491,7 +490,7 @@ describe("serialize/deserializePublicKey", () => {
 describe("serialize/deserializePrivateKey", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance with DhkemP256HkdfSha256", async () => {
-      if (!isNode()) {
+      if (isDenoV1()) {
         return;
       }
 
@@ -509,7 +508,7 @@ describe("serialize/deserializePrivateKey", () => {
     });
 
     it("should return a proper instance with DhkemP384HkdfSha384", async () => {
-      if (!isNode()) {
+      if (isDenoV1()) {
         return;
       }
 
