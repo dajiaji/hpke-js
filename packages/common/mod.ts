@@ -34,6 +34,7 @@ export {
   hexToBytes,
   i2Osp,
   isCryptoKeyPair,
+  isDenoV1,
   isNode,
   kemToKeyGenAlgorithm,
   loadCrypto,
