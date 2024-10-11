@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { hexToBytes, isNode } from "@hpke/common";
+import { hexToBytes, isDenoV1 } from "@hpke/common";
 
 import {
   AeadId,
@@ -516,7 +516,7 @@ describe("deriveKeyPair", () => {
 
   describe("with official test-vector for DhkemP256HkdfSha256.", () => {
     it("should derive a proper key pair.", async () => {
-      if (!isNode()) {
+      if (isDenoV1()) {
         return;
       }
       const ikmR = hexToBytes(

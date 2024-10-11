@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, it } from "@std/testing/bdd";
 
-import { isNode } from "@hpke/common";
+import { isDeno } from "@hpke/common";
 
 import type { ConformanceTester } from "./conformanceTester.ts";
 import type { WycheproofTestVector } from "./testVector.ts";
@@ -24,7 +24,7 @@ describe("EC key validation", () => {
 
   describe("P-256", () => {
     it("should validate properly", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
@@ -49,7 +49,7 @@ describe("EC key validation", () => {
 
   describe("P-384", () => {
     it("should validate properly", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
@@ -74,7 +74,7 @@ describe("EC key validation", () => {
 
   describe("P-521", () => {
     it("should validate properly", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
