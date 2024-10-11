@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.x
       - name: Run dnt & minify
         run: |
           npm install -g esbuild

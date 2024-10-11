@@ -454,7 +454,12 @@ Browsers:
   <head></head>
   <body>
     <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js@<SEMVER>";
+      import {
+        AeadId,
+        CipherSuite,
+        KdfId,
+        KemId,
+      } from "https://esm.sh/hpke-js@<SEMVER>";
       // import {
       //   Aes128Gcm, CipherSuite, DhkemP256HkdfSha256, HkdfSha256,
       // } from "https://esm.sh/@hpke/core@<SEMVER>";
@@ -464,18 +469,17 @@ Browsers:
           const suite = new CipherSuite({
             kem: KemId.DhkemP256HkdfSha256,
             kdf: KdfId.HkdfSha256,
-            aead: AeadId.Aes128Gcm
+            aead: AeadId.Aes128Gcm,
           });
- 
+
           const rkp = await suite.kem.generateKeyPair();
-      
+
           const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
+            recipientPublicKey: rkp.publicKey,
           });
-      
+
           // encrypt
           const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
@@ -490,8 +494,7 @@ Browsers:
         } catch (err) {
           alert("failed:", err.message);
         }
-      }
-      
+      };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

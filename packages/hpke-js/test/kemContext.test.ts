@@ -280,7 +280,8 @@ describe("deriveKeyPair", () => {
 
   describe("with invalid parameters", () => {
     it("should throw NotSupportedError with DhkemP256HkdfSha256", async () => {
-      if (isNode()) {
+      // deno-lint-ignore no-explicit-any
+      if ((globalThis as any).process !== undefined) {
         return;
       }
       const cryptoApi = await loadCrypto();

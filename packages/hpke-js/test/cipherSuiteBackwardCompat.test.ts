@@ -1368,9 +1368,6 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Oblivious HTTP (HKDF-SHA384)", () => {
     it("should work normally", async () => {
-      if (!isNode()) {
-        return;
-      }
       const te = new TextEncoder();
       const cryptoApi = await loadCrypto();
 

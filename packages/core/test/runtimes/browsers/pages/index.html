@@ -40,27 +40,28 @@
             for (const aead of aeads) {
               try {
                 const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
-      
+
                 const rkp = await suite.kem.generateKeyPair();
-      
+
                 const sender = await suite.createSenderContext({
-                  recipientPublicKey: rkp.publicKey
+                  recipientPublicKey: rkp.publicKey,
                 });
-      
+
                 const recipient = await suite.createRecipientContext({
                   recipientKey: rkp,
                   enc: sender.enc,
                 });
-      
+
                 // encrypt
-                const ct = await sender.seal(new TextEncoder().encode('hello world!'));
-      
+                const ct = await sender.seal(
+                  new TextEncoder().encode("hello world!"),
+                );
+
                 // decrypt
                 const pt = await recipient.open(ct);
 
                 // hello world!
-                'hello world!' === new TextDecoder().decode(pt) ? pass++ : fail++;
-
+                "hello world!" === new TextDecoder().decode(pt) ? pass++ : fail++;
               } catch (e) {
                 fail++;
               }
@@ -69,13 +70,12 @@
         }
         document.getElementById("pass").innerHTML = pass;
         document.getElementById("fail").innerHTML = fail;
-      }
+      };
 
       globalThis.reset = () => {
         document.getElementById("pass").innerHTML = "-";
         document.getElementById("fail").innerHTML = "-";
-      }
-      
+      };
     </script>
 
     <h1><a href="https://github.com/dajiaji/hpke-js">@hpke/core</a> test</h1>
@@ -85,16 +85,16 @@
       <button type="button" onclick="reset()">reset</button>
     </div>
 
-    <br>
+    <br />
 
-    <div id="test">  
+    <div id="test">
       <table>
         <tr>
-          <th><font color="green">pass: </font></th>
+          <th><font color="green">pass:</font></th>
           <td id="pass">-</td>
         </tr>
         <tr>
-          <th><font color="red">fail: </font></th>
+          <th><font color="red">fail:</font></th>
           <td id="fail">-</td>
         </tr>
       </table>

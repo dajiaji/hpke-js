@@ -46,15 +46,15 @@ import { X25519 } from "./x25519.ts";
  */
 export class DhkemX25519HkdfSha256 extends Dhkem {
   /** KemId.DhkemX25519HkdfSha256 (0x0020) */
-  public readonly id: KemId = KemId.DhkemX25519HkdfSha256;
+  override id: KemId = KemId.DhkemX25519HkdfSha256;
   /** 32 */
-  public readonly secretSize: number = 32;
+  override secretSize: number = 32;
   /** 32 */
-  public readonly encSize: number = 32;
+  override encSize: number = 32;
   /** 32 */
-  public readonly publicKeySize: number = 32;
+  override publicKeySize: number = 32;
   /** 32 */
-  public readonly privateKeySize: number = 32;
+  override privateKeySize: number = 32;
 
   constructor() {
     const kdf = new HkdfSha256();

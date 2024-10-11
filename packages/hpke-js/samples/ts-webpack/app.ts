@@ -16,7 +16,7 @@ export const test = async () => {
   // const rkp = await suite.kem.generateKeyPair();
   // instead I needed to do:
   const extractable = true;
-  const rkp = await window.crypto.subtle.generateKey(
+  const rkp = await globalThis.crypto.subtle.generateKey(
     {
       name: "ECDH",
       namedCurve: "P-256",

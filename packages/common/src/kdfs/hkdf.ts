@@ -182,11 +182,11 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
 
 export class HkdfSha256Native extends HkdfNative {
   /** KdfId.HkdfSha256 (0x0001) */
-  public readonly id: KdfId = KdfId.HkdfSha256;
+  override id: KdfId = KdfId.HkdfSha256;
   /** 32 */
-  public readonly hashSize: number = 32;
+  override hashSize: number = 32;
   /** The parameters for Web Cryptography API */
-  protected readonly algHash: HmacKeyGenParams = {
+  override algHash: HmacKeyGenParams = {
     name: "HMAC",
     hash: "SHA-256",
     length: 256,
@@ -195,11 +195,11 @@ export class HkdfSha256Native extends HkdfNative {
 
 export class HkdfSha384Native extends HkdfNative {
   /** KdfId.HkdfSha384 (0x0002) */
-  public readonly id: KdfId = KdfId.HkdfSha384;
+  override id: KdfId = KdfId.HkdfSha384;
   /** 48 */
-  public readonly hashSize: number = 48;
+  override hashSize: number = 48;
   /** The parameters for Web Cryptography API */
-  protected readonly algHash: HmacKeyGenParams = {
+  override algHash: HmacKeyGenParams = {
     name: "HMAC",
     hash: "SHA-384",
     length: 384,
@@ -208,11 +208,11 @@ export class HkdfSha384Native extends HkdfNative {
 
 export class HkdfSha512Native extends HkdfNative {
   /** KdfId.HkdfSha512 (0x0003) */
-  public readonly id: KdfId = KdfId.HkdfSha512;
+  override id: KdfId = KdfId.HkdfSha512;
   /** 64 */
-  public readonly hashSize: number = 64;
+  override hashSize: number = 64;
   /** The parameters for Web Cryptography API */
-  protected readonly algHash: HmacKeyGenParams = {
+  override algHash: HmacKeyGenParams = {
     name: "HMAC",
     hash: "SHA-512",
     length: 512,

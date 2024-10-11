@@ -210,7 +210,11 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { Aes256Gcm, CipherSuite, HkdfSha512 } from "https://esm.sh/@hpke/core@<SEMVER>";
+      import {
+        Aes256Gcm,
+        CipherSuite,
+        HkdfSha512,
+      } from "https://esm.sh/@hpke/core@<SEMVER>";
       import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
 
       globalThis.doHpke = async () => {
@@ -220,16 +224,16 @@ try {
             kdf: new HkdfSha512(),
             aead: new Aes256Gcm(),
           });
- 
+
           const rkp = await suite.kem.generateKeyPair();
-      
+
           const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey
+            recipientPublicKey: rkp.publicKey,
           });
 
           // encrypt
           const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
-      
+
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
             enc: sender.enc,
@@ -243,7 +247,7 @@ try {
         } catch (err) {
           alert("failed:", err);
         }
-      }
+      };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

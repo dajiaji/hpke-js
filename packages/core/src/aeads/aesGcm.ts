@@ -135,11 +135,11 @@ export class Aes128Gcm implements AeadInterface {
  */
 export class Aes256Gcm extends Aes128Gcm {
   /** AeadId.Aes256Gcm (0x0002) */
-  public readonly id: AeadId = AeadId.Aes256Gcm;
+  override id: AeadId = AeadId.Aes256Gcm;
   /** 32 */
-  public readonly keySize: number = 32;
+  override keySize: number = 32;
   /** 12 */
-  public readonly nonceSize: number = 12;
+  override nonceSize: number = 12;
   /** 16 */
-  public readonly tagSize: number = 16;
+  override tagSize: number = 16;
 }

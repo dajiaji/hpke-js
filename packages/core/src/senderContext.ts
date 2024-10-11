@@ -19,7 +19,7 @@ export class SenderContextImpl extends EncryptionContextImpl
     this.enc = enc;
   }
 
-  public async seal(
+  override async seal(
     data: ArrayBuffer,
     aad: ArrayBuffer = EMPTY,
   ): Promise<ArrayBuffer> {

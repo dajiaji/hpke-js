@@ -6,11 +6,11 @@ import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { KemKyber768 } from "./kemKyber768.ts";
 
 class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
-  public readonly id: KemId = KemId.DhkemX25519HkdfSha256;
-  public readonly secretSize: number = 32;
-  public readonly encSize: number = 32;
-  public readonly publicKeySize: number = 32;
-  public readonly privateKeySize: number = 32;
+  override id: KemId = KemId.DhkemX25519HkdfSha256;
+  override secretSize: number = 32;
+  override encSize: number = 32;
+  override publicKeySize: number = 32;
+  override privateKeySize: number = 32;
 
   constructor() {
     const kdf = new HkdfSha256();
@@ -44,12 +44,12 @@ class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
  * ```
  */
 export class HybridkemX25519Kyber768 extends Hybridkem {
-  public readonly id: KemId = KemId.HybridkemX25519Kyber768;
-  public readonly name: string = "X25519Kyber25519";
-  public readonly secretSize: number = 64;
-  public readonly encSize: number = 1120;
-  public readonly publicKeySize: number = 1216;
-  public readonly privateKeySize: number = 2432;
+  override id: KemId = KemId.HybridkemX25519Kyber768;
+  override name: string = "X25519Kyber25519";
+  override secretSize: number = 64;
+  override encSize: number = 1120;
+  override publicKeySize: number = 1216;
+  override privateKeySize: number = 2432;
   public readonly auth: boolean = false;
 
   constructor() {

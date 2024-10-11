@@ -247,9 +247,6 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on X448 with a P-521 private key", async () => {
-      if (!isNode()) {
-        return;
-      }
       const kdf = new HkdfSha512();
       const prim = new X448(kdf);
       const kdf2 = new HkdfSha512();

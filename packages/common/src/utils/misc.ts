@@ -1,8 +1,13 @@
 import { KemId } from "../identifiers.ts";
 
-export const isNode = (): boolean =>
+export function isNode(): boolean {
   // deno-lint-ignore no-explicit-any
-  (globalThis as any).process?.versions?.node != null;
+  if ((globalThis as any).process === undefined) {
+    return false;
+  }
+  // deno-lint-ignore no-explicit-any
+  return (globalThis as any).process?.versions?.deno === undefined;
+}
 
 /**
  * Checks whetehr the type of input is CryptoKeyPair or not.

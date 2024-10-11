@@ -2,9 +2,9 @@ name: Cloudflare Workers CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 permissions:
   contents: read
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.x
       - uses: actions/setup-node@v4
         with:
           node-version: v20.x
