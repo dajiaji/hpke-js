@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { concat, isNode, loadCrypto } from "@hpke/common";
+import { concat, isDeno, loadCrypto } from "@hpke/common";
 import { AeadId, Aes128Gcm, KdfId, KemId, NotSupportedError } from "@hpke/core";
 import { DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/dhkem-x25519";
 import { DhkemX448HkdfSha512, HkdfSha512 } from "@hpke/dhkem-x448";
@@ -249,7 +249,7 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemP521HkdfSha512/HkdfSha512/Aes128Gcm", () => {
     it("should work normally with ids", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
@@ -284,7 +284,7 @@ describe("README examples", () => {
     });
 
     it("should work normally with instances", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
@@ -319,7 +319,7 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
 
@@ -1034,7 +1034,7 @@ describe("README examples", () => {
 
   describe("Oblivious HTTP with DhkemP384HkdfSha384/HkdfSha384/Aes256Gcm", () => {
     it("should work normally", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
       const te = new TextEncoder();
@@ -1121,7 +1121,7 @@ describe("README examples", () => {
 
   describe("Oblivious HTTP with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
     it("should work normally", async () => {
-      if (!isNode()) {
+      if (isDeno()) {
         return;
       }
       const te = new TextEncoder();

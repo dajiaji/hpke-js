@@ -4,13 +4,17 @@ export const isDenoV1 = (): boolean =>
   // deno-lint-ignore no-explicit-any
   (globalThis as any).process === undefined;
 
-export function isNode(): boolean {
+/**
+ * Checks whether the runtime is Deno or not (Node.js).
+ * @returns boolean - true if the runtime is Deno, false Node.js.
+ */
+export function isDeno(): boolean {
   // deno-lint-ignore no-explicit-any
   if ((globalThis as any).process === undefined) {
-    return false;
+    return true;
   }
   // deno-lint-ignore no-explicit-any
-  return (globalThis as any).process?.versions?.deno === undefined;
+  return (globalThis as any).process?.versions?.deno !== undefined;
 }
 
 /**
