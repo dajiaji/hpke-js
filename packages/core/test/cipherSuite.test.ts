@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { hexToBytes, isDenoV1 } from "@hpke/common";
+import { hexToBytes, isDeno, isDenoV1 } from "@hpke/common";
 
 import {
   AeadId,
@@ -12,6 +12,7 @@ import {
   DhkemP256HkdfSha256,
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
+  DhkemX25519HkdfSha256,
   ExportOnly,
   HkdfSha256,
   HkdfSha384,
@@ -22,6 +23,39 @@ import {
 } from "../mod.ts";
 
 describe("constructor", () => {
+  // RFC9180 A.1.
+  describe("with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm", () => {
+    it("should have ciphersuites", async () => {
+      if (isDeno()) {
+        return;
+      }
+      const suite = new CipherSuite({
+        kem: new DhkemX25519HkdfSha256(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
+
+      // assert
+      assertEquals(suite.kem.id, KemId.DhkemX25519HkdfSha256);
+      assertEquals(suite.kem.id, 0x0020);
+      assertEquals(suite.kdf.id, KdfId.HkdfSha256);
+      assertEquals(suite.kdf.id, 0x0001);
+      assertEquals(suite.aead.id, AeadId.Aes128Gcm);
+      assertEquals(suite.aead.id, 0x0001);
+
+      const rkp = await suite.kem.generateKeyPair();
+      assertEquals(rkp.publicKey.type, "public");
+      assertEquals(rkp.publicKey.extractable, true);
+      assertEquals(rkp.publicKey.algorithm.name, "X25519");
+      assertEquals(rkp.publicKey.usages.length, 0);
+      assertEquals(rkp.privateKey.type, "private");
+      assertEquals(rkp.privateKey.extractable, true);
+      assertEquals(rkp.privateKey.algorithm.name, "X25519");
+      assertEquals(rkp.privateKey.usages.length, 1);
+      assertEquals(rkp.privateKey.usages[0], "deriveBits");
+    });
+  });
+
   describe("with DhkemP384HkdfSha384/HkdfSha384/Aes128Gcm", () => {
     it("should have a correct ciphersuite", () => {
       const suite = new CipherSuite({
