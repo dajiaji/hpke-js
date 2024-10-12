@@ -1,6 +1,6 @@
 {
   "name": "@hpke/dhkem-secp256k1",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "exports": "./mod.ts",
   "imports": {
     "@noble/curves": "npm:@noble/curves@^1.4.2"
