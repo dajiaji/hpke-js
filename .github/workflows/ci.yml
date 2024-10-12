@@ -20,6 +20,9 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ matrix.deno-version }}
+      - name: REmove lock file
+        if: matrix.deno-version == '1.x'
+        run: rm deno.lock
       - name: Run deno test
         run: |
           deno fmt --check
