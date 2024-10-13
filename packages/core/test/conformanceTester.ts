@@ -18,6 +18,7 @@ import {
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
   DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
   ExportOnly,
   HkdfSha256,
   HkdfSha384,
@@ -39,6 +40,8 @@ function createKem(id: KemId): KemInterface {
       return new DhkemP521HkdfSha512();
     case KemId.DhkemX25519HkdfSha256:
       return new DhkemX25519HkdfSha256();
+    case KemId.DhkemX448HkdfSha512:
+      return new DhkemX448HkdfSha512();
     default:
       break;
   }

@@ -13,15 +13,15 @@ import {
   SerializeError,
 } from "@hpke/common";
 
-const ALG_NAME = "X25519";
+const ALG_NAME = "X448";
 
 // deno-fmt-ignore
-const PKCS8_ALG_ID_X25519 = new Uint8Array([
-  0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06,
-  0x03, 0x2b, 0x65, 0x6e, 0x04, 0x22, 0x04, 0x20,
+const PKCS8_ALG_ID_X448 = new Uint8Array([
+  0x30, 0x46, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06,
+  0x03, 0x2b, 0x65, 0x6f, 0x04, 0x3a, 0x04, 0x38,
 ]);
 
-export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
+export class X448 extends NativeAlgorithm implements DhkemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: KeyAlgorithm;
   private _nPk: number;
@@ -33,10 +33,10 @@ export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
     super();
     this._alg = { name: ALG_NAME };
     this._hkdf = hkdf;
-    this._nPk = 32;
-    this._nSk = 32;
-    this._nDh = 32;
-    this._pkcs8AlgId = PKCS8_ALG_ID_X25519;
+    this._nPk = 56;
+    this._nSk = 56;
+    this._nDh = 56;
+    this._pkcs8AlgId = PKCS8_ALG_ID_X448;
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
