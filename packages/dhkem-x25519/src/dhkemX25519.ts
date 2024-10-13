@@ -10,37 +10,22 @@ import { X25519 } from "./x25519.ts";
  * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
  *
  * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuiteParams | CipherSuiteParams} as follows:
  *
- * @example Use with `@hpke/core` (`https://deno.land/x/hpke/core/mod.ts`).
+ * @example Use with `@hpke/core`:
  *
  * ```ts
  * import {
  *   Aes128Gcm,
  *   CipherSuite,
  *   HkdfSha256,
- * } from "https://deno.land/x/hpke/core/mod.ts";
- * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+ * } from "@hpke/core";
+ * import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
  *   kdf: new HkdfSha256(),
  *   aead: new Aes128Gcm(),
- * });
- * ```
- *
- * When using `hpke-js` (`https://deno.land/x/hpke/mod.ts`), `KemId.DhkemX25519HkdfSha256`
- * can be used. You don't need to use this class.
- *
- * @example
- *
- * ```ts
- * import { AeadId, CipherSuite, KdfId, KemId } from "https://deno.land/x/hpke/mod.ts";
- *
- * const suite = new CipherSuite({
- *   kem: KemId.DhkemX25519HkdfSha256,
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
  * });
  * ```
  */

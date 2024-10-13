@@ -85,7 +85,7 @@ export class AesGcmContext extends NativeAlgorithm
  *   CipherSuite,
  *   DhkemP256HkdfSha256,
  *   HkdfSha256,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
@@ -124,7 +124,7 @@ export class Aes128Gcm implements AeadInterface {
  *   CipherSuite,
  *   DhkemP256HkdfSha256,
  *   HkdfSha256,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
