@@ -22,8 +22,8 @@ This module works on web browsers, Node.js, Deno and various other JavaScript ru
 
 <div align="center">
 
-Documentation: [jsr.io](https://jsr.io/@hpke/hpke-js/doc) |
-[pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/docs/)
+Documentation: [jsr.io](https://jsr.io/@hpke/core/doc) |
+[pages (only for the latest ver.)](https://dajiaji.github.io/hpke-js/core/docs/)
 
 </div>
 
