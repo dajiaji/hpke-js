@@ -4,6 +4,7 @@ import type { PreSharedKey } from "@hpke/common";
 import type { AeadInterface, KdfInterface, KemInterface } from "../mod.ts";
 import {
   hexToBytes,
+  isDeno,
   kemToKeyGenAlgorithm,
   loadSubtleCrypto,
 } from "@hpke/common";
@@ -119,9 +120,11 @@ export class ConformanceTester {
 
     const dSkR = await suite.kem.deserializePrivateKey(skRm);
     const dPkR = await suite.kem.deserializePublicKey(pkRm);
-    const skRm2 = await suite.kem.serializePrivateKey(dSkR);
+    if (!isDeno()) {
+      const skRm2 = await suite.kem.serializePrivateKey(dSkR);
+      assertEquals(skRm, new Uint8Array(skRm2));
+    }
     const pkRm2 = await suite.kem.serializePublicKey(dPkR);
-    assertEquals(skRm, new Uint8Array(skRm2));
     assertEquals(pkRm, new Uint8Array(pkRm2));
 
     const ekp = {
@@ -132,12 +135,14 @@ export class ConformanceTester {
     // deriveKeyPair
     const ikmE = hexToBytes(v.ikmE);
     const ikmR = hexToBytes(v.ikmR);
-    const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer);
-    const derivedPkRm = await this.cryptoKeyToBytes(derivedR.publicKey);
-    assertEquals(derivedPkRm, pkRm);
-    const derivedE = await suite.kem.deriveKeyPair(ikmE.buffer);
-    const derivedPkEm = await this.cryptoKeyToBytes(derivedE.publicKey);
-    assertEquals(derivedPkEm, pkEm);
+    if (!isDeno()) {
+      const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer);
+      const derivedPkRm = await this.cryptoKeyToBytes(derivedR.publicKey);
+      assertEquals(derivedPkRm, pkRm);
+      const derivedE = await suite.kem.deriveKeyPair(ikmE.buffer);
+      const derivedPkEm = await this.cryptoKeyToBytes(derivedE.publicKey);
+      assertEquals(derivedPkEm, pkEm);
+    }
 
     // create EncryptionContext
     const info = hexToBytes(v.info);

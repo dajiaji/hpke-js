@@ -92,7 +92,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 0 && v.kem_id === 0x0020 && v.aead_id <= 0x0002) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -115,7 +115,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 0 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -203,7 +203,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id === 0x0020 && v.aead_id <= 0x0002) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -226,7 +226,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 1 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -314,7 +314,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 2 && v.kem_id === 0x0020 && v.aead_id <= 0x0002) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -337,7 +337,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 2 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -425,7 +425,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id === 0x0020 && v.aead_id <= 0x0002) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
@@ -448,7 +448,7 @@ describe("RFC9180 conformance", () => {
     it("should match demonstrated values", async () => {
       for (const v of testVectors) {
         if (v.mode === 3 && v.kem_id === 0x0020 && v.aead_id === 0xFFFF) {
-          if (isDeno()) {
+          if (isDenoV1()) {
             continue;
           }
           await tester.test(v);
