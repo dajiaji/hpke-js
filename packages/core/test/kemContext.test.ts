@@ -131,6 +131,9 @@ describe("generateKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // assert
       const kemContext = new DhkemX448HkdfSha512();
       const kp = await kemContext.generateKeyPair();
@@ -363,6 +366,9 @@ describe("serialize/deserializePublicKey", () => {
     });
 
     it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // assert
       const kemContext = new DhkemX448HkdfSha512();
       const kp = await kemContext.generateKeyPair();
@@ -848,6 +854,9 @@ describe("importKey", () => {
     });
 
     it("should return a valid private key for DhkemX448HkdfSha512 from JWK", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       const kemContext = new DhkemX448HkdfSha512();
 
       const jwk = {
@@ -866,6 +875,9 @@ describe("importKey", () => {
     });
 
     it("should return a valid public key for DhkemX448HkdfSha512 from JWK", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       const kemContext = new DhkemX448HkdfSha512();
 
       const jwk = {

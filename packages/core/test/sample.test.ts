@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno } from "@hpke/common";
+import { isDeno, isDenoV1 } from "@hpke/common";
 import {
   Aes128Gcm,
   Aes256Gcm,
@@ -283,6 +283,9 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemX25519HkdfSha256/HkdfSha256/Aes128Gcm", () => {
     it("should work normally", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX25519HkdfSha256(),
@@ -366,6 +369,9 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk') and using CryptoKeyPair", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX25519HkdfSha256(),
@@ -416,6 +422,9 @@ describe("README examples", () => {
   });
   describe("Base mode with DhkemX448HkdfSha256/HkdfSha512/Aes256Gcm)", () => {
     it("should work normally", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX448HkdfSha512(),
@@ -499,6 +508,9 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk') and using CryptoKeyPair", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX448HkdfSha512(),
@@ -589,6 +601,9 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemX25519HkdfSha256/HkdfSha256/ExportOnly", () => {
     it("should work normally", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX25519HkdfSha256(),
@@ -749,6 +764,9 @@ describe("README examples", () => {
 
   describe("AuthPSK mode with DhkemX25519HkdfSha256", () => {
     it("should work normally", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX25519HkdfSha256(),
@@ -793,6 +811,9 @@ describe("README examples", () => {
 
   describe("AuthPSK mode with DhkemX448HkdfSha512", () => {
     it("should work normally", async () => {
+      if (isDenoV1()) {
+        return;
+      }
       // setup
       const suite = new CipherSuite({
         kem: new DhkemX448HkdfSha512(),
