@@ -16,7 +16,7 @@ import { AeadId, NotSupportedError } from "@hpke/common";
  *   DhkemP256HkdfSha256,
  *   ExportOnly,
  *   HkdfSha256,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),

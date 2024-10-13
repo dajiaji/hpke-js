@@ -29,13 +29,13 @@ class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
  * {@link https://github.com/Argyle-Software/kyber | pqc-kyber }.
  *
  * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuiteParams | CipherSuiteParams} as follows:
  *
- * @example
+ * @example Use with `@hpke/core`:
  *
  * ```ts
- * import { Aes128Gcm, CipherSuite, HkdfSha256 } from "http://deno.land/x/hpke/core/mod.ts";
- * import { HybridkemX25519Kyber768 } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+ * import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+ * import { HybridkemX25519Kyber768 } from "@hpke/hybridkem-x25519-kyber768";
  * const suite = new CipherSuite({
  *   kem: new HybridkemX25519Kyber768(),
  *   kdf: new HkdfSha256(),

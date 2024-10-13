@@ -17,7 +17,7 @@ import {
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  *
  * This class is the same as
- * {@link https://deno.land/x/hpke/mod.ts?s=CipherSuiteNative | @hpke/core#CipherSuiteNative },
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuiteNative | @hpke/core#CipherSuiteNative} as follows:
  * which supports only the ciphersuites that can be implemented on the native
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  * Therefore, the following cryptographic algorithms are not supported for now:
@@ -30,7 +30,7 @@ import {
  *
  * If you want to use the unsupported cryptographic algorithms
  * above or derive keys longer than the `hashSize`,
- * please use {@link https://deno.land/x/hpke/mod.ts?s=CipherSuite | hpke-js#CipherSuite}.
+ * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
  *
  * This class provides following functions:
  *
@@ -52,7 +52,7 @@ import {
  *   DhkemP256HkdfSha256,
  *   HkdfSha256,
  *   CipherSuite,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
@@ -64,8 +64,8 @@ import {
  * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
  *
  * ```ts
- * import { Aes128Gcm, HkdfSha256, CipherSuite } from "http://deno.land/x/hpke/core/mod.ts";
- * import { DhkemX25519HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-x25519/mod.ts";
+ * import { Aes128Gcm, HkdfSha256, CipherSuite } from "@hpke/core";
+ * import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
  * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
  *   kdf: new HkdfSha256(),
@@ -90,7 +90,7 @@ export class CipherSuite extends CipherSuiteNative {}
  *   CipherSuite,
  *   DhkemP256HkdfSha256,
  *   HkdfSha256,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
@@ -116,7 +116,7 @@ export class DhkemP256HkdfSha256 extends DhkemP256HkdfSha256Native {}
  *   CipherSuite,
  *   DhkemP384HkdfSha384,
  *   HkdfSha384,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP384HkdfSha384(),
@@ -142,7 +142,7 @@ export class DhkemP384HkdfSha384 extends DhkemP384HkdfSha384Native {}
  *   CipherSuite,
  *   DhkemP521HkdfSha512,
  *   HkdfSha512,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP521HkdfSha512(),
@@ -161,7 +161,7 @@ export class DhkemP521HkdfSha512 extends DhkemP521HkdfSha512Native {}
  *
  * The KDF class can only derive keys of the same length as the `hashSize`.
  * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://deno.land/x/hpke/mod.ts?s=CipherSuite | hpke-js#CipherSuite}.
+ * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
  *
  * @example
  *
@@ -171,7 +171,7 @@ export class DhkemP521HkdfSha512 extends DhkemP521HkdfSha512Native {}
  *   CipherSuite,
  *   DhkemP256HkdfSha256,
  *   HkdfSha256,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP256HkdfSha256(),
@@ -190,7 +190,7 @@ export class HkdfSha256 extends HkdfSha256Native {}
  *
  * The KDF class can only derive keys of the same length as the `hashSize`.
  * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://deno.land/x/hpke/mod.ts?s=CipherSuite | hpke-js#CipherSuite}.
+ * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
  *
  * @example
  *
@@ -200,7 +200,7 @@ export class HkdfSha256 extends HkdfSha256Native {}
  *   CipherSuite,
  *   DhkemP384HkdfSha384,
  *   HkdfSha384,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP384HkdfSha384(),
@@ -219,7 +219,7 @@ export class HkdfSha384 extends HkdfSha384Native {}
  *
  * The KDF class can only derive keys of the same length as the `hashSize`.
  * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://deno.land/x/hpke/mod.ts?s=CipherSuite | hpke-js#CipherSuite}.
+ * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
  *
  * @example
  *
@@ -229,7 +229,7 @@ export class HkdfSha384 extends HkdfSha384Native {}
  *   CipherSuite,
  *   DhkemP521HkdfSha512,
  *   HkdfSha512,
- * } from "http://deno.land/x/hpke/core/mod.ts";
+ * } from "@hpke/core";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemP521HkdfSha512(),

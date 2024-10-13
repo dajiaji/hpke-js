@@ -9,30 +9,17 @@ import { X448 } from "./x448.ts";
  * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
  *
  * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuiteParams | CipherSuiteParams} as follows:
  *
- * @example Use with `hpke-js` (`https://deno.land/x/hpke/mod.ts`).
- *
- * ```ts
- * import { CipherSuite, AeadId, KdfId } from "https://deno.land/x/hpke/mod.ts";
- * import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
- *
- * const suite = new CipherSuite({
- *   kem: new DhkemX448HkdfSha512(),
- *   kdf: KdfId.HkdfSha512,
- *   aead: AeadId.Aes256Gcm,
- * });
- * ```
- *
- * @example Use with `@hpke/core` (`https://deno.land/x/hpke/core/mod.ts`).
+ * @example Use with `@hpke/core`:
  *
  * ```ts
  * import {
  *   Aes256Gcm,
  *   CipherSuite,
  *   HkdfSha512,
- * } from "https://deno.land/x/hpke/core/mod.ts";
- * import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
+ * } from "@hpke/core";
+ * import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemX448HkdfSha512(),

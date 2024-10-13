@@ -25,10 +25,10 @@ import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
  * which supports all of the ciphersuites defined in
  * {@link https://datatracker.ietf.org/doc/html/rfc9180 | RFC9180}.
  *
- * The class consists of the {@link https://deno.land/x/hpke/core/mod.ts | @hpke/core},
- * {@link https://deno.land/x/hpke/x/chacha20Poly1305/mod.ts | @hpke/chcha20poly1305},
- * {@link https://deno.land/x/hpke/x/dhkem-x25519/mod.ts | @hpke/dhkem-x25519} and
- * {@link https://deno.land/x/hpke/x/dhkem-x448/mod.ts | @hpke/dhkem-x448} internally.
+ * The class consists of the {@link https://jsr.io/@hpke/core/doc | @hpke/core},
+ * {@link https://jsr.io/@hpke/chacha20Poly1305/doc | @hpke/chcha20poly1305},
+ * {@link https://jsr.io/@hpke/dhkem-x25519/doc | @hpke/dhkem-x25519} and
+ * {@link https://jsr.io/@hpke/dhkem-x448/doc | @hpke/dhkem-x448} internally.
  *
  * This class provides following functions:
  *
@@ -48,7 +48,7 @@ import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
  * @example Use only ciphersuites supported internally.
  *
  * ```ts
- * import { AeadId, CipherSuite, KdfId, KemId } from "http://deno.land/x/hpke/mod.ts";
+ * import { AeadId, CipherSuite, KdfId, KemId } from "@hpke/hpke-js";
  *
  * const suite = new CipherSuite({
  *   kem: KemId.DhkemP256HkdfSha256,
@@ -60,11 +60,11 @@ import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
  * @example Use a ciphersuite consisting of an external module.
  *
  * ```ts
- * import { AeadId, CipherSuite, KdfId } from "http://deno.land/x/hpke/mod.ts";
+ * import { AeadId, CipherSuite, KdfId } from "@hpke/hpke-js";
  * // Use an extension module.
  * import {
  *   HybridkemX25519Kyber768,
- * } from "https://deno.land/x/hpke/x/hybridkem-x25519-kyber768/mod.ts";
+ * } from "@hpke/hybridkem-x25519-kyber768";
  *
  * const suite = new CipherSuite({
  *   kem: new HybridkemX25519Kyber768(),

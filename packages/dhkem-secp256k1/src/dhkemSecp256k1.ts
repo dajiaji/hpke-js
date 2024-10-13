@@ -12,33 +12,17 @@ import { Secp256k1 } from "./secp256k1.ts";
  * The public keys are assumed to be compressed.
  *
  * The instance of this class can be specified to the
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuiteParams | CipherSuiteParams} as follows:
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuiteParams | CipherSuiteParams} as follows:
  *
- * @example Use with `hpke-js` (`https://deno.land/x/hpke/mod.ts`).
- *
- * ```ts
- * import { AeadId, CipherSuite, KdfId } from "https://deno.land/x/hpke/mod.ts";
- * import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
- *
- * const suite = new CipherSuite({
- *   kem: new DhkemSecp256k1HkdfSha256(),
- *   kdf: KdfId.HkdfSha256,
- *   aead: AeadId.Aes128Gcm,
- * });
- * ```
- *
- * When using `hpke-js` (`https://deno.land/x/hpke/mod.ts`), `KemId.DhkemSecp256k1HkdfSha256`
- * cannot be used as well. So you need to specify the instance of this class as follows:
- *
- * @example Use with `@hpke/core` (`https://deno.land/x/hpke/core/mod.ts`).
+ * @example Use with `@hpke/core`:
  *
  * ```ts
  * import {
  *   Aes128Gcm,
  *   CipherSuite,
  *   HkdfSha256,
- * } from "https://deno.land/x/hpke/core/mod.ts";
- * import { DhkemSecp256k1HkdfSha256 } from "https://deno.land/x/hpke/x/dhkem-secp256k1/mod.ts";
+ * } from "@hpke/core";
+ * import { DhkemSecp256k1HkdfSha256 } from "@hpke/dhkem-secp256k1";
  *
  * const suite = new CipherSuite({
  *   kem: new DhkemSecp256k1HkdfSha256(),

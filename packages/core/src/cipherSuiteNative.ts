@@ -66,7 +66,7 @@ const SUITE_ID_HEADER_HPKE = new Uint8Array([
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  *
  * This is the super class of {@link CipherSuite} and the same as
- * {@link https://deno.land/x/hpke/core/mod.ts?s=CipherSuite | @hpke/core#CipherSuite },
+ * {@link https://jsr.io/@hpke/core/doc/~/CipherSuite | @hpke/core#CipherSuite} as follows:
  * which supports only the ciphersuites that can be implemented on the native
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  * Therefore, the following cryptographic algorithms are not supported for now:
