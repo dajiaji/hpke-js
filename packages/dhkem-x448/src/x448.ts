@@ -3,6 +3,7 @@ import { x448 } from "@noble/curves/ed448";
 import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
 import {
+  base64UrlToBytes,
   DeriveKeyPairError,
   DeserializeError,
   EMPTY,
@@ -15,16 +16,6 @@ import {
 } from "@hpke/common";
 
 const ALG_NAME = "X448";
-
-function base64UrlToBytes(v: string): Uint8Array {
-  const base64 = v.replace(/-/g, "+").replace(/_/g, "/");
-  const byteString = atob(base64);
-  const ret = new Uint8Array(byteString.length);
-  for (let i = 0; i < byteString.length; i++) {
-    ret[i] = byteString.charCodeAt(i);
-  }
-  return ret;
-}
 
 export class X448 implements DhkemPrimitives {
   private _hkdf: KdfInterface;
