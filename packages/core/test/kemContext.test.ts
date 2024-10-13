@@ -9,24 +9,10 @@ import {
   DhkemP384HkdfSha384,
   DhkemP521HkdfSha512,
   DhkemX25519HkdfSha256,
+  DhkemX448HkdfSha512,
   KemId,
   // SerializeError,
 } from "../mod.ts";
-
-// async function loadSubtleCrypto(): Promise<SubtleCrypto> {
-//   if (globalThis !== undefined && globalThis.crypto !== undefined) {
-//     // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
-//     return globalThis.crypto.subtle;
-//   }
-//   // Node.js <= v18
-//   try {
-//     // @ts-ignore: to ignore "crypto"
-//     const { webcrypto } = await import("crypto"); // node:crypto
-//     return (webcrypto as unknown as Crypto).subtle;
-//   } catch (e: unknown) {
-//     throw e as Error;
-//   }
-// }
 
 describe("constructor", () => {
   describe("with valid parameters", () => {
@@ -64,13 +50,13 @@ describe("constructor", () => {
       assertEquals(dhkemX25519.publicKeySize, 32);
       assertEquals(dhkemX25519.privateKeySize, 32);
 
-      // const dhkemX448 = new DhkemX448HkdfSha512();
-      // assertEquals(typeof dhkemX448, "object");
-      // assertEquals(dhkemX448.id, KemId.DhkemX448HkdfSha512);
-      // assertEquals(dhkemX448.secretSize, 64);
-      // assertEquals(dhkemX448.encSize, 56);
-      // assertEquals(dhkemX448.publicKeySize, 56);
-      // assertEquals(dhkemX448.privateKeySize, 56);
+      const dhkemX448 = new DhkemX448HkdfSha512();
+      assertEquals(typeof dhkemX448, "object");
+      assertEquals(dhkemX448.id, KemId.DhkemX448HkdfSha512);
+      assertEquals(dhkemX448.secretSize, 64);
+      assertEquals(dhkemX448.encSize, 56);
+      assertEquals(dhkemX448.publicKeySize, 56);
+      assertEquals(dhkemX448.privateKeySize, 56);
     });
   });
 });
@@ -144,21 +130,20 @@ describe("generateKeyPair", () => {
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
 
-    // it("should return a proper instance with DhkemX448HkdfSha512", async () => {
-    //   // assert
-    //   const kemContext = new DhkemX448HkdfSha512();
-    //   const kp = await kemContext.generateKeyPair();
-    //   assertEquals(kp.publicKey.type, "public");
-    //   assertEquals(kp.publicKey.extractable, true);
-    //   assertEquals(kp.publicKey.algorithm.name, "X448");
-    //   assertEquals(kp.publicKey.usages.length, 0);
-    //   // assertEquals(kp.publicKey.usages[0], "deriveBits");
-    //   assertEquals(kp.privateKey.type, "private");
-    //   assertEquals(kp.privateKey.extractable, true);
-    //   assertEquals(kp.privateKey.algorithm.name, "X448");
-    //   assertEquals(kp.privateKey.usages.length, 1);
-    //   assertEquals(kp.privateKey.usages[0], "deriveBits");
-    // });
+    it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const kp = await kemContext.generateKeyPair();
+      assertEquals(kp.publicKey.type, "public");
+      assertEquals(kp.publicKey.extractable, true);
+      assertEquals(kp.publicKey.algorithm.name, "X448");
+      assertEquals(kp.publicKey.usages.length, 0);
+      assertEquals(kp.privateKey.type, "private");
+      assertEquals(kp.privateKey.extractable, true);
+      assertEquals(kp.privateKey.algorithm.name, "X448");
+      assertEquals(kp.privateKey.usages.length, 1);
+      assertEquals(kp.privateKey.usages[0], "deriveBits");
+    });
   });
 });
 
@@ -258,24 +243,27 @@ describe("deriveKeyPair", () => {
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
 
-    // it("should return a proper instance with DhkemX448HkdfSha512", async () => {
-    //   const cryptoApi = await loadCrypto();
+    it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      if (isDeno()) {
+        return;
+      }
+      const cryptoApi = await loadCrypto();
 
-    //   // assert
-    //   const kemContext = new DhkemX448HkdfSha512();
-    //   const ikm = new Uint8Array(32);
-    //   cryptoApi.getRandomValues(ikm);
-    //   const kp = await kemContext.deriveKeyPair(ikm.buffer);
-    //   assertEquals(kp.publicKey.type, "public");
-    //   assertEquals(kp.publicKey.extractable, true);
-    //   assertEquals(kp.publicKey.algorithm.name, "X448");
-    //   assertEquals(kp.publicKey.usages.length, 0);
-    //   assertEquals(kp.privateKey.type, "private");
-    //   assertEquals(kp.privateKey.extractable, true);
-    //   assertEquals(kp.privateKey.algorithm.name, "X448");
-    //   assertEquals(kp.privateKey.usages.length, 1);
-    //   assertEquals(kp.privateKey.usages[0], "deriveBits");
-    // });
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const ikm = new Uint8Array(32);
+      cryptoApi.getRandomValues(ikm);
+      const kp = await kemContext.deriveKeyPair(ikm.buffer);
+      assertEquals(kp.publicKey.type, "public");
+      assertEquals(kp.publicKey.extractable, true);
+      assertEquals(kp.publicKey.algorithm.name, "X448");
+      assertEquals(kp.publicKey.usages.length, 0);
+      assertEquals(kp.privateKey.type, "private");
+      assertEquals(kp.privateKey.extractable, true);
+      assertEquals(kp.privateKey.algorithm.name, "X448");
+      assertEquals(kp.privateKey.usages.length, 1);
+      assertEquals(kp.privateKey.usages[0], "deriveBits");
+    });
 
     it("should return a proper instance with DhkemX25519HkdfSha256 and zero-length ikm", async () => {
       if (isDeno()) {
@@ -374,18 +362,18 @@ describe("serialize/deserializePublicKey", () => {
       // assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
 
-    // it("should return a proper instance with DhkemX448HkdfSha512", async () => {
-    //   // assert
-    //   const kemContext = new DhkemX448HkdfSha512();
-    //   const kp = await kemContext.generateKeyPair();
-    //   const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
-    //   const pubKey = await kemContext.deserializePublicKey(bPubKey);
-    //   assertEquals(pubKey.type, "public");
-    //   assertEquals(pubKey.extractable, true);
-    //   assertEquals(pubKey.algorithm.name, "X448");
-    //   assertEquals(pubKey.usages.length, 0);
-    //   // assertEquals(kp.privateKey.usages[0], "deriveBits");
-    // });
+    it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const kp = await kemContext.generateKeyPair();
+      const bPubKey = await kemContext.serializePublicKey(kp.publicKey);
+      const pubKey = await kemContext.deserializePublicKey(bPubKey);
+      assertEquals(pubKey.type, "public");
+      assertEquals(pubKey.extractable, true);
+      assertEquals(pubKey.algorithm.name, "X448");
+      assertEquals(pubKey.usages.length, 0);
+      // assertEquals(kp.privateKey.usages[0], "deriveBits");
+    });
   });
 
   describe("with invalid parameters", () => {
@@ -492,17 +480,17 @@ describe("serialize/deserializePublicKey", () => {
       );
     });
 
-    // it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePublicKey with invalid length key", async () => {
-    //   // assert
-    //   const kemContext = new DhkemX25519HkdfSha256();
-    //   const cryptoApi = await loadCrypto();
-    //   const rawKey = new Uint8Array(56 - 1);
-    //   cryptoApi.getRandomValues(rawKey);
-    //   await assertRejects(
-    //     () => kemContext.deserializePublicKey(rawKey.buffer),
-    //     DeserializeError,
-    //   );
-    // });
+    it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX25519HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(56 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        DeserializeError,
+      );
+    });
   });
 });
 
@@ -577,18 +565,21 @@ describe("serialize/deserializePrivateKey", () => {
       assertEquals(privKey.usages[0], "deriveBits");
     });
 
-    // it("should return a proper instance with DhkemX448HkdfSha512", async () => {
-    //   // assert
-    //   const kemContext = new DhkemX448HkdfSha512();
-    //   const kp = await kemContext.generateKeyPair();
-    //   const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
-    //   const privKey = await kemContext.deserializePrivateKey(bPrivKey);
-    //   assertEquals(privKey.type, "private");
-    //   assertEquals(privKey.extractable, true);
-    //   assertEquals(privKey.algorithm.name, "X448");
-    //   assertEquals(privKey.usages.length, 1);
-    //   assertEquals(privKey.usages[0], "deriveBits");
-    // });
+    it("should return a proper instance with DhkemX448HkdfSha512", async () => {
+      if (isDeno()) {
+        return;
+      }
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "X448");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
   });
 
   describe("with invalid parameters", () => {
@@ -695,17 +686,17 @@ describe("serialize/deserializePrivateKey", () => {
       );
     });
 
-    // it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePrivateKey with invalid length key", async () => {
-    //   // assert
-    //   const kemContext = new DhkemX448HkdfSha512();
-    //   const cryptoApi = await loadCrypto();
-    //   const rawKey = new Uint8Array(55);
-    //   cryptoApi.getRandomValues(rawKey);
-    //   await assertRejects(
-    //     () => kemContext.deserializePrivateKey(rawKey),
-    //     DeserializeError,
-    //   );
-    // });
+    it("should throw DeserializeError on DhkemX448HkdfSha512.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemX448HkdfSha512();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(55);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        DeserializeError,
+      );
+    });
   });
 });
 
@@ -856,39 +847,39 @@ describe("importKey", () => {
       assertEquals(privKey.usages.length, 0);
     });
 
-    // it("should return a valid private key for DhkemX448HkdfSha512 from JWK", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should return a valid private key for DhkemX448HkdfSha512 from JWK", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: ["deriveBits"],
-    //   };
-    //   const privKey = await kemContext.importKey("jwk", jwk, false);
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
+      const privKey = await kemContext.importKey("jwk", jwk, false);
 
-    //   // assert
-    //   assertEquals(privKey.usages.length, 1);
-    //   assertEquals(privKey.usages[0], "deriveBits");
-    // });
+      // assert
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
 
-    // it("should return a valid public key for DhkemX448HkdfSha512 from JWK", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should return a valid public key for DhkemX448HkdfSha512 from JWK", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     key_ops: [],
-    //   };
-    //   const privKey = await kemContext.importKey("jwk", jwk, true);
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        key_ops: [],
+      };
+      const privKey = await kemContext.importKey("jwk", jwk, true);
 
-    //   // assert
-    //   assertEquals(privKey.usages.length, 0);
-    // });
+      // assert
+      assertEquals(privKey.usages.length, 0);
+    });
   });
 
   describe("with invalid parameters", () => {
@@ -1157,132 +1148,135 @@ describe("importKey", () => {
       );
     });
 
-    // it("should throw DeserializeError with private raw key(OKP/448) with 'jwk'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with private raw key(OKP/448) with 'jwk'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const cryptoApi = await loadCrypto();
-    //   const rawKey = new Uint8Array(56);
-    //   cryptoApi.getRandomValues(rawKey);
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(56);
+      cryptoApi.getRandomValues(rawKey);
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", rawKey.buffer, false),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", rawKey.buffer, false),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with private JWK(OKP/448) with 'raw'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with private JWK(OKP/448) with 'raw'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: ["deriveBits"],
-    //   };
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("raw", jwk, false),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("raw", jwk, false),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'kty'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'kty'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     // kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: ["deriveBits"],
-    //   };
+      const jwk = {
+        // kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", jwk, false),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'crv'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'crv'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     // crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: ["deriveBits"],
-    //   };
+      const jwk = {
+        kty: "OKP",
+        // crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", jwk, false),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'd'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with invalid private JWK(OKP/X448) without 'd'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     // d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: ["deriveBits"],
-    //   };
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        // d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: ["deriveBits"],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", jwk, false),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with invalid public JWK(OKP/X448) without 'x'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with invalid public JWK(OKP/X448) without 'x'", async () => {
+      if (isDeno()) {
+        return;
+      }
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     // x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     // d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: [],
-    //   };
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        // x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        // d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: [],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", jwk, true),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-    // it("should throw DeserializeError with invalid public JWK(X448) with 'd'", async () => {
-    //   const kemContext = new DhkemX448HkdfSha512();
+    it("should throw DeserializeError with invalid public JWK(X448) with 'd'", async () => {
+      const kemContext = new DhkemX448HkdfSha512();
 
-    //   const jwk = {
-    //     kty: "OKP",
-    //     crv: "X448",
-    //     kid: "X448-01",
-    //     x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
-    //     d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
-    //     key_ops: [],
-    //   };
+      const jwk = {
+        kty: "OKP",
+        crv: "X448",
+        kid: "X448-01",
+        x: "IkLmc0klvEMXYneHMKAB6ePohryAwAPVe2pRSffIDY6NrjeYNWVX5J-fG4NV2OoU77C88A0mvxI",
+        d: "rJJRG3nshyCtd9CgXld8aNaB9YXKR0UOi7zj7hApg9YH4XdBO0G8NcAFNz_uPH2GnCZVcSDgV5c",
+        key_ops: [],
+      };
 
-    //   // assert
-    //   await assertRejects(
-    //     () => kemContext.importKey("jwk", jwk, true),
-    //     DeserializeError,
-    //   );
-    // });
+      // assert
+      await assertRejects(
+        () => kemContext.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
   });
 });

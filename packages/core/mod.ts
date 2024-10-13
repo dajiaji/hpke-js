@@ -48,3 +48,4 @@ export {
 } from "./src/native.ts";
 
 export { DhkemX25519HkdfSha256 } from "./src/kems/dhkemX25519.ts";
+export { DhkemX448HkdfSha512 } from "./src/kems/dhkemX448.ts";
