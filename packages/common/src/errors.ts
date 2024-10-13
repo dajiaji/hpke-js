@@ -2,7 +2,7 @@
  * The base error class of hpke-js.
  * @group Errors
  */
-export class BaseError extends Error {
+export class HpkeError extends Error {
   public constructor(e: unknown) {
     let message: string;
 
@@ -18,12 +18,6 @@ export class BaseError extends Error {
     this.name = this.constructor.name;
   }
 }
-
-/**
- * The base error class of hpke-js.
- * @group Errors
- */
-export class HpkeError extends BaseError {}
 
 /**
  * Invalid parameter.
