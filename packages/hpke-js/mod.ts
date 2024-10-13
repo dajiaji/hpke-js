@@ -15,7 +15,6 @@ export type {
 
 export {
   AeadId,
-  BaseError,
   DecapError,
   DeriveKeyPairError,
   DeserializeError,

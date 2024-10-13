@@ -18,7 +18,6 @@ export type { CipherSuiteSealResponse } from "./src/interfaces/responses.ts";
 
 export {
   AeadId,
-  BaseError,
   DecapError,
   DeriveKeyPairError,
   DeserializeError,
