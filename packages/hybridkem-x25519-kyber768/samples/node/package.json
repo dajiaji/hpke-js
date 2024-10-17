@@ -1,5 +1,5 @@
 {
-  "name": "node-hpke-core",
+  "name": "samples-node-hpke-hybridkem-x25519-kyber768",
   "version": "1.0.0",
   "description": "A sample code of @hpke/core.",
   "type": "module",
