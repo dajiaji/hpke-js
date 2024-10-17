@@ -1,5 +1,5 @@
 {
-  "name": "node-hpke-core",
+  "name": "samples-node-hpke-dhkem-x448",
   "version": "1.0.0",
   "description": "A sample code of @hpke/core.",
   "type": "module",

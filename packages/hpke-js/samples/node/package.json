@@ -1,5 +1,5 @@
 {
-  "name": "node-hpke-js",
+  "name": "samples-node-hpke-js",
   "version": "1.0.0",
   "description": "A sample code of hpke-js.",
   "type": "module",
