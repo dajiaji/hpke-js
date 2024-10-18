@@ -72,7 +72,7 @@
     "test:bun:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task test:bun",
     "test:bun:hpke-js": "cd packages/hpke-js && deno task test:bun",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "npm": "deno task dnt && deno task npm-link && deno task npm-pack",
+    "npm": "deno task dnt && deno task npm-link && deno task npm-pack && cd npm && npm install",
     "dnt": "deno task dnt:common && deno task dnt:core && deno task dnt:chacha20poly1305 && deno task dnt:dhkem-x25519 && deno task dnt:dhkem-x448 && deno task dnt:dhkem-secp256k1 && deno task dnt:hybridkem-x25519-kyber768 && deno task dnt:hpke-js",
     "dnt:common": "cd packages/common && deno task dnt",
     "dnt:core": "cd packages/core && deno task dnt",
