@@ -1,6 +1,7 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm/packages/dhkem-secp256k1");
+await emptyDir("../../npm/samples/dhkem-secp256k1");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -69,4 +70,12 @@ Deno.copyFileSync("LICENSE", "../../npm/packages/dhkem-secp256k1/LICENSE");
 Deno.copyFileSync(
   "README.md",
   "../../npm/packages/dhkem-secp256k1/README.md",
+);
+Deno.copyFileSync(
+  "samples/node/app.js",
+  "../../npm/samples/dhkem-secp256k1/app.js",
+);
+Deno.copyFileSync(
+  "samples/node/package.json",
+  "../../npm/samples/dhkem-secp256k1/package.json",
 );

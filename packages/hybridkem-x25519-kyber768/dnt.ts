@@ -1,6 +1,7 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm/packages/hybridkem-x25519-kyber768");
+await emptyDir("../../npm/samples/hybridkem-x25519-kyber768");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -72,4 +73,12 @@ Deno.copyFileSync(
 Deno.copyFileSync(
   "README.md",
   "../../npm/packages/hybridkem-x25519-kyber768/README.md",
+);
+Deno.copyFileSync(
+  "samples/node/app.js",
+  "../../npm/samples/hybridkem-x25519-kyber768/app.js",
+);
+Deno.copyFileSync(
+  "samples/node/package.json",
+  "../../npm/samples/hybridkem-x25519-kyber768/package.json",
 );
