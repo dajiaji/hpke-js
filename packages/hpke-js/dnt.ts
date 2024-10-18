@@ -1,7 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
+import { copySync } from "@std/fs";
 
 await emptyDir("../../npm/packages/hpke-js");
 await emptyDir("../../npm/samples/hpke-js");
+await emptyDir("../../npm/test/hpke-js/runtimes/cloudflare");
+
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -69,11 +72,17 @@ await build({
   },
 });
 
+copySync(
+  "samples/node",
+  "../../npm/samples/hpke-js",
+  { overwrite: true },
+);
+copySync(
+  "test/runtimes/cloudflare",
+  "../../npm/test/hpke-js/runtimes/cloudflare",
+  { overwrite: true },
+);
+
 // post build steps
 Deno.copyFileSync("LICENSE", "../../npm/packages/hpke-js/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/hpke-js/README.md");
-Deno.copyFileSync("samples/node/app.js", "../../npm/samples/hpke-js/app.js");
-Deno.copyFileSync(
-  "samples/node/package.json",
-  "../../npm/samples/hpke-js/package.json",
-);

@@ -1,7 +1,10 @@
 import { build, emptyDir } from "jsr:@deno/dnt";
+import { copySync } from "@std/fs";
 
 await emptyDir("../../npm/packages/dhkem-x25519");
 await emptyDir("../../npm/samples/dhkem-x25519");
+await emptyDir("../../npm/test/dhkem-x25519/runtimes/cloudflare");
+
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -65,14 +68,17 @@ await build({
   },
 });
 
+copySync(
+  "samples/node",
+  "../../npm/samples/dhkem-x25519",
+  { overwrite: true },
+);
+copySync(
+  "test/runtimes/cloudflare",
+  "../../npm/test/dhkem-x25519/runtimes/cloudflare",
+  { overwrite: true },
+);
+
 // post build steps
 Deno.copyFileSync("LICENSE", "../../npm/packages/dhkem-x25519/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/dhkem-x25519/README.md");
-Deno.copyFileSync(
-  "samples/node/app.js",
-  "../../npm/samples/dhkem-x25519/app.js",
-);
-Deno.copyFileSync(
-  "samples/node/package.json",
-  "../../npm/samples/dhkem-x25519/package.json",
-);

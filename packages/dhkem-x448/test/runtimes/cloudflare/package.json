@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare",
+  "name": "test-cloudflare-hpke-dhkem-x448",
   "version": "0.0.0",
   "private": true,
   "scripts": {
