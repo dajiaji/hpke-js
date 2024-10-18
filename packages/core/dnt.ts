@@ -1,7 +1,10 @@
 import { build, emptyDir } from "@deno/dnt";
+import { copySync } from "@std/fs";
 
 await emptyDir("../../npm/packages/core");
 await emptyDir("../../npm/samples/core");
+await emptyDir("../../npm/test/core/runtimes/cloudflare");
+
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -63,11 +66,17 @@ await build({
   },
 });
 
+copySync(
+  "samples/node",
+  "../../npm/samples/core",
+  { overwrite: true },
+);
+copySync(
+  "test/runtimes/cloudflare",
+  "../../npm/test/core/runtimes/cloudflare",
+  { overwrite: true },
+);
+
 // post build steps
 Deno.copyFileSync("LICENSE", "../../npm/packages/core/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/core/README.md");
-Deno.copyFileSync("samples/node/app.js", "../../npm/samples/core/app.js");
-Deno.copyFileSync(
-  "samples/node/package.json",
-  "../../npm/samples/core/package.json",
-);
