@@ -7,7 +7,6 @@ await emptyDir("../../npm/test/dhkem-secp256k1/runtimes/cloudflare");
 
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
-await emptyDir("test/runtimes/cloudflare/node_modules");
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
