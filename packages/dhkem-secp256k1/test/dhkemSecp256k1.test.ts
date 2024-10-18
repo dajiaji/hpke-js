@@ -6,15 +6,18 @@ import {
   AeadId,
   Aes128Gcm,
   CipherSuite,
+  DeserializeError,
+  DhkemP256HkdfSha256,
   ExportOnly,
   HkdfSha256,
   KdfId,
   KemId,
+  SerializeError,
 } from "@hpke/core";
 
 import { DhkemSecp256k1HkdfSha256 } from "../mod.ts";
 
-describe("DhkemSecp256k1Hkdf256", () => {
+describe("constructor", () => {
   describe("with valid parameters", () => {
     it("should have a correct KEM object", () => {
       // assert
@@ -91,6 +94,72 @@ describe("serialize/deserializePublicKey", () => {
       // assertEquals(pubKey.algorithm.namedCurve, "secp256k1");
       assertEquals(pubKey.usages.length, 0);
       // assertEquals(pubKey.usages[0], "deriveBits");
+    });
+  });
+  describe("with invalid parameters", () => {
+    it("should throw SerializeError on DhkemSecp256k1HkdfSha256.serializePublicKey with a public key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemSecp256k1HkdfSha256();
+      await assertRejects(
+        () => kemContext.serializePublicKey(kp.publicKey),
+        SerializeError,
+      );
+    });
+
+    it("should throw DeserializeError on DhkemP256HkdfSha256.deserializePublicKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemSecp256k1HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(33 - 1);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePublicKey(rawKey.buffer),
+        DeserializeError,
+      );
+    });
+  });
+});
+
+describe("serialize/deserializePrivateKey", () => {
+  describe("with valid parameters", () => {
+    it("should return a proper instance with DhkemSecp256k1HkdfSha256", async () => {
+      // assert
+      const kemContext = new DhkemSecp256k1HkdfSha256();
+      const kp = await kemContext.generateKeyPair();
+      const bPrivKey = await kemContext.serializePrivateKey(kp.privateKey);
+      const privKey = await kemContext.deserializePrivateKey(bPrivKey);
+      assertEquals(privKey.type, "private");
+      assertEquals(privKey.extractable, true);
+      assertEquals(privKey.algorithm.name, "ECDH");
+      // assertEquals(pubKey.algorithm.namedCurve, "secp256k1");
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+  });
+
+  describe("with invalid parameters", () => {
+    it("should throw SerializeError on DhkemSecp256k1HkdfSha256.serializePrivateKey with a private key for DhkemP256HkdfSha256", async () => {
+      // assert
+      const ctx = new DhkemP256HkdfSha256();
+      const kp = await ctx.generateKeyPair();
+      const kemContext = new DhkemSecp256k1HkdfSha256();
+      await assertRejects(
+        () => kemContext.serializePrivateKey(kp.privateKey),
+        SerializeError,
+      );
+    });
+    it("should throw DeserializeError on DhkemSecp256k1HkdfSha256.deserializePrivateKey with invalid length key", async () => {
+      // assert
+      const kemContext = new DhkemSecp256k1HkdfSha256();
+      const cryptoApi = await loadCrypto();
+      const rawKey = new Uint8Array(33);
+      cryptoApi.getRandomValues(rawKey);
+      await assertRejects(
+        () => kemContext.deserializePrivateKey(rawKey),
+        DeserializeError,
+      );
     });
   });
 });
