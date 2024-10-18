@@ -1,6 +1,7 @@
 import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm/packages/chacha20poly1305");
+await emptyDir("../../npm/samples/chacha20poly1305");
 await emptyDir("test/runtimes/browsers/node_modules");
 await emptyDir("test/runtimes/bun/node_modules");
 await emptyDir("test/runtimes/cloudflare/node_modules");
@@ -69,4 +70,12 @@ Deno.copyFileSync("LICENSE", "../../npm/packages/chacha20poly1305/LICENSE");
 Deno.copyFileSync(
   "README.md",
   "../../npm/packages/chacha20poly1305/README.md",
+);
+Deno.copyFileSync(
+  "samples/node/app.js",
+  "../../npm/samples/chacha20poly1305/app.js",
+);
+Deno.copyFileSync(
+  "samples/node/package.json",
+  "../../npm/samples/chacha20poly1305/package.json",
 );

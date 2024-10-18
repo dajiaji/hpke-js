@@ -6,6 +6,9 @@
   "main": "app.js",
   "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
   "license": "MIT",
+  "scripts": {
+    "test": "node app.js"
+  },
   "dependencies": {
     "hpke-js": "^1.5.0"
   }
