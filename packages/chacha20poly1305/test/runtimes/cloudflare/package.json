@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare",
+  "name": "test-cloudflare-hpke-chacha20poly1305",
   "version": "0.0.0",
   "private": true,
   "scripts": {
