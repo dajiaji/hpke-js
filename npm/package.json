@@ -10,6 +10,7 @@
     "packages/dhkem-secp256k1",
     "packages/hybridkem-x25519-kyber768",
     "packages/hpke-js",
+    "test/**/*/runtimes/cloudflare",
     "samples/**/*"
   ]
 }

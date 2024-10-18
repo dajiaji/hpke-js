@@ -15,6 +15,7 @@
     "@noble/hashes/sha512": "npm:@noble/hashes@^1.4.0/sha512",
     "@noble/hashes/sha3": "npm:@noble/hashes@^1.4.0/sha3",
     "@std/assert": "jsr:@std/assert@1.0.0",
+    "@std/fs": "jsr:@std/fs@^1.0.4",
     "@std/path": "jsr:@std/path@^1.0.3",
     "@std/testing/bdd": "jsr:@std/testing@^1.0.0/bdd"
   }
