@@ -1,5 +1,6 @@
 {
   "imports": {
+    "@dajiaji/mlkem": "npm:mlkem@^2.2.0",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.4.3",
     "@hpke/common": "npm:@hpke/common@^1.4.3",

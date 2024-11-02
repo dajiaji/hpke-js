@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@dajiaji/mlkem@^2.2.0": "2.2.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.2",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@*": "0.41.3",
@@ -22,7 +23,7 @@
     "jsr:@std/path@0.223": "0.223.0",
     "jsr:@std/path@1": "1.0.3",
     "jsr:@std/path@1.0.0-rc.1": "1.0.0-rc.1",
-    "jsr:@std/path@^1.0.3": "1.0.3",
+    "jsr:@std/path@^1.0.3": "1.0.6",
     "jsr:@std/path@^1.0.6": "1.0.6",
     "jsr:@std/path@~0.225.2": "0.225.2",
     "jsr:@std/testing@1": "1.0.1",
@@ -38,9 +39,17 @@
     "npm:@noble/curves@^1.4.2": "1.4.2",
     "npm:@noble/hashes@1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.4.0": "1.4.0",
-    "npm:@types/node@*": "22.2.0"
+    "npm:@noble/hashes@^1.5.0": "1.5.0",
+    "npm:@types/node@*": "22.2.0",
+    "npm:mlkem@^2.2.0": "2.2.0"
   },
   "jsr": {
+    "@dajiaji/mlkem@2.2.0": {
+      "integrity": "37f4cf9be3e89bdeb74e71d6e17daf52fe9147b86c87955b7ca234e8f25d6449",
+      "dependencies": [
+        "npm:@noble/hashes@^1.5.0"
+      ]
+    },
     "@david/code-block-writer@13.0.2": {
       "integrity": "14dd3baaafa3a2dea8bf7dfbcddeccaa13e583da2d21d666c01dc6d681cd74ad"
     },
@@ -176,7 +185,7 @@
       "dependencies": [
         "@hpke/core",
         "@noble/curves",
-        "@noble/hashes"
+        "@noble/hashes@1.4.0"
       ]
     },
     "@hpke/dhkem-x448@1.3.1": {
@@ -184,7 +193,7 @@
       "dependencies": [
         "@hpke/core",
         "@noble/curves",
-        "@noble/hashes"
+        "@noble/hashes@1.4.0"
       ]
     },
     "@noble/ciphers@0.5.3": {
@@ -193,16 +202,25 @@
     "@noble/curves@1.4.2": {
       "integrity": "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==",
       "dependencies": [
-        "@noble/hashes"
+        "@noble/hashes@1.4.0"
       ]
     },
     "@noble/hashes@1.4.0": {
       "integrity": "sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg=="
     },
+    "@noble/hashes@1.5.0": {
+      "integrity": "sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA=="
+    },
     "@types/node@22.2.0": {
       "integrity": "sha512-bm6EG6/pCpkxDf/0gDNDdtDILMOHgaQBVOJGdwsqClnxA3xL6jtMv76rLBc006RVMWbmaf0xbmom4Z/5o2nRkQ==",
       "dependencies": [
         "undici-types"
+      ]
+    },
+    "mlkem@2.2.0": {
+      "integrity": "sha512-TRMY06ZsZctqsG2wVa5A28Vin8Lc0HoG35anFQOFmwxXtvCDK44mNDjFIC2oz1IQwirTrWRgGFiyKdhPOL28TA==",
+      "dependencies": [
+        "@noble/hashes@1.5.0"
       ]
     },
     "undici-types@6.13.0": {
@@ -320,6 +338,12 @@
       },
       "packages/hpke-js": {
         "dependencies": [
+          "npm:@noble/hashes@^1.4.0"
+        ]
+      },
+      "packages/hybridkem-x-wing": {
+        "dependencies": [
+          "jsr:@dajiaji/mlkem@^2.2.0",
           "npm:@noble/hashes@^1.4.0"
         ]
       },
