@@ -34,6 +34,7 @@
     "npm:@hpke/dhkem-x25519@^1.3.0": "1.3.1",
     "npm:@hpke/dhkem-x448@^1.3.0": "1.3.1",
     "npm:@noble/ciphers@0.5.3": "0.5.3",
+    "npm:@noble/ciphers@1": "1.0.0",
     "npm:@noble/ciphers@~0.5.3": "0.5.3",
     "npm:@noble/curves@1.4.2": "1.4.2",
     "npm:@noble/curves@^1.4.2": "1.4.2",
@@ -175,7 +176,7 @@
       "integrity": "sha512-kX8D5y04o+SxGJSJMA4r3+YtxOSHir7QxRFuANCVB4hr7Dm7oVwce9iVUQJtOPRSc4mddFlRFq4SQyy2mI4KQA==",
       "dependencies": [
         "@hpke/core",
-        "@noble/ciphers"
+        "@noble/ciphers@0.5.3"
       ]
     },
     "@hpke/core@1.3.1": {
@@ -199,6 +200,9 @@
     },
     "@noble/ciphers@0.5.3": {
       "integrity": "sha512-B0+6IIHiqEs3BPMT0hcRmHvEj2QHOLu+uwt+tqDDeVd0oyVzh7BPrDcPjRnV1PV/5LaknXJJQvOuRGR0zQJz+w=="
+    },
+    "@noble/ciphers@1.0.0": {
+      "integrity": "sha512-wH5EHOmLi0rEazphPbecAzmjd12I6/Yv/SiHdkA9LSycsQk7RuuTp7am5/o62qYr0RScE7Pc9icXGBbsr6cesA=="
     },
     "@noble/curves@1.4.2": {
       "integrity": "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==",
@@ -317,7 +321,7 @@
     "members": {
       "packages/chacha20poly1305": {
         "dependencies": [
-          "npm:@noble/ciphers@~0.5.3"
+          "npm:@noble/ciphers@1"
         ]
       },
       "packages/chacha20poly1305/samples/deno": {
