@@ -1,4 +1,5 @@
 import { sha3_256, shake256 } from "@noble/hashes/sha3";
+// @ts-ignore: Unreachable code error
 import { MlKem768 } from "@dajiaji/mlkem";
 
 import type {
