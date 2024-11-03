@@ -1,7 +1,8 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { hexToBytes, KemId } from "@hpke/common";
+import { hexToBytes, loadCrypto } from "@hpke/common";
+import { Aes128Gcm, CipherSuite, HkdfSha256, KemId } from "@hpke/core";
 import { HybridkemXWing } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
 
@@ -63,34 +64,53 @@ describe("HybridkemXWing", () => {
   });
 });
 
-// describe("README examples", () => {
-//   describe("HybridkemXWing/HkdfShar256/Aes128Gcm", () => {
-//     it("should work normally", async () => {
-//       const suite = new CipherSuite({
-//         kem: new HybridkemXWing(),
-//         kdf: new HkdfSha256(),
-//         aead: new Aes128Gcm(),
-//       });
-//       const rkp = await suite.kem.generateKeyPair();
-//       const sender = await suite.createSenderContext({
-//         recipientPublicKey: rkp.publicKey,
-//       });
-//       const recipient = await suite.createRecipientContext({
-//         recipientKey: rkp,
-//         enc: sender.enc,
-//       });
-//       assertEquals(sender.enc.byteLength, suite.kem.encSize);
-//
-//       // encrypt
-//       const ct = await sender.seal(
-//         new TextEncoder().encode("my-secret-message"),
-//       );
-//
-//       // decrypt
-//       const pt = await recipient.open(ct);
-//
-//       // assert
-//       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
-//     });
-//   });
-// });
+describe("README examples", () => {
+  describe("HybridkemXWing/HkdfShar256/Aes128Gcm", () => {
+    it("should work normally with generateKeyPair", async () => {
+      const suite = new CipherSuite({
+        kem: new HybridkemXWing(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
+      const rkp = await suite.kem.generateKeyPair();
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+      assertEquals(sender.enc.byteLength, suite.kem.encSize);
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+      const pt = await recipient.open(ct);
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+
+    it("should work normally with deriveKeyPair", async () => {
+      const suite = new CipherSuite({
+        kem: new HybridkemXWing(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
+      const cryptoApi = await loadCrypto();
+      const ikm = new Uint8Array(32);
+      cryptoApi.getRandomValues(ikm);
+      const rkp = await suite.kem.deriveKeyPair(ikm.buffer);
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp,
+        enc: sender.enc,
+      });
+      assertEquals(sender.enc.byteLength, suite.kem.encSize);
+      const ct = await sender.seal(
+        new TextEncoder().encode("my-secret-message"),
+      );
+      const pt = await recipient.open(ct);
+      assertEquals(new TextDecoder().decode(pt), "my-secret-message");
+    });
+  });
+});
