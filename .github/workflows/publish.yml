@@ -74,6 +74,11 @@ jobs:
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Publish @hpke/hybridkem-x-wing to npm
+        working-directory: ./npm/packages/hybridkem-x-wing
+        run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Publish hpke-js to npm
         working-directory: ./npm/packages/hpke-js
         run: npm publish --provenance

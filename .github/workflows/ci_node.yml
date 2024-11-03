@@ -81,6 +81,14 @@ jobs:
       - name: Publish to npm (dry) for /packages/dhkem-secp256k1
         working-directory: ./npm/packages/dhkem-secp256k1
         run: npm publish --dry-run
+      - name: Run dnt & minify for /packages/hybridkem-x-wing
+        working-directory: ./packages/hybridkem-x-wing
+        run: |
+          deno task dnt
+          deno task minify > ../../npm/packages/hybridkem-x-wing/hpke-hybridkem-x-wing.min.js
+      - name: Publish to npm (dry) for /packages/hybridkem-x-wing
+        working-directory: ./npm/packages/hybridkem-x-wing
+        run: npm publish --dry-run
       - name: Run dnt & minify for /packages/hpke-js
         working-directory: ./packages/hpke-js
         run: |

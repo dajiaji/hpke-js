@@ -90,6 +90,11 @@ jobs:
         run: |
           npx typedoc --name "@hpke/dhkem-secp256k1 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/docs mod.ts
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-dhkem-secp256k1.js
+      - name: Build docs for @hpke/hybridkem-x-wing
+        working-directory: ./packages/hybridkem-x-wing
+        run: |
+          npx typedoc --name "@hpke/hybridkem-x-wing" --out ../hpke-js/test/runtimes/browsers/pages/hybridkem-x-wing/docs mod.ts
+          deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x-wing/src/hpke-hybridkem-x-wing.js
       - name: Build docs for @hpke/hpke-js
         working-directory: ./packages/hpke-js
         run: |
