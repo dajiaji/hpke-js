@@ -1,0 +1,15 @@
+{
+  "name": "test",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hpke/core": "link:@hpke/core",
+    "@hpke/hybridkem-x-wing": "link:@hpke/hybridkem-x-wing"
+  }
+}

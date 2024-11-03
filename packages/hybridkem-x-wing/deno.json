@@ -1,0 +1,59 @@
+{
+  "name": "@hpke/hybridkem-x-wing",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "imports": {
+    "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.2.0",
+    "@noble/hashes": "npm:@noble/hashes@^1.4.0"
+  },
+  "publish": {
+    "exclude": [
+      "dnt.ts",
+      "samples/",
+      "test/",
+      "tsconfig.json"
+    ]
+  },
+  "fmt": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "lint": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "samples/",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "tasks": {
+    "test": "deno fmt && deno lint && deno test --import-map=../../import_map.json --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test:cloudflare": "cd test/runtimes/cloudflare && npm install && npm link @hpke/common @hpke/hybridkem-x-wing && npm run test",
+    "test:bun": "cd test/runtimes/bun && bun install && bun test",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
+    "sample:deno": "cd samples/deno && deno run main.ts",
+    "sample:node": "cd samples/node && npm install && node app.js",
+    "minify": "esbuild ../../npm/packages/hybridkem-x-wing/esm/mod.js --bundle --format=esm --minify"
+  }
+}

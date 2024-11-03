@@ -25,6 +25,7 @@ export const KemId = {
   DhkemX25519HkdfSha256: 0x0020,
   DhkemX448HkdfSha512: 0x0021,
   HybridkemX25519Kyber768: 0x0030,
+  HybridkemXWing: 0x647a,
 } as const;
 
 /**

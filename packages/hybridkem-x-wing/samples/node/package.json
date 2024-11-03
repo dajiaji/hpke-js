@@ -1,0 +1,16 @@
+{
+  "name": "samples-node-hpke-hybridkem-x-wing",
+  "version": "1.0.0",
+  "description": "A sample code of @hpke/hybridkem-x-wing.",
+  "type": "module",
+  "main": "app.js",
+  "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "dependencies": {
+    "@hpke/core": "^1.5.0",
+    "@hpke/hybridkem-x-wing": "^0.1.0"
+  }
+}
