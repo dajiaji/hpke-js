@@ -134,6 +134,14 @@ export class X25519 implements DhkemPrimitives {
     }
   }
 
+  public async derive(sk: Uint8Array, pk: Uint8Array): Promise<Uint8Array> {
+    try {
+      return await this._derive(sk, pk);
+    } catch (e: unknown) {
+      throw new SerializeError(e);
+    }
+  }
+
   private _serializePublicKey(k: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
       resolve(k.key.buffer);
@@ -221,6 +229,16 @@ export class X25519 implements DhkemPrimitives {
     return new Promise((resolve, reject) => {
       try {
         resolve(x25519.getSharedSecret(sk.key, pk.key).buffer);
+      } catch (e: unknown) {
+        reject(e);
+      }
+    });
+  }
+
+  private _derive(sk: Uint8Array, pk: Uint8Array): Promise<Uint8Array> {
+    return new Promise((resolve, reject) => {
+      try {
+        resolve(x25519.getSharedSecret(sk, pk));
       } catch (e: unknown) {
         reject(e);
       }
