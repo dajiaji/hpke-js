@@ -327,29 +327,29 @@
       "packages/dhkem-x25519": {
         "dependencies": [
           "npm:@noble/curves@^1.4.2",
-          "npm:@noble/hashes@^1.4.0"
+          "npm:@noble/hashes@^1.5.0"
         ]
       },
       "packages/dhkem-x448": {
         "dependencies": [
           "npm:@noble/curves@^1.4.2",
-          "npm:@noble/hashes@^1.4.0"
+          "npm:@noble/hashes@^1.5.0"
         ]
       },
       "packages/hpke-js": {
         "dependencies": [
-          "npm:@noble/hashes@^1.4.0"
+          "npm:@noble/hashes@^1.5.0"
         ]
       },
       "packages/hybridkem-x-wing": {
         "dependencies": [
           "jsr:@dajiaji/mlkem@^2.2.0",
-          "npm:@noble/hashes@^1.4.0"
+          "npm:@noble/hashes@^1.5.0"
         ]
       },
       "packages/hybridkem-x25519-kyber768": {
         "dependencies": [
-          "npm:@noble/hashes@^1.4.0"
+          "npm:@noble/hashes@^1.5.0"
         ]
       }
     }
