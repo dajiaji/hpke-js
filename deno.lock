@@ -37,6 +37,7 @@
     "npm:@noble/ciphers@~0.5.3": "0.5.3",
     "npm:@noble/curves@1.4.2": "1.4.2",
     "npm:@noble/curves@^1.4.2": "1.4.2",
+    "npm:@noble/curves@^1.6.0": "1.6.0",
     "npm:@noble/hashes@1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.5.0": "1.5.0",
@@ -184,7 +185,7 @@
       "integrity": "sha512-BR0s6GYTbCufMRnG7byuRGvtby61kc3od1AaI+LJDkgmmLdsEcr7mk8cfbMncse1PlHVWLoFcMX67ATyGoDwcw==",
       "dependencies": [
         "@hpke/core",
-        "@noble/curves",
+        "@noble/curves@1.4.2",
         "@noble/hashes@1.4.0"
       ]
     },
@@ -192,7 +193,7 @@
       "integrity": "sha512-xsy/1nfbi+pbWUZtQAx4uXj9IJ5Db8QAfuT8m0JZq3CZbWy/3qn9WV6NUFdg3pqNW7WEK99yirHyaIXBfqTOIA==",
       "dependencies": [
         "@hpke/core",
-        "@noble/curves",
+        "@noble/curves@1.4.2",
         "@noble/hashes@1.4.0"
       ]
     },
@@ -203,6 +204,12 @@
       "integrity": "sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==",
       "dependencies": [
         "@noble/hashes@1.4.0"
+      ]
+    },
+    "@noble/curves@1.6.0": {
+      "integrity": "sha512-TlaHRXDehJuRNR9TfZDNQ45mMEd5dwUwmicsafcIX4SsNiqnCHKjE/1alYPd/lDRVhxdhUAlv8uEhMCI5zjIJQ==",
+      "dependencies": [
+        "@noble/hashes@1.5.0"
       ]
     },
     "@noble/hashes@1.4.0": {
@@ -321,18 +328,18 @@
       },
       "packages/dhkem-secp256k1": {
         "dependencies": [
-          "npm:@noble/curves@^1.4.2"
+          "npm:@noble/curves@^1.6.0"
         ]
       },
       "packages/dhkem-x25519": {
         "dependencies": [
-          "npm:@noble/curves@^1.4.2",
+          "npm:@noble/curves@^1.6.0",
           "npm:@noble/hashes@^1.5.0"
         ]
       },
       "packages/dhkem-x448": {
         "dependencies": [
-          "npm:@noble/curves@^1.4.2",
+          "npm:@noble/curves@^1.6.0",
           "npm:@noble/hashes@^1.5.0"
         ]
       },
