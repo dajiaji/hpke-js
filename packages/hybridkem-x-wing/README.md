@@ -130,20 +130,21 @@ async function doHpke() {
 
   const rkp = await suite.kem.generateKeyPair();
 
+  // Note that the `ct` (ciphertext) resulting from X-Wing Encapsulate() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+  const encrypted = await sender.seal(new TextEncoder().encode("Hello world!"));
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc,
+    enc: sender.enc, // == `ct` (ciphertext) for X-Wing
   });
 
   // decrypt
-  const pt = await recipient.open(ct);
+  const pt = await recipient.open(encrypted);
 
   // Hello world!
   console.log(new TextDecoder().decode(pt));
@@ -172,20 +173,21 @@ async function doHpke() {
 
   const rkp = await suite.kem.generateKeyPair();
 
+  // Note that the `ct` (ciphertext) resulting from X-Wing::Encapsulate() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+  const encrypted = await sender.seal(new TextEncoder().encode("Hello world!"));
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc,
+    enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
   });
 
   // decrypt
-  const pt = await recipient.open(ct);
+  const pt = await recipient.open(encrypted);
 
   // Hello world!
   console.log(new TextDecoder().decode(pt));
@@ -222,19 +224,22 @@ try {
 
           const rkp = await suite.kem.generateKeyPair();
 
+          // Note that the `ct` resulting from X-Wing::Encapsulate() is set to `sender.enc`.
           const sender = await suite.createSenderContext({
             recipientPublicKey: rkp.publicKey,
           });
           // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+          const encrypted = await sender.seal(
+            new TextEncoder().encode("Hello world!"),
+          );
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
+            enc: sender.enc, // == `ct` (ciphertext) for X-Wing
           });
 
           // decrypt
-          const pt = await recipient.open(ct);
+          const pt = await recipient.open(encrypted);
 
           // Hello world!
           alert(new TextDecoder().decode(pt));
