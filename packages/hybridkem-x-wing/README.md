@@ -27,7 +27,7 @@ Documentation: [jsr.io](https://jsr.io/@hpke/hybridkem-x-wing/doc) |
 
 ## Installation
 
-`@hpke/hybridkem-x-wing` need to be used with
+`@hpke/hybridkem-x-wing` needs to be used with
 [@hpke/core](https://github.com/dajiaji/hpke-js/blob/main/packages/core/README.md),
 which can be installed in the same manner as desribed below.
 
@@ -52,7 +52,7 @@ such as Cloudflare Workers and Bun.
 Then, you can use the module from code like this:
 
 ```ts
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
 ```
 
@@ -75,7 +75,7 @@ Using esm.sh:
 <!-- use a specific version -->
 <script type="module">
   import {
-    Aes128Gcm,
+    Aes256Gcm,
     CipherSuite,
     HkdfSha256,
   } from "https://esm.sh/@hpke/core@<SEMVER>";
@@ -86,7 +86,7 @@ Using esm.sh:
 <!-- use the latest stable version -->
 <script type="module">
   import {
-    Aes128Gcm,
+    Aes256Gcm,
     CipherSuite,
     HkdfSha256,
   } from "https://esm.sh/@hpke/core";
@@ -101,7 +101,7 @@ Using unpkg:
 <!-- use a specific version -->
 <script type="module">
   import {
-    Aes128Gcm,
+    Aes256Gcm,
     CipherSuite,
     HkdfSha256,
   } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
@@ -117,7 +117,7 @@ This section shows some typical usage examples.
 ### Node.js
 
 ```js
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
 
 async function doHpke() {
@@ -125,25 +125,26 @@ async function doHpke() {
   const suite = new CipherSuite({
     kem: new HybridkemXWing(),
     kdf: new HkdfSha256(),
-    aead: new Aes128Gcm(),
+    aead: new Aes256Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
 
+  // Note that the `ct` (ciphertext) resulting from X-Wing Encapsulate() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+  const encrypted = await sender.seal(new TextEncoder().encode("Hello world!"));
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc,
+    enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
   });
 
   // decrypt
-  const pt = await recipient.open(ct);
+  const pt = await recipient.open(encrypted);
 
   // Hello world!
   console.log(new TextDecoder().decode(pt));
@@ -159,7 +160,7 @@ try {
 ### Deno
 
 ```ts
-import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
+import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
 
 async function doHpke() {
@@ -167,25 +168,26 @@ async function doHpke() {
   const suite = new CipherSuite({
     kem: new HybridkemXWing(),
     kdf: new HkdfSha256(),
-    aead: new Aes128Gcm(),
+    aead: new Aes256Gcm(),
   });
 
   const rkp = await suite.kem.generateKeyPair();
 
+  // Note that the `ct` (ciphertext) resulting from X-Wing::Encapsulate() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+  const encrypted = await sender.seal(new TextEncoder().encode("Hello world!"));
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc,
+    enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
   });
 
   // decrypt
-  const pt = await recipient.open(ct);
+  const pt = await recipient.open(encrypted);
 
   // Hello world!
   console.log(new TextDecoder().decode(pt));
@@ -206,7 +208,7 @@ try {
   <body>
     <script type="module">
       import {
-        Aes128Gcm,
+        Aes256Gcm,
         CipherSuite,
         HkdfSha256,
       } from "https://esm.sh/@hpke/core";
@@ -217,24 +219,27 @@ try {
           const suite = new CipherSuite({
             kem: new HybridkemXWing(),
             kdf: new HkdfSha256(),
-            aead: new Aes128Gcm(),
+            aead: new Aes256Gcm(),
           });
 
           const rkp = await suite.kem.generateKeyPair();
 
+          // Note that the `ct` resulting from X-Wing::Encapsulate() is set to `sender.enc`.
           const sender = await suite.createSenderContext({
             recipientPublicKey: rkp.publicKey,
           });
           // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+          const encrypted = await sender.seal(
+            new TextEncoder().encode("Hello world!"),
+          );
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
+            enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
           });
 
           // decrypt
-          const pt = await recipient.open(ct);
+          const pt = await recipient.open(encrypted);
 
           // Hello world!
           alert(new TextDecoder().decode(pt));

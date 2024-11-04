@@ -222,6 +222,13 @@ export class HybridkemXWing implements KemInterface {
     // return await this.deserializePrivateKey(key as ArrayBuffer);
   }
 
+  /**
+   * Encapsulates the shared secret and the `ct` (ciphertext) as `enc`.
+   * @param params The parameters for encapsulation.
+   * @returns {Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }>} A promise that resolves with the `ss` (shared secret) as `sharedSecret` and the `ct` (ciphertext) as `enc`.
+   * @throws {InvalidParamError} Thrown if the length of the `ekm` is not 64 bytes.
+   * @throws {EncapError} Thrown if the shared secret cannot be encapsulated.
+   */
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
@@ -268,6 +275,15 @@ export class HybridkemXWing implements KemInterface {
     }
   }
 
+  /**
+   * Decapsulates the `ss` (shared secret) from the `enc` and the recipient's private key.
+   * The `enc` is the same as the `ct` (ciphertext) resulting from `X-Wing::Encapsulate(),
+   * which is executed under the `encap()`.
+   * @param params The parameters for decapsulation.
+   * @returns {Promise<ArrayBuffer>} A promise that resolves with the shared secret.
+   * @throws {InvalidParamError} Thrown if the length of the `enc` is not 1120 bytes.
+   * @throws {DecapError} Thrown if the shared secret cannot be decapsulated.
+   */
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
     const rSk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
