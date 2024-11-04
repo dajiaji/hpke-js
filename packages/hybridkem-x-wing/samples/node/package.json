@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@hpke/core": "^1.5.0",
-    "@hpke/hybridkem-x-wing": "^0.1.0"
+    "@hpke/hybridkem-x-wing": "^0.2.0"
   }
 }
