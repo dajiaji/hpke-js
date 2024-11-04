@@ -21,40 +21,32 @@ Documentation: [jsr.io](https://jsr.io/@hpke/dhkem-x448/doc) |
   - [Node.js](#nodejs)
   - [Deno](#deno)
   - [Web Browsers](#web-browsers)
-  - [Cloudflare Workers](#cloudflare-workers)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
 ## Installation
 
+`@hpke/dhkem-x448` need to be used with
+[@hpke/core](https://github.com/dajiaji/hpke-js/blob/main/packages/core/README.md),
+which can be installed in the same manner as desribed below.
+
 ### Node.js
 
-Using npm:
+You can install the package with npm, yarn or pnpm.
 
 ```sh
+# Using npm:
 npm install @hpke/dhkem-x448
-```
-
-Using yarn:
-
-```sh
 yarn add @hpke/dhkem-x448
+pnpm install @hpke/dhkem-x448
+# Using jsr:
+npx jsr add @hpke/dhkem-x448
+yarn dlx jsr add @hpke/dhkem-x448
+pnpm dlx jsr add @hpke/dhkem-x448
 ```
 
-### Deno
-
-Starting from version 1.3.0, hpke-js packages are available from the JSR
-registry. From this version onwards, please use JSR import instead of HTTPS
-import in Deno.
-
-**JSR imoprt (recommended on `>=1.3.0`):**
-
-Add hpke-js packages using the commands below:
-
-```sh
-deno add @hpke/core
-deno add @hpke/dhkem-x448
-```
+The above manner can be used with other JavaScript runtimes that support npm,
+such as Cloudflare Workers and Bun.
 
 Then, you can use the module from code like this:
 
@@ -63,11 +55,12 @@ import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
 import { DhkemX448HkdfSha512 } from "@hpke/dhkem-x448";
 ```
 
-**HTTPS imoprt (deprecated):**
+### Deno
 
-```ts
-import { CipherSuite, HkdfSha256 } from "https://deno.land/x/hpke/core/mod.ts";
-import { DhkemX448HkdfSha512 } from "https://deno.land/x/hpke/x/dhkem-x448/mod.ts";
+For Deno, it is recommended to use the jsr.io registry.
+
+```sh
+deno add jsr:@hpke/dhkem-x448
 ```
 
 ### Web Browsers
@@ -80,8 +73,14 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
-  import * as x448 from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
+  import {
+    Aes256Gcm,
+    CipherSuite,
+    HkdfSha256,
+  } from "https://esm.sh/@hpke/core@<SEMVER>";
+  import {
+    DhkemX448HkdfSha512,
+  } from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
   // ...
 </script>
 
@@ -98,20 +97,16 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  import * as x448 from "https://unpkg.com/@hpke/dhkem-x448@<SEMVER>/esm/mod.js";
+  import {
+    Aes256Gcm,
+    CipherSuite,
+    HkdfSha256,
+  } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+  import {
+    DhkemX448HkdfSha512,
+  } from "https://unpkg.com/@hpke/dhkem-x448@<SEMVER>/esm/mod.js";
   // ...
 </script>
-```
-
-### Cloudflare Workers
-
-```sh
-git clone git@github.com:dajiaji/hpke-js.git
-cd hpke-js/x/dhkem-x448
-npm install -g esbuild
-deno task dnt
-deno task minify > $YOUR_SRC_PATH/hpke-dhkem-x448.js
 ```
 
 ## Usage
@@ -214,8 +209,8 @@ try {
         Aes256Gcm,
         CipherSuite,
         HkdfSha512,
-      } from "https://esm.sh/@hpke/core@<SEMVER>";
-      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448@<SEMVER>";
+      } from "https://esm.sh/@hpke/core>";
+      import { DhkemX448HkdfSha512 } from "https://esm.sh/@hpke/dhkem-x448";
 
       globalThis.doHpke = async () => {
         try {
