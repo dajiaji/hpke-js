@@ -1,5 +1,28 @@
 # Changes
 
+## Version 1.6.0
+
+Released 2024-11-04
+
+- [(#445) Update dependabot.yml to check npm/package-lock.json.](https://github.com/dajiaji/hpke-js/pull/445)
+- [(#444) Implement X-Wing experimentally.](https://github.com/dajiaji/hpke-js/pull/444)
+- [(#443) Add test for serialize/deserializePrivateKey.](https://github.com/dajiaji/hpke-js/pull/443)
+- [(#441) Add */test/runtimes/cloudflare to npm workspaces.](https://github.com/dajiaji/hpke-js/pull/441)
+- [(#440) Add vscode setting.](https://github.com/dajiaji/hpke-js/pull/440)
+- [(#439) Refine deno task sample:node.](https://github.com/dajiaji/hpke-js/pull/439)
+- [(#438) Add samples to npm workspaces.](https://github.com/dajiaji/hpke-js/pull/438)
+- [(#437) Add \@group Error for docs.](https://github.com/dajiaji/hpke-js/pull/437)
+- [(#437) Remove BaseError.](https://github.com/dajiaji/hpke-js/pull/437)
+- [(#436) Change main docs from hpke-js to \@hpke/core.](https://github.com/dajiaji/hpke-js/pull/436)
+- [(#435) Remove deno.land from docs.](https://github.com/dajiaji/hpke-js/pull/435)
+- [(#433) Implement DhkemX4489HkdfSha512 on @hpke/core.](https://github.com/dajiaji/hpke-js/pull/433)
+- [(#432) Disclose base64UrlToBytes on @hpke/common.](https://github.com/dajiaji/hpke-js/pull/432)
+- [(#431) Implement DhkemX25519HkdfSha256 on @hpke/core.](https://github.com/dajiaji/hpke-js/pull/431)
+- Update devDependencies:
+  - [(#446) Bump @noble/ciphers to 1.0.0.](https://github.com/dajiaji/hpke-js/pull/446)
+  - [(#446) Bump @noble/hashes to 1.5.0.](https://github.com/dajiaji/hpke-js/pull/446)
+  - [(#446) Bump @noble/curves to 1.6.0.](https://github.com/dajiaji/hpke-js/pull/446)
+
 ## Version 1.5.0
 
 Released 2024-10-12

@@ -29,7 +29,7 @@ await build({
     name: denoPkg.name,
     version: denoPkg.version,
     description:
-      "A Hybrid Public Key Encryption (HPKE) module extension for a hybrid post-quantum KEM, X25519Kyber768Draft00",
+      "A Hybrid Public Key Encryption (HPKE) module extension for X-Wing: general-purpose hybrid post-quantum KEM.",
     repository: {
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
@@ -49,11 +49,12 @@ await build({
     },
     keywords: [
       "hpke",
-      "rfc9180",
-      "kem",
+      "ml-kem",
       "kyber",
       "x25519",
       "post-quantum",
+      "pqc",
+      "x-wing",
       "security",
       "encryption",
     ],
