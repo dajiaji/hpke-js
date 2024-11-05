@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@dajiaji/mlkem": "npm:mlkem@^2.2.0",
+    "@dajiaji/mlkem": "npm:mlkem@^2.3.0",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.0.0/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.6.0/ed25519",
     "@noble/curves/ed448": "npm:@noble/curves@^1.6.0/ed448",
