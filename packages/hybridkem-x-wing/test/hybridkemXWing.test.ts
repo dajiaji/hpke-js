@@ -45,10 +45,10 @@ describe("HybridkemXWing", () => {
           new Uint8Array(await recipient.serializePrivateKey(kp.privateKey)),
           sk,
         );
-        // assertEquals(
-        //   new Uint8Array(await kem.serializePublicKey(kp.publicKey)),
-        //   pk,
-        // );
+        assertEquals(
+          new Uint8Array(await recipient.serializePublicKey(kp.publicKey)),
+          pk,
+        );
         const sender = new HybridkemXWing();
         const res = await sender.encap({
           recipientPublicKey: kp.publicKey,
@@ -58,7 +58,12 @@ describe("HybridkemXWing", () => {
           enc: res.enc,
           recipientKey: kp.privateKey,
         });
+        assertEquals(res.enc.byteLength, 1120);
+        assertEquals(res.sharedSecret.byteLength, 32);
+        assertEquals(res.enc, ct);
         assertEquals(res.sharedSecret, ssR);
+        assertEquals(res.sharedSecret, ss);
+        // assertEquals(ssR, ss);
       }
     });
   });
