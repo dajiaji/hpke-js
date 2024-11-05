@@ -53,7 +53,7 @@ Then, you can use the module from code like this:
 
 ```ts
 import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 ```
 
 ### Deno
@@ -79,7 +79,7 @@ Using esm.sh:
     CipherSuite,
     HkdfSha256,
   } from "https://esm.sh/@hpke/core@<SEMVER>";
-  import { HybridkemXWing } from "https://esm.sh/@hpke/hybridkem-x-wing@<SEMVER>";
+  import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing@<SEMVER>";
   // ...
 </script>
 
@@ -90,7 +90,7 @@ Using esm.sh:
     CipherSuite,
     HkdfSha256,
   } from "https://esm.sh/@hpke/core";
-  import { HybridkemXWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
+  import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
   // ...
 </script>
 ```
@@ -105,7 +105,7 @@ Using unpkg:
     CipherSuite,
     HkdfSha256,
   } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  import { HybridkemXWing } from "https://unpkg.com/@hpke/hybridkem-x-wing@<SEMVER>/esm/mod.js";
+  import { XWing } from "https://unpkg.com/@hpke/hybridkem-x-wing@<SEMVER>/esm/mod.js";
   // ...
 </script>
 ```
@@ -118,12 +118,12 @@ This section shows some typical usage examples.
 
 ```js
 import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: new HybridkemXWing(),
+    kem: new XWing(),
     kdf: new HkdfSha256(),
     aead: new Aes256Gcm(),
   });
@@ -161,12 +161,12 @@ try {
 
 ```ts
 import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 
 async function doHpke() {
   // setup
   const suite = new CipherSuite({
-    kem: new HybridkemXWing(),
+    kem: new XWing(),
     kdf: new HkdfSha256(),
     aead: new Aes256Gcm(),
   });
@@ -212,12 +212,12 @@ try {
         CipherSuite,
         HkdfSha256,
       } from "https://esm.sh/@hpke/core";
-      import { HybridkemXWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
+      import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
 
       globalThis.doHpke = async () => {
         try {
           const suite = new CipherSuite({
-            kem: new HybridkemXWing(),
+            kem: new XWing(),
             kdf: new HkdfSha256(),
             aead: new Aes256Gcm(),
           });

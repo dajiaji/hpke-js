@@ -3,18 +3,18 @@ import { describe, it } from "@std/testing/bdd";
 
 import { hexToBytes, loadCrypto } from "@hpke/common";
 import { Aes128Gcm, CipherSuite, HkdfSha256, KemId } from "@hpke/core";
-import { HybridkemXWing } from "../mod.ts";
+import { XWing } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
 
-describe("HybridkemXWing", () => {
+describe("XWing", () => {
   describe("constructor", () => {
     it("should have a correct ciphersuite", () => {
-      const kem = new HybridkemXWing();
+      const kem = new XWing();
       assertEquals(kem.secretSize, 32);
       assertEquals(kem.encSize, 1120);
       assertEquals(kem.publicKeySize, 1216);
       assertEquals(kem.privateKeySize, 32);
-      assertEquals(kem.id, KemId.HybridkemXWing);
+      assertEquals(kem.id, KemId.XWing);
       assertEquals(kem.id, 0x647a);
     });
   });
@@ -35,7 +35,7 @@ describe("HybridkemXWing", () => {
         assertEquals(ct.length, 1120);
         assertEquals(ss.length, 32);
 
-        const recipient = new HybridkemXWing();
+        const recipient = new XWing();
         const kp = await recipient.generateKeyPairDerand(seed);
         assertEquals(
           (await recipient.serializePublicKey(kp.publicKey)).byteLength,
@@ -49,7 +49,7 @@ describe("HybridkemXWing", () => {
           new Uint8Array(await recipient.serializePublicKey(kp.publicKey)),
           pk,
         );
-        const sender = new HybridkemXWing();
+        const sender = new XWing();
         const res = await sender.encap({
           recipientPublicKey: kp.publicKey,
           ekm: eseed,
@@ -70,10 +70,10 @@ describe("HybridkemXWing", () => {
 });
 
 describe("README examples", () => {
-  describe("HybridkemXWing/HkdfShar256/Aes128Gcm", () => {
+  describe("XWing/HkdfShar256/Aes128Gcm", () => {
     it("should work normally with generateKeyPair", async () => {
       const suite = new CipherSuite({
-        kem: new HybridkemXWing(),
+        kem: new XWing(),
         kdf: new HkdfSha256(),
         aead: new Aes128Gcm(),
       });
@@ -95,7 +95,7 @@ describe("README examples", () => {
 
     it("should work normally with deriveKeyPair", async () => {
       const suite = new CipherSuite({
-        kem: new HybridkemXWing(),
+        kem: new XWing(),
         kdf: new HkdfSha256(),
         aead: new Aes128Gcm(),
       });

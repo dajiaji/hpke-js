@@ -10,7 +10,7 @@ import {
   KdfId,
 } from "@hpke/core";
 
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 
 function createKdf(id) {
   switch (id) {
@@ -51,7 +51,7 @@ export async function testServer(request) {
   if (kdfStr === null || aeadStr === null) {
     return new Response("ng: invalid params");
   }
-  const kem = new HybridkemXWing();
+  const kem = new XWing();
   const kdf = Number.parseInt(kdfStr);
   const aead = Number.parseInt(aeadStr);
   if (Number.isNaN(kdf) || Number.isNaN(aead)) {

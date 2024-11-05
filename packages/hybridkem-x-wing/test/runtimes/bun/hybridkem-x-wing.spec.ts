@@ -14,7 +14,7 @@ import {
   KdfId,
 } from "@hpke/core";
 
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 
 function createKdf(id: number): KdfInterface {
   switch (id) {
@@ -47,7 +47,7 @@ function createAead(id: number): AeadInterface {
 }
 
 test("bun - normal cases", async () => {
-  const kem = new HybridkemXWing();
+  const kem = new XWing();
   for (const kdf of [0x0001, 0x0002, 0x0003]) {
     for (const aead of [0x0001, 0x0002]) {
       try {

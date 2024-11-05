@@ -76,16 +76,16 @@ function combiner(
  *
  * ```ts
  * import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
- * import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+ * import { XWing } from "@hpke/hybridkem-x-wing";
  * const suite = new CipherSuite({
- *   kem: new HybridkemXWing(),
+ *   kem: new XWing(),
  *   kdf: new HkdfSha256(),
  *   aead: new Aes128Gcm(),
  * });
  * ```
  */
-export class HybridkemXWing implements KemInterface {
-  public readonly id: KemId = KemId.HybridkemXWing;
+export class XWing implements KemInterface {
+  public readonly id: KemId = KemId.XWing;
   public readonly name: string = "X-Wing";
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1120;

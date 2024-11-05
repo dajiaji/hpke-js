@@ -1,1 +1,1 @@
-export { HybridkemXWing } from "./src/hybridkemXWing.ts";
+export { XWing } from "./src/xWing.ts";
