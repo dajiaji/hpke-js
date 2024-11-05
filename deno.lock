@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@dajiaji/mlkem@^2.2.0": "2.2.0",
+    "jsr:@dajiaji/mlkem@^2.3.0": "2.3.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.2",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@*": "0.41.3",
@@ -43,15 +43,9 @@
     "npm:@noble/hashes@^1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.5.0": "1.5.0",
     "npm:@types/node@*": "22.2.0",
-    "npm:mlkem@^2.2.0": "2.2.0"
+    "npm:mlkem@^2.3.0": "2.3.0"
   },
   "jsr": {
-    "@dajiaji/mlkem@2.2.0": {
-      "integrity": "37f4cf9be3e89bdeb74e71d6e17daf52fe9147b86c87955b7ca234e8f25d6449",
-      "dependencies": [
-        "npm:@noble/hashes@^1.5.0"
-      ]
-    },
     "@david/code-block-writer@13.0.2": {
       "integrity": "14dd3baaafa3a2dea8bf7dfbcddeccaa13e583da2d21d666c01dc6d681cd74ad"
     },
@@ -228,8 +222,8 @@
         "undici-types"
       ]
     },
-    "mlkem@2.2.0": {
-      "integrity": "sha512-TRMY06ZsZctqsG2wVa5A28Vin8Lc0HoG35anFQOFmwxXtvCDK44mNDjFIC2oz1IQwirTrWRgGFiyKdhPOL28TA==",
+    "mlkem@2.3.0": {
+      "integrity": "sha512-iDY5QTG/O/ouhC79dIlVzyiaieOopwhPZmxvevLoeJ4hkADnyCLa5ZSID1PKbReF4IebidrJrRf5YM3TFp02cQ==",
       "dependencies": [
         "@noble/hashes@1.5.0"
       ]
@@ -354,7 +348,7 @@
       },
       "packages/hybridkem-x-wing": {
         "dependencies": [
-          "jsr:@dajiaji/mlkem@^2.2.0",
+          "jsr:@dajiaji/mlkem@^2.3.0",
           "npm:@noble/hashes@^1.5.0"
         ]
       },
