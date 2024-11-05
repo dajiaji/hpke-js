@@ -14,7 +14,7 @@
         HkdfSha384,
         HkdfSha512,
       } from "./src/hpke-core.js";
-      import { HybridkemXWing } from "./src/hpke-hybridkem-x-wing.js";
+      import { XWing } from "./src/hpke-hybridkem-x-wing.js";
 
       // const kems = [
       //   new DhkemP256HkdfSha256(),
@@ -36,7 +36,7 @@
       globalThis.run = async () => {
         let pass = 0;
         let fail = 0;
-        const kem = new HybridkemXWing();
+        const kem = new XWing();
         for (const kdf of kdfs) {
           for (const aead of aeads) {
             try {
