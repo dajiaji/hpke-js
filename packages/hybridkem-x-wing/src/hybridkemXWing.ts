@@ -38,7 +38,7 @@ const X25519_BASE = new Uint8Array([
 //   "/^\",
 // );
 // deno-fmt-ignore
-const XWING_LABEL = new Uint8Array([46, 47, 47, 94, 92]);
+const XWING_LABEL = new Uint8Array([92, 46, 47, 47, 94, 92]);
 
 function emitNotSupported<T>(): Promise<T> {
   return new Promise((_resolve, reject) => {
