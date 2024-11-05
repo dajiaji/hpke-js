@@ -1,9 +1,9 @@
 import { Aes256Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
-import { HybridkemXWing } from "@hpke/hybridkem-x-wing";
+import { XWing } from "@hpke/hybridkem-x-wing";
 
 async function doHpke() {
   const suite = new CipherSuite({
-    kem: new HybridkemXWing(),
+    kem: new XWing(),
     kdf: new HkdfSha256(),
     aead: new Aes256Gcm(),
   });
