@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.6.1
+
+Released 2024-11-05
+
+- [(#458) Update internal dependencies.](https://github.com/dajiaji/hpke-js/pull/458)
+
 ## Version 1.6.0
 
 Released 2024-11-04
