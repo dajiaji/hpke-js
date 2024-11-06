@@ -2,6 +2,7 @@ export type { AeadEncryptionContext } from "./src/interfaces/aeadEncryptionConte
 export type { AeadInterface } from "./src/interfaces/aeadInterface.ts";
 export type { DhkemPrimitives } from "./src/interfaces/dhkemPrimitives.ts";
 export type { DhkemInterface } from "./src/interfaces/dhkemInterface.ts";
+export type { JsonWebKeyExtended } from "./src/interfaces/jsonWebKeyExtended.ts";
 export type { KdfInterface } from "./src/interfaces/kdfInterface.ts";
 export type { KemInterface } from "./src/interfaces/kemInterface.ts";
 export type { KeyScheduleParams } from "./src/interfaces/keyScheduleParams.ts";
