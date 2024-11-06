@@ -1,6 +1,7 @@
 export type {
   AeadEncryptionContext,
   AeadInterface,
+  JsonWebKeyExtended,
   KdfInterface,
   KemInterface,
   PreSharedKey,

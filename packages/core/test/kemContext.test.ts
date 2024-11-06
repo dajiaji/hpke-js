@@ -2,6 +2,7 @@ import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { isDeno, isDenoV1, loadCrypto } from "@hpke/common";
+import type { JsonWebKeyExtended } from "../mod.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
@@ -734,6 +735,42 @@ describe("importKey", () => {
         kty: "EC",
         crv: "P-256",
         kid: "P-256-01",
+        x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        key_ops: [],
+      };
+      const privKey = await kemContext.importKey("jwk", jwk, true);
+
+      // assert
+      assertEquals(privKey.usages.length, 0);
+    });
+
+    it("should return a valid private key for DhkemP256HkdfSha256 from JWK with JsonWebKeyExtended interface", async () => {
+      const kemContext = new DhkemP256HkdfSha256();
+
+      const jwk: JsonWebKeyExtended = {
+        kty: "EC",
+        crv: "P-256",
+        // kid: "P-256-01",
+        x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
+        y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
+        d: "kwibx3gas6Kz1V2fyQHKSnr-ybflddSjN0eOnbmLmyo",
+        key_ops: ["deriveBits"],
+      };
+      const privKey = await kemContext.importKey("jwk", jwk, false);
+
+      // assert
+      assertEquals(privKey.usages.length, 1);
+      assertEquals(privKey.usages[0], "deriveBits");
+    });
+
+    it("should return a valid public key for DhkemP256HkdfSha256 from JWK with JsonWebKeyExtended interface", async () => {
+      const kemContext = new DhkemP256HkdfSha256();
+
+      const jwk: JsonWebKeyExtended = {
+        kty: "EC",
+        crv: "P-256",
+        // kid: "P-256-01",
         x: "-eZXC6nV-xgthy8zZMCN8pcYSeE2XfWWqckA2fsxHPc",
         y: "BGU5soLgsu_y7GN2I3EPUXS9EZ7Sw0qif-V70JtInFI",
         key_ops: [],
