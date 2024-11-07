@@ -3,12 +3,14 @@ import { sha3_256, shake256 } from "@noble/hashes/sha3";
 import { MlKem768 } from "@dajiaji/mlkem";
 
 import type {
+  JsonWebKeyExtended,
   KemInterface,
   RecipientContextParams,
   SenderContextParams,
 } from "@hpke/common";
 
 import {
+  base64UrlToBytes,
   concat,
   DecapError,
   DeriveKeyPairError,
@@ -16,12 +18,15 @@ import {
   EncapError,
   InvalidParamError,
   isCryptoKeyPair,
+  KEM_USAGES,
   KemId,
   loadCrypto,
   NotSupportedError,
   SerializeError,
   XCryptoKey,
 } from "@hpke/common";
+
+const ALG_NAME = "X-Wing";
 
 import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 
@@ -39,12 +44,6 @@ const X25519_BASE = new Uint8Array([
 // );
 // deno-fmt-ignore
 const XWING_LABEL = new Uint8Array([92, 46, 47, 47, 94, 92]);
-
-function emitNotSupported<T>(): Promise<T> {
-  return new Promise((_resolve, reject) => {
-    reject(new NotSupportedError("Not supported"));
-  });
-}
 
 function combiner(
   ssM: Uint8Array,
@@ -86,7 +85,7 @@ function combiner(
  */
 export class XWing implements KemInterface {
   public readonly id: KemId = KemId.XWing;
-  public readonly name: string = "X-Wing";
+  public readonly name: string = ALG_NAME;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1120;
   public readonly publicKeySize: number = 1216;
@@ -204,22 +203,31 @@ export class XWing implements KemInterface {
     }
   }
 
+  /**
+   * Imports a key from the input.
+   * @param format The format of the key. "raw" or "jwk" can be specified.
+   * @param key The key to import. If the format is "raw", the key must be an ArrayBuffer. If the format is "jwk", the key must be a JsonWebKey.
+   * @param isPublic A boolean indicating whether the key is public or not. The default is true.
+   * @returns {Promise<CryptoKey>} A promise that resolves with the imported key.
+   * @throws {DeserializeError} Thrown if the key cannot be imported.
+   */
   public async importKey(
-    _format: "raw" | "jwk",
-    _key: ArrayBuffer | JsonWebKey,
-    _isPublic = true,
+    format: "raw" | "jwk",
+    key: ArrayBuffer | JsonWebKeyExtended,
+    isPublic = true,
   ): Promise<CryptoKey> {
-    return await emitNotSupported<CryptoKey>();
-    // if (format !== "raw") {
-    //   throw new NotSupportedError("'jwk' is not supported");
-    // }
-    // if (!(key instanceof ArrayBuffer)) {
-    //   throw new InvalidParamError("Invalid type of key");
-    // }
-    // if (isPublic) {
-    //   return await this.deserializePublicKey(key as ArrayBuffer);
-    // }
-    // return await this.deserializePrivateKey(key as ArrayBuffer);
+    await this._setup();
+    try {
+      if (format === "raw") {
+        return await this._importRawKey(key as ArrayBuffer, isPublic);
+      }
+      if (key instanceof ArrayBuffer) {
+        throw new Error("Invalid jwk key format");
+      }
+      return await this._importJWK(key as JsonWebKey, isPublic);
+    } catch (e: unknown) {
+      throw new DeserializeError(e);
+    }
   }
 
   /**
@@ -394,6 +402,78 @@ export class XWing implements KemInterface {
       }
       resolve(
         new XCryptoKey(this.name, new Uint8Array(k), "private", ["deriveBits"]),
+      );
+    });
+  }
+
+  private _importRawKey(
+    key: ArrayBuffer,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    return new Promise((resolve, reject) => {
+      if (isPublic && key.byteLength !== this.publicKeySize) {
+        reject(new Error("Invalid length of the key"));
+      }
+      if (!isPublic && key.byteLength !== this.privateKeySize) {
+        reject(new Error("Invalid length of the key"));
+      }
+      resolve(
+        new XCryptoKey(
+          ALG_NAME,
+          new Uint8Array(key),
+          isPublic ? "public" : "private",
+          isPublic ? [] : KEM_USAGES,
+        ),
+      );
+    });
+  }
+
+  private _importJWK(
+    key: JsonWebKeyExtended,
+    isPublic: boolean,
+  ): Promise<CryptoKey> {
+    return new Promise((resolve, reject) => {
+      if (typeof key.kty === "undefined" || key.kty !== "AKP") {
+        reject(new Error(`Invalid kty: ${key.kty}`));
+      }
+      if (typeof key.alg === "undefined" || key.alg !== ALG_NAME) {
+        reject(new Error(`Invalid alg: ${key.alg}`));
+      }
+      if (!isPublic) {
+        if (typeof key.priv === "undefined") {
+          reject(new Error("Invalid key: `priv` not found"));
+        }
+        if (
+          typeof key.key_ops !== "undefined" &&
+          (key.key_ops.length !== 1 || key.key_ops[0] !== "deriveBits")
+        ) {
+          reject(new Error("Invalid key: `key_ops` should be ['deriveBits']"));
+        }
+        resolve(
+          new XCryptoKey(
+            ALG_NAME,
+            base64UrlToBytes(key.priv as string),
+            "private",
+            KEM_USAGES,
+          ),
+        );
+        return;
+      }
+      if (typeof key.priv !== "undefined") {
+        reject(new Error("Invalid key: `priv` should not be set"));
+      }
+      if (typeof key.pub === "undefined") {
+        reject(new Error("Invalid key: `pub` not found"));
+      }
+      if (typeof key.key_ops !== "undefined" && key.key_ops.length > 0) {
+        reject(new Error("Invalid key: `key_ops` should not be set"));
+      }
+      resolve(
+        new XCryptoKey(
+          ALG_NAME,
+          base64UrlToBytes(key.pub as string),
+          "public",
+        ),
       );
     });
   }
