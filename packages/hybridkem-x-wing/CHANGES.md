@@ -1,5 +1,12 @@
 # Changes
 
+## Version 0.5.0
+
+Released 2024-11-08
+
+- [(#468) Refine imoprtKey implementation.](https://github.com/dajiaji/hpke-js/pull/468)
+- [(#467) Add experimental support for imoprtKey.](https://github.com/dajiaji/hpke-js/pull/467)
+
 ## Version 0.4.0
 
 Released 2024-11-05
