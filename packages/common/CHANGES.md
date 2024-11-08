@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.7.1
+
+Released 2024-11-06
+
+- [(#470) Add ML-KEM-* to KemId.](https://github.com/dajiaji/hpke-js/pull/470)
+
 ## Version 1.7.0
 
 Released 2024-11-06
