@@ -1,5 +1,4 @@
-// import { assertEquals, assertRejects } from "@std/assert";
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertRejects } from "@std/assert";
 import { dirname, fromFileUrl, join } from "@std/path";
 import { describe, it } from "@std/testing/bdd";
 
@@ -8,6 +7,7 @@ import {
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
+  DeserializeError,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
@@ -179,547 +179,510 @@ describe("MlKem", () => {
     });
   });
 
-  // describe("official test vectors", () => {
-  //   it("should match the results", async () => {
-  //     for (const v of TEST_VECTORS) {
-  //       const seed = hexToBytes(v.seed);
-  //       const sk = hexToBytes(v.sk);
-  //       const pk = hexToBytes(v.pk);
-  //       const eseed = hexToBytes(v.eseed);
-  //       const ct = hexToBytes(v.ct);
-  //       const ss = hexToBytes(v.ss);
-  //       assertEquals(seed.length, 32);
-  //       assertEquals(sk.length, 32);
-  //       assertEquals(pk.length, 1216);
-  //       assertEquals(eseed.length, 64);
-  //       assertEquals(ct.length, 1120);
-  //       assertEquals(ss.length, 32);
+  describe("importKey", () => {
+    it("with valid raw - as ArrayBuffer", async () => {
+      const kem = new MlKem768();
+      const pkR = await kem.importKey(
+        "raw",
+        hexToBytes(
+          "3f1b8a5cf5aa0cb148cfac766a30a78209a3ce97cb427a9e813254e0b6a99ae25370b583c275357ce3b4d6c60aafda03e99734e0e98eba56aeef821e92b8c1db43942a7c37c9977d79946fe0474df27b9cf3b12ca94bb06401d09150530bf82adfc4623bd7af97425984b8c53f51969ebc02d9b41aace79536e3282af5adedb6363d4a7bdbb06a69e24c892888f6710055bb644db60ba3b884204c03b07c2a8aca0249ac29ead77d5c879a790a09b850a55ef614cc73cf7f727223ba0d6353295c008c986aa9200349a0ac500e347ee1795a1a8369ab6151c27b1341cace56852ee76c6d3ccb8331b23cde8b224af9b2dee402d9605bbfa8401976419c57ab1686bda096b28cb654cd4a5db7c32598e01491e21b8cd54497f60fe2bc31d783928e382bfbf3332b754cf969b12aa58f438b4a57064129d4456009a172a59ab3b77cc84c76944b99a53445a529ac0a62ad490174a47324a5d34b81a682a69c0a8dd75f0de93c20e430266c23b00c4869f53c6fd0854ed3caf4544952b05ed3b3b0d6ca34f0f297f2e9a7c1187804a37a121a6ad2ab50daf475aa3a25e6c9a0d6a29def62cbd298050f5b307c053a5c8838b4c3357f3376653c3366fa6fe1025d1960c75ba643265c157a84c914d559f540c67ec1587394af7bd17830d5089d505906fa9f766a9b93909f5b6627cc05a0b2192cbfc2271b0b22d77a07ce551edaa6522d402b00003723c115936c97f54c88aa513482a05554c628e69448eb6a0ef6f346341c802bdab9b03ba0af297d9e8b938b9cabefa46722421a338a872d9a88b88c9f0eec46932c367cc58b83573d26036aaf5276e515b0f23059b40c848f638ace3703ee6c27d966990c7702ed23a0cd9ba4cf6169a668a1f0bb586b076692e1c215754ff6784bd91a248cb90f008a3eca59852c057966933a1a86b6e05b2fad91b28bc61648b041a7ac046ab8112b6ac2cb900fb5c09821dc4b0716b509e122dc97c6ed7342f6f49fb65559729c384763ba2d2bb8cf56ae36f3b269970ac54841213b24b792c949f3c775e70ac8f7cc53763ff638adc5113ec60075c1a79276ca473c113832954abe207bebf0cd0426c0e29733947256c7756bf9b50d82191a07f0ba5d5a154b0866e293473b4076a1e995f9d086a472c118ac22c216a839920660a331eee198df5b1a1595239d5780cda75f73c6765a46ae4aa34001939dfad92f7e124a5f2c628b259de9560bbf470cc69cc652dc29b93ba86a4990dce0af1a4524c199a692670caf748d16612feed711f88a505d552a6440aa0422626f185f6921a82ef925086028ae8562fc7610e1b1649ef0094d96b505fbb7f112896efac0d192af45d903ac7992bbe9bf30e2577e24581cbc4f73b180d04a69f540b39e19a4ae36aec4f21ade774965391bcaebc0af869cb63631327b421bec6726651b8758bfee73c591212d4ff981f6684c58b359c2d07fa1e601d6c5cbfdc964b31909cca37fff96204fb5688d92ca5a85758cf160e9b06ed18320a4b1b0c8e8196ae76a6f621972d17a4d64a7df04c5a4c333c3bc1acaab37709149a3b8ca082a8fbca13268a1b022230e2d630272cb9ff2e6655af17327f3b9807095f582be18bd3f4e0bb723eced69b0585629986548d722b03b5bbd157ac99dee1c0a9aa1",
+        ).buffer,
+        true,
+      );
+      const skR = await kem.importKey(
+        "raw",
+        hexToBytes(
+          "d69cfc64f84d4f33e4c54e166b7ff9283a394986a539b23987a10f39d2d9689b6de62e3465a55c9c78a07d265be8540b3e58b0801a124d07ff12b438d5202ea0",
+        ).buffer,
+        false,
+      );
+      const res = await kem.encap({ recipientPublicKey: pkR });
+      const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
+      assertEquals(res.sharedSecret, ssR);
+    });
 
-  //       const recipient = new MlKem768();
-  //       const kp = await recipient.generateKeyPairDerand(seed);
-  //       assertEquals(
-  //         (await recipient.serializePublicKey(kp.publicKey)).byteLength,
-  //         1216,
-  //       );
-  //       assertEquals(
-  //         new Uint8Array(await recipient.serializePrivateKey(kp.privateKey)),
-  //         sk,
-  //       );
-  //       assertEquals(
-  //         new Uint8Array(await recipient.serializePublicKey(kp.publicKey)),
-  //         pk,
-  //       );
-  //       const sender = new MlKem768();
-  //       const res = await sender.encap({
-  //         recipientPublicKey: kp.publicKey,
-  //         ekm: eseed,
-  //       });
-  //       const ssR = await recipient.decap({
-  //         enc: res.enc,
-  //         recipientKey: kp.privateKey,
-  //       });
-  //       assertEquals(res.enc.byteLength, 1120);
-  //       assertEquals(res.sharedSecret.byteLength, 32);
-  //       assertEquals(res.enc, ct);
-  //       assertEquals(res.sharedSecret, ssR);
-  //       assertEquals(res.sharedSecret, ss);
-  //       // assertEquals(ssR, ss);
-  //     }
-  //   });
-  // });
+    it("with valid raw - as Uint8Array", async () => {
+      const kem = new MlKem768();
+      const pkR = await kem.importKey(
+        "raw",
+        hexToBytes(
+          "3f1b8a5cf5aa0cb148cfac766a30a78209a3ce97cb427a9e813254e0b6a99ae25370b583c275357ce3b4d6c60aafda03e99734e0e98eba56aeef821e92b8c1db43942a7c37c9977d79946fe0474df27b9cf3b12ca94bb06401d09150530bf82adfc4623bd7af97425984b8c53f51969ebc02d9b41aace79536e3282af5adedb6363d4a7bdbb06a69e24c892888f6710055bb644db60ba3b884204c03b07c2a8aca0249ac29ead77d5c879a790a09b850a55ef614cc73cf7f727223ba0d6353295c008c986aa9200349a0ac500e347ee1795a1a8369ab6151c27b1341cace56852ee76c6d3ccb8331b23cde8b224af9b2dee402d9605bbfa8401976419c57ab1686bda096b28cb654cd4a5db7c32598e01491e21b8cd54497f60fe2bc31d783928e382bfbf3332b754cf969b12aa58f438b4a57064129d4456009a172a59ab3b77cc84c76944b99a53445a529ac0a62ad490174a47324a5d34b81a682a69c0a8dd75f0de93c20e430266c23b00c4869f53c6fd0854ed3caf4544952b05ed3b3b0d6ca34f0f297f2e9a7c1187804a37a121a6ad2ab50daf475aa3a25e6c9a0d6a29def62cbd298050f5b307c053a5c8838b4c3357f3376653c3366fa6fe1025d1960c75ba643265c157a84c914d559f540c67ec1587394af7bd17830d5089d505906fa9f766a9b93909f5b6627cc05a0b2192cbfc2271b0b22d77a07ce551edaa6522d402b00003723c115936c97f54c88aa513482a05554c628e69448eb6a0ef6f346341c802bdab9b03ba0af297d9e8b938b9cabefa46722421a338a872d9a88b88c9f0eec46932c367cc58b83573d26036aaf5276e515b0f23059b40c848f638ace3703ee6c27d966990c7702ed23a0cd9ba4cf6169a668a1f0bb586b076692e1c215754ff6784bd91a248cb90f008a3eca59852c057966933a1a86b6e05b2fad91b28bc61648b041a7ac046ab8112b6ac2cb900fb5c09821dc4b0716b509e122dc97c6ed7342f6f49fb65559729c384763ba2d2bb8cf56ae36f3b269970ac54841213b24b792c949f3c775e70ac8f7cc53763ff638adc5113ec60075c1a79276ca473c113832954abe207bebf0cd0426c0e29733947256c7756bf9b50d82191a07f0ba5d5a154b0866e293473b4076a1e995f9d086a472c118ac22c216a839920660a331eee198df5b1a1595239d5780cda75f73c6765a46ae4aa34001939dfad92f7e124a5f2c628b259de9560bbf470cc69cc652dc29b93ba86a4990dce0af1a4524c199a692670caf748d16612feed711f88a505d552a6440aa0422626f185f6921a82ef925086028ae8562fc7610e1b1649ef0094d96b505fbb7f112896efac0d192af45d903ac7992bbe9bf30e2577e24581cbc4f73b180d04a69f540b39e19a4ae36aec4f21ade774965391bcaebc0af869cb63631327b421bec6726651b8758bfee73c591212d4ff981f6684c58b359c2d07fa1e601d6c5cbfdc964b31909cca37fff96204fb5688d92ca5a85758cf160e9b06ed18320a4b1b0c8e8196ae76a6f621972d17a4d64a7df04c5a4c333c3bc1acaab37709149a3b8ca082a8fbca13268a1b022230e2d630272cb9ff2e6655af17327f3b9807095f582be18bd3f4e0bb723eced69b0585629986548d722b03b5bbd157ac99dee1c0a9aa1",
+        ),
+        true,
+      );
+      const skR = await kem.importKey(
+        "raw",
+        hexToBytes(
+          "d69cfc64f84d4f33e4c54e166b7ff9283a394986a539b23987a10f39d2d9689b6de62e3465a55c9c78a07d265be8540b3e58b0801a124d07ff12b438d5202ea0",
+        ),
+        false,
+      );
+      const res = await kem.encap({ recipientPublicKey: pkR });
+      const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
+      assertEquals(res.sharedSecret, ssR);
+    });
 
-  // describe("importKey", () => {
-  //   it("with valid raw - as ArrayBuffer", async () => {
-  //     const kem = new MlKem768();
-  //     const pkR = await kem.importKey(
-  //       "raw",
-  //       hexToBytes(
-  //         "e2236b35a8c24b39b10aa1323a96a919a2ced88400633a7b07131713fc14b2b5b19cfc3da5fa1a92c49f25513e0fd30d6b1611c9ab9635d7086727a4b7d21d34244e66969cf15b3b2a785329f61b096b277ea037383479a6b556de7231fe4b7fa9c9ac24c0699a0018a5253401bacfa905ca816573e56a2d2e067e9b7287533ba13a937dedb31fa44baced40769923610034ae31e619a170245199b3c5c39864859fe1b4c9717a07c30495bdfb98a0a002ccf56c1286cef5041dede3c44cf16bf562c7448518026b3d8b9940680abd38a1575fd27b58da063bfac32c39c30869374c05c1aeb1898b6b303cc68be455346ee0af699636224a148ca2aea10463111c709f69b69c70ce8538746698c4c60a9aef0030c7924ceec42a5d36816f545eae13293460b3acb37ea0e13d70e4aa78686da398a8397c08eaf96882113fe4f7bad4da40b0501e1c753efe73053c87014e8661c33099afe8bede414a5b1aa27d8392b3e131e9a70c1055878240cad0f40d5fe3cdf85236ead97e2a97448363b2808caafd516cd25052c5c362543c2517e4acd0e60ec07163009b6425fc32277acee71c24bab53ed9f29e74c66a0a3564955998d76b96a9a8b50d1635a4d7a67eb42df5644d330457293a8042f53cc7a69288f17ed55827e82b28e82665a86a14fbd96645eca8172c044f83bc0d8c0b4c8626985631ca87af829068f1358963cb333664ca482763ba3b3bb208577f9ba6ac62c25f76592743b64be519317714cb4102cb7b2f9a25b2b4f0615de31decd9ca55026d6da0b65111b16fe52feed8a487e144462a6dba93728f500b6ffc49e515569ef25fed17aff520507368253525860f58be3be61c964604a6ac814e6935596402a520a4670b3d284318866593d15a4bb01c35e3e587ee0c67d2880d6f2407fb7a70712b838deb96c5d7bf2b44bcf6038ccbe33fbcf51a54a584fe90083c91c7a6d43d4fb15f48c60c2fd66e0a8aad4ad64e5c42bb8877c0ebec2b5e387c8a988fdc23beb9e16c8757781e0a1499c61e138c21f216c29d076979871caa6942bafc090544bee99b54b16cb9a9a364d6246d9f42cce53c66b59c45c8f9ae9299a75d15180c3c952151a91b7a10772429dc4cbae6fcc622fa8018c63439f890630b9928db6bb7f9438ae4065ed34d73d486f3f52f90f0807dc88dfdd8c728e954f1ac35c06c000ce41a0582580e3bb57b672972890ac5e7988e7850657116f1b57d0809aaedec0bede1ae148148311c6f7e317346e5189fb8cd635b986f8c0bdd27641c584b778b3a911a80be1c9692ab8e1bbb12839573cce19df183b45835bbb55052f9fc66a1678ef2a36dea78411e6c8d60501b4e60592d13698a943b509185db912e2ea10be06171236b327c71716094c964a68b03377f513a05bcd99c1f346583bb052977a10a12adfc758034e5617da4c1276585e5774e1f3b9978b09d0e9c44d3bc86151c43aad185712717340223ac381d21150a04294e97bb13bbda21b5a182b6da969e19a7fd072737fa8e880a53c2428e3d049b7d2197405296ddb361912a7bcf4827ced611d0c7a7da104dde4322095339f64a61d5bb108ff0bf4d780cae509fb22c256914193ff7349042581237d522828824ee3bdfd07fb03f1f942d2ea179fe722f06cc03de5b69859edb06eff389b27dce59844570216223593d4ba32d9abac8cd049040ef6534",
-  //       ).buffer,
-  //       true,
-  //     );
-  //     const skR = await kem.importKey(
-  //       "raw",
-  //       hexToBytes(
-  //         "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
-  //       ).buffer,
-  //       false,
-  //     );
-  //     const res = await kem.encap({ recipientPublicKey: pkR });
-  //     const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
-  //     assertEquals(res.sharedSecret, ssR);
-  //   });
+    it("with valid jwk", async () => {
+      const kem = new MlKem768();
 
-  //   it("with valid raw - as Uint8Array", async () => {
-  //     const kem = new MlKem768();
-  //     const pkR = await kem.importKey(
-  //       "raw",
-  //       hexToBytes(
-  //         "e2236b35a8c24b39b10aa1323a96a919a2ced88400633a7b07131713fc14b2b5b19cfc3da5fa1a92c49f25513e0fd30d6b1611c9ab9635d7086727a4b7d21d34244e66969cf15b3b2a785329f61b096b277ea037383479a6b556de7231fe4b7fa9c9ac24c0699a0018a5253401bacfa905ca816573e56a2d2e067e9b7287533ba13a937dedb31fa44baced40769923610034ae31e619a170245199b3c5c39864859fe1b4c9717a07c30495bdfb98a0a002ccf56c1286cef5041dede3c44cf16bf562c7448518026b3d8b9940680abd38a1575fd27b58da063bfac32c39c30869374c05c1aeb1898b6b303cc68be455346ee0af699636224a148ca2aea10463111c709f69b69c70ce8538746698c4c60a9aef0030c7924ceec42a5d36816f545eae13293460b3acb37ea0e13d70e4aa78686da398a8397c08eaf96882113fe4f7bad4da40b0501e1c753efe73053c87014e8661c33099afe8bede414a5b1aa27d8392b3e131e9a70c1055878240cad0f40d5fe3cdf85236ead97e2a97448363b2808caafd516cd25052c5c362543c2517e4acd0e60ec07163009b6425fc32277acee71c24bab53ed9f29e74c66a0a3564955998d76b96a9a8b50d1635a4d7a67eb42df5644d330457293a8042f53cc7a69288f17ed55827e82b28e82665a86a14fbd96645eca8172c044f83bc0d8c0b4c8626985631ca87af829068f1358963cb333664ca482763ba3b3bb208577f9ba6ac62c25f76592743b64be519317714cb4102cb7b2f9a25b2b4f0615de31decd9ca55026d6da0b65111b16fe52feed8a487e144462a6dba93728f500b6ffc49e515569ef25fed17aff520507368253525860f58be3be61c964604a6ac814e6935596402a520a4670b3d284318866593d15a4bb01c35e3e587ee0c67d2880d6f2407fb7a70712b838deb96c5d7bf2b44bcf6038ccbe33fbcf51a54a584fe90083c91c7a6d43d4fb15f48c60c2fd66e0a8aad4ad64e5c42bb8877c0ebec2b5e387c8a988fdc23beb9e16c8757781e0a1499c61e138c21f216c29d076979871caa6942bafc090544bee99b54b16cb9a9a364d6246d9f42cce53c66b59c45c8f9ae9299a75d15180c3c952151a91b7a10772429dc4cbae6fcc622fa8018c63439f890630b9928db6bb7f9438ae4065ed34d73d486f3f52f90f0807dc88dfdd8c728e954f1ac35c06c000ce41a0582580e3bb57b672972890ac5e7988e7850657116f1b57d0809aaedec0bede1ae148148311c6f7e317346e5189fb8cd635b986f8c0bdd27641c584b778b3a911a80be1c9692ab8e1bbb12839573cce19df183b45835bbb55052f9fc66a1678ef2a36dea78411e6c8d60501b4e60592d13698a943b509185db912e2ea10be06171236b327c71716094c964a68b03377f513a05bcd99c1f346583bb052977a10a12adfc758034e5617da4c1276585e5774e1f3b9978b09d0e9c44d3bc86151c43aad185712717340223ac381d21150a04294e97bb13bbda21b5a182b6da969e19a7fd072737fa8e880a53c2428e3d049b7d2197405296ddb361912a7bcf4827ced611d0c7a7da104dde4322095339f64a61d5bb108ff0bf4d780cae509fb22c256914193ff7349042581237d522828824ee3bdfd07fb03f1f942d2ea179fe722f06cc03de5b69859edb06eff389b27dce59844570216223593d4ba32d9abac8cd049040ef6534",
-  //       ),
-  //       true,
-  //     );
-  //     const skR = await kem.importKey(
-  //       "raw",
-  //       hexToBytes(
-  //         "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
-  //       ),
-  //       false,
-  //     );
-  //     const res = await kem.encap({ recipientPublicKey: pkR });
-  //     const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
-  //     assertEquals(res.sharedSecret, ssR);
-  //   });
+      const jwkPkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      const pkR = await kem.importKey("jwk", jwkPkR, true);
 
-  //   it("with valid jwk", async () => {
-  //     const kem = new MlKem768();
+      const jwkSkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
 
-  //     const jwkPkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     const pkR = await kem.importKey("jwk", jwkPkR, true);
+      const skR = await kem.importKey("jwk", jwkSkR, false);
+      const res = await kem.encap({ recipientPublicKey: pkR });
+      const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
+      assertEquals(res.sharedSecret, ssR);
+    });
 
-  //     const jwkSkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
+    it("with valid jwk - private key with pub", async () => {
+      const kem = new MlKem768();
 
-  //     const skR = await kem.importKey("jwk", jwkSkR, false);
-  //     const res = await kem.encap({ recipientPublicKey: pkR });
-  //     const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
-  //     assertEquals(res.sharedSecret, ssR);
-  //   });
+      const jwkPkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      const pkR = await kem.importKey("jwk", jwkPkR, true);
 
-  //   it("with valid jwk - private key with pub", async () => {
-  //     const kem = new MlKem768();
+      const jwkSkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
 
-  //     const jwkPkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     const pkR = await kem.importKey("jwk", jwkPkR, true);
+      const skR = await kem.importKey("jwk", jwkSkR, false);
+      const res = await kem.encap({ recipientPublicKey: pkR });
+      const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
+      assertEquals(res.sharedSecret, ssR);
+    });
 
-  //     const jwkSkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
+    it("with valid jwk - public key without key_ops", async () => {
+      const kem = new MlKem768();
 
-  //     const skR = await kem.importKey("jwk", jwkSkR, false);
-  //     const res = await kem.encap({ recipientPublicKey: pkR });
-  //     const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
-  //     assertEquals(res.sharedSecret, ssR);
-  //   });
+      const jwkPkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        // key_ops: [],
+      };
+      const pkR = await kem.importKey("jwk", jwkPkR, true);
 
-  //   it("with valid jwk - public key without key_ops", async () => {
-  //     const kem = new MlKem768();
+      const jwkSkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
 
-  //     const jwkPkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       // key_ops: [],
-  //     };
-  //     const pkR = await kem.importKey("jwk", jwkPkR, true);
+      const skR = await kem.importKey("jwk", jwkSkR, false);
+      const res = await kem.encap({ recipientPublicKey: pkR });
+      const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
+      assertEquals(res.sharedSecret, ssR);
+    });
 
-  //     const jwkSkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
+    it("with invalid raw - public key with valid jwk", async () => {
+      const kem = new MlKem768();
+      const jwkPkR = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      await assertRejects(
+        () =>
+          kem.importKey(
+            "raw",
+            jwkPkR,
+            true,
+          ),
+        DeserializeError,
+      );
+    });
 
-  //     const skR = await kem.importKey("jwk", jwkSkR, false);
-  //     const res = await kem.encap({ recipientPublicKey: pkR });
-  //     const ssR = await kem.decap({ enc: res.enc, recipientKey: skR });
-  //     assertEquals(res.sharedSecret, ssR);
-  //   });
+    it("with invalid raw - public key with invalid length of the key", async () => {
+      const kem = new MlKem768();
+      await assertRejects(
+        () =>
+          kem.importKey(
+            "raw",
+            hexToBytes(
+              "1b8a5cf5aa0cb148cfac766a30a78209a3ce97cb427a9e813254e0b6a99ae25370b583c275357ce3b4d6c60aafda03e99734e0e98eba56aeef821e92b8c1db43942a7c37c9977d79946fe0474df27b9cf3b12ca94bb06401d09150530bf82adfc4623bd7af97425984b8c53f51969ebc02d9b41aace79536e3282af5adedb6363d4a7bdbb06a69e24c892888f6710055bb644db60ba3b884204c03b07c2a8aca0249ac29ead77d5c879a790a09b850a55ef614cc73cf7f727223ba0d6353295c008c986aa9200349a0ac500e347ee1795a1a8369ab6151c27b1341cace56852ee76c6d3ccb8331b23cde8b224af9b2dee402d9605bbfa8401976419c57ab1686bda096b28cb654cd4a5db7c32598e01491e21b8cd54497f60fe2bc31d783928e382bfbf3332b754cf969b12aa58f438b4a57064129d4456009a172a59ab3b77cc84c76944b99a53445a529ac0a62ad490174a47324a5d34b81a682a69c0a8dd75f0de93c20e430266c23b00c4869f53c6fd0854ed3caf4544952b05ed3b3b0d6ca34f0f297f2e9a7c1187804a37a121a6ad2ab50daf475aa3a25e6c9a0d6a29def62cbd298050f5b307c053a5c8838b4c3357f3376653c3366fa6fe1025d1960c75ba643265c157a84c914d559f540c67ec1587394af7bd17830d5089d505906fa9f766a9b93909f5b6627cc05a0b2192cbfc2271b0b22d77a07ce551edaa6522d402b00003723c115936c97f54c88aa513482a05554c628e69448eb6a0ef6f346341c802bdab9b03ba0af297d9e8b938b9cabefa46722421a338a872d9a88b88c9f0eec46932c367cc58b83573d26036aaf5276e515b0f23059b40c848f638ace3703ee6c27d966990c7702ed23a0cd9ba4cf6169a668a1f0bb586b076692e1c215754ff6784bd91a248cb90f008a3eca59852c057966933a1a86b6e05b2fad91b28bc61648b041a7ac046ab8112b6ac2cb900fb5c09821dc4b0716b509e122dc97c6ed7342f6f49fb65559729c384763ba2d2bb8cf56ae36f3b269970ac54841213b24b792c949f3c775e70ac8f7cc53763ff638adc5113ec60075c1a79276ca473c113832954abe207bebf0cd0426c0e29733947256c7756bf9b50d82191a07f0ba5d5a154b0866e293473b4076a1e995f9d086a472c118ac22c216a839920660a331eee198df5b1a1595239d5780cda75f73c6765a46ae4aa34001939dfad92f7e124a5f2c628b259de9560bbf470cc69cc652dc29b93ba86a4990dce0af1a4524c199a692670caf748d16612feed711f88a505d552a6440aa0422626f185f6921a82ef925086028ae8562fc7610e1b1649ef0094d96b505fbb7f112896efac0d192af45d903ac7992bbe9bf30e2577e24581cbc4f73b180d04a69f540b39e19a4ae36aec4f21ade774965391bcaebc0af869cb63631327b421bec6726651b8758bfee73c591212d4ff981f6684c58b359c2d07fa1e601d6c5cbfdc964b31909cca37fff96204fb5688d92ca5a85758cf160e9b06ed18320a4b1b0c8e8196ae76a6f621972d17a4d64a7df04c5a4c333c3bc1acaab37709149a3b8ca082a8fbca13268a1b022230e2d630272cb9ff2e6655af17327f3b9807095f582be18bd3f4e0bb723eced69b0585629986548d722b03b5bbd157ac99dee1c0a9aa1",
+            ),
+            true,
+          ),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid raw - public key with valid jwk", async () => {
-  //     const kem = new MlKem768();
-  //     const jwkPkR = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     await assertRejects(
-  //       () =>
-  //         kem.importKey(
-  //           "raw",
-  //           jwkPkR,
-  //           true,
-  //         ),
-  //       DeserializeError,
-  //     );
-  //   });
+    it("with invalid raw - private key with invalid length of the key", async () => {
+      const kem = new MlKem768();
+      await assertRejects(
+        () =>
+          kem.importKey(
+            "raw",
+            hexToBytes(
+              "9cfc64f84d4f33e4c54e166b7ff9283a394986a539b23987a10f39d2d9689b6de62e3465a55c9c78a07d265be8540b3e58b0801a124d07ff12b438d5202ea0",
+            ),
+            false,
+          ),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid raw - public key with invalid length of the key", async () => {
-  //     const kem = new MlKem768();
-  //     await assertRejects(
-  //       () =>
-  //         kem.importKey(
-  //           "raw",
-  //           hexToBytes(
-  //             "236b35a8c24b39b10aa1323a96a919a2ced88400633a7b07131713fc14b2b5b19cfc3da5fa1a92c49f25513e0fd30d6b1611c9ab9635d7086727a4b7d21d34244e66969cf15b3b2a785329f61b096b277ea037383479a6b556de7231fe4b7fa9c9ac24c0699a0018a5253401bacfa905ca816573e56a2d2e067e9b7287533ba13a937dedb31fa44baced40769923610034ae31e619a170245199b3c5c39864859fe1b4c9717a07c30495bdfb98a0a002ccf56c1286cef5041dede3c44cf16bf562c7448518026b3d8b9940680abd38a1575fd27b58da063bfac32c39c30869374c05c1aeb1898b6b303cc68be455346ee0af699636224a148ca2aea10463111c709f69b69c70ce8538746698c4c60a9aef0030c7924ceec42a5d36816f545eae13293460b3acb37ea0e13d70e4aa78686da398a8397c08eaf96882113fe4f7bad4da40b0501e1c753efe73053c87014e8661c33099afe8bede414a5b1aa27d8392b3e131e9a70c1055878240cad0f40d5fe3cdf85236ead97e2a97448363b2808caafd516cd25052c5c362543c2517e4acd0e60ec07163009b6425fc32277acee71c24bab53ed9f29e74c66a0a3564955998d76b96a9a8b50d1635a4d7a67eb42df5644d330457293a8042f53cc7a69288f17ed55827e82b28e82665a86a14fbd96645eca8172c044f83bc0d8c0b4c8626985631ca87af829068f1358963cb333664ca482763ba3b3bb208577f9ba6ac62c25f76592743b64be519317714cb4102cb7b2f9a25b2b4f0615de31decd9ca55026d6da0b65111b16fe52feed8a487e144462a6dba93728f500b6ffc49e515569ef25fed17aff520507368253525860f58be3be61c964604a6ac814e6935596402a520a4670b3d284318866593d15a4bb01c35e3e587ee0c67d2880d6f2407fb7a70712b838deb96c5d7bf2b44bcf6038ccbe33fbcf51a54a584fe90083c91c7a6d43d4fb15f48c60c2fd66e0a8aad4ad64e5c42bb8877c0ebec2b5e387c8a988fdc23beb9e16c8757781e0a1499c61e138c21f216c29d076979871caa6942bafc090544bee99b54b16cb9a9a364d6246d9f42cce53c66b59c45c8f9ae9299a75d15180c3c952151a91b7a10772429dc4cbae6fcc622fa8018c63439f890630b9928db6bb7f9438ae4065ed34d73d486f3f52f90f0807dc88dfdd8c728e954f1ac35c06c000ce41a0582580e3bb57b672972890ac5e7988e7850657116f1b57d0809aaedec0bede1ae148148311c6f7e317346e5189fb8cd635b986f8c0bdd27641c584b778b3a911a80be1c9692ab8e1bbb12839573cce19df183b45835bbb55052f9fc66a1678ef2a36dea78411e6c8d60501b4e60592d13698a943b509185db912e2ea10be06171236b327c71716094c964a68b03377f513a05bcd99c1f346583bb052977a10a12adfc758034e5617da4c1276585e5774e1f3b9978b09d0e9c44d3bc86151c43aad185712717340223ac381d21150a04294e97bb13bbda21b5a182b6da969e19a7fd072737fa8e880a53c2428e3d049b7d2197405296ddb361912a7bcf4827ced611d0c7a7da104dde4322095339f64a61d5bb108ff0bf4d780cae509fb22c256914193ff7349042581237d522828824ee3bdfd07fb03f1f942d2ea179fe722f06cc03de5b69859edb06eff389b27dce59844570216223593d4ba32d9abac8cd049040ef6534",
-  //           ),
-  //           true,
-  //         ),
-  //       DeserializeError,
-  //     );
-  //   });
+    it("with invalid jwk - public key with valid raw key", async () => {
+      const kem = new MlKem768();
+      await assertRejects(
+        () =>
+          kem.importKey(
+            "jwk",
+            hexToBytes(
+              "3f1b8a5cf5aa0cb148cfac766a30a78209a3ce97cb427a9e813254e0b6a99ae25370b583c275357ce3b4d6c60aafda03e99734e0e98eba56aeef821e92b8c1db43942a7c37c9977d79946fe0474df27b9cf3b12ca94bb06401d09150530bf82adfc4623bd7af97425984b8c53f51969ebc02d9b41aace79536e3282af5adedb6363d4a7bdbb06a69e24c892888f6710055bb644db60ba3b884204c03b07c2a8aca0249ac29ead77d5c879a790a09b850a55ef614cc73cf7f727223ba0d6353295c008c986aa9200349a0ac500e347ee1795a1a8369ab6151c27b1341cace56852ee76c6d3ccb8331b23cde8b224af9b2dee402d9605bbfa8401976419c57ab1686bda096b28cb654cd4a5db7c32598e01491e21b8cd54497f60fe2bc31d783928e382bfbf3332b754cf969b12aa58f438b4a57064129d4456009a172a59ab3b77cc84c76944b99a53445a529ac0a62ad490174a47324a5d34b81a682a69c0a8dd75f0de93c20e430266c23b00c4869f53c6fd0854ed3caf4544952b05ed3b3b0d6ca34f0f297f2e9a7c1187804a37a121a6ad2ab50daf475aa3a25e6c9a0d6a29def62cbd298050f5b307c053a5c8838b4c3357f3376653c3366fa6fe1025d1960c75ba643265c157a84c914d559f540c67ec1587394af7bd17830d5089d505906fa9f766a9b93909f5b6627cc05a0b2192cbfc2271b0b22d77a07ce551edaa6522d402b00003723c115936c97f54c88aa513482a05554c628e69448eb6a0ef6f346341c802bdab9b03ba0af297d9e8b938b9cabefa46722421a338a872d9a88b88c9f0eec46932c367cc58b83573d26036aaf5276e515b0f23059b40c848f638ace3703ee6c27d966990c7702ed23a0cd9ba4cf6169a668a1f0bb586b076692e1c215754ff6784bd91a248cb90f008a3eca59852c057966933a1a86b6e05b2fad91b28bc61648b041a7ac046ab8112b6ac2cb900fb5c09821dc4b0716b509e122dc97c6ed7342f6f49fb65559729c384763ba2d2bb8cf56ae36f3b269970ac54841213b24b792c949f3c775e70ac8f7cc53763ff638adc5113ec60075c1a79276ca473c113832954abe207bebf0cd0426c0e29733947256c7756bf9b50d82191a07f0ba5d5a154b0866e293473b4076a1e995f9d086a472c118ac22c216a839920660a331eee198df5b1a1595239d5780cda75f73c6765a46ae4aa34001939dfad92f7e124a5f2c628b259de9560bbf470cc69cc652dc29b93ba86a4990dce0af1a4524c199a692670caf748d16612feed711f88a505d552a6440aa0422626f185f6921a82ef925086028ae8562fc7610e1b1649ef0094d96b505fbb7f112896efac0d192af45d903ac7992bbe9bf30e2577e24581cbc4f73b180d04a69f540b39e19a4ae36aec4f21ade774965391bcaebc0af869cb63631327b421bec6726651b8758bfee73c591212d4ff981f6684c58b359c2d07fa1e601d6c5cbfdc964b31909cca37fff96204fb5688d92ca5a85758cf160e9b06ed18320a4b1b0c8e8196ae76a6f621972d17a4d64a7df04c5a4c333c3bc1acaab37709149a3b8ca082a8fbca13268a1b022230e2d630272cb9ff2e6655af17327f3b9807095f582be18bd3f4e0bb723eced69b0585629986548d722b03b5bbd157ac99dee1c0a9aa1",
+            ),
+            true,
+          ),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid raw - private key with invalid length of the key", async () => {
-  //     const kem = new MlKem768();
-  //     await assertRejects(
-  //       () =>
-  //         kem.importKey(
-  //           "raw",
-  //           hexToBytes(
-  //             "9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
-  //           ),
-  //           false,
-  //         ),
-  //       DeserializeError,
-  //     );
-  //   });
+    it("with invalid jwk - public key with invalid kty", async () => {
+      const kem = new MlKem768();
 
-  //   it("with invalid jwk - public key with valid raw key", async () => {
-  //     const kem = new MlKem768();
-  //     await assertRejects(
-  //       () =>
-  //         kem.importKey(
-  //           "jwk",
-  //           hexToBytes(
-  //             "e2236b35a8c24b39b10aa1323a96a919a2ced88400633a7b07131713fc14b2b5b19cfc3da5fa1a92c49f25513e0fd30d6b1611c9ab9635d7086727a4b7d21d34244e66969cf15b3b2a785329f61b096b277ea037383479a6b556de7231fe4b7fa9c9ac24c0699a0018a5253401bacfa905ca816573e56a2d2e067e9b7287533ba13a937dedb31fa44baced40769923610034ae31e619a170245199b3c5c39864859fe1b4c9717a07c30495bdfb98a0a002ccf56c1286cef5041dede3c44cf16bf562c7448518026b3d8b9940680abd38a1575fd27b58da063bfac32c39c30869374c05c1aeb1898b6b303cc68be455346ee0af699636224a148ca2aea10463111c709f69b69c70ce8538746698c4c60a9aef0030c7924ceec42a5d36816f545eae13293460b3acb37ea0e13d70e4aa78686da398a8397c08eaf96882113fe4f7bad4da40b0501e1c753efe73053c87014e8661c33099afe8bede414a5b1aa27d8392b3e131e9a70c1055878240cad0f40d5fe3cdf85236ead97e2a97448363b2808caafd516cd25052c5c362543c2517e4acd0e60ec07163009b6425fc32277acee71c24bab53ed9f29e74c66a0a3564955998d76b96a9a8b50d1635a4d7a67eb42df5644d330457293a8042f53cc7a69288f17ed55827e82b28e82665a86a14fbd96645eca8172c044f83bc0d8c0b4c8626985631ca87af829068f1358963cb333664ca482763ba3b3bb208577f9ba6ac62c25f76592743b64be519317714cb4102cb7b2f9a25b2b4f0615de31decd9ca55026d6da0b65111b16fe52feed8a487e144462a6dba93728f500b6ffc49e515569ef25fed17aff520507368253525860f58be3be61c964604a6ac814e6935596402a520a4670b3d284318866593d15a4bb01c35e3e587ee0c67d2880d6f2407fb7a70712b838deb96c5d7bf2b44bcf6038ccbe33fbcf51a54a584fe90083c91c7a6d43d4fb15f48c60c2fd66e0a8aad4ad64e5c42bb8877c0ebec2b5e387c8a988fdc23beb9e16c8757781e0a1499c61e138c21f216c29d076979871caa6942bafc090544bee99b54b16cb9a9a364d6246d9f42cce53c66b59c45c8f9ae9299a75d15180c3c952151a91b7a10772429dc4cbae6fcc622fa8018c63439f890630b9928db6bb7f9438ae4065ed34d73d486f3f52f90f0807dc88dfdd8c728e954f1ac35c06c000ce41a0582580e3bb57b672972890ac5e7988e7850657116f1b57d0809aaedec0bede1ae148148311c6f7e317346e5189fb8cd635b986f8c0bdd27641c584b778b3a911a80be1c9692ab8e1bbb12839573cce19df183b45835bbb55052f9fc66a1678ef2a36dea78411e6c8d60501b4e60592d13698a943b509185db912e2ea10be06171236b327c71716094c964a68b03377f513a05bcd99c1f346583bb052977a10a12adfc758034e5617da4c1276585e5774e1f3b9978b09d0e9c44d3bc86151c43aad185712717340223ac381d21150a04294e97bb13bbda21b5a182b6da969e19a7fd072737fa8e880a53c2428e3d049b7d2197405296ddb361912a7bcf4827ced611d0c7a7da104dde4322095339f64a61d5bb108ff0bf4d780cae509fb22c256914193ff7349042581237d522828824ee3bdfd07fb03f1f942d2ea179fe722f06cc03de5b69859edb06eff389b27dce59844570216223593d4ba32d9abac8cd049040ef6534",
-  //           ),
-  //           true,
-  //         ),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "OKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with invalid kty", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key without kty", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "OKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        // kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key without kty", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key with invalid alg", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       // kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "X-Wind",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with invalid alg", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key without alg", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wind",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        // alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key without alg", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key with invalid length of the key", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       // alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "uKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with invalid length of the key", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key with priv", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "NrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with priv", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key without pub", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        x: "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: [],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key without pub", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key with invalid key_ops including deriveBits", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       x: "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: [],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with invalid key_ops including deriveBits", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - public key with invalid key_ops including encrypt", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        key_ops: ["encrypt"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - public key with invalid key_ops including encrypt", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key with invalid kty", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       key_ops: ["encrypt"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "OKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key with invalid kty", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key without kty", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "OKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        // kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key without kty", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key with invalid alg", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       // kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "X-Wing",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key with invalid alg", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key without alg", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wind",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        // alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key without alg", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key with invalid length of the key", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       // alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "z8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, false),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key with invalid length of the key", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key without priv", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, false),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        pub:
+          "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
+        // priv:
+        //   "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key without priv", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key with invalid key_ops", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       pub:
-  //         "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
-  //       // priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["encrypt"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
 
-  //   it("with invalid jwk - private key with invalid key_ops", async () => {
-  //     const kem = new MlKem768();
+    it("with invalid jwk - private key with invalid key_ops including a valid value", async () => {
+      const kem = new MlKem768();
 
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["encrypt"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
-
-  //   it("with invalid jwk - private key with invalid key_ops including a valid value", async () => {
-  //     const kem = new MlKem768();
-
-  //     const jwk = {
-  //       kty: "AKP",
-  //       kid: "01",
-  //       alg: "X-Wing",
-  //       priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
-  //       key_ops: ["deriveBits", "encrypt"],
-  //     };
-  //     // assert
-  //     await assertRejects(
-  //       () => kem.importKey("jwk", jwk, true),
-  //       DeserializeError,
-  //     );
-  //   });
-  // });
+      const jwk = {
+        kty: "AKP",
+        kid: "01",
+        alg: "ML-KEM-768",
+        priv:
+          "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
+        key_ops: ["deriveBits", "encrypt"],
+      };
+      // assert
+      await assertRejects(
+        () => kem.importKey("jwk", jwk, true),
+        DeserializeError,
+      );
+    });
+  });
 });
 
 describe("README examples", () => {

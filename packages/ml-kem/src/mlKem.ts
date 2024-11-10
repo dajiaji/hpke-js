@@ -308,7 +308,7 @@ export class MlKemBase implements KemInterface {
  *
  * ```ts
  * import { Aes128Gcm, CipherSuite, HkdfSha256 } from "@hpke/core";
- * import { MlKem768 } from "@hpke/ml-kem";
+ * import { MlKem512 } from "@hpke/ml-kem";
  * const suite = new CipherSuite({
  *   kem: new MlKem512(),
  *   kdf: new HkdfSha256(),
@@ -376,7 +376,7 @@ export class MlKem768 extends MlKemBase {
  *
  * ```ts
  * import { Aes256Gcm, CipherSuite, HkdfSha512 } from "@hpke/core";
- * import { MlKem768 } from "@hpke/ml-kem";
+ * import { MlKem1024 } from "@hpke/ml-kem";
  * const suite = new CipherSuite({
  *   kem: new MlKem1024(),
  *   kdf: new HkdfSha512(),
