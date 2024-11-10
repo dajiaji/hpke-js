@@ -11,6 +11,7 @@
     "packages/hybridkem-x25519-kyber768",
     "packages/hybridkem-x-wing",
     "packages/hpke-js",
+    "packages/ml-kem",
     "test/**/*/runtimes/cloudflare",
     "samples/**/*"
   ]

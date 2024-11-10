@@ -356,6 +356,11 @@
         "dependencies": [
           "npm:@noble/hashes@^1.5.0"
         ]
+      },
+      "packages/ml-kem": {
+        "dependencies": [
+          "jsr:@dajiaji/mlkem@^2.3.0"
+        ]
       }
     }
   }

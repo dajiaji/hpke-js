@@ -1,0 +1,16 @@
+{
+  "name": "samples-node-hpke-ml-kem",
+  "version": "1.0.0",
+  "description": "A sample code of @hpke/ml-kem.",
+  "type": "module",
+  "main": "app.js",
+  "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "dependencies": {
+    "@hpke/core": "^1.7.1",
+    "@hpke/ml-kem": "^0.1.0"
+  }
+}
