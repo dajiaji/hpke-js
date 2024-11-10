@@ -97,3 +97,11 @@ jobs:
       - name: Publish to npm (dry) for /packages/hpke-js
         working-directory: ./npm/packages/hpke-js
         run: npm publish --dry-run
+      - name: Run dnt & minify for /packages/ml-kem
+        working-directory: ./packages/ml-kem
+        run: |
+          deno task dnt
+          deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js
+      - name: Publish to npm (dry) for /packages/ml-kem
+        working-directory: ./npm/packages/ml-kem
+        run: npm publish --dry-run

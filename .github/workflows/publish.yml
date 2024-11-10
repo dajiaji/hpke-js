@@ -93,3 +93,9 @@ jobs:
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Publish @hpke/ml-kem to npm
+        continue-on-error: true
+        working-directory: ./npm/packages/ml-kem
+        run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
