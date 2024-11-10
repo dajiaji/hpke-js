@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for <a href="https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/">X-Wing: general-purpose hybrid post-quantum KEM</a>.
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for <a href="https://datatracker.ietf.org/doc/draft-connolly-cfrg-hpke-mlkem/">ML-KEM for HPKE</a>.
 </div>
 <p></p>
 
@@ -34,23 +34,24 @@ async function doHpke() {
   const jwkPub = {
     kty: "AKP",
     kid: "01",
-    alg: "X-Wing",
+    alg: "ML-KEM-768",
     pub:
-      "4iNrNajCSzmxCqEyOpapGaLO2IQAYzp7BxMXE_wUsrWxnPw9pfoaksSfJVE-D9MNaxYRyauWNdcIZyekt9IdNCROZpac8Vs7KnhTKfYbCWsnfqA3ODR5prVW3nIx_kt_qcmsJMBpmgAYpSU0AbrPqQXKgWVz5WotLgZ-m3KHUzuhOpN97bMfpEus7UB2mSNhADSuMeYZoXAkUZmzxcOYZIWf4bTJcXoHwwSVvfuYoKACzPVsEobO9QQd7ePETPFr9WLHRIUYAms9i5lAaAq9OKFXX9J7WNoGO_rDLDnDCGk3TAXBrrGJi2swPMaL5FU0buCvaZY2IkoUjKKuoQRjERxwn2m2nHDOhTh0ZpjExgqa7wAwx5JM7sQqXTaBb1RerhMpNGCzrLN-oOE9cOSqeGhto5ioOXwI6vloghE_5Pe61NpAsFAeHHU-_nMFPIcBToZhwzCZr-i-3kFKWxqifYOSs-Ex6acMEFWHgkDK0PQNX-PN-FI26tl-KpdEg2OygIyq_VFs0lBSxcNiVDwlF-Ss0OYOwHFjAJtkJfwyJ3rO5xwkurU-2fKedMZqCjVklVmY12uWqai1DRY1pNemfrQt9WRNMwRXKTqAQvU8x6aSiPF-1Vgn6Cso6CZlqGoU-9lmReyoFywET4O8DYwLTIYmmFYxyoevgpBo8TWJY8szNmTKSCdjujs7sghXf5umrGLCX3ZZJ0O2S-UZMXcUy0ECy3svmiWytPBhXeMd7NnKVQJtbaC2URGxb-Uv7tikh-FERiptupNyj1ALb_xJ5RVWnvJf7Rev9SBQc2glNSWGD1i-O-YclkYEpqyBTmk1WWQCpSCkZws9KEMYhmWT0VpLsBw14-WH7gxn0ogNbyQH-3pwcSuDjeuWxde_K0S89gOMy-M_vPUaVKWE_pAIPJHHptQ9T7FfSMYML9ZuCoqtStZOXEK7iHfA6-wrXjh8ipiP3CO-ueFsh1d4HgoUmcYeE4wh8hbCnQdpeYccqmlCuvwJBUS-6ZtUsWy5qaNk1iRtn0LM5TxmtZxFyPmukpmnXRUYDDyVIVGpG3oQdyQp3Ey65vzGIvqAGMY0OfiQYwuZKNtrt_lDiuQGXtNNc9SG8_UvkPCAfciN_djHKOlU8aw1wGwADOQaBYJYDju1e2cpcokKxeeYjnhQZXEW8bV9CAmq7ewL7eGuFIFIMRxvfjFzRuUYn7jNY1uYb4wL3SdkHFhLd4s6kRqAvhyWkquOG7sSg5VzzOGd8YO0WDW7tVBS-fxmoWeO8qNt6nhBHmyNYFAbTmBZLRNpipQ7UJGF25EuLqEL4GFxI2syfHFxYJTJZKaLAzd_UToFvNmcHzRlg7sFKXehChKt_HWANOVhfaTBJ2WF5XdOHzuZeLCdDpxE07yGFRxDqtGFcScXNAIjrDgdIRUKBClOl7sTu9ohtaGCttqWnhmn_QcnN_qOiApTwkKOPQSbfSGXQFKW3bNhkSp7z0gnztYR0Men2hBN3kMiCVM59kph1bsQj_C_TXgMrlCfsiwlaRQZP_c0kEJYEjfVIoKIJO4739B_sD8flC0uoXn-ci8GzAPeW2mFntsG7_OJsn3OWYRFcCFiI1k9S6MtmrrIzQSQQO9lNA",
+      "PxuKXPWqDLFIz6x2ajCnggmjzpfLQnqegTJU4LapmuJTcLWDwnU1fOO01sYKr9oD6Zc04OmOulau74IekrjB20OUKnw3yZd9eZRv4EdN8nuc87EsqUuwZAHQkVBTC_gq38RiO9evl0JZhLjFP1GWnrwC2bQarOeVNuMoKvWt7bY2PUp727BqaeJMiSiI9nEAVbtkTbYLo7iEIEwDsHwqisoCSawp6td9XIeaeQoJuFClXvYUzHPPf3JyI7oNY1MpXACMmGqpIANJoKxQDjR-4XlaGoNpq2FRwnsTQcrOVoUu52xtPMuDMbI83osiSvmy3uQC2WBbv6hAGXZBnFerFoa9oJayjLZUzUpdt8MlmOAUkeIbjNVEl_YP4rwx14OSjjgr-_MzK3VM-WmxKqWPQ4tKVwZBKdRFYAmhcqWas7d8yEx2lEuZpTRFpSmsCmKtSQF0pHMkpdNLgaaCppwKjddfDek8IOQwJmwjsAxIafU8b9CFTtPK9FRJUrBe07Ow1so08PKX8umnwRh4BKN6Ehpq0qtQ2vR1qjol5smg1qKd72LL0pgFD1swfAU6XIg4tMM1fzN2ZTwzZvpv4QJdGWDHW6ZDJlwVeoTJFNVZ9UDGfsFYc5Sve9F4MNUInVBZBvqfdmqbk5CfW2YnzAWgshksv8InGwsi13oHzlUe2qZSLUArAAA3I8EVk2yX9UyIqlE0gqBVVMYo5pRI62oO9vNGNByAK9q5sDugryl9nouTi5yr76RnIkIaM4qHLZqIuIyfDuxGkyw2fMWLg1c9JgNqr1J25RWw8jBZtAyEj2OKzjcD7mwn2WaZDHcC7SOgzZukz2Fppmih8LtYawdmkuHCFXVP9nhL2RokjLkPAIo-ylmFLAV5ZpM6Goa24FsvrZGyi8YWSLBBp6wEargRK2rCy5APtcCYIdxLBxa1CeEi3JfG7XNC9vSftlVZcpw4R2O6LSu4z1auNvOyaZcKxUhBITskt5LJSfPHdecKyPfMU3Y_9jitxRE-xgB1waeSdspHPBE4MpVKviB76_DNBCbA4pczlHJWx3Vr-bUNghkaB_C6XVoVSwhm4pNHO0B2oemV-dCGpHLBGKwiwhaoOZIGYKMx7uGY31saFZUjnVeAzadfc8Z2WkauSqNAAZOd-tkvfhJKXyxiiyWd6VYLv0cMxpzGUtwpuTuoakmQ3OCvGkUkwZmmkmcMr3SNFmEv7tcR-IpQXVUqZECqBCJibxhfaSGoLvklCGAoroVi_HYQ4bFknvAJTZa1Bfu38RKJbvrA0ZKvRdkDrHmSu-m_MOJXfiRYHLxPc7GA0Epp9UCznhmkrjauxPIa3ndJZTkbyuvAr4actjYxMntCG-xnJmUbh1i_7nPFkSEtT_mB9mhMWLNZwtB_oeYB1sXL_clksxkJzKN__5YgT7VojZLKWoV1jPFg6bBu0YMgpLGwyOgZaudqb2IZctF6TWSn3wTFpMMzw7wayqs3cJFJo7jKCCqPvKEyaKGwIiMOLWMCcsuf8uZlWvFzJ_O5gHCV9YK-GL0_Tgu3I-ztabBYVimYZUjXIrA7W70Vesmd7hwKmqE",
     key_ops: [],
   };
   const pk = await suite.kem.importKey("jwk", jwkPub, true);
   // In addition to importing keys from external sources, you can also generate keys as follows:
   //   const rkp = await suite.kem.generateKeyPair();
-  //   const rkp = await suite.kem.deriveKeyPair(random32bytesValue);
+  //   const rkp = await suite.kem.deriveKeyPair(random64bytesValue);
 
   const sender = await suite.createSenderContext({ recipientPublicKey: pk });
 
   const jwkPriv = {
     kty: "AKP",
     kid: "01",
-    alg: "X-Wing",
-    priv: "f5wrpOiPgn1hYEVQdgWFPtc7gJP277yI6xpurPpm7yY",
+    alg: "ML-KEM-768",
+    priv:
+      "1pz8ZPhNTzPkxU4Wa3_5KDo5SYalObI5h6EPOdLZaJtt5i40ZaVcnHigfSZb6FQLPliwgBoSTQf_ErQ41SAuoA",
     key_ops: ["deriveBits"],
   };
   const sk = await suite.kem.importKey("jwk", jwkPriv, false);
@@ -188,7 +189,7 @@ async function doHpke() {
 
   const rkp = await suite.kem.generateKeyPair();
 
-  // Note that the `ct` (ciphertext) resulting from X-Wing Encapsulate() is set to `sender.enc`.
+  // Note that the `ct` (ciphertext) resulting from ML-KEM::Encaps() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
@@ -198,7 +199,7 @@ async function doHpke() {
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
+    enc: sender.enc, // == `ct` (ciphertext) in the context of ML-KEM
   });
 
   // decrypt
@@ -231,7 +232,7 @@ async function doHpke() {
 
   const rkp = await suite.kem.generateKeyPair();
 
-  // Note that the `ct` (ciphertext) resulting from X-Wing::Encapsulate() is set to `sender.enc`.
+  // Note that the `ct` (ciphertext) resulting from ML-KEM::Encaps() is set to `sender.enc`.
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
@@ -241,7 +242,7 @@ async function doHpke() {
 
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
-    enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
+    enc: sender.enc, // == `ct` (ciphertext) in the context of ML-KEM
   });
 
   // decrypt
@@ -282,7 +283,7 @@ try {
 
           const rkp = await suite.kem.generateKeyPair();
 
-          // Note that the `ct` resulting from X-Wing::Encapsulate() is set to `sender.enc`.
+          // Note that the `ct` (ciphertext) resulting from ML-KEM::Encaps() is set to `sender.enc`.
           const sender = await suite.createSenderContext({
             recipientPublicKey: rkp.publicKey,
           });
@@ -293,7 +294,7 @@ try {
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
+            enc: sender.enc, // == `ct` (ciphertext) in the context of ML-KEM
           });
 
           // decrypt
