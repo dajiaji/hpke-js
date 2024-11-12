@@ -15,7 +15,7 @@ await build({
   outDir: "../../npm/packages/hybridkem-x-wing",
   typeCheck: "both",
   test: true,
-  declaration: true,
+  declaration: "inline",
   scriptModule: "umd",
   importMap: "../../npm/import_map.json",
   compilerOptions: {
