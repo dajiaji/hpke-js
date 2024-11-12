@@ -46,6 +46,12 @@
     "npm:mlkem@^2.3.0": "2.3.0"
   },
   "jsr": {
+    "@dajiaji/mlkem@2.3.0": {
+      "integrity": "4c44a371b61d79fa128562c76634399c6f80a894bd01aeffbbda5aa6324b0b18",
+      "dependencies": [
+        "npm:@noble/hashes@^1.5.0"
+      ]
+    },
     "@david/code-block-writer@13.0.2": {
       "integrity": "14dd3baaafa3a2dea8bf7dfbcddeccaa13e583da2d21d666c01dc6d681cd74ad"
     },
@@ -312,6 +318,17 @@
     "https://deno.land/x/hpke@1.2.9/x/hybridkem-x25519-kyber768/mod.ts": "4e2f654c400cae7dd5f0ba9657733f46059d57212a02064d48a4b855f2123189"
   },
   "workspace": {
+    "dependencies": [
+      "jsr:@deno/dnt@~0.41.3",
+      "jsr:@std/assert@1.0.0",
+      "jsr:@std/fs@^1.0.4",
+      "jsr:@std/path@^1.0.3",
+      "jsr:@std/testing@1",
+      "npm:@noble/ciphers@1",
+      "npm:@noble/curves@^1.6.0",
+      "npm:@noble/hashes@^1.5.0",
+      "npm:mlkem@^2.3.0"
+    ],
     "members": {
       "packages/chacha20poly1305": {
         "dependencies": [
