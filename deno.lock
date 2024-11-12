@@ -42,6 +42,7 @@
     "npm:@noble/hashes@1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.4.0": "1.4.0",
     "npm:@noble/hashes@^1.5.0": "1.5.0",
+    "npm:@playwright/test@^1.48.2": "1.48.2",
     "npm:@types/node@*": "22.2.0",
     "npm:mlkem@^2.3.0": "2.3.0"
   },
@@ -222,16 +223,35 @@
     "@noble/hashes@1.5.0": {
       "integrity": "sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA=="
     },
+    "@playwright/test@1.48.2": {
+      "integrity": "sha512-54w1xCWfXuax7dz4W2M9uw0gDyh+ti/0K/MxcCUxChFh37kkdxPdfZDw5QBbuPUJHr1CiHJ1hXgSs+GgeQc5Zw==",
+      "dependencies": [
+        "playwright"
+      ]
+    },
     "@types/node@22.2.0": {
       "integrity": "sha512-bm6EG6/pCpkxDf/0gDNDdtDILMOHgaQBVOJGdwsqClnxA3xL6jtMv76rLBc006RVMWbmaf0xbmom4Z/5o2nRkQ==",
       "dependencies": [
         "undici-types"
       ]
     },
+    "fsevents@2.3.2": {
+      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
+    },
     "mlkem@2.3.0": {
       "integrity": "sha512-iDY5QTG/O/ouhC79dIlVzyiaieOopwhPZmxvevLoeJ4hkADnyCLa5ZSID1PKbReF4IebidrJrRf5YM3TFp02cQ==",
       "dependencies": [
         "@noble/hashes@1.5.0"
+      ]
+    },
+    "playwright-core@1.48.2": {
+      "integrity": "sha512-sjjw+qrLFlriJo64du+EK0kJgZzoQPsabGF4lBvsid+3CNIZIYLgnMj9V6JY5VhM2Peh20DJWIVpVljLLnlawA=="
+    },
+    "playwright@1.48.2": {
+      "integrity": "sha512-NjYvYgp4BPmiwfe31j4gHLa3J7bD2WiBz8Lk2RoSsmX38SVIARZ18VYjxLjAcDsAhA+F4iSEXTSGgjua0rrlgQ==",
+      "dependencies": [
+        "fsevents",
+        "playwright-core"
       ]
     },
     "undici-types@6.13.0": {
@@ -327,6 +347,7 @@
       "npm:@noble/ciphers@1",
       "npm:@noble/curves@^1.6.0",
       "npm:@noble/hashes@^1.5.0",
+      "npm:@playwright/test@^1.48.2",
       "npm:mlkem@^2.3.0"
     ],
     "members": {
