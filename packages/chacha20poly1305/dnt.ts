@@ -1,12 +1,14 @@
 import { build, emptyDir } from "@deno/dnt";
 import { copySync } from "@std/fs";
+import { removeNodeModules } from "../../utils/misc.ts";
 
+// clean up dist
 await emptyDir("../../npm/packages/chacha20poly1305");
 await emptyDir("../../npm/samples/chacha20poly1305");
 await emptyDir("../../npm/test/chacha20poly1305/runtimes/cloudflare");
 
-await emptyDir("test/runtimes/browsers/node_modules");
-await emptyDir("test/runtimes/bun/node_modules");
+// clean up node_modules
+await removeNodeModules();
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
