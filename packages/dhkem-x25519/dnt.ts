@@ -1,12 +1,14 @@
 import { build, emptyDir } from "jsr:@deno/dnt";
 import { copySync } from "@std/fs";
+import { removeNodeModules } from "../../utils/misc.ts";
 
+// clean up dist
 await emptyDir("../../npm/packages/dhkem-x25519");
 await emptyDir("../../npm/samples/dhkem-x25519");
 await emptyDir("../../npm/test/dhkem-x25519/runtimes/cloudflare");
 
-await emptyDir("test/runtimes/browsers/node_modules");
-await emptyDir("test/runtimes/bun/node_modules");
+// clean up node_modules
+await removeNodeModules();
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
 
