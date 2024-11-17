@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/chacha20poly1305");
-await emptyDir("../../npm/samples/chacha20poly1305");
-await emptyDir("../../npm/test/chacha20poly1305/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("chacha20poly1305");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -69,20 +62,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/chacha20poly1305",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/chacha20poly1305/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/chacha20poly1305/LICENSE");
-Deno.copyFileSync(
-  "README.md",
-  "../../npm/packages/chacha20poly1305/README.md",
-);
+afterBuild("chacha20poly1305");

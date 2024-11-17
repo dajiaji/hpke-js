@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/dhkem-x448");
-await emptyDir("../../npm/samples/dhkem-x448");
-await emptyDir("../../npm/test/dhkem-x448/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("dhkem-x448");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -69,17 +62,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/dhkem-x448",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/dhkem-x448/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/dhkem-x448/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/packages/dhkem-x448/README.md");
+afterBuild("dhkem-x448");

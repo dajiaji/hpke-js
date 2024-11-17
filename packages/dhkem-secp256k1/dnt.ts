@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/dhkem-secp256k1");
-await emptyDir("../../npm/samples/dhkem-secp256k1");
-await emptyDir("../../npm/test/dhkem-secp256k1/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("dhkem-secp256k1");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -69,20 +62,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/dhkem-secp256k1",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/dhkem-secp256k1/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/dhkem-secp256k1/LICENSE");
-Deno.copyFileSync(
-  "README.md",
-  "../../npm/packages/dhkem-secp256k1/README.md",
-);
+afterBuild("dhkem-secp256k1");

@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/hybridkem-x25519-kyber768");
-await emptyDir("../../npm/samples/hybridkem-x25519-kyber768");
-await emptyDir("../../npm/test/hybridkem-x25519-kyber768/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("hybridkem-x25519-kyber768");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -69,23 +62,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/hybridkem-x25519-kyber768",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/hybridkem-x25519-kyber768/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync(
-  "LICENSE",
-  "../../npm/packages/hybridkem-x25519-kyber768/LICENSE",
-);
-Deno.copyFileSync(
-  "README.md",
-  "../../npm/packages/hybridkem-x25519-kyber768/README.md",
-);
+afterBuild("hybridkem-x25519-kyber768");
