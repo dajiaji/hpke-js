@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/hpke-js");
-await emptyDir("../../npm/samples/hpke-js");
-await emptyDir("../../npm/test/hpke-js/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("hpke-js");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -73,17 +66,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/hpke-js",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/hpke-js/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/hpke-js/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/packages/hpke-js/README.md");
+afterBuild("hpke-js");

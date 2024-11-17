@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/hybridkem-x-wing");
-await emptyDir("../../npm/samples/hybridkem-x-wing");
-await emptyDir("../../npm/test/hybridkem-x-wing/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("hybridkem-x-wing");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -70,23 +63,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/hybridkem-x-wing",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/hybridkem-x-wing/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync(
-  "LICENSE",
-  "../../npm/packages/hybridkem-x-wing/LICENSE",
-);
-Deno.copyFileSync(
-  "README.md",
-  "../../npm/packages/hybridkem-x-wing/README.md",
-);
+afterBuild("hybridkem-x-wing");

@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/ml-kem");
-await emptyDir("../../npm/samples/ml-kem");
-await emptyDir("../../npm/test/ml-kem/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("ml-kem");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -68,17 +61,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/ml-kem",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/ml-kem/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/ml-kem/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/packages/ml-kem/README.md");
+afterBuild("ml-kem");

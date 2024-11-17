@@ -1,16 +1,9 @@
-import { build, emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
-import { removeNodeModules } from "../../utils/misc.ts";
-
-// clean up dist
-await emptyDir("../../npm/packages/core");
-await emptyDir("../../npm/samples/core");
-await emptyDir("../../npm/test/core/runtimes/cloudflare");
-
-// clean up node_modules
-await removeNodeModules();
+import { build } from "@deno/dnt";
+import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+
+await beforeBuild("core");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -67,17 +60,4 @@ await build({
   },
 });
 
-copySync(
-  "samples/node",
-  "../../npm/samples/core",
-  { overwrite: true },
-);
-copySync(
-  "test/runtimes/cloudflare",
-  "../../npm/test/core/runtimes/cloudflare",
-  { overwrite: true },
-);
-
-// post build steps
-Deno.copyFileSync("LICENSE", "../../npm/packages/core/LICENSE");
-Deno.copyFileSync("README.md", "../../npm/packages/core/README.md");
+afterBuild("core");
