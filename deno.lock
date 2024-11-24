@@ -344,7 +344,7 @@
       "jsr:@std/fs@^1.0.4",
       "jsr:@std/path@^1.0.3",
       "jsr:@std/testing@1",
-      "npm:@noble/ciphers@1",
+      "npm:@noble/ciphers@^1.1.0",
       "npm:@noble/curves@^1.6.0",
       "npm:@noble/hashes@^1.5.0",
       "npm:@playwright/test@^1.48.2",
