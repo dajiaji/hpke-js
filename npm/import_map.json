@@ -1,6 +1,6 @@
 {
   "imports": {
-    "@dajiaji/mlkem": "npm:mlkem@^2.3.0",
+    "@dajiaji/mlkem": "npm:mlkem@^2.3.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.6.0",
     "@hpke/common": "npm:@hpke/common@^1.7.1",
@@ -16,8 +16,8 @@
     "@noble/hashes/sha512": "npm:@noble/hashes@^1.6.0/sha512",
     "@noble/hashes/sha3": "npm:@noble/hashes@^1.6.0/sha3",
     "@std/assert": "jsr:@std/assert@1.0.0",
-    "@std/fs": "jsr:@std/fs@^1.0.4",
-    "@std/path": "jsr:@std/path@^1.0.3",
-    "@std/testing/bdd": "jsr:@std/testing@^1.0.0/bdd"
+    "@std/fs": "jsr:@std/fs@^1.0.14",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "@std/testing/bdd": "jsr:@std/testing@^1.0.9/bdd"
   }
 }
