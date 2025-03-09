@@ -39,7 +39,11 @@
           for (const kdf of kdfs) {
             for (const aead of aeads) {
               try {
-                const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
+                const suite = new CipherSuite({
+                  kem: kem,
+                  kdf: kdf,
+                  aead: aead,
+                });
 
                 const rkp = await suite.kem.generateKeyPair();
 
@@ -61,7 +65,9 @@
                 const pt = await recipient.open(ct);
 
                 // hello world!
-                "hello world!" === new TextDecoder().decode(pt) ? pass++ : fail++;
+                "hello world!" === new TextDecoder().decode(pt)
+                  ? pass++
+                  : fail++;
               } catch (e) {
                 fail++;
               }
