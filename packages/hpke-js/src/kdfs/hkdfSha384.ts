@@ -13,7 +13,8 @@ export class HkdfSha384 extends HkdfSha384Native {
       salt = new ArrayBuffer(this.hashSize);
     }
     if (salt.byteLength !== this.hashSize) {
-      return hmac(sha384, new Uint8Array(salt), new Uint8Array(ikm));
+      return hmac(sha384, new Uint8Array(salt), new Uint8Array(ikm))
+        .buffer as ArrayBuffer;
     }
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",

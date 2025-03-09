@@ -64,7 +64,7 @@ export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
       if (!("d" in jwk)) {
         throw new Error("Not private key");
       }
-      return base64UrlToBytes(jwk["d"] as string);
+      return base64UrlToBytes(jwk["d"] as string).buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new SerializeError(e);
     }
@@ -116,7 +116,7 @@ export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
     await this._setup();
     try {
       const dkpPrk = await this._hkdf.labeledExtract(
-        EMPTY,
+        EMPTY.buffer as ArrayBuffer,
         LABEL_DKP_PRK,
         new Uint8Array(ikm),
       );

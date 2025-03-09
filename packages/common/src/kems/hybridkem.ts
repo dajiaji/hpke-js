@@ -85,17 +85,17 @@ export class Hybridkem implements KemInterface {
     const skB = await this._b.serializePrivateKey(kpB.privateKey);
     return {
       publicKey: await this.deserializePublicKey(
-        concat(new Uint8Array(pkA), new Uint8Array(pkB)),
+        concat(new Uint8Array(pkA), new Uint8Array(pkB)).buffer as ArrayBuffer,
       ),
       privateKey: await this.deserializePrivateKey(
-        concat(new Uint8Array(skA), new Uint8Array(skB)),
+        concat(new Uint8Array(skA), new Uint8Array(skB)).buffer as ArrayBuffer,
       ),
     };
   }
 
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     const dkpPrk = await this._kdf.labeledExtract(
-      EMPTY,
+      EMPTY.buffer as ArrayBuffer,
       LABEL_DKP_PRK,
       new Uint8Array(ikm),
     );
@@ -109,18 +109,18 @@ export class Hybridkem implements KemInterface {
     );
     const seed1 = seed.slice(0, 32);
     const seed2 = seed.slice(32, 96);
-    const kpA = await this._a.deriveKeyPair(seed1);
-    const kpB = await this._b.deriveKeyPair(seed2);
+    const kpA = await this._a.deriveKeyPair(seed1.buffer as ArrayBuffer);
+    const kpB = await this._b.deriveKeyPair(seed2.buffer as ArrayBuffer);
     const pkA = await this._a.serializePublicKey(kpA.publicKey);
     const skA = await this._a.serializePrivateKey(kpA.privateKey);
     const pkB = await this._b.serializePublicKey(kpB.publicKey);
     const skB = await this._b.serializePrivateKey(kpB.privateKey);
     return {
       publicKey: await this.deserializePublicKey(
-        concat(new Uint8Array(pkA), new Uint8Array(pkB)),
+        concat(new Uint8Array(pkA), new Uint8Array(pkB)).buffer as ArrayBuffer,
       ),
       privateKey: await this.deserializePrivateKey(
-        concat(new Uint8Array(skA), new Uint8Array(skB)),
+        concat(new Uint8Array(skA), new Uint8Array(skB)).buffer as ArrayBuffer,
       ),
     };
   }
@@ -158,10 +158,10 @@ export class Hybridkem implements KemInterface {
       await this.serializePublicKey(params.recipientPublicKey),
     );
     const pkRA = await this._a.deserializePublicKey(
-      pkR.slice(0, this._a.publicKeySize),
+      pkR.slice(0, this._a.publicKeySize).buffer as ArrayBuffer,
     );
     const pkRB = await this._b.deserializePublicKey(
-      pkR.slice(this._a.publicKeySize),
+      pkR.slice(this._a.publicKeySize).buffer as ArrayBuffer,
     );
     const resA = await this._a.encap({ recipientPublicKey: pkRA, ekm: ekmA });
     const resB = await this._b.encap({ recipientPublicKey: pkRB, ekm: ekmB });
@@ -169,8 +169,9 @@ export class Hybridkem implements KemInterface {
       sharedSecret: concat(
         new Uint8Array(resA.sharedSecret),
         new Uint8Array(resB.sharedSecret),
-      ),
-      enc: concat(new Uint8Array(resA.enc), new Uint8Array(resB.enc)),
+      ).buffer as ArrayBuffer,
+      enc: concat(new Uint8Array(resA.enc), new Uint8Array(resB.enc))
+        .buffer as ArrayBuffer,
     };
   }
 
@@ -180,10 +181,10 @@ export class Hybridkem implements KemInterface {
       : params.recipientKey;
     const skR = new Uint8Array(await this.serializePrivateKey(sk));
     const skRA = await this._a.deserializePrivateKey(
-      skR.slice(0, this._a.privateKeySize),
+      skR.slice(0, this._a.privateKeySize).buffer as ArrayBuffer,
     );
     const skRB = await this._b.deserializePrivateKey(
-      skR.slice(this._a.privateKeySize),
+      skR.slice(this._a.privateKeySize).buffer as ArrayBuffer,
     );
     const ssA = await this._a.decap({
       recipientKey: skRA,
@@ -193,7 +194,8 @@ export class Hybridkem implements KemInterface {
       recipientKey: skRB,
       enc: params.enc.slice(this._a.encSize),
     });
-    return concat(new Uint8Array(ssA), new Uint8Array(ssB));
+    return concat(new Uint8Array(ssA), new Uint8Array(ssB))
+      .buffer as ArrayBuffer;
   }
 
   private _serializePublicKey(k: XCryptoKey): Promise<ArrayBuffer> {
@@ -207,7 +209,7 @@ export class Hybridkem implements KemInterface {
       if (k.key.byteLength !== this.publicKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
@@ -231,7 +233,7 @@ export class Hybridkem implements KemInterface {
       if (k.key.byteLength !== this.privateKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 

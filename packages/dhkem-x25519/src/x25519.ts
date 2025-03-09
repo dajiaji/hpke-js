@@ -93,7 +93,7 @@ export class X25519 implements DhkemPrimitives {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     try {
       const dkpPrk = await this._hkdf.labeledExtract(
-        EMPTY,
+        EMPTY.buffer as ArrayBuffer,
         LABEL_DKP_PRK,
         new Uint8Array(ikm),
       );
@@ -144,13 +144,13 @@ export class X25519 implements DhkemPrimitives {
 
   private _serializePublicKey(k: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
   private _serializePrivateKey(k: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve) => {
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
@@ -228,7 +228,7 @@ export class X25519 implements DhkemPrimitives {
   private _dh(sk: XCryptoKey, pk: XCryptoKey): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
       try {
-        resolve(x25519.getSharedSecret(sk.key, pk.key).buffer);
+        resolve(x25519.getSharedSecret(sk.key, pk.key).buffer as ArrayBuffer);
       } catch (e: unknown) {
         reject(e);
       }

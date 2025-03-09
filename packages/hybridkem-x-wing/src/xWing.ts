@@ -151,8 +151,8 @@ export class XWing implements KemInterface {
     }
     try {
       const [_sk, pk] = await this._generateKeyPairDerand(sk);
-      const dSk = await this.deserializePrivateKey(sk);
-      const dPk = await this.deserializePublicKey(pk);
+      const dSk = await this.deserializePrivateKey(sk.buffer as ArrayBuffer);
+      const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -172,8 +172,8 @@ export class XWing implements KemInterface {
     }
     try {
       const [_sk, pk] = await this._generateKeyPairDerand(sk);
-      const dSk = await this.deserializePrivateKey(sk);
-      const dPk = await this.deserializePublicKey(pk);
+      const dSk = await this.deserializePrivateKey(sk.buffer as ArrayBuffer);
+      const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -195,8 +195,8 @@ export class XWing implements KemInterface {
         .update(new Uint8Array(ikm))
         .digest();
       const [_sk, pk] = await this._generateKeyPairDerand(sk);
-      const dSk = await this.deserializePrivateKey(sk);
-      const dPk = await this.deserializePublicKey(pk);
+      const dSk = await this.deserializePrivateKey(sk.buffer as ArrayBuffer);
+      const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -295,8 +295,8 @@ export class XWing implements KemInterface {
       const ssX = await this._x25519.derive(ekX, pkX);
       const [ctM, ssM] = await this._m.encap(pkM, ekM);
       return {
-        sharedSecret: combiner(ssM, ssX, ctX, pkX),
-        enc: concat(ctM, ctX),
+        sharedSecret: combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer,
+        enc: concat(ctM, ctX).buffer as ArrayBuffer,
       };
     } catch (e: unknown) {
       throw new EncapError(e);
@@ -331,7 +331,7 @@ export class XWing implements KemInterface {
       const ctX = ct.subarray(1088);
       const ssM = await this._m.decap(ctM, skM);
       const ssX = await this._x25519.derive(skX, ctX);
-      return combiner(ssM, ssX, ctX, pkX);
+      return combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
     }
@@ -387,7 +387,7 @@ export class XWing implements KemInterface {
       if (k.key.byteLength !== this.publicKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
@@ -411,7 +411,7 @@ export class XWing implements KemInterface {
       if (k.key.byteLength !== this.privateKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 

@@ -34,9 +34,16 @@ describe("extract/expand", () => {
 
       kdf.init(suiteId);
 
-      const prk = await kdf.extract(salt, ikm);
+      const prk = await kdf.extract(
+        salt.buffer as ArrayBuffer,
+        ikm.buffer as ArrayBuffer,
+      );
       assertEquals(
-        typeof await kdf.expand(prk, te.encode("key"), 16),
+        typeof await kdf.expand(
+          prk,
+          te.encode("key").buffer as ArrayBuffer,
+          16,
+        ),
         "object",
       );
     });
@@ -60,9 +67,16 @@ describe("extract/expand", () => {
       const ikm = new Uint8Array(48);
       cryptoApi.getRandomValues(ikm);
 
-      const prk = await kdf.extract(salt, ikm);
+      const prk = await kdf.extract(
+        salt.buffer as ArrayBuffer,
+        ikm.buffer as ArrayBuffer,
+      );
       assertEquals(
-        typeof await kdf.expand(prk, te.encode("key"), 16),
+        typeof await kdf.expand(
+          prk,
+          te.encode("key").buffer as ArrayBuffer,
+          16,
+        ),
         "object",
       );
     });
@@ -86,9 +100,16 @@ describe("extract/expand", () => {
       const ikm = new Uint8Array(64);
       cryptoApi.getRandomValues(ikm);
 
-      const prk = await kdf.extract(salt, ikm);
+      const prk = await kdf.extract(
+        salt.buffer as ArrayBuffer,
+        ikm.buffer as ArrayBuffer,
+      );
       assertEquals(
-        typeof await kdf.expand(prk, te.encode("key"), 16),
+        typeof await kdf.expand(
+          prk,
+          te.encode("key").buffer as ArrayBuffer,
+          16,
+        ),
         "object",
       );
     });
@@ -112,9 +133,16 @@ describe("extract/expand", () => {
       cryptoApi.getRandomValues(ikm);
 
       // assert
-      const prk = await kdf.extract(salt, ikm);
+      const prk = await kdf.extract(
+        salt.buffer as ArrayBuffer,
+        ikm.buffer as ArrayBuffer,
+      );
       assertEquals(
-        typeof await kdf.expand(prk, te.encode("key"), 16),
+        typeof await kdf.expand(
+          prk,
+          te.encode("key").buffer as ArrayBuffer,
+          16,
+        ),
         "object",
       );
     });
@@ -138,9 +166,16 @@ describe("extract/expand", () => {
       cryptoApi.getRandomValues(ikm);
 
       // assert
-      const prk = await kdf.extract(salt, ikm);
+      const prk = await kdf.extract(
+        salt.buffer as ArrayBuffer,
+        ikm.buffer as ArrayBuffer,
+      );
       assertEquals(
-        typeof await kdf.expand(prk, te.encode("key"), 16),
+        typeof await kdf.expand(
+          prk,
+          te.encode("key").buffer as ArrayBuffer,
+          16,
+        ),
         "object",
       );
     });

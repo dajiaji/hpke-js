@@ -37,7 +37,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
         new Uint8Array(iv),
         new Uint8Array(aad),
       ).encrypt(new Uint8Array(data));
-      resolve(ret.buffer);
+      resolve(ret.buffer as ArrayBuffer);
     });
   }
 
@@ -52,7 +52,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
         new Uint8Array(iv),
         new Uint8Array(aad),
       ).decrypt(new Uint8Array(data));
-      resolve(ret.buffer);
+      resolve(ret.buffer as ArrayBuffer);
     });
   }
 }

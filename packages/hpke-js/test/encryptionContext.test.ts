@@ -34,7 +34,7 @@ describe("open", () => {
       });
 
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // assert
@@ -72,11 +72,11 @@ describe("open", () => {
       });
 
       const ct1 = await sender1.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
       await assertRejects(() =>
         recipient1.seal(
-          new TextEncoder().encode("my-secret-message"),
+          new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
         ), NotSupportedError);
 
       // assert
@@ -114,10 +114,13 @@ describe("open", () => {
       });
 
       const ct1 = await sender1.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
       await assertRejects(
-        () => recipient1.seal(new TextEncoder().encode("my-secret-message")),
+        () =>
+          recipient1.seal(
+            new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
+          ),
         NotSupportedError,
       );
 
@@ -146,7 +149,7 @@ describe("export", () => {
 
       // assert
       await assertRejects(
-        () => sender.export(te.encode("info"), -1),
+        () => sender.export(te.encode("info").buffer as ArrayBuffer, -1),
         ExportError,
       );
     });
@@ -170,7 +173,7 @@ describe("export", () => {
 
       // assert
       await assertRejects(
-        () => sender.export(te.encode("info"), -1),
+        () => sender.export(te.encode("info").buffer as ArrayBuffer, -1),
         ExportError,
       );
     });
@@ -192,7 +195,7 @@ describe("export", () => {
 
       // assert
       await assertRejects(
-        () => sender.export(new Uint8Array(8193), 32),
+        () => sender.export(new Uint8Array(8193).buffer as ArrayBuffer, 32),
         InvalidParamError,
         "Too long exporter context",
       );

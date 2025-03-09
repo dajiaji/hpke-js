@@ -21,7 +21,7 @@ export class SenderContextImpl extends EncryptionContextImpl
 
   override async seal(
     data: ArrayBuffer,
-    aad: ArrayBuffer = EMPTY,
+    aad: ArrayBuffer = EMPTY.buffer as ArrayBuffer,
   ): Promise<ArrayBuffer> {
     let ct: ArrayBuffer;
     try {

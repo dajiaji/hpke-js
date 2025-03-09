@@ -39,13 +39,17 @@ describe("createEncryptionContext", () => {
 
       const te = new TextEncoder();
       const td = new TextDecoder();
-      const ctx = await aead.createEncryptionContext(key);
+      const ctx = await aead.createEncryptionContext(key.buffer as ArrayBuffer);
       const ct = await ctx.seal(
-        iv,
-        te.encode("my-secret-message"),
-        te.encode("aad"),
+        iv.buffer as ArrayBuffer,
+        te.encode("my-secret-message").buffer as ArrayBuffer,
+        te.encode("aad").buffer as ArrayBuffer,
       );
-      const pt = await ctx.open(iv, ct, te.encode("aad"));
+      const pt = await ctx.open(
+        iv.buffer as ArrayBuffer,
+        ct,
+        te.encode("aad").buffer as ArrayBuffer,
+      );
 
       // assert
       assertEquals(td.decode(pt), "my-secret-message");
@@ -94,7 +98,7 @@ describe("CipherSuite", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt

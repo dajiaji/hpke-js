@@ -95,7 +95,12 @@ Using esm.sh:
 
 <!-- use the latest stable version -->
 <script type="module">
-  import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
+  import {
+    AeadId,
+    CipherSuite,
+    KdfId,
+    KemId,
+  } from "https://esm.sh/hpke-js";
   // import * as hpke from "https://esm.sh/@hpke/core";
   // ...
 </script>
@@ -207,7 +212,12 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
+      import {
+        AeadId,
+        CipherSuite,
+        KdfId,
+        KemId,
+      } from "https://esm.sh/hpke-js";
 
       globalThis.doHpke = async () => {
         try {
@@ -224,7 +234,9 @@ try {
           });
 
           // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+          const ct = await sender.seal(
+            new TextEncoder().encode("Hello world!"),
+          );
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.

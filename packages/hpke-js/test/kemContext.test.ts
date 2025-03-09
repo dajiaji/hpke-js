@@ -632,7 +632,7 @@ describe("serialize/deserializePrivateKey", () => {
       const rawKey = new Uint8Array(33);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
-        () => kemContext.deserializePrivateKey(rawKey),
+        () => kemContext.deserializePrivateKey(rawKey.buffer as ArrayBuffer),
         DeserializeError,
       );
     });
@@ -644,7 +644,7 @@ describe("serialize/deserializePrivateKey", () => {
       const rawKey = new Uint8Array(49);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
-        () => kemContext.deserializePrivateKey(rawKey),
+        () => kemContext.deserializePrivateKey(rawKey.buffer as ArrayBuffer),
         DeserializeError,
       );
     });
@@ -656,7 +656,7 @@ describe("serialize/deserializePrivateKey", () => {
       const rawKey = new Uint8Array(67);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
-        () => kemContext.deserializePrivateKey(rawKey),
+        () => kemContext.deserializePrivateKey(rawKey.buffer as ArrayBuffer),
         DeserializeError,
       );
     });
@@ -668,7 +668,7 @@ describe("serialize/deserializePrivateKey", () => {
       const rawKey = new Uint8Array(33);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
-        () => kemContext.deserializePrivateKey(rawKey),
+        () => kemContext.deserializePrivateKey(rawKey.buffer as ArrayBuffer),
         DeserializeError,
       );
     });
@@ -680,7 +680,7 @@ describe("serialize/deserializePrivateKey", () => {
       const rawKey = new Uint8Array(55);
       cryptoApi.getRandomValues(rawKey);
       await assertRejects(
-        () => kemContext.deserializePrivateKey(rawKey),
+        () => kemContext.deserializePrivateKey(rawKey.buffer as ArrayBuffer),
         DeserializeError,
       );
     });

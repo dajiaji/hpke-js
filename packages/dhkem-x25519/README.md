@@ -236,7 +236,9 @@ try {
           });
 
           // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+          const ct = await sender.seal(
+            new TextEncoder().encode("Hello world!"),
+          );
 
           // decrypt
           const pt = await recipient.open(ct);

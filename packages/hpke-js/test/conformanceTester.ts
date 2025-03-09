@@ -36,15 +36,15 @@ export class ConformanceTester {
     });
 
     // importKey
-    const pkEm = hexToBytes(v.pkEm);
-    const skEm = hexToBytes(v.skEm);
-    const pkRm = hexToBytes(v.pkRm);
-    const skRm = hexToBytes(v.skRm);
+    const pkEm = hexToBytes(v.pkEm).buffer as ArrayBuffer;
+    const skEm = hexToBytes(v.skEm).buffer as ArrayBuffer;
+    const pkRm = hexToBytes(v.pkRm).buffer as ArrayBuffer;
+    const skRm = hexToBytes(v.skRm).buffer as ArrayBuffer;
     let skp: CryptoKeyPair | undefined = undefined;
     let pks: CryptoKey | undefined = undefined;
     if (v.skSm !== undefined && v.pkSm !== undefined) {
-      const skSm = hexToBytes(v.skSm);
-      const pkSm = hexToBytes(v.pkSm);
+      const skSm = hexToBytes(v.skSm).buffer as ArrayBuffer;
+      const pkSm = hexToBytes(v.pkSm).buffer as ArrayBuffer;
       skp = {
         privateKey: await suite.kem.importKey("raw", skSm, false),
         publicKey: await suite.kem.importKey("raw", pkSm, true),
@@ -60,8 +60,8 @@ export class ConformanceTester {
     const dPkR = await suite.kem.deserializePublicKey(pkRm);
     const skRm2 = await suite.kem.serializePrivateKey(dSkR);
     const pkRm2 = await suite.kem.serializePublicKey(dPkR);
-    assertEquals(skRm, new Uint8Array(skRm2));
-    assertEquals(pkRm, new Uint8Array(pkRm2));
+    assertEquals(skRm, skRm2);
+    assertEquals(pkRm, pkRm2);
 
     const ekp = {
       privateKey: await suite.kem.importKey("raw", skEm, false),
@@ -71,26 +71,26 @@ export class ConformanceTester {
     // deriveKeyPair
     const ikmE = hexToBytes(v.ikmE);
     const ikmR = hexToBytes(v.ikmR);
-    const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer);
-    const derivedPkRm = await this.cryptoKeyToBytes(
+    const derivedR = await suite.kem.deriveKeyPair(ikmR.buffer as ArrayBuffer);
+    const derivedPkRm = (await this.cryptoKeyToBytes(
       derivedR.publicKey,
       kemToKeyGenAlgorithm(v.kem_id),
-    );
+    )).buffer as ArrayBuffer;
     assertEquals(derivedPkRm, pkRm);
-    const derivedE = await suite.kem.deriveKeyPair(ikmE.buffer);
-    const derivedPkEm = await this.cryptoKeyToBytes(
+    const derivedE = await suite.kem.deriveKeyPair(ikmE.buffer as ArrayBuffer);
+    const derivedPkEm = (await this.cryptoKeyToBytes(
       derivedE.publicKey,
       kemToKeyGenAlgorithm(v.kem_id),
-    );
+    )).buffer as ArrayBuffer;
     assertEquals(derivedPkEm, pkEm);
 
     // create EncryptionContext
-    const info = hexToBytes(v.info);
+    const info = hexToBytes(v.info).buffer as ArrayBuffer;
     let psk: PreSharedKey | undefined = undefined;
     if (v.psk !== undefined && v.psk_id !== undefined) {
       psk = { id: new ArrayBuffer(0), key: new ArrayBuffer(0) };
-      psk.key = hexToBytes(v.psk);
-      psk.id = hexToBytes(v.psk_id);
+      psk.key = hexToBytes(v.psk).buffer as ArrayBuffer;
+      psk.id = hexToBytes(v.psk_id).buffer as ArrayBuffer;
     }
     const enc = hexToBytes(v.enc);
 
@@ -114,14 +114,14 @@ export class ConformanceTester {
     // seal and open
     if (v.aead_id !== 0xFFFF) {
       for (const ve of v.encryptions) {
-        const pt = hexToBytes(ve.pt);
-        const aad = hexToBytes(ve.aad);
-        const ct = hexToBytes(ve.ct);
+        const pt = hexToBytes(ve.pt).buffer as ArrayBuffer;
+        const aad = hexToBytes(ve.aad).buffer as ArrayBuffer;
+        const ct = hexToBytes(ve.ct).buffer as ArrayBuffer;
 
         const sealed = await sender.seal(pt, aad);
         const opened = await recipient.open(sealed, aad);
-        assertEquals(new Uint8Array(sealed), ct);
-        assertEquals(new Uint8Array(opened), pt);
+        assertEquals(sealed, ct);
+        assertEquals(opened, pt);
       }
     }
 
@@ -129,7 +129,7 @@ export class ConformanceTester {
     for (const ve of v.exports) {
       const ec = ve.exporter_context.length === 0
         ? new ArrayBuffer(0)
-        : hexToBytes(ve.exporter_context);
+        : hexToBytes(ve.exporter_context).buffer as ArrayBuffer;
       const ev = hexToBytes(ve.exported_value);
 
       let exported = await sender.export(ec, ve.L);
@@ -175,7 +175,7 @@ export class ConformanceTester {
       recipientPublicKey: cpk,
     });
     await assertRejects(
-      () => sender.open(new Uint8Array([1, 2, 3, 4])),
+      () => sender.open(new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer),
       NotSupportedError,
     );
 
@@ -185,12 +185,12 @@ export class ConformanceTester {
     }
     const recipient = await suite.createRecipientContext({
       recipientKey: rkp,
-      enc: pkb,
+      enc: pkb.buffer as ArrayBuffer,
     });
 
     // assert
     await assertRejects(
-      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer),
       NotSupportedError,
     );
     this._count++;
@@ -219,7 +219,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexToBytes(pk);
+    const pkb = hexToBytes(pk).buffer as ArrayBuffer;
 
     // assert
     await assertRejects(
@@ -251,7 +251,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexToBytes(pk);
+    const pkb = hexToBytes(pk).buffer as ArrayBuffer;
 
     const recipient = await suite.createRecipientContext({
       recipientKey: rkp,
@@ -260,7 +260,7 @@ export class ConformanceTester {
 
     // assert
     await assertRejects(
-      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer),
       NotSupportedError,
     );
     this._count++;
@@ -274,7 +274,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexToBytes(pk);
+    const pkb = hexToBytes(pk).buffer as ArrayBuffer;
 
     // assert
     await assertRejects(() =>
@@ -293,7 +293,7 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexToBytes(pk);
+    const pkb = hexToBytes(pk).buffer as ArrayBuffer;
 
     const recipient = await suite.createRecipientContext({
       recipientKey: rkp,
@@ -302,7 +302,7 @@ export class ConformanceTester {
 
     // assert
     await assertRejects(
-      () => recipient.seal(new Uint8Array([1, 2, 3, 4])),
+      () => recipient.seal(new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer),
       NotSupportedError,
     );
     this._count++;
@@ -316,10 +316,10 @@ export class ConformanceTester {
     });
     const rkp = await suite.kem.generateKeyPair();
 
-    const pkb = hexToBytes(pk);
+    const pkb = hexToBytes(pk).buffer as ArrayBuffer;
 
     // assert
-    if (pkb.length !== 56) {
+    if (pkb.byteLength !== 56) {
       await assertRejects(() =>
         suite.createRecipientContext({
           recipientKey: rkp,
