@@ -21,7 +21,7 @@
     "./packages/ml-kem/samples/deno"
   ],
   "imports": {
-    "@dajiaji/mlkem": "npm:mlkem@^2.3.0",
+    "@dajiaji/mlkem": "npm:mlkem@^2.3.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.1.0/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.7.0/ed25519",
@@ -31,11 +31,11 @@
     "@noble/hashes/sha256": "npm:@noble/hashes@^1.6.0/sha256",
     "@noble/hashes/sha512": "npm:@noble/hashes@^1.6.0/sha512",
     "@noble/hashes/sha3": "npm:@noble/hashes@^1.6.0/sha3",
-    "@playwright/test": "npm:@playwright/test@^1.48.2",
+    "@playwright/test": "npm:@playwright/test@^1.51.0",
     "@std/assert": "jsr:@std/assert@1.0.0",
-    "@std/fs": "jsr:@std/fs@^1.0.4",
-    "@std/path": "jsr:@std/path@^1.0.3",
-    "@std/testing/bdd": "jsr:@std/testing@^1.0.0/bdd"
+    "@std/fs": "jsr:@std/fs@^1.0.14",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "@std/testing/bdd": "jsr:@std/testing@^1.0.9/bdd"
   },
   "fmt": {
     "exclude": [
