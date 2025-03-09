@@ -21,7 +21,9 @@ async function doHpke() {
   });
 
   // encrypt
-  const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+  const ct = await sender.seal(
+    new TextEncoder().encode("Hello world!").buffer as ArrayBuffer,
+  );
 
   // decrypt
   const pt = await recipient.open(ct);
