@@ -1,5 +1,12 @@
 # Changes
 
+## Version 1.7.2
+
+Released 2025-03-09
+
+- [(#483) Apply deno formatter/linter.](https://github.com/dajiaji/hpke-js/pull/483)
+- [(#483) Fix type declaration error.](https://github.com/dajiaji/hpke-js/pull/483)
+
 ## Version 1.7.1
 
 Released 2024-11-06
