@@ -3,7 +3,7 @@
   "version": "1.6.1",
   "exports": "./mod.ts",
   "imports": {
-    "@noble/curves": "npm:@noble/curves@^1.6.0"
+    "@noble/curves": "npm:@noble/curves@^1.8.1"
   },
   "publish": {
     "exclude": [
