@@ -124,22 +124,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - uses: microsoft/playwright-github-action@v1
       - working-directory: ./packages/core/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-x25519/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-x448/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/chacha20poly1305/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hybridkem-x25519-kyber768/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hybridkem-x-wing/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/ml-kem/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-secp256k1/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hpke-js/test/runtimes/browsers
-        run: npm install && npx playwright install && npx playwright test
+        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
