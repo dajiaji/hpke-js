@@ -4,7 +4,7 @@
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.6.0",
     "@hpke/common": "npm:@hpke/common@^1.7.2",
-    "@hpke/core": "npm:@hpke/core@^1.7.1",
+    "@hpke/core": "npm:@hpke/core@^1.7.2",
     "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.0",
     "@hpke/dhkem-x448": "npm:@hpke/dhkem-x448@^1.6.0",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.2.1/chacha",

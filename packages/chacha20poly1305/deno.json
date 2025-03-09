@@ -1,6 +1,6 @@
 {
   "name": "@hpke/chacha20poly1305",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "exports": "./mod.ts",
   "imports": {
     "@noble/ciphers": "npm:@noble/ciphers@^1.2.1"

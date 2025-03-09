@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@hpke/chacha20poly1305": "^1.4.3",
-    "@hpke/core": "^1.4.3"
+    "@hpke/core": "^1.7.2"
   }
 }
