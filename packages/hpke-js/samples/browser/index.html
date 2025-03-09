@@ -23,7 +23,9 @@
         const sender = await suite.createSenderContext({
           recipientPublicKey: rkp.publicKey,
         });
-        const ct = await sender.seal(new TextEncoder().encode("hello world!"));
+        const ct = await sender.seal(
+          new TextEncoder().encode("hello world!"),
+        );
 
         // A recipient decripts it.
         const recipient = await suite.createRecipientContext({

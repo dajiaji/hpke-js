@@ -42,7 +42,7 @@ export class EncryptionContextImpl extends ExporterContextImpl {
 
   protected computeNonce(k: KeyInfo): ArrayBuffer {
     const seqBytes = i2Osp(k.seq, k.baseNonce.byteLength);
-    return xor(k.baseNonce, seqBytes);
+    return xor(k.baseNonce, seqBytes).buffer as ArrayBuffer;
   }
 
   protected incrementSeq(k: KeyInfo) {

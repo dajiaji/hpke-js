@@ -55,7 +55,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt

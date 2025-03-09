@@ -14,7 +14,11 @@
         HkdfSha384,
         HkdfSha512,
       } from "./src/hpke-core.js";
-      import { MlKem1024, MlKem512, MlKem768 } from "./src/hpke-ml-kem.js";
+      import {
+        MlKem1024,
+        MlKem512,
+        MlKem768,
+      } from "./src/hpke-ml-kem.js";
 
       const kems = [
         new MlKem512(),
@@ -40,7 +44,11 @@
           for (const kdf of kdfs) {
             for (const aead of aeads) {
               try {
-                const suite = new CipherSuite({ kem: kem, kdf: kdf, aead: aead });
+                const suite = new CipherSuite({
+                  kem: kem,
+                  kdf: kdf,
+                  aead: aead,
+                });
 
                 const rkp = await suite.kem.generateKeyPair();
 
@@ -62,7 +70,9 @@
                 const pt = await recipient.open(ct);
 
                 // hello world!
-                "hello world!" === new TextDecoder().decode(pt) ? pass++ : fail++;
+                "hello world!" === new TextDecoder().decode(pt)
+                  ? pass++
+                  : fail++;
               } catch (e) {
                 fail++;
               }

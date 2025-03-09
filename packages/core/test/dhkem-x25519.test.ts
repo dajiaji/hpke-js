@@ -105,7 +105,11 @@ describe("importKey", () => {
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
       cryptoApi.getRandomValues(rawKey);
-      const privKey = await kem.importKey("raw", rawKey, false);
+      const privKey = await kem.importKey(
+        "raw",
+        rawKey.buffer as ArrayBuffer,
+        false,
+      );
 
       // assert
       assertEquals(privKey.usages.length, 1);
@@ -118,7 +122,11 @@ describe("importKey", () => {
       const cryptoApi = await loadCrypto();
       const rawKey = new Uint8Array(32);
       cryptoApi.getRandomValues(rawKey);
-      const privKey = await kem.importKey("raw", rawKey, true);
+      const privKey = await kem.importKey(
+        "raw",
+        rawKey.buffer as ArrayBuffer,
+        true,
+      );
 
       // assert
       assertEquals(privKey.usages.length, 0);
@@ -136,7 +144,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => kem.importKey("raw", rawKey, false),
+        () => kem.importKey("raw", rawKey.buffer as ArrayBuffer, false),
         Error,
       );
     });
@@ -150,7 +158,7 @@ describe("importKey", () => {
 
       // assert
       await assertRejects(
-        () => kem.importKey("raw", rawKey, true),
+        () => kem.importKey("raw", rawKey.buffer as ArrayBuffer, true),
         Error,
       );
     });
@@ -208,7 +216,7 @@ describe("CipherSuite", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt

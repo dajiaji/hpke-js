@@ -5,7 +5,7 @@ import { EncryptionContextImpl } from "./encryptionContext.ts";
 export class RecipientContextImpl extends EncryptionContextImpl {
   override async open(
     data: ArrayBuffer,
-    aad: ArrayBuffer = EMPTY,
+    aad: ArrayBuffer = EMPTY.buffer as ArrayBuffer,
   ): Promise<ArrayBuffer> {
     let pt: ArrayBuffer;
     try {

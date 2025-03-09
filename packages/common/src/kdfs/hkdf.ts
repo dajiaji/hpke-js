@@ -161,7 +161,10 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     label: Uint8Array,
     ikm: Uint8Array,
   ): Promise<ArrayBuffer> {
-    return await this.extract(salt, this.buildLabeledIkm(label, ikm));
+    return await this.extract(
+      salt,
+      this.buildLabeledIkm(label, ikm).buffer as ArrayBuffer,
+    );
   }
 
   public async labeledExpand(
@@ -170,7 +173,11 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     info: Uint8Array,
     len: number,
   ): Promise<ArrayBuffer> {
-    return await this.expand(prk, this.buildLabeledInfo(label, info, len), len);
+    return await this.expand(
+      prk,
+      this.buildLabeledInfo(label, info, len).buffer as ArrayBuffer,
+      len,
+    );
   }
 
   protected _checkInit(): void {

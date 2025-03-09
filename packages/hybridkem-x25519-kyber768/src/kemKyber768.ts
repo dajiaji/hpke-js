@@ -76,8 +76,8 @@ export class KemKyber768 implements KemInterface {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     const keys = await this._prim.generateKeyPair();
-    const sk = await this.deserializePrivateKey(keys[1]);
-    const pk = await this.deserializePublicKey(keys[0]);
+    const sk = await this.deserializePrivateKey(keys[1].buffer as ArrayBuffer);
+    const pk = await this.deserializePublicKey(keys[0].buffer as ArrayBuffer);
     return { publicKey: pk, privateKey: sk };
   }
 
@@ -87,8 +87,10 @@ export class KemKyber768 implements KemInterface {
     }
     try {
       const keys = await this._prim.deriveKeyPair(new Uint8Array(ikm));
-      const sk = await this.deserializePrivateKey(keys[1]);
-      const pk = await this.deserializePublicKey(keys[0]);
+      const sk = await this.deserializePrivateKey(
+        keys[1].buffer as ArrayBuffer,
+      );
+      const pk = await this.deserializePublicKey(keys[0].buffer as ArrayBuffer);
       return { publicKey: pk, privateKey: sk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -125,7 +127,10 @@ export class KemKyber768 implements KemInterface {
     );
     try {
       const res = await this._prim.encap(pkR, ikm);
-      return { sharedSecret: res[1], enc: res[0] };
+      return {
+        sharedSecret: res[1].buffer as ArrayBuffer,
+        enc: res[0].buffer as ArrayBuffer,
+      };
     } catch (e: unknown) {
       throw new EncapError(e);
     }
@@ -137,7 +142,8 @@ export class KemKyber768 implements KemInterface {
       : params.recipientKey;
     const serializedSkR = new Uint8Array(await this.serializePrivateKey(skR));
     try {
-      return await this._prim.decap(new Uint8Array(params.enc), serializedSkR);
+      return (await this._prim.decap(new Uint8Array(params.enc), serializedSkR))
+        .buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
     }
@@ -154,7 +160,7 @@ export class KemKyber768 implements KemInterface {
       if (k.key.byteLength !== this.publicKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
@@ -178,7 +184,7 @@ export class KemKyber768 implements KemInterface {
       if (k.key.byteLength !== this.privateKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 

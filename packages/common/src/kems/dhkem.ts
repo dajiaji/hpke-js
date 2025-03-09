@@ -201,9 +201,9 @@ export class Dhkem implements KemInterface {
       this.secretSize,
     );
     return await this._kdf.extractAndExpand(
-      EMPTY,
-      labeledIkm,
-      labeledInfo,
+      EMPTY.buffer as ArrayBuffer,
+      labeledIkm.buffer as ArrayBuffer,
+      labeledInfo.buffer as ArrayBuffer,
       this.secretSize,
     );
   }

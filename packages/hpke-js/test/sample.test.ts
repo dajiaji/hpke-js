@@ -35,7 +35,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -68,7 +68,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -119,7 +119,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -154,7 +154,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -185,7 +185,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -234,7 +234,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -273,7 +273,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -308,7 +308,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -361,7 +361,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -396,7 +396,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -427,7 +427,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -474,7 +474,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -509,7 +509,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -540,7 +540,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -587,7 +587,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -623,17 +623,23 @@ describe("README examples", () => {
       const te = new TextEncoder();
 
       // export
-      const pskS = sender.export(te.encode("jugemujugemu"), 32);
-      const pskR = recipient.export(te.encode("jugemujugemu"), 32);
+      const pskS = sender.export(
+        te.encode("jugemujugemu").buffer as ArrayBuffer,
+        32,
+      );
+      const pskR = recipient.export(
+        te.encode("jugemujugemu").buffer as ArrayBuffer,
+        32,
+      );
       assertEquals(pskR, pskS);
 
       // other functions are disabled.
       await assertRejects(
-        () => sender.seal(te.encode("my-secret-message")),
+        () => sender.seal(te.encode("my-secret-message").buffer as ArrayBuffer),
         NotSupportedError,
       );
       await assertRejects(
-        () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
+        () => sender.open(te.encode("xxxxxxxxxxxxxxxxx").buffer as ArrayBuffer),
         NotSupportedError,
       );
     });
@@ -662,17 +668,23 @@ describe("README examples", () => {
       const te = new TextEncoder();
 
       // export
-      const pskS = sender.export(te.encode("jugemujugemu"), 32);
-      const pskR = recipient.export(te.encode("jugemujugemu"), 32);
+      const pskS = sender.export(
+        te.encode("jugemujugemu").buffer as ArrayBuffer,
+        32,
+      );
+      const pskR = recipient.export(
+        te.encode("jugemujugemu").buffer as ArrayBuffer,
+        32,
+      );
       assertEquals(pskR, pskS);
 
       // other functions are disabled.
       await assertRejects(
-        () => sender.seal(te.encode("my-secret-message")),
+        () => sender.seal(te.encode("my-secret-message").buffer as ArrayBuffer),
         NotSupportedError,
       );
       await assertRejects(
-        () => sender.open(te.encode("xxxxxxxxxxxxxxxxx")),
+        () => sender.open(te.encode("xxxxxxxxxxxxxxxxx").buffer as ArrayBuffer),
         NotSupportedError,
       );
     });
@@ -692,8 +704,10 @@ describe("README examples", () => {
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
@@ -701,14 +715,16 @@ describe("README examples", () => {
         recipientKey: rkp,
         enc: sender.enc,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -744,7 +760,7 @@ describe("README examples", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -771,8 +787,10 @@ describe("README examples", () => {
         recipientPublicKey: rkp.publicKey,
         senderKey: skp,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
@@ -781,14 +799,16 @@ describe("README examples", () => {
         enc: sender.enc,
         senderPublicKey: skp.publicKey,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -815,8 +835,10 @@ describe("README examples", () => {
         recipientPublicKey: rkp.publicKey,
         senderKey: skp,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
@@ -825,14 +847,16 @@ describe("README examples", () => {
         enc: sender.enc,
         senderPublicKey: skp.publicKey,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -859,8 +883,10 @@ describe("README examples", () => {
         recipientPublicKey: rkp.publicKey,
         senderKey: skp,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
@@ -869,14 +895,16 @@ describe("README examples", () => {
         enc: sender.enc,
         senderPublicKey: skp.publicKey,
         psk: {
-          id: new TextEncoder().encode("our-pre-shared-key-id"),
-          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija"),
+          id: new TextEncoder().encode("our-pre-shared-key-id")
+            .buffer as ArrayBuffer,
+          key: new TextEncoder().encode("jugemujugemugokounosurikirekaija")
+            .buffer as ArrayBuffer,
         },
       });
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -917,31 +945,35 @@ describe("README examples", () => {
 
       // The recipient encrypts a plaintext.
       const keyR = await ctxR.export(
-        te.encode("response key"),
+        te.encode("response key").buffer as ArrayBuffer,
         recipient.aead.keySize,
       );
       const nonceR = await ctxR.export(
-        te.encode("response nonce"),
+        te.encode("response nonce").buffer as ArrayBuffer,
         recipient.aead.nonceSize,
       );
       const aeadCtxR = await recipient.aead.createEncryptionContext(keyR);
       const ct = await aeadCtxR.seal(
         nonceR,
-        te.encode("Hello world!"),
-        te.encode("jugemu-jugemu"),
+        te.encode("Hello world!").buffer as ArrayBuffer,
+        te.encode("jugemu-jugemu").buffer as ArrayBuffer,
       );
 
       // The sender decrypts the ciphertext.
       const keyS = await ctxS.export(
-        te.encode("response key"),
+        te.encode("response key").buffer as ArrayBuffer,
         sender.aead.keySize,
       );
       const nonceS = await ctxS.export(
-        te.encode("response nonce"),
+        te.encode("response nonce").buffer as ArrayBuffer,
         sender.aead.nonceSize,
       );
       const aeadCtxS = await sender.aead.createEncryptionContext(keyS);
-      const pt = await aeadCtxS.open(nonceS, ct, te.encode("jugemu-jugemu"));
+      const pt = await aeadCtxS.open(
+        nonceS,
+        ct,
+        te.encode("jugemu-jugemu").buffer as ArrayBuffer,
+      );
 
       // pt === "Hello world!"
       assertEquals(te.encode("Hello world!"), new Uint8Array(pt));
@@ -961,34 +993,39 @@ describe("README examples", () => {
       const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
-      const response = te.encode("This is the response.");
+      const response = te.encode("This is the response.").buffer as ArrayBuffer;
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
       });
 
       const secretS = await sender.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
-      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce)
+        .buffer as ArrayBuffer;
 
-      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const prkS = await suite.kdf.extract(saltS, secretS);
       const keyS = await suite.kdf.expand(
         prkS,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceS = await suite.kdf.expand(
         prkS,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const ct = await aeadKeyS.seal(
+        nonceS,
+        response,
+        te.encode("").buffer as ArrayBuffer,
+      );
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
       // The recipient (OHTTP server) side:
@@ -998,37 +1035,34 @@ describe("README examples", () => {
       });
 
       const secretR = await recipient.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
-      );
-      const prkR = await suite.kdf.extract(
-        saltR,
-        new Uint8Array(secretR),
-      );
+      ).buffer as ArrayBuffer;
+      const prkR = await suite.kdf.extract(saltR, secretR);
       const keyR = await suite.kdf.expand(
         prkR,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceR = await suite.kdf.expand(
         prkR,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aead.keySize),
-        te.encode(""),
+        encResponse.slice(suite.aead.keySize).buffer as ArrayBuffer,
+        te.encode("").buffer as ArrayBuffer,
       );
 
       // pt === "This is the response."
-      assertEquals(response, new Uint8Array(pt));
+      assertEquals(response, pt);
     });
   });
 
@@ -1048,34 +1082,39 @@ describe("README examples", () => {
       const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
-      const response = te.encode("This is the response.");
+      const response = te.encode("This is the response.").buffer as ArrayBuffer;
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
       });
 
       const secretS = await sender.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
-      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce)
+        .buffer as ArrayBuffer;
 
-      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const prkS = await suite.kdf.extract(saltS, secretS);
       const keyS = await suite.kdf.expand(
         prkS,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceS = await suite.kdf.expand(
         prkS,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const ct = await aeadKeyS.seal(
+        nonceS,
+        response,
+        te.encode("").buffer as ArrayBuffer,
+      );
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
       // The recipient (OHTTP server) side:
@@ -1085,37 +1124,34 @@ describe("README examples", () => {
       });
 
       const secretR = await recipient.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
-      );
-      const prkR = await suite.kdf.extract(
-        saltR,
-        new Uint8Array(secretR),
-      );
+      ).buffer as ArrayBuffer;
+      const prkR = await suite.kdf.extract(saltR, secretR);
       const keyR = await suite.kdf.expand(
         prkR,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceR = await suite.kdf.expand(
         prkR,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aead.keySize),
-        te.encode(""),
+        encResponse.slice(suite.aead.keySize).buffer as ArrayBuffer,
+        te.encode("").buffer as ArrayBuffer,
       );
 
       // pt === "This is the response."
-      assertEquals(response, new Uint8Array(pt));
+      assertEquals(response, pt);
     });
   });
 
@@ -1135,34 +1171,39 @@ describe("README examples", () => {
       const rkp = await suite.kem.generateKeyPair();
 
       // The sender (OHTTP client) side:
-      const response = te.encode("This is the response.");
+      const response = te.encode("This is the response.").buffer as ArrayBuffer;
       const sender = await suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
       });
 
       const secretS = await sender.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const responseNonce = new Uint8Array(suite.aead.keySize);
       cryptoApi.getRandomValues(responseNonce);
-      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce)
+        .buffer as ArrayBuffer;
 
-      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const prkS = await suite.kdf.extract(saltS, secretS);
       const keyS = await suite.kdf.expand(
         prkS,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceS = await suite.kdf.expand(
         prkS,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
 
       const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const ct = await aeadKeyS.seal(
+        nonceS,
+        response,
+        te.encode("").buffer as ArrayBuffer,
+      );
       const encResponse = concat(responseNonce, new Uint8Array(ct));
 
       // The recipient (OHTTP server) side:
@@ -1172,37 +1213,34 @@ describe("README examples", () => {
       });
 
       const secretR = await recipient.export(
-        te.encode("message/bhttp response"),
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
 
       const saltR = concat(
         new Uint8Array(sender.enc),
         encResponse.slice(0, suite.aead.keySize),
-      );
-      const prkR = await suite.kdf.extract(
-        saltR,
-        new Uint8Array(secretR),
-      );
+      ).buffer as ArrayBuffer;
+      const prkR = await suite.kdf.extract(saltR, secretR);
       const keyR = await suite.kdf.expand(
         prkR,
-        te.encode("key"),
+        te.encode("key").buffer as ArrayBuffer,
         suite.aead.keySize,
       );
       const nonceR = await suite.kdf.expand(
         prkR,
-        te.encode("nonce"),
+        te.encode("nonce").buffer as ArrayBuffer,
         suite.aead.nonceSize,
       );
       const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
       const pt = await aeadKeyR.open(
         nonceR,
-        encResponse.slice(suite.aead.keySize),
-        te.encode(""),
+        encResponse.slice(suite.aead.keySize).buffer as ArrayBuffer,
+        te.encode("").buffer as ArrayBuffer,
       );
 
       // pt === "This is the response."
-      assertEquals(response, new Uint8Array(pt));
+      assertEquals(response, pt);
     });
   });
 });

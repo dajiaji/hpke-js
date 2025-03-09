@@ -34,7 +34,7 @@ describe("test-vectors", () => {
         // const sharedSecret = hexToBytes(v.shared_secret);
 
         // deriveKeyPair
-        const rkp = await suite.kem.deriveKeyPair(ikmR);
+        const rkp = await suite.kem.deriveKeyPair(ikmR.buffer as ArrayBuffer);
         const pkR = new Uint8Array(
           await suite.kem.serializePublicKey(rkp.publicKey),
         );
@@ -49,23 +49,23 @@ describe("test-vectors", () => {
         let psk: PreSharedKey | undefined = undefined;
         if (v.psk !== undefined && v.psk_id !== undefined) {
           psk = { id: new ArrayBuffer(0), key: new ArrayBuffer(0) };
-          psk.key = hexToBytes(v.psk);
-          psk.id = hexToBytes(v.psk_id);
+          psk.key = hexToBytes(v.psk).buffer as ArrayBuffer;
+          psk.id = hexToBytes(v.psk_id).buffer as ArrayBuffer;
         }
         const enc = hexToBytes(v.enc);
         const ier = hexToBytes(v.ier);
 
         const sender = await suite.createSenderContext({
-          info: info,
+          info: info.buffer as ArrayBuffer,
           psk: psk,
           recipientPublicKey: rkp.publicKey,
           // senderKey: skp,
-          ekm: ier, // FOR DEBUGGING/TESTING PURPOSES ONLY.
+          ekm: ier.buffer as ArrayBuffer, // FOR DEBUGGING/TESTING PURPOSES ONLY.
         });
         assertEquals(new Uint8Array(sender.enc), enc);
 
         const recipient = await suite.createRecipientContext({
-          info: info,
+          info: info.buffer as ArrayBuffer,
           psk: psk,
           recipientKey: rkp,
           enc: sender.enc,
@@ -75,14 +75,14 @@ describe("test-vectors", () => {
         // seal and open
         if (v.aead_id !== 0xFFFF) {
           for (const ve of v.encryptions) {
-            const pt = hexToBytes(ve.pt);
-            const aad = hexToBytes(ve.aad);
-            const ct = hexToBytes(ve.ct);
+            const pt = hexToBytes(ve.pt).buffer as ArrayBuffer;
+            const aad = hexToBytes(ve.aad).buffer as ArrayBuffer;
+            const ct = hexToBytes(ve.ct).buffer as ArrayBuffer;
 
             const sealed = await sender.seal(pt, aad);
             const opened = await recipient.open(sealed, aad);
-            assertEquals(new Uint8Array(sealed), ct);
-            assertEquals(new Uint8Array(opened), pt);
+            assertEquals(sealed, ct);
+            assertEquals(opened, pt);
           }
         }
 
@@ -90,7 +90,7 @@ describe("test-vectors", () => {
         for (const ve of v.exports) {
           const ec = ve.exporter_context.length === 0
             ? new ArrayBuffer(0)
-            : hexToBytes(ve.exporter_context);
+            : hexToBytes(ve.exporter_context).buffer as ArrayBuffer;
           const ev = hexToBytes(ve.exported_value);
 
           let exported = await sender.export(ec, ve.L);

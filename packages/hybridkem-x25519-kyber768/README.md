@@ -232,7 +232,9 @@ try {
             recipientPublicKey: rkp.publicKey,
           });
           // encrypt
-          const ct = await sender.seal(new TextEncoder().encode("Hello world!"));
+          const ct = await sender.seal(
+            new TextEncoder().encode("Hello world!"),
+          );
 
           const recipient = await suite.createRecipientContext({
             recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.

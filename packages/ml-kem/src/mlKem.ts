@@ -97,8 +97,8 @@ export class MlKemBase implements KemInterface {
     try {
       const sk = concat(d, z);
       const [pk, _sk] = await (this._prim as MlKemInterface).deriveKeyPair(sk);
-      const dSk = await this.deserializePrivateKey(sk);
-      const dPk = await this.deserializePublicKey(pk);
+      const dSk = await this.deserializePrivateKey(sk.buffer as ArrayBuffer);
+      const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -111,7 +111,7 @@ export class MlKemBase implements KemInterface {
         new Uint8Array(ikm),
       );
       const dSk = await this.deserializePrivateKey(ikm);
-      const dPk = await this.deserializePublicKey(pk);
+      const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
       throw new DeriveKeyPairError(e);
@@ -178,7 +178,10 @@ export class MlKemBase implements KemInterface {
     }
     try {
       const [ct, ss] = await (this._prim as MlKemInterface).encap(pk, ekm);
-      return { sharedSecret: ss, enc: ct };
+      return {
+        sharedSecret: ss.buffer as ArrayBuffer,
+        enc: ct.buffer as ArrayBuffer,
+      };
     } catch (e: unknown) {
       throw new EncapError(e);
     }
@@ -198,7 +201,8 @@ export class MlKemBase implements KemInterface {
     }
     try {
       const [_, exSk] = await (this._prim as MlKemInterface).deriveKeyPair(sk);
-      return await (this._prim as MlKemInterface).decap(ct, exSk);
+      return (await (this._prim as MlKemInterface).decap(ct, exSk))
+        .buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
     }
@@ -222,7 +226,7 @@ export class MlKemBase implements KemInterface {
       if (k.key.byteLength !== this.publicKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 
@@ -246,7 +250,7 @@ export class MlKemBase implements KemInterface {
       if (k.key.byteLength !== this.privateKeySize) {
         reject(new Error(`Invalid key length: ${k.key.byteLength}`));
       }
-      resolve(k.key.buffer);
+      resolve(k.key.buffer as ArrayBuffer);
     });
   }
 

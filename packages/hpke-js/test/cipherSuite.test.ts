@@ -193,7 +193,7 @@ describe("createRecipientContext", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -254,7 +254,7 @@ describe("createSenderContext", () => {
 
       // encrypt
       const ct = await sender.seal(
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -280,8 +280,8 @@ describe("createSenderContext", () => {
         () =>
           suite.createSenderContext({
             psk: {
-              key: (new Uint8Array(8193)).buffer,
-              id: new Uint8Array([1, 2, 3, 4]),
+              key: (new Uint8Array(8193)).buffer as ArrayBuffer,
+              id: new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer,
             },
             recipientPublicKey: rkp.publicKey,
           }),
@@ -306,8 +306,8 @@ describe("createSenderContext", () => {
         () =>
           suite.createSenderContext({
             psk: {
-              key: (new Uint8Array(31)).buffer,
-              id: new Uint8Array([1, 2, 3, 4]),
+              key: (new Uint8Array(31)).buffer as ArrayBuffer,
+              id: new Uint8Array([1, 2, 3, 4]).buffer as ArrayBuffer,
             },
             recipientPublicKey: rkp.publicKey,
           }),
@@ -332,8 +332,8 @@ describe("createSenderContext", () => {
         () =>
           suite.createSenderContext({
             psk: {
-              key: new Uint8Array(32),
-              id: (new Uint8Array(8193)).buffer,
+              key: new Uint8Array(32).buffer as ArrayBuffer,
+              id: (new Uint8Array(8193)).buffer as ArrayBuffer,
             },
             recipientPublicKey: rkp.publicKey,
           }),
@@ -361,7 +361,7 @@ describe("seal/open", () => {
         {
           recipientPublicKey: rkp.publicKey,
         },
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -394,7 +394,7 @@ describe("seal/open", () => {
         {
           recipientPublicKey: rkp.publicKey,
         },
-        new TextEncoder().encode("my-secret-message"),
+        new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
       );
 
       // decrypt
@@ -432,7 +432,9 @@ describe("seal/open", () => {
       });
 
       // encrypt
-      const ct = await sender.seal(new TextEncoder().encode(""));
+      const ct = await sender.seal(
+        new TextEncoder().encode("").buffer as ArrayBuffer,
+      );
 
       // decrypt
       const pt = await recipient.open(ct);
@@ -448,16 +450,16 @@ describe("deriveKeyPair", () => {
     it("should derive a proper key pair.", async () => {
       const ikmR = hexToBytes(
         "6db9df30aa07dd42ee5e8181afdb977e538f5e1fec8a06223f33f7013e525037",
-      );
+      ).buffer as ArrayBuffer;
       const ikmE = hexToBytes(
         "7268600d403fce431561aef583ee1613527cff655c1343f29812e66706df3234",
-      );
+      ).buffer as ArrayBuffer;
       const pkRm = hexToBytes(
         "3948cfe0ad1ddb695d780e59077195da6c56506b027329794ab02bca80815c4d",
-      );
+      ).buffer as ArrayBuffer;
       const pkEm = hexToBytes(
         "37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431",
-      );
+      ).buffer as ArrayBuffer;
 
       const suite = new CipherSuite({
         kem: KemId.DhkemX25519HkdfSha256,
@@ -468,12 +470,12 @@ describe("deriveKeyPair", () => {
       const derivedPkRm = await suite.kem.serializePublicKey(
         derivedR.publicKey,
       );
-      assertEquals(new Uint8Array(derivedPkRm), pkRm);
+      assertEquals(derivedPkRm, pkRm);
       const derivedE = await suite.kem.deriveKeyPair(ikmE);
       const derivedPkEm = await suite.kem.serializePublicKey(
         derivedE.publicKey,
       );
-      assertEquals(new Uint8Array(derivedPkEm), pkEm);
+      assertEquals(derivedPkEm, pkEm);
     });
   });
 
@@ -484,16 +486,16 @@ describe("deriveKeyPair", () => {
       }
       const ikmR = hexToBytes(
         "d42ef874c1913d9568c9405407c805baddaffd0898a00f1e84e154fa787b2429",
-      );
+      ).buffer as ArrayBuffer;
       const ikmE = hexToBytes(
         "2afa611d8b1a7b321c761b483b6a053579afa4f767450d3ad0f84a39fda587a6",
-      );
+      ).buffer as ArrayBuffer;
       const pkRm = hexToBytes(
         "040d97419ae99f13007a93996648b2674e5260a8ebd2b822e84899cd52d87446ea394ca76223b76639eccdf00e1967db10ade37db4e7db476261fcc8df97c5ffd1",
-      );
+      ).buffer as ArrayBuffer;
       const pkEm = hexToBytes(
         "04305d35563527bce037773d79a13deabed0e8e7cde61eecee403496959e89e4d0ca701726696d1485137ccb5341b3c1c7aaee90a4a02449725e744b1193b53b5f",
-      );
+      ).buffer as ArrayBuffer;
 
       const suite = new CipherSuite({
         kem: KemId.DhkemP256HkdfSha256,
@@ -504,12 +506,12 @@ describe("deriveKeyPair", () => {
       const derivedPkRm = await suite.kem.serializePublicKey(
         derivedR.publicKey,
       );
-      assertEquals(new Uint8Array(derivedPkRm), pkRm);
+      assertEquals(derivedPkRm, pkRm);
       const derivedE = await suite.deriveKeyPair(ikmE);
       const derivedPkEm = await suite.kem.serializePublicKey(
         derivedE.publicKey,
       );
-      assertEquals(new Uint8Array(derivedPkEm), pkEm);
+      assertEquals(derivedPkEm, pkEm);
     });
   });
 
@@ -542,7 +544,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
@@ -562,7 +564,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
@@ -582,7 +584,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
@@ -602,7 +604,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
@@ -622,7 +624,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
@@ -642,7 +644,7 @@ describe("importKey", () => {
       });
 
       const kStr = "aabbccddeeff";
-      const k = hexToBytes(kStr);
+      const k = hexToBytes(kStr).buffer as ArrayBuffer;
 
       // assert
       await assertRejects(
