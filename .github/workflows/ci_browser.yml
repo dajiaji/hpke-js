@@ -19,7 +19,7 @@ jobs:
           deno-version: 2.x
       - uses: actions/setup-node@v4
         with:
-          node-version: v20.x
+          node-version: 22.x
       - name: Install dependencies
         run: |
           npm install -g typescript

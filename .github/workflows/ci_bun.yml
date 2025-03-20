@@ -19,7 +19,7 @@ jobs:
           deno-version: 2.x
       - uses: actions/setup-node@v4
         with:
-          node-version: v20.x
+          node-version: 22.x
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
