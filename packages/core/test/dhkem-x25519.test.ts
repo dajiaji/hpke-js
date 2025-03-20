@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno, isDenoV1, loadCrypto } from "@hpke/common";
+import { isDenoV1, loadCrypto } from "@hpke/common";
 import {
   AeadId,
   Aes128Gcm,
@@ -53,7 +53,7 @@ describe("generateKeyPair", () => {
 describe("deriveKeyPair", () => {
   describe("with valid parameters", () => {
     it("should return a proper instance", async () => {
-      if (isDeno()) {
+      if (isDenoV1()) {
         return;
       }
       const cryptoApi = await loadCrypto();
