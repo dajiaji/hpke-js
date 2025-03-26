@@ -189,7 +189,15 @@ The hpke-js includes the following packages.
 ## Contributing
 
 We welcome all kind of contributions, filing issues, suggesting new features or
-sending PRs.
+sending PRs. Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed
+guidelines on:
+
+- Development setup and prerequisites
+- Available development tasks
+- Code quality requirements
+- Project structure
+- Testing requirements
+- Documentation guidelines
 
 ## References
 
