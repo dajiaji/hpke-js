@@ -29,7 +29,9 @@ export const test = async () => {
   const sender = await suite.createSenderContext({
     recipientPublicKey: rkp.publicKey,
   });
-  const ct = await sender.seal(new TextEncoder().encode("✨ hello world! ✨"));
+  const ct = await sender.seal(
+    new TextEncoder().encode("✨ hello world! ✨").buffer as ArrayBuffer,
+  );
   // A recipient decripts it.
   const recipient = await suite.createRecipientContext({
     recipientKey: rkp.privateKey,
