@@ -1,4 +1,4 @@
-# Contributing to HPKE.js
+# Contributing to hpke-js
 
 Thank you for your interest in contributing to hpke-js! We welcome contributions
 from the community.
@@ -20,8 +20,8 @@ The project provides several tasks for development and testing:
 #### Testing
 
 - `deno task test:all`: Run all tests across different environments
-- `deno task test`: Run basic tests including formatting, linting, and unit
-  tests
+- `deno task test`: Run basic tests including formatting, linting, type
+  checking, and unit tests
 - `deno task test:common`: Test the common package
 - `deno task test:core`: Test the core package
 - `deno task test:chacha20poly1305`: Test the ChaCha20-Poly1305 implementation
@@ -41,11 +41,13 @@ The project provides several tasks for development and testing:
 
 ### Code Quality
 
-The project enforces code quality through:
+The project enforces code quality through the `deno task test` command, which
+includes:
 
 - Formatting: `deno fmt`
 - Linting: `deno lint`
 - Type checking: `deno check`
+- Unit tests
 
 ### Project Structure
 
@@ -67,8 +69,8 @@ Each package contains its own tests and samples in the `samples/deno` directory.
 
 ### Dependencies
 
-The project uses several external dependencies managed through Deno's import
-map:
+The project uses several external dependencies managed through Deno's
+import-map:
 
 - `@dajiaji/mlkem`: ML-KEM implementation
 - `@noble/ciphers`: Cryptographic primitives
@@ -88,6 +90,8 @@ map:
 
 - Follow the existing code style
 - Use TypeScript for all new code
+- Follow Deno's default formatting rules (enforced by `deno fmt`)
+- Follow Deno's default linting rules (enforced by `deno lint`)
 - Add appropriate tests for new features
 - Update documentation as needed
 
