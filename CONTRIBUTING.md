@@ -112,6 +112,64 @@ Before submitting a pull request, ensure that:
 - Include examples in the `samples/deno` directory
 - Update the README if necessary
 
+### Running Sample Code
+
+You can use the following tasks to run sample code:
+
+#### Running All Samples
+
+```bash
+deno task sample
+```
+
+This runs samples for all packages in both Deno and Node.js environments.
+
+#### Running Samples in Specific Environments
+
+To run samples only in Deno environment:
+
+```bash
+deno task sample:deno
+```
+
+To run samples only in Node.js environment:
+
+```bash
+deno task sample:node
+```
+
+#### Running Samples for Specific Packages
+
+To run Deno samples for specific packages:
+
+```bash
+deno task sample:deno:core                  # Run samples for core package
+deno task sample:deno:chacha20poly1305      # Run samples for ChaCha20-Poly1305 package
+deno task sample:deno:dhkem-x25519          # Run samples for X25519 DHKEM package
+deno task sample:deno:dhkem-x448            # Run samples for X448 DHKEM package
+deno task sample:deno:dhkem-secp256k1       # Run samples for secp256k1 DHKEM package
+deno task sample:deno:hybridkem-x25519-kyber768  # Run samples for X25519-Kyber768 hybrid KEM package
+deno task sample:deno:hybridkem-x-wing      # Run samples for X-Wing hybrid package
+deno task sample:deno:hpke-js               # Run samples for main HPKE package
+deno task sample:deno:ml-kem                # Run samples for ML-KEM package
+```
+
+To run Node.js samples for specific packages:
+
+```bash
+deno task sample:node:core                  # Run samples for core package
+deno task sample:node:chacha20poly1305      # Run samples for ChaCha20-Poly1305 package
+deno task sample:node:dhkem-x25519          # Run samples for X25519 DHKEM package
+deno task sample:node:dhkem-x448            # Run samples for X448 DHKEM package
+deno task sample:node:dhkem-secp256k1       # Run samples for secp256k1 DHKEM package
+deno task sample:node:hybridkem-x25519-kyber768  # Run samples for X25519-Kyber768 hybrid KEM package
+deno task sample:node:hybridkem-x-wing      # Run samples for X-Wing hybrid package
+deno task sample:node:hpke-js               # Run samples for main HPKE package
+deno task sample:node:ml-kem                # Run samples for ML-KEM package
+```
+
+Sample code can be found in the `samples/deno` directory of each package.
+
 ## License
 
 By contributing, you agree that your contributions will be licensed under the
