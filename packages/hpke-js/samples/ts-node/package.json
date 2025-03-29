@@ -1,6 +1,7 @@
 {
   "name": "ts-node-hpke-sample",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "app.ts",
   "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",

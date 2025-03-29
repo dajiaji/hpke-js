@@ -1,5 +1,3 @@
-import * as util from "util";
-
 import {
   Aes128Gcm,
   CipherSuite,
@@ -28,14 +26,14 @@ async function doHpke() {
 
   // encrypt
   const ct = await sender.seal(
-    new util.TextEncoder().encode("my-secret-message"),
+    new TextEncoder().encode("my-secret-message").buffer as ArrayBuffer,
   );
 
   // decrypt
   const pt = await recipient.open(ct);
 
   // new TextDecoder().decode(pt) === "my-secret-message"
-  console.log("decrypted: ", new util.TextDecoder().decode(pt));
+  console.log("decrypted: ", new TextDecoder().decode(pt));
 }
 
 doHpke();
