@@ -26,11 +26,20 @@ from the community.
 
 ### Prerequisites
 
-- Deno 1.41.0 or later
-- Node.js 16.0.0 or later (for npm package testing)
-- Bun 1.0.0 or later (for Bun runtime testing)
-- npm (for package management and testing)
-- Cloudflare Workers (for Cloudflare runtime testing)
+- Deno 1.41.0 or later **(required for all development)**
+- Node.js 16.0.0 or later **(required for all development and npm package
+  testing)**
+- npm **(required for package management and testing)**
+- Bun 1.0.0 or later (optional, only required for Bun runtime testing if
+  modifying core module implementations)
+- Cloudflare Workers (optional, only required for Cloudflare runtime testing if
+  modifying core module implementations)
+
+**Note**: Deno, Node.js, and npm are essential for all development work. Bun and
+Cloudflare Workers are only needed for cross-platform testing when you modify
+core module implementations. If you're only contributing documentation,
+examples, or non-core features, you don't need to install Bun or set up
+Cloudflare Workers.
 
 ### Available Tasks
 
