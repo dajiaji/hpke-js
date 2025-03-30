@@ -26,11 +26,11 @@ from the community.
 
 ### Prerequisites
 
-- Deno 1.41.0 or later **(required for all development)**
-- Node.js 16.0.0 or later **(required for all development and npm package
+- Deno 2.0.0 or later **(required for all development)**
+- Node.js 18.0.0 or later **(required for all development and npm package
   testing)**
 - npm **(required for package management and testing)**
-- Bun 1.0.0 or later (optional, only required for Bun runtime testing if
+- Bun 1.1.0 or later (optional, only required for Bun runtime testing if
   modifying core module implementations)
 - Cloudflare Workers (optional, only required for Cloudflare runtime testing if
   modifying core module implementations)
