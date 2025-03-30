@@ -3,6 +3,25 @@
 Thank you for your interest in contributing to hpke-js! We welcome contributions
 from the community.
 
+## Contents
+
+- [Contributing to hpke-js](#contributing-to-hpke-js)
+- [Development Setup](#development-setup)
+  - [Prerequisites](#prerequisites)
+  - [Available Tasks](#available-tasks)
+    - [Testing](#testing)
+    - [Cross-Platform Testing](#cross-platform-testing)
+    - [Package Creation](#package-creation)
+  - [Code Quality](#code-quality)
+  - [Project Structure](#project-structure)
+  - [Dependencies](#dependencies)
+- [Contributing Guidelines](#contributing-guidelines)
+  - [Code Style](#code-style)
+  - [Testing Requirements](#testing-requirements)
+  - [Documentation](#documentation)
+  - [Running Sample Code](#running-sample-code)
+- [License](#license)
+
 ## Development Setup
 
 ### Prerequisites
@@ -21,7 +40,14 @@ The project provides several tasks for development and testing:
 
 - `deno task test:all`: Run all tests across different environments
 - `deno task test`: Run basic tests including formatting, linting, type
-  checking, and unit tests
+  checking, and unit tests in Deno environment only
+  - **Note**: Difference from `deno task test:all`: `deno task test` only runs
+    basic tests (formatting, linting, type checking, and unit tests) in the Deno
+    environment. In contrast, `deno task test:all` runs the basic tests plus npm
+    package generation (`deno task npm`), testing in Cloudflare environment
+    (`deno task test:cloudflare`), and testing in Bun environment
+    (`deno task test:bun`). Use `test:all` when more comprehensive testing is
+    needed.
 - `deno task test:common`: Test the common package
 - `deno task test:core`: Test the core package
 - `deno task test:chacha20poly1305`: Test the ChaCha20-Poly1305 implementation
@@ -38,6 +64,39 @@ The project provides several tasks for development and testing:
 
 - `deno task test:cloudflare`: Run tests in Cloudflare Workers environment
 - `deno task test:bun`: Run tests in Bun runtime environment
+- `deno task dnt`: Run tests in Node.js environment using dnt (Deno to npm
+  package build tool)
+
+The `deno task dnt` command uses [dnt](https://github.com/denoland/dnt) to
+transform Deno code into npm packages and runs tests in a Node.js environment.
+This ensures cross-platform compatibility between Deno and Node.js. The process
+includes:
+
+1. Converting Deno modules to npm-compatible packages
+2. Handling necessary shims and polyfills
+3. Transforming ES modules to both ESM and CommonJS formats
+4. Executing tests in the Node.js runtime
+
+This approach helps identify any platform-specific issues and ensures the
+library works consistently across both Deno and Node.js environments.
+
+#### Package Creation
+
+- `deno task npm`: Create npm packages from Deno modules
+
+The `deno task npm` command transforms the Deno modules into publishable npm
+packages using the [dnt](https://github.com/denoland/dnt) tool. This task:
+
+1. Cleans the output directory
+2. Converts all Deno modules to npm-compatible packages
+3. Generates both ESM and CommonJS versions
+4. Creates proper package.json with all necessary dependencies
+5. Copies license, readme, and other essential files
+6. Prepares the package for publication to npm registry
+
+The generated packages are placed in the `npm` directory and are ready to be
+published with `npm publish` or similar commands. This task is essential for
+releasing new versions of the library to npm.
 
 ### Code Quality
 
@@ -99,11 +158,10 @@ import-map:
 
 Before submitting a pull request, ensure that:
 
-1. All tests pass: `deno task test:all`
-2. Code is properly formatted: `deno fmt`
-3. No linting errors: `deno lint`
-4. Tests are added for new features
-5. Documentation is updated
+1. All tests pass: `deno task test:all` (this includes formatting, linting, type
+   checking, and tests across all environments)
+2. Tests are added for new features
+3. Documentation is updated
 
 ### Documentation
 
