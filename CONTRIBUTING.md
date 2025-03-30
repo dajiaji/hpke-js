@@ -40,7 +40,14 @@ The project provides several tasks for development and testing:
 
 - `deno task test:all`: Run all tests across different environments
 - `deno task test`: Run basic tests including formatting, linting, type
-  checking, and unit tests
+  checking, and unit tests in Deno environment only
+  - **Note**: Difference from `deno task test:all`: `deno task test` only runs
+    basic tests (formatting, linting, type checking, and unit tests) in the Deno
+    environment. In contrast, `deno task test:all` runs the basic tests plus npm
+    package generation (`deno task npm`), testing in Cloudflare environment
+    (`deno task test:cloudflare`), and testing in Bun environment
+    (`deno task test:bun`). Use `test:all` when more comprehensive testing is
+    needed.
 - `deno task test:common`: Test the common package
 - `deno task test:core`: Test the core package
 - `deno task test:chacha20poly1305`: Test the ChaCha20-Poly1305 implementation
