@@ -11,6 +11,7 @@ import {
   AeadId,
   EMPTY,
   i2Osp,
+  INFO_LENGTH_LIMIT,
   INPUT_LENGTH_LIMIT,
   InvalidParamError,
   MINIMUM_PSK_LENGTH,
@@ -431,7 +432,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
   private _validateInputLength(params: KeyScheduleParams) {
     if (
       params.info !== undefined &&
-      params.info.byteLength > INPUT_LENGTH_LIMIT
+      params.info.byteLength > INFO_LENGTH_LIMIT
     ) {
       throw new InvalidParamError("Too long info");
     }
