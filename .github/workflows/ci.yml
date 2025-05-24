@@ -14,15 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        deno-version: [1.x, 2.x]
+        deno-version: [2.x]
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ matrix.deno-version }}
-      - name: REmove lock file
-        if: matrix.deno-version == '1.x'
-        run: rm deno.lock
       - name: Run deno test
         run: |
           deno fmt --check

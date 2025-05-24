@@ -1,20 +1,24 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@dajiaji/mlkem@^2.3.1": "2.3.1",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@~0.41.3": "0.41.3",
+    "jsr:@deno/graph@~0.73.1": "0.73.1",
+    "jsr:@hpke/chacha20poly1305@^1.3.0": "1.6.2",
+    "jsr:@hpke/core@^1.3.0": "1.7.2",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
     "jsr:@std/assert@1.0.0": "1.0.0",
     "jsr:@std/assert@^1.0.10": "1.0.11",
     "jsr:@std/bytes@0.223": "0.223.0",
     "jsr:@std/fmt@0.223": "0.223.0",
-    "jsr:@std/fmt@1": "1.0.6",
+    "jsr:@std/fmt@1": "1.0.8",
     "jsr:@std/fs@0.223": "0.223.0",
     "jsr:@std/fs@1": "1.0.14",
     "jsr:@std/fs@^1.0.14": "1.0.14",
+    "jsr:@std/fs@^1.0.6": "1.0.14",
     "jsr:@std/fs@~0.229.3": "0.229.3",
     "jsr:@std/internal@^1.0.1": "1.0.5",
     "jsr:@std/internal@^1.0.5": "1.0.5",
@@ -31,6 +35,7 @@
     "npm:@noble/curves@^1.8.1": "1.8.1",
     "npm:@noble/hashes@^1.7.1": "1.7.1",
     "npm:@playwright/test@^1.51.0": "1.51.0",
+    "npm:@types/node@*": "22.13.10",
     "npm:mlkem@^2.3.1": "2.3.1"
   },
   "jsr": {
@@ -46,6 +51,7 @@
     "@deno/cache-dir@0.10.3": {
       "integrity": "eb022f84ecc49c91d9d98131c6e6b118ff63a29e343624d058646b9d50404776",
       "dependencies": [
+        "jsr:@deno/graph",
         "jsr:@std/fmt@0.223",
         "jsr:@std/fs@0.223",
         "jsr:@std/io",
@@ -62,6 +68,18 @@
         "jsr:@std/path@1",
         "jsr:@ts-morph/bootstrap"
       ]
+    },
+    "@deno/graph@0.73.1": {
+      "integrity": "cd69639d2709d479037d5ce191a422eabe8d71bb68b0098344f6b07411c84d41"
+    },
+    "@hpke/chacha20poly1305@1.6.2": {
+      "integrity": "b8a13d553e838854ad6980b55bbae655e5fbcfa5d060958e082f520a43e0f132",
+      "dependencies": [
+        "npm:@noble/ciphers"
+      ]
+    },
+    "@hpke/core@1.7.2": {
+      "integrity": "6792063b05b603897430674fd6475a755661da89547e2ab0b25b37ea447dc231"
     },
     "@std/assert@0.223.0": {
       "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
@@ -84,8 +102,8 @@
     "@std/fmt@0.223.0": {
       "integrity": "6deb37794127dfc7d7bded2586b9fc6f5d50e62a8134846608baf71ffc1a5208"
     },
-    "@std/fmt@1.0.6": {
-      "integrity": "a2c56a69a2369876ddb3ad6a500bb6501b5bad47bb3ea16bfb0c18974d2661fc"
+    "@std/fmt@1.0.8": {
+      "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
     },
     "@std/fs@0.223.0": {
       "integrity": "3b4b0550b2c524cbaaa5a9170c90e96cbb7354e837ad1bdaf15fc9df1ae9c31c"
@@ -168,10 +186,19 @@
       "integrity": "sha512-dJ0dMbZeHhI+wb77+ljx/FeC8VBP6j/rj9OAojO08JI80wTZy6vRk9KvHKiDCUh4iMpEiseMgqRBIeW+eKX6RA==",
       "dependencies": [
         "playwright"
+      ],
+      "bin": true
+    },
+    "@types/node@22.13.10": {
+      "integrity": "sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==",
+      "dependencies": [
+        "undici-types"
       ]
     },
     "fsevents@2.3.2": {
-      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
+      "integrity": "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==",
+      "os": ["darwin"],
+      "scripts": true
     },
     "mlkem@2.3.1": {
       "integrity": "sha512-ZlhI0U1ZXpXd1U3DRyk1xafXNm7rU4lm2sSPIX5lidoLHJ7gyKQ4dafNd7W/MgIejadVfKTTa3uL1PDSbesL3g==",
@@ -180,14 +207,21 @@
       ]
     },
     "playwright-core@1.51.0": {
-      "integrity": "sha512-x47yPE3Zwhlil7wlNU/iktF7t2r/URR3VLbH6EknJd/04Qc/PSJ0EY3CMXipmglLG+zyRxW6HNo2EGbKLHPWMg=="
+      "integrity": "sha512-x47yPE3Zwhlil7wlNU/iktF7t2r/URR3VLbH6EknJd/04Qc/PSJ0EY3CMXipmglLG+zyRxW6HNo2EGbKLHPWMg==",
+      "bin": true
     },
     "playwright@1.51.0": {
       "integrity": "sha512-442pTfGM0xxfCYxuBa/Pu6B2OqxqqaYq39JS8QDMGThUvIOCd6s0ANDog3uwA0cHavVlnTQzGCN7Id2YekDSXA==",
       "dependencies": [
-        "fsevents",
         "playwright-core"
-      ]
+      ],
+      "optionalDependencies": [
+        "fsevents"
+      ],
+      "bin": true
+    },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
     }
   },
   "workspace": {
