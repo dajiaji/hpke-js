@@ -25,9 +25,12 @@ jobs:
       - name: Run dnt & minify
         run: |
           npm install -g esbuild
+          deno install --lock=./deno.lock
+          deno task dnt
       - name: Run dnt & minify for /common
         working-directory: ./packages/common
         run: |
+          deno install --lock=../../deno.lock
           deno task dnt
           deno task minify > ../../npm/packages/common/hpke-common.min.js
       - name: Publish to npm (dry) for /packages/common
