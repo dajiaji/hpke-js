@@ -173,7 +173,7 @@ The hpke-js includes the following packages.
   supported browsers
   - Confirmed: Chrome, Firefox, Edge, Safari, Opera, Vivaldi, Brave
 - **Node.js**: 16.x, 17.x, 18.x, 19.x, 20.x, 21.x, 22.x, 23.x
-- **Deno**: 1.x, 2.x
+- **Deno**: 2.x
 - **Cloudflare Workers**
 - **bun**: 0.x (0.6.0-), 1.x
 
