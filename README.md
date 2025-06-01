@@ -38,7 +38,7 @@ pnpm install @hpke/core
 # Using jsr:
 npx jsr add @hpke/core
 yarn dlx jsr add @hpke/core
-pnpm dlx jsr add @@hpke/core
+pnpm dlx jsr add @hpke/core
 npm install @hpke/core
 ```
 
