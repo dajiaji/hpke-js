@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.7.3
+
+Released 2025-07-12
+
+- [(#524) base: bump @hpke/common to 1.7.3](https://github.com/dajiaji/hpke-js/pull/524)
+
 ## Version 1.7.2
 
 Released 2025-03-09
