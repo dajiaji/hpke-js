@@ -3,7 +3,7 @@
   "version": "1.6.1",
   "exports": "./mod.ts",
   "imports": {
-    "@noble/hashes": "npm:@noble/hashes@^1.7.1"
+    "@noble/hashes": "npm:@noble/hashes@^1.8.0"
   },
   "publish": {
     "exclude": [

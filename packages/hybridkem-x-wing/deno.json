@@ -4,7 +4,7 @@
   "exports": "./mod.ts",
   "imports": {
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.3.1",
-    "@noble/hashes": "npm:@noble/hashes@^1.7.1"
+    "@noble/hashes": "npm:@noble/hashes@^1.8.0"
   },
   "publish": {
     "exclude": [
