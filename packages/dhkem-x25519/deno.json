@@ -3,7 +3,7 @@
   "version": "1.6.2",
   "exports": "./mod.ts",
   "imports": {
-    "@noble/curves": "npm:@noble/curves@^1.8.1",
+    "@noble/curves": "npm:@noble/curves@^1.9.2",
     "@noble/hashes": "npm:@noble/hashes@^1.8.0"
   },
   "publish": {
