@@ -5,7 +5,7 @@
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.6.3",
     "@hpke/common": "npm:@hpke/common@^1.7.3",
     "@hpke/core": "npm:@hpke/core@^1.7.3",
-    "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.2",
+    "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.3",
     "@hpke/dhkem-x448": "npm:@hpke/dhkem-x448@^1.6.2",
     "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.3.0/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.9.2/ed25519",
