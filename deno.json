@@ -23,7 +23,7 @@
   "imports": {
     "@dajiaji/mlkem": "npm:mlkem@^2.3.1",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
-    "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.2.1/chacha",
+    "@noble/ciphers/chacha": "npm:@noble/ciphers@^1.3.0/chacha",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.8.1/ed25519",
     "@noble/curves/ed448": "npm:@noble/curves@^1.8.1/ed448",
     "@noble/curves/secp256k1": "npm:@noble/curves@^1.8.1/secp256k1",
