@@ -4,6 +4,8 @@
 
 Released 2025-07-12
 
+- [(#527) base: bump @noble/cipher to 1.3.0](https://github.com/dajiaji/hpke-js/pull/527)
+- [(#526) base: bump @hpke/core to 1.7.3](https://github.com/dajiaji/hpke-js/pull/526)
 - [(#524) base: bump @hpke/common to 1.7.3](https://github.com/dajiaji/hpke-js/pull/524)
 
 ## Version 1.7.2
