@@ -2,6 +2,8 @@
 
 ## Version 1.6.3
 
+Released 2025-07-12
+
 - [(#529) base: bump @noble/curves to 1.9.2](https://github.com/dajiaji/hpke-js/pull/529)
 - [(#528) base: bump @noble/hashes to 1.8.0](https://github.com/dajiaji/hpke-js/pull/528)
 - [(#526) base: bump @hpke/core to 1.7.3](https://github.com/dajiaji/hpke-js/pull/526)
