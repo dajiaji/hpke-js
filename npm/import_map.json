@@ -2,7 +2,7 @@
   "imports": {
     "@dajiaji/mlkem": "npm:mlkem@^2.3.1",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
-    "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.6.2",
+    "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.6.3",
     "@hpke/common": "npm:@hpke/common@^1.7.3",
     "@hpke/core": "npm:@hpke/core@^1.7.3",
     "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.2",
