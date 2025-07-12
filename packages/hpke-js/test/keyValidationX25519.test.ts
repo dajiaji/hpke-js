@@ -34,10 +34,7 @@ describe("X25519 key validation", () => {
 
       if (isDeno()) {
         for (const v of tv.testGroups[0].tests) {
-          if (
-            v.flags.find((k) => k === "ZeroSharedSecret") ||
-            [85, 86, 87, 88, 97].includes(v.tcId)
-          ) {
+          if (v.flags.find((k) => k === "ZeroSharedSecret")) {
             await tester.testInvalidX25519PublicKey(v.public);
           } else {
             await tester.testValidX25519PublicKey(v.public);
