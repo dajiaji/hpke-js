@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.6.3
+
+Released 2025-07-12
+
+- []
+
 ## Version 1.6.2
 
 Released 2025-03-09
