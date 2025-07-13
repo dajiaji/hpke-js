@@ -1,6 +1,6 @@
 {
   "name": "@hpke/hybridkem-x-wing",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "exports": "./mod.ts",
   "imports": {
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.3.1",
