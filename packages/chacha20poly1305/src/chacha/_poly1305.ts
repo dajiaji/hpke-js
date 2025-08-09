@@ -5,7 +5,6 @@
  *
  * The original file is located at:
  * https://github.com/paulmillr/noble-ciphers/blob/749cdf9cd07ebdd19e9b957d0f172f1045179695/src/_poly1305.ts
- * 
  */
 
 /**
@@ -29,58 +28,60 @@
  */
 // prettier-ignore
 import {
-  abytes, aexists, aoutput, bytesToHex,
-  clean, concatBytes, copyBytes, hexToNumber, numberToBytesBE,
-  type IHash2
-} from './utils.ts';
+  abytes,
+  aexists,
+  aoutput,
+  clean,
+  copyBytes,
+  type IHash2,
+} from "./utils.ts";
 
 function u8to16(a: Uint8Array, i: number) {
   return (a[i++] & 0xff) | ((a[i++] & 0xff) << 8);
 }
 
-function bytesToNumberLE(bytes: Uint8Array): bigint {
-  return hexToNumber(bytesToHex(Uint8Array.from(bytes).reverse()));
-}
+// function bytesToNumberLE(bytes: Uint8Array): bigint {
+//   return hexToNumber(bytesToHex(Uint8Array.from(bytes).reverse()));
+// }
 
-/** Small version of `poly1305` without loop unrolling. Unused, provided for auditability. */
-function poly1305_small(msg: Uint8Array, key: Uint8Array): Uint8Array {
-  abytes(msg);
-  abytes(key, 32, 'key');
-  const POW_2_130_5 = BigInt(2) ** BigInt(130) - BigInt(5); // 2^130-5
-  const POW_2_128_1 = BigInt(2) ** BigInt(128) - BigInt(1); // 2^128-1
-  const CLAMP_R = BigInt('0x0ffffffc0ffffffc0ffffffc0fffffff');
-  const r = bytesToNumberLE(key.subarray(0, 16)) & CLAMP_R;
-  const s = bytesToNumberLE(key.subarray(16));
-  // Process by 16 byte chunks
-  let acc = BigInt(0);
-  for (let i = 0; i < msg.length; i += 16) {
-    const m = msg.subarray(i, i + 16);
-    const n = bytesToNumberLE(m) | (BigInt(1) << BigInt(8 * m.length));
-    acc = ((acc + n) * r) % POW_2_130_5;
-  }
-  const res = (acc + s) & POW_2_128_1;
-  return numberToBytesBE(res, 16).reverse(); // LE
-}
+// /** Small version of `poly1305` without loop unrolling. Unused, provided for auditability. */
+// function poly1305_small(msg: Uint8Array, key: Uint8Array): Uint8Array {
+//   abytes(msg);
+//   abytes(key, 32, "key");
+//   const POW_2_130_5 = BigInt(2) ** BigInt(130) - BigInt(5); // 2^130-5
+//   const POW_2_128_1 = BigInt(2) ** BigInt(128) - BigInt(1); // 2^128-1
+//   const CLAMP_R = BigInt("0x0ffffffc0ffffffc0ffffffc0fffffff");
+//   const r = bytesToNumberLE(key.subarray(0, 16)) & CLAMP_R;
+//   const s = bytesToNumberLE(key.subarray(16));
+//   // Process by 16 byte chunks
+//   let acc = BigInt(0);
+//   for (let i = 0; i < msg.length; i += 16) {
+//     const m = msg.subarray(i, i + 16);
+//     const n = bytesToNumberLE(m) | (BigInt(1) << BigInt(8 * m.length));
+//     acc = ((acc + n) * r) % POW_2_130_5;
+//   }
+//   const res = (acc + s) & POW_2_128_1;
+//   return numberToBytesBE(res, 16).reverse(); // LE
+// }
 
 // Can be used to replace `computeTag` in chacha.ts. Unused, provided for auditability.
-// @ts-expect-error
-function poly1305_computeTag_small(
-  authKey: Uint8Array,
-  lengths: Uint8Array,
-  ciphertext: Uint8Array,
-  AAD?: Uint8Array
-): Uint8Array {
-  const res = [];
-  const updatePadded2 = (msg: Uint8Array) => {
-    res.push(msg);
-    const leftover = msg.length % 16;
-    if (leftover) res.push(new Uint8Array(16).slice(leftover));
-  };
-  if (AAD) updatePadded2(AAD);
-  updatePadded2(ciphertext);
-  res.push(lengths);
-  return poly1305_small(concatBytes(...res), authKey);
-}
+// function poly1305_computeTag_small(
+//   authKey: Uint8Array,
+//   lengths: Uint8Array,
+//   ciphertext: Uint8Array,
+//   AAD?: Uint8Array,
+// ): Uint8Array {
+//   const res = [];
+//   const updatePadded2 = (msg: Uint8Array) => {
+//     res.push(msg);
+//     const leftover = msg.length % 16;
+//     if (leftover) res.push(new Uint8Array(16).slice(leftover));
+//   };
+//   if (AAD) updatePadded2(AAD);
+//   updatePadded2(ciphertext);
+//   res.push(lengths);
+//   return poly1305_small(concatBytes(...res), authKey);
+// }
 
 /** Poly1305 class. Prefer poly1305() function instead. */
 export class Poly1305 implements IHash2 {
@@ -95,7 +96,7 @@ export class Poly1305 implements IHash2 {
 
   // Can be speed-up using BigUint64Array, at the cost of complexity
   constructor(key: Uint8Array) {
-    key = copyBytes(abytes(key, 32, 'key'));
+    key = copyBytes(abytes(key, 32, "key"));
     const t0 = u8to16(key, 0);
     const t1 = u8to16(key, 2);
     const t2 = u8to16(key, 4);
@@ -142,58 +143,66 @@ export class Poly1305 implements IHash2 {
     const t6 = u8to16(data, offset + 12);
     const t7 = u8to16(data, offset + 14);
 
-    let h0 = h[0] + (t0 & 0x1fff);
-    let h1 = h[1] + (((t0 >>> 13) | (t1 << 3)) & 0x1fff);
-    let h2 = h[2] + (((t1 >>> 10) | (t2 << 6)) & 0x1fff);
-    let h3 = h[3] + (((t2 >>> 7) | (t3 << 9)) & 0x1fff);
-    let h4 = h[4] + (((t3 >>> 4) | (t4 << 12)) & 0x1fff);
-    let h5 = h[5] + ((t4 >>> 1) & 0x1fff);
-    let h6 = h[6] + (((t4 >>> 14) | (t5 << 2)) & 0x1fff);
-    let h7 = h[7] + (((t5 >>> 11) | (t6 << 5)) & 0x1fff);
-    let h8 = h[8] + (((t6 >>> 8) | (t7 << 8)) & 0x1fff);
-    let h9 = h[9] + ((t7 >>> 5) | hibit);
+    const h0 = h[0] + (t0 & 0x1fff);
+    const h1 = h[1] + (((t0 >>> 13) | (t1 << 3)) & 0x1fff);
+    const h2 = h[2] + (((t1 >>> 10) | (t2 << 6)) & 0x1fff);
+    const h3 = h[3] + (((t2 >>> 7) | (t3 << 9)) & 0x1fff);
+    const h4 = h[4] + (((t3 >>> 4) | (t4 << 12)) & 0x1fff);
+    const h5 = h[5] + ((t4 >>> 1) & 0x1fff);
+    const h6 = h[6] + (((t4 >>> 14) | (t5 << 2)) & 0x1fff);
+    const h7 = h[7] + (((t5 >>> 11) | (t6 << 5)) & 0x1fff);
+    const h8 = h[8] + (((t6 >>> 8) | (t7 << 8)) & 0x1fff);
+    const h9 = h[9] + ((t7 >>> 5) | hibit);
 
     let c = 0;
 
-    let d0 = c + h0 * r0 + h1 * (5 * r9) + h2 * (5 * r8) + h3 * (5 * r7) + h4 * (5 * r6);
+    let d0 = c + h0 * r0 + h1 * (5 * r9) + h2 * (5 * r8) + h3 * (5 * r7) +
+      h4 * (5 * r6);
     c = d0 >>> 13;
     d0 &= 0x1fff;
-    d0 += h5 * (5 * r5) + h6 * (5 * r4) + h7 * (5 * r3) + h8 * (5 * r2) + h9 * (5 * r1);
+    d0 += h5 * (5 * r5) + h6 * (5 * r4) + h7 * (5 * r3) + h8 * (5 * r2) +
+      h9 * (5 * r1);
     c += d0 >>> 13;
     d0 &= 0x1fff;
 
-    let d1 = c + h0 * r1 + h1 * r0 + h2 * (5 * r9) + h3 * (5 * r8) + h4 * (5 * r7);
+    let d1 = c + h0 * r1 + h1 * r0 + h2 * (5 * r9) + h3 * (5 * r8) +
+      h4 * (5 * r7);
     c = d1 >>> 13;
     d1 &= 0x1fff;
-    d1 += h5 * (5 * r6) + h6 * (5 * r5) + h7 * (5 * r4) + h8 * (5 * r3) + h9 * (5 * r2);
+    d1 += h5 * (5 * r6) + h6 * (5 * r5) + h7 * (5 * r4) + h8 * (5 * r3) +
+      h9 * (5 * r2);
     c += d1 >>> 13;
     d1 &= 0x1fff;
 
     let d2 = c + h0 * r2 + h1 * r1 + h2 * r0 + h3 * (5 * r9) + h4 * (5 * r8);
     c = d2 >>> 13;
     d2 &= 0x1fff;
-    d2 += h5 * (5 * r7) + h6 * (5 * r6) + h7 * (5 * r5) + h8 * (5 * r4) + h9 * (5 * r3);
+    d2 += h5 * (5 * r7) + h6 * (5 * r6) + h7 * (5 * r5) + h8 * (5 * r4) +
+      h9 * (5 * r3);
     c += d2 >>> 13;
     d2 &= 0x1fff;
 
     let d3 = c + h0 * r3 + h1 * r2 + h2 * r1 + h3 * r0 + h4 * (5 * r9);
     c = d3 >>> 13;
     d3 &= 0x1fff;
-    d3 += h5 * (5 * r8) + h6 * (5 * r7) + h7 * (5 * r6) + h8 * (5 * r5) + h9 * (5 * r4);
+    d3 += h5 * (5 * r8) + h6 * (5 * r7) + h7 * (5 * r6) + h8 * (5 * r5) +
+      h9 * (5 * r4);
     c += d3 >>> 13;
     d3 &= 0x1fff;
 
     let d4 = c + h0 * r4 + h1 * r3 + h2 * r2 + h3 * r1 + h4 * r0;
     c = d4 >>> 13;
     d4 &= 0x1fff;
-    d4 += h5 * (5 * r9) + h6 * (5 * r8) + h7 * (5 * r7) + h8 * (5 * r6) + h9 * (5 * r5);
+    d4 += h5 * (5 * r9) + h6 * (5 * r8) + h7 * (5 * r7) + h8 * (5 * r6) +
+      h9 * (5 * r5);
     c += d4 >>> 13;
     d4 &= 0x1fff;
 
     let d5 = c + h0 * r5 + h1 * r4 + h2 * r3 + h3 * r2 + h4 * r1;
     c = d5 >>> 13;
     d5 &= 0x1fff;
-    d5 += h5 * r0 + h6 * (5 * r9) + h7 * (5 * r8) + h8 * (5 * r7) + h9 * (5 * r6);
+    d5 += h5 * r0 + h6 * (5 * r9) + h7 * (5 * r8) + h8 * (5 * r7) +
+      h9 * (5 * r6);
     c += d5 >>> 13;
     d5 &= 0x1fff;
 
@@ -299,7 +308,7 @@ export class Poly1305 implements IHash2 {
     const { buffer, blockLen } = this;
     const len = data.length;
 
-    for (let pos = 0; pos < len; ) {
+    for (let pos = 0; pos < len;) {
       const take = Math.min(blockLen - this.pos, len - pos);
       // Fast path: we have at least one block in input
       if (take === blockLen) {
@@ -349,7 +358,7 @@ export class Poly1305 implements IHash2 {
 
 export type CHash = ReturnType<typeof wrapConstructorWithKey>;
 export function wrapConstructorWithKey<H extends IHash2>(
-  hashCons: (key: Uint8Array) => H
+  hashCons: (key: Uint8Array) => H,
 ): {
   (msg: Uint8Array, key: Uint8Array): Uint8Array;
   outputLen: number;
@@ -366,5 +375,5 @@ export function wrapConstructorWithKey<H extends IHash2>(
 }
 
 /** Poly1305 MAC from RFC 8439. */
-export const poly1305: CHash = /** @__PURE__ */ (() =>
-  wrapConstructorWithKey((key) => new Poly1305(key)))();
+export const poly1305: CHash =
+  /** @__PURE__ */ (() => wrapConstructorWithKey((key) => new Poly1305(key)))();

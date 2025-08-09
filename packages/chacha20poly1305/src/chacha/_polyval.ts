@@ -28,9 +28,9 @@ import {
   clean,
   copyBytes,
   createView,
-  u32,
   type IHash2,
-} from './utils.ts';
+  u32,
+} from "./utils.ts";
 
 const BLOCK_SIZE = 16;
 // TODO: rewrite
@@ -98,7 +98,7 @@ export class GHASH implements IHash2 {
   private windowSize: number;
   // We select bits per window adaptively based on expectedLength
   constructor(key: Uint8Array, expectedLength?: number) {
-    abytes(key, 16, 'key');
+    abytes(key, 16, "key");
     key = copyBytes(key);
     const kView = createView(key);
     let k0 = kView.getUint32(0, false);
@@ -108,12 +108,18 @@ export class GHASH implements IHash2 {
     // generate table of doubled keys (half of montgomery ladder)
     const doubles: Value[] = [];
     for (let i = 0; i < 128; i++) {
-      doubles.push({ s0: swapLE(k0), s1: swapLE(k1), s2: swapLE(k2), s3: swapLE(k3) });
+      doubles.push({
+        s0: swapLE(k0),
+        s1: swapLE(k1),
+        s2: swapLE(k2),
+        s3: swapLE(k3),
+      });
       ({ s0: k0, s1: k1, s2: k2, s3: k3 } = mul2(k0, k1, k2, k3));
     }
     const W = estimateWindow(expectedLength || 1024);
-    if (![1, 2, 4, 8].includes(W))
-      throw new Error('ghash: invalid window size, expected 2, 4 or 8');
+    if (![1, 2, 4, 8].includes(W)) {
+      throw new Error("ghash: invalid window size, expected 2, 4 or 8");
+    }
     this.W = W;
     const bits = 128; // always 128 bits;
     const windows = bits / W;
@@ -167,7 +173,12 @@ export class GHASH implements IHash2 {
     const blocks = Math.floor(data.length / BLOCK_SIZE);
     const left = data.length % BLOCK_SIZE;
     for (let i = 0; i < blocks; i++) {
-      this._updateBlock(b32[i * 4 + 0], b32[i * 4 + 1], b32[i * 4 + 2], b32[i * 4 + 3]);
+      this._updateBlock(
+        b32[i * 4 + 0],
+        b32[i * 4 + 1],
+        b32[i * 4 + 2],
+        b32[i * 4 + 3],
+      );
     }
     if (left) {
       ZEROS16.set(data.subarray(blocks * BLOCK_SIZE));
@@ -210,7 +221,7 @@ export class Polyval extends GHASH {
     super(ghKey, expectedLength);
     clean(ghKey);
   }
-  update(data: Uint8Array): this {
+  override update(data: Uint8Array): this {
     aexists(this);
     abytes(data);
     data = copyBytes(data);
@@ -222,7 +233,7 @@ export class Polyval extends GHASH {
         swapLE(b32[i * 4 + 3]),
         swapLE(b32[i * 4 + 2]),
         swapLE(b32[i * 4 + 1]),
-        swapLE(b32[i * 4 + 0])
+        swapLE(b32[i * 4 + 0]),
       );
     }
     if (left) {
@@ -231,13 +242,13 @@ export class Polyval extends GHASH {
         swapLE(ZEROS32[3]),
         swapLE(ZEROS32[2]),
         swapLE(ZEROS32[1]),
-        swapLE(ZEROS32[0])
+        swapLE(ZEROS32[0]),
       );
       clean(ZEROS32);
     }
     return this;
   }
-  digestInto(out: Uint8Array): Uint8Array {
+  override digestInto(out: Uint8Array): Uint8Array {
     aexists(this);
     aoutput(out, this);
     this.finished = true;
@@ -254,7 +265,7 @@ export class Polyval extends GHASH {
 
 export type CHashPV = ReturnType<typeof wrapConstructorWithKey>;
 function wrapConstructorWithKey<H extends IHash2>(
-  hashCons: (key: Uint8Array, expectedLength?: number) => H
+  hashCons: (key: Uint8Array, expectedLength?: number) => H,
 ): {
   (msg: Uint8Array, key: Uint8Array): Uint8Array;
   outputLen: number;
@@ -266,16 +277,17 @@ function wrapConstructorWithKey<H extends IHash2>(
   const tmp = hashCons(new Uint8Array(16), 0);
   hashC.outputLen = tmp.outputLen;
   hashC.blockLen = tmp.blockLen;
-  hashC.create = (key: Uint8Array, expectedLength?: number) => hashCons(key, expectedLength);
+  hashC.create = (key: Uint8Array, expectedLength?: number) =>
+    hashCons(key, expectedLength);
   return hashC;
 }
 
 /** GHash MAC for AES-GCM. */
 export const ghash: CHashPV = wrapConstructorWithKey(
-  (key, expectedLength) => new GHASH(key, expectedLength)
+  (key, expectedLength) => new GHASH(key, expectedLength),
 );
 
 /** Polyval MAC for AES-SIV. */
 export const polyval: CHashPV = wrapConstructorWithKey(
-  (key, expectedLength) => new Polyval(key, expectedLength)
+  (key, expectedLength) => new Polyval(key, expectedLength),
 );
