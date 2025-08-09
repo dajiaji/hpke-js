@@ -1,4 +1,4 @@
-import { chacha20poly1305 } from "@noble/ciphers/chacha";
+import { chacha20poly1305 } from "./chacha/chacha.ts";
 
 import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
 import { AeadId } from "@hpke/common";
