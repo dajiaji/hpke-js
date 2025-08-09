@@ -1,8 +1,16 @@
 /**
+ * This file is based on noble-ciphers (https://github.com/paulmillr/noble-ciphers).
+ *
+ * noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com)
+ *
+ * The original file is located at:
+ * https://github.com/paulmillr/noble-ciphers/blob/749cdf9cd07ebdd19e9b957d0f172f1045179695/src/utils.ts
+ */
+
+/**
  * Utilities for hex, bytes, CSPRNG.
  * @module
  */
-/*! noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com) */
 
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {

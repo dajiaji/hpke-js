@@ -1,4 +1,13 @@
 /**
+ * This file is based on noble-ciphers (https://github.com/paulmillr/noble-ciphers).
+ *
+ * noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com)
+ *
+ * The original file is located at:
+ * https://github.com/paulmillr/noble-ciphers/blob/749cdf9cd07ebdd19e9b957d0f172f1045179695/src/chacha.ts
+ */
+
+/**
  * ChaCha stream cipher, released
  * in 2008. Developed after Salsa20, ChaCha aims to increase diffusion per round.
  * It was standardized in [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) and

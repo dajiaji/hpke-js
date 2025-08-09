@@ -1,4 +1,14 @@
 /**
+ * This file is based on noble-ciphers (https://github.com/paulmillr/noble-ciphers).
+ *
+ * noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com)
+ *
+ * The original file is located at:
+ * https://github.com/paulmillr/noble-ciphers/blob/749cdf9cd07ebdd19e9b957d0f172f1045179695/src/_poly1305.ts
+ * 
+ */
+
+/**
  * Poly1305 ([PDF](https://cr.yp.to/mac/poly1305-20050329.pdf),
  * [wiki](https://en.wikipedia.org/wiki/Poly1305))
  * is a fast and parallel secret-key message-authentication code suitable for

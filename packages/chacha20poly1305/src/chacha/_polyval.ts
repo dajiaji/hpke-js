@@ -1,4 +1,13 @@
 /**
+ * This file is based on noble-ciphers (https://github.com/paulmillr/noble-ciphers).
+ *
+ * noble-ciphers - MIT License (c) 2023 Paul Miller (paulmillr.com)
+ *
+ * The original file is located at:
+ * https://github.com/paulmillr/noble-ciphers/blob/749cdf9cd07ebdd19e9b957d0f172f1045179695/src/_polyval.ts
+ */
+
+/**
  * GHash from AES-GCM and its little-endian "mirror image" Polyval from AES-SIV.
  *
  * Implemented in terms of GHash with conversion function for keys
