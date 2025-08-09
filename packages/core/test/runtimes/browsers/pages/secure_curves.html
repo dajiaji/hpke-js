@@ -6,19 +6,14 @@
         Aes128Gcm,
         Aes256Gcm,
         CipherSuite,
-        DhkemP256HkdfSha256,
-        DhkemP384HkdfSha384,
-        DhkemP521HkdfSha512,
-        // ExportOnly,
+        DhkemX25519HkdfSha256,
         HkdfSha256,
         HkdfSha384,
         HkdfSha512,
       } from "./src/hpke-core.js";
 
       const kems = [
-        new DhkemP256HkdfSha256(),
-        new DhkemP384HkdfSha384(),
-        new DhkemP521HkdfSha512(),
+        new DhkemX25519HkdfSha256(),
       ];
 
       const kdfs = [
