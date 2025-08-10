@@ -159,7 +159,10 @@ jobs:
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/ml-kem/test/runtimes/browsers
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
-      - working-directory: ./packages/dhkem-secp256k1/test/runtimes/browsers
-        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
+      - working-directory: ./packages/dhkem-secp256k1
+        run: |
+          deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-secp256k1.js
+          cd test/runtimes/browsers
+          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hpke-js/test/runtimes/browsers
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
