@@ -129,10 +129,20 @@ jobs:
       - working-directory: ./packages/core
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../dhkem-x25519/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../dhkem-x448/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../chacha20poly1305/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../hybridkem-x-wing/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../ml-kem/test/runtimes/browsers/pages/src/hpke-core.js
+          deno task minify > ../dhkem-secp256k1/test/runtimes/browsers/pages/src/hpke-core.js
           cd test/runtimes/browsers
           npm ci && npx playwright install-deps && npx playwright install && npx playwright test
-      - working-directory: ./packages/dhkem-x25519/test/runtimes/browsers
-        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
+      - working-directory: ./packages/dhkem-x25519
+        run: |
+          deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-x25519.js
+          cd test/runtimes/browsers
+          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-x448/test/runtimes/browsers
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/chacha20poly1305/test/runtimes/browsers
