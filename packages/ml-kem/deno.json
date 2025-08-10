@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "exports": "./mod.ts",
   "imports": {
-    "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.3.1"
+    "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0"
   },
   "publish": {
     "exclude": [
