@@ -9,13 +9,18 @@ test("basic test", async ({ page }) => {
 });
 
 test("secure curves test", async ({ browserName, page }) => {
-  test.skip(
-    browserName === "webkit",
-    "Secure curves are not supported in Safari",
-  );
+  // test.skip(
+  //   browserName === "webkit",
+  //   "Secure curves are not supported in Safari",
+  // );
   await page.goto("./secure_curves.html");
   await page.click("text=run");
   await page.waitForTimeout(5000);
-  await expect(page.locator("id=pass")).toHaveText("6");
-  await expect(page.locator("id=fail")).toHaveText("0");
+  if (browserName === "webkit") {
+    await expect(page.locator("id=pass")).toHaveText("0");
+    await expect(page.locator("id=fail")).toHaveText("6");
+  } else {
+    await expect(page.locator("id=pass")).toHaveText("6");
+    await expect(page.locator("id=fail")).toHaveText("0");
+  }
 });
