@@ -124,6 +124,8 @@ jobs:
       - name: Install dependencies
         run: |
           npm install -g esbuild
+          npx playwright install-deps
+          npx playwright install
       - name: Run dnt
         run: deno task dnt
       - working-directory: ./packages/core
@@ -137,44 +139,44 @@ jobs:
           deno task minify > ../ml-kem/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../dhkem-secp256k1/test/runtimes/browsers/pages/src/hpke-core.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/dhkem-x25519
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-x25519.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/dhkem-x448
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-x448.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/chacha20poly1305
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-chacha20poly1305.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/hybridkem-x25519-kyber768
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-hybridkem-x25519-kyber768.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/hybridkem-x-wing
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-hybridkem-x-wing.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/ml-kem
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-ml-kem.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/dhkem-secp256k1
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-secp256k1.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
       - working-directory: ./packages/hpke-js
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke.js
           cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
+          npm ci && npx playwright test
