@@ -45,7 +45,6 @@
                   aead: aead,
                 });
 
-
                 const rkp = await suite.kem.generateKeyPair();
 
                 const ikm = new Uint8Array(suite.kem.privateKeySize);
