@@ -1,7 +1,8 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@dajiaji/mlkem@^2.3.1": "2.3.1",
+    "jsr:@dajiaji/mlkem@^2.3.1": "2.4.0",
+    "jsr:@dajiaji/mlkem@^2.4.0": "2.4.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@0.41.3": "0.41.3",
@@ -35,20 +36,16 @@
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@noble/ciphers@^1.2.1": "1.2.1",
-    "npm:@noble/ciphers@^1.3.0": "1.3.0",
-    "npm:@noble/curves@^1.9.2": "1.9.2",
-    "npm:@noble/hashes@^1.7.1": "1.8.0",
+    "npm:@noble/curves@^1.9.2": "1.9.6",
+    "npm:@noble/curves@^1.9.6": "1.9.6",
     "npm:@noble/hashes@^1.8.0": "1.8.0",
-    "npm:@playwright/test@^1.51.0": "1.51.0",
+    "npm:@playwright/test@^1.54.2": "1.54.2",
     "npm:@types/node@*": "22.13.10",
-    "npm:mlkem@^2.3.1": "2.3.1"
+    "npm:mlkem@^2.4.0": "2.4.0"
   },
   "jsr": {
-    "@dajiaji/mlkem@2.3.1": {
-      "integrity": "0636f16f21539d2f853a10284f667fb8f2eb5f7d8c378eb8acca2da1c868ff02",
-      "dependencies": [
-        "npm:@noble/hashes@^1.7.1"
-      ]
+    "@dajiaji/mlkem@2.4.0": {
+      "integrity": "3852e45e5e6b997bf4fee5b8c678633a6dd36ef59eea0cf2ecb610a7cb459fe1"
     },
     "@david/code-block-writer@13.0.3": {
       "integrity": "f98c77d320f5957899a61bfb7a9bead7c6d83ad1515daee92dbacc861e13bb7f"
@@ -76,7 +73,7 @@
     "@hpke/chacha20poly1305@1.6.2": {
       "integrity": "b8a13d553e838854ad6980b55bbae655e5fbcfa5d060958e082f520a43e0f132",
       "dependencies": [
-        "npm:@noble/ciphers@^1.2.1"
+        "npm:@noble/ciphers"
       ]
     },
     "@hpke/core@1.7.2": {
@@ -174,11 +171,8 @@
     "@noble/ciphers@1.2.1": {
       "integrity": "sha512-rONPWMC7PeExE077uLE4oqWrZ1IvAfz3oH9LibVAcVCopJiA9R62uavnbEzdkVmJYI6M6Zgkbeb07+tWjlq2XA=="
     },
-    "@noble/ciphers@1.3.0": {
-      "integrity": "sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw=="
-    },
-    "@noble/curves@1.9.2": {
-      "integrity": "sha512-HxngEd2XUcg9xi20JkwlLCtYwfoFw4JGkuZpT+WlsPD4gB/cxkvTD8fSsoAnphGZhFdZYKeQIPCuFlWPm1uE0g==",
+    "@noble/curves@1.9.6": {
+      "integrity": "sha512-GIKz/j99FRthB8icyJQA51E8Uk5hXmdyThjgQXRKiv9h0zeRlzSCLIzFw6K1LotZ3XuB7yzlf76qk7uBmTdFqA==",
       "dependencies": [
         "@noble/hashes"
       ]
@@ -186,8 +180,8 @@
     "@noble/hashes@1.8.0": {
       "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
     },
-    "@playwright/test@1.51.0": {
-      "integrity": "sha512-dJ0dMbZeHhI+wb77+ljx/FeC8VBP6j/rj9OAojO08JI80wTZy6vRk9KvHKiDCUh4iMpEiseMgqRBIeW+eKX6RA==",
+    "@playwright/test@1.54.2": {
+      "integrity": "sha512-A+znathYxPf+72riFd1r1ovOLqsIIB0jKIoPjyK2kqEIe30/6jF6BC7QNluHuwUmsD2tv1XZVugN8GqfTMOxsA==",
       "dependencies": [
         "playwright"
       ],
@@ -204,18 +198,15 @@
       "os": ["darwin"],
       "scripts": true
     },
-    "mlkem@2.3.1": {
-      "integrity": "sha512-ZlhI0U1ZXpXd1U3DRyk1xafXNm7rU4lm2sSPIX5lidoLHJ7gyKQ4dafNd7W/MgIejadVfKTTa3uL1PDSbesL3g==",
-      "dependencies": [
-        "@noble/hashes"
-      ]
+    "mlkem@2.4.0": {
+      "integrity": "sha512-dxDnWX36hG6OE/RM3CSJEJIqDdalbc03mmyHas1tpsPTC7X2ZTuTmrv/Ac3i5cB4s2g19atYu+JmFawzkiZthg=="
     },
-    "playwright-core@1.51.0": {
-      "integrity": "sha512-x47yPE3Zwhlil7wlNU/iktF7t2r/URR3VLbH6EknJd/04Qc/PSJ0EY3CMXipmglLG+zyRxW6HNo2EGbKLHPWMg==",
+    "playwright-core@1.54.2": {
+      "integrity": "sha512-n5r4HFbMmWsB4twG7tJLDN9gmBUeSPcsBZiWSE4DnYz9mJMAFqr2ID7+eGC9kpEnxExJ1epttwR59LEWCk8mtA==",
       "bin": true
     },
-    "playwright@1.51.0": {
-      "integrity": "sha512-442pTfGM0xxfCYxuBa/Pu6B2OqxqqaYq39JS8QDMGThUvIOCd6s0ANDog3uwA0cHavVlnTQzGCN7Id2YekDSXA==",
+    "playwright@1.54.2": {
+      "integrity": "sha512-Hu/BMoA1NAdRUuulyvQC0pEqZ4vQbGfn8f7wPXcnqQmM+zct9UliKxsIkLNmz/ku7LElUNqmaiv1TG/aL5ACsw==",
       "dependencies": [
         "playwright-core"
       ],
@@ -235,11 +226,10 @@
       "jsr:@std/fs@1.0.14",
       "jsr:@std/path@1.0.8",
       "jsr:@std/testing@1.0.9",
-      "npm:@noble/ciphers@^1.3.0",
-      "npm:@noble/curves@^1.9.2",
+      "npm:@noble/curves@^1.9.6",
       "npm:@noble/hashes@^1.8.0",
-      "npm:@playwright/test@^1.51.0",
-      "npm:mlkem@^2.3.1"
+      "npm:@playwright/test@^1.54.2",
+      "npm:mlkem@^2.4.0"
     ],
     "members": {
       "packages/chacha20poly1305/samples/deno": {
@@ -272,7 +262,7 @@
       },
       "packages/hybridkem-x-wing": {
         "dependencies": [
-          "jsr:@dajiaji/mlkem@^2.3.1",
+          "jsr:@dajiaji/mlkem@^2.4.0",
           "npm:@noble/hashes@^1.8.0"
         ]
       },
