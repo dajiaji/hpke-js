@@ -45,7 +45,12 @@
                   aead: aead,
                 });
 
+
                 const rkp = await suite.kem.generateKeyPair();
+
+                const ikm = new Uint8Array(suite.kem.privateKeySize);
+                globalThis.crypto.getRandomValues(ikm);
+                const _rkp = await suite.kem.deriveKeyPair(ikm.buffer);
 
                 const sender = await suite.createSenderContext({
                   recipientPublicKey: rkp.publicKey,
