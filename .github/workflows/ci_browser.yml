@@ -111,7 +111,6 @@ jobs:
           publish_dir: ./packages/hpke-js/test/runtimes/browsers/pages
 
   playwright-test:
-    needs: pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
