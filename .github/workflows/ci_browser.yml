@@ -143,8 +143,11 @@ jobs:
           deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-x25519.js
           cd test/runtimes/browsers
           npm ci && npx playwright install-deps && npx playwright install && npx playwright test
-      - working-directory: ./packages/dhkem-x448/test/runtimes/browsers
-        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
+      - working-directory: ./packages/dhkem-x448
+        run: |
+          deno task minify > test/runtimes/browsers/pages/src/hpke-dhkem-x448.js
+          cd test/runtimes/browsers
+          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/chacha20poly1305/test/runtimes/browsers
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hybridkem-x25519-kyber768/test/runtimes/browsers
