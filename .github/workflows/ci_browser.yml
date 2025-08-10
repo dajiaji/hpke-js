@@ -123,9 +123,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: 2.x
       - uses: actions/setup-node@v4
-      - working-directory: ./packages/core/test/runtimes/browsers
-        run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: |
+          npm install -g esbuild
+      - name: Run dnt
+        run: deno task dnt
+      - working-directory: ./packages/core
+        run: |
+          deno task minify > test/runtimes/browsers/pages/src/hpke-core.js
+          cd test/runtimes/browsers
+          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-x25519/test/runtimes/browsers
         run: npm install && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/dhkem-x448/test/runtimes/browsers
