@@ -39,7 +39,6 @@ pnpm install @hpke/core
 npx jsr add @hpke/core
 yarn dlx jsr add @hpke/core
 pnpm dlx jsr add @hpke/core
-npm install @hpke/core
 ```
 
 Following extensions can be installed in the same manner:
@@ -48,9 +47,9 @@ Following extensions can be installed in the same manner:
 - `@hpke/dhkem-x25519`
 - `@hpke/dhkem-x448`
 - `@hpke/dhkem-secp256k1`
-- `@hpke/hybridkem-x25519-kyber768` - deprecated
 - `@hpke/hybridkem-x-wing`
 - `@hpke/ml-kem`
+- `@hpke/hybridkem-x25519-kyber768` - deprecated
 
 Then, you can use it as follows:
 
@@ -205,3 +204,5 @@ guidelines on:
 - [W3C/WICG: Secure Curves in the Web Cryptography API](https://wicg.github.io/webcrypto-secure-curves/)
 - [X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE](https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00)
 - [X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem)
+- [Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
+- [Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
