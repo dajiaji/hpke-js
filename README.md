@@ -39,7 +39,6 @@ pnpm install @hpke/core
 npx jsr add @hpke/core
 yarn dlx jsr add @hpke/core
 pnpm dlx jsr add @hpke/core
-npm install @hpke/core
 ```
 
 Following extensions can be installed in the same manner:
