@@ -1,30 +1,26 @@
-name: Cloudflare Workers CI
+name: Markdown CI
 
 on:
   push:
     branches: [main]
-    paths-ignore:
+    paths:
       - "**/*.md"
   pull_request:
     branches: [main]
-    paths-ignore:
+    paths:
       - "**/*.md"
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  fmt:
+    name: Run deno fmt --check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: denoland/setup-deno@v2
         with:
           deno-version: 2.x
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Prepare test
-        run: deno task npm
-      - name: Run test
-        run: deno task test:cloudflare
+      - name: Check formatting
+        run: deno fmt --check
