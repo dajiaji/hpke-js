@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@hpke/core": "^1.7.2",
-    "@hpke/ml-kem": "^0.1.0"
+    "@hpke/ml-kem": "^0.2.0"
   }
 }
