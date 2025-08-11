@@ -47,9 +47,9 @@ Following extensions can be installed in the same manner:
 - `@hpke/dhkem-x25519`
 - `@hpke/dhkem-x448`
 - `@hpke/dhkem-secp256k1`
-- `@hpke/hybridkem-x25519-kyber768` - deprecated
 - `@hpke/hybridkem-x-wing`
 - `@hpke/ml-kem`
+- `@hpke/hybridkem-x25519-kyber768` - deprecated
 
 Then, you can use it as follows:
 
