@@ -21,7 +21,7 @@
     "./packages/ml-kem/samples/deno"
   ],
   "imports": {
-    "@dajiaji/mlkem": "npm:mlkem@^2.5.0",
+    "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@noble/curves/ed25519": "npm:@noble/curves@^1.9.6/ed25519",
     "@noble/curves/ed448": "npm:@noble/curves@^1.9.6/ed448",

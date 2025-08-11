@@ -1,7 +1,6 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@dajiaji/mlkem@^2.3.1": "2.5.0",
     "jsr:@dajiaji/mlkem@^2.5.0": "2.5.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
@@ -40,8 +39,7 @@
     "npm:@noble/curves@^1.9.6": "1.9.6",
     "npm:@noble/hashes@^1.8.0": "1.8.0",
     "npm:@playwright/test@^1.54.2": "1.54.2",
-    "npm:@types/node@*": "22.13.10",
-    "npm:mlkem@^2.5.0": "2.5.0"
+    "npm:@types/node@*": "22.13.10"
   },
   "jsr": {
     "@dajiaji/mlkem@2.5.0": {
@@ -198,9 +196,6 @@
       "os": ["darwin"],
       "scripts": true
     },
-    "mlkem@2.5.0": {
-      "integrity": "sha512-TnSvGBs0EVPukQcdPF0882ZoYXYuD2rb+VgO0kUDbFi/XM1rJOwnQoFW3wGGuc3nG3AT/zp3oWJ86W7ewwKYyA=="
-    },
     "playwright-core@1.54.2": {
       "integrity": "sha512-n5r4HFbMmWsB4twG7tJLDN9gmBUeSPcsBZiWSE4DnYz9mJMAFqr2ID7+eGC9kpEnxExJ1epttwR59LEWCk8mtA==",
       "bin": true
@@ -221,6 +216,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@dajiaji/mlkem@^2.5.0",
       "jsr:@deno/dnt@0.41.3",
       "jsr:@std/assert@1.0.0",
       "jsr:@std/fs@1.0.14",
@@ -228,8 +224,7 @@
       "jsr:@std/testing@1.0.9",
       "npm:@noble/curves@^1.9.6",
       "npm:@noble/hashes@^1.8.0",
-      "npm:@playwright/test@^1.54.2",
-      "npm:mlkem@^2.5.0"
+      "npm:@playwright/test@^1.54.2"
     ],
     "members": {
       "packages/chacha20poly1305/samples/deno": {
@@ -262,8 +257,7 @@
       },
       "packages/hybridkem-x-wing": {
         "dependencies": [
-          "jsr:@dajiaji/mlkem@^2.3.1",
-          "npm:@noble/hashes@^1.8.0"
+          "jsr:@dajiaji/mlkem@^2.5.0"
         ]
       },
       "packages/hybridkem-x25519-kyber768": {
