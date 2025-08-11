@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@dajiaji/mlkem@^2.3.1": "2.5.0",
+    "jsr:@dajiaji/mlkem@^2.5.0": "2.5.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
     "jsr:@deno/dnt@0.41.3": "0.41.3",
@@ -272,7 +273,7 @@
       },
       "packages/ml-kem": {
         "dependencies": [
-          "jsr:@dajiaji/mlkem@^2.3.1"
+          "jsr:@dajiaji/mlkem@^2.5.0"
         ]
       }
     }
