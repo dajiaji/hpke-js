@@ -1,5 +1,11 @@
 # Changes
 
+## Version 0.6.0
+
+Released 2025-08-11
+
+- [(#568) hybridkem-x-wing: bump mlkem to 2.5.0.](https://github.com/dajiaji/hpke-js/pull/568)
+
 ## Version 0.5.2
 
 Released 2025-07-13
