@@ -260,11 +260,6 @@
           "jsr:@dajiaji/mlkem@^2.5.0"
         ]
       },
-      "packages/hybridkem-x25519-kyber768": {
-        "dependencies": [
-          "npm:@noble/hashes@^1.8.0"
-        ]
-      },
       "packages/ml-kem": {
         "dependencies": [
           "jsr:@dajiaji/mlkem@^2.5.0"

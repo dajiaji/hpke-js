@@ -70,15 +70,6 @@ jobs:
         working-directory: ./npm/packages/dhkem-x448
         if: matrix.node-version != 24
         run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/hybridkem-x25519-kyber768
-        working-directory: ./packages/hybridkem-x25519-kyber768
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/hybridkem-x25519-kyber768/hpke-hybridkem-x25519-kyber768.min.js
-      - name: Publish to npm (dry) for /packages/hybridkem-x25519-kyber768
-        working-directory: ./npm/packages/hybridkem-x25519-kyber768
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
       - name: Run dnt & minify for /packages/dhkem-secp256k1
         working-directory: ./packages/dhkem-secp256k1
         run: |

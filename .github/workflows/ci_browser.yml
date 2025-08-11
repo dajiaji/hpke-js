@@ -41,8 +41,6 @@ jobs:
           cp -rf ../dhkem-x25519/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x25519
           mkdir test/runtimes/browsers/pages/dhkem-x448
           cp -rf ../dhkem-x448/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/dhkem-x448
-          mkdir test/runtimes/browsers/pages/hybridkem-x25519-kyber768
-          cp -rf ../hybridkem-x25519-kyber768/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/hybridkem-x25519-kyber768
           mkdir test/runtimes/browsers/pages/hybridkem-x-wing
           cp -rf ../hybridkem-x-wing/test/runtimes/browsers/pages/* test/runtimes/browsers/pages/hybridkem-x-wing
           mkdir test/runtimes/browsers/pages/ml-kem
@@ -61,7 +59,6 @@ jobs:
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x25519/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/chacha20poly1305/src/hpke-core.js
-          deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x-wing/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/ml-kem/src/hpke-core.js
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-secp256k1/src/hpke-core.js
@@ -80,11 +77,6 @@ jobs:
         run: |
           npx typedoc --name "@hpke/dhkem-x448 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/docs mod.ts
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/dhkem-x448/src/hpke-dhkem-x448.js
-      - name: Build docs for @hpke/hybridkem-x25519-kyber768
-        working-directory: ./packages/hybridkem-x25519-kyber768
-        run: |
-          npx typedoc --name "@hpke/hybridkem-x25519-kyber768 $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/docs mod.ts
-          deno task minify > ../hpke-js/test/runtimes/browsers/pages/hybridkem-x25519-kyber768/src/hpke-hybridkem-x25519-kyber768.js
       - name: Build docs for @hpke/dhkem-secp256k1
         working-directory: ./packages/dhkem-secp256k1
         run: |
@@ -131,7 +123,6 @@ jobs:
           deno task minify > ../dhkem-x25519/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../dhkem-x448/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../chacha20poly1305/test/runtimes/browsers/pages/src/hpke-core.js
-          deno task minify > ../hybridkem-x25519-kyber768/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../hybridkem-x-wing/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../ml-kem/test/runtimes/browsers/pages/src/hpke-core.js
           deno task minify > ../dhkem-secp256k1/test/runtimes/browsers/pages/src/hpke-core.js
@@ -150,11 +141,6 @@ jobs:
       - working-directory: ./packages/chacha20poly1305
         run: |
           deno task minify > test/runtimes/browsers/pages/src/hpke-chacha20poly1305.js
-          cd test/runtimes/browsers
-          npm ci && npx playwright install-deps && npx playwright install && npx playwright test
-      - working-directory: ./packages/hybridkem-x25519-kyber768
-        run: |
-          deno task minify > test/runtimes/browsers/pages/src/hpke-hybridkem-x25519-kyber768.js
           cd test/runtimes/browsers
           npm ci && npx playwright install-deps && npx playwright install && npx playwright test
       - working-directory: ./packages/hybridkem-x-wing

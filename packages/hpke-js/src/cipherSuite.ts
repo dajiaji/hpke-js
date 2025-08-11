@@ -63,11 +63,11 @@ import { DhkemP521HkdfSha512 } from "./kems/dhkemP521.ts";
  * import { AeadId, CipherSuite, KdfId } from "@hpke/hpke-js";
  * // Use an extension module.
  * import {
- *   HybridkemX25519Kyber768,
- * } from "@hpke/hybridkem-x25519-kyber768";
+ *   XWing,
+ * } from "@hpke/hybridkem-x-wing";
  *
  * const suite = new CipherSuite({
- *   kem: new HybridkemX25519Kyber768(),
+ *   kem: new XWing(),
  *   kdf: KdfId.HkdfSha256,
  *   aead: AeadId.Aes128Gcm,
  * });
