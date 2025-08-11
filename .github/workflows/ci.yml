@@ -53,11 +53,6 @@ jobs:
       #   run: |
       #     deno fmt --check
       #     deno task test
-      # - name: Run deno test for /packages/hybridkem-x25519-kyber768
-      #   working-directory: ./packages/hybridkem-x25519-kyber768
-      #   run: |
-      #     deno fmt --check
-      #     deno task test
       # - name: Run deno test for /packages/dhkem-secp256k1
       #   working-directory: ./packages/dhkem-secp256k1
       #   run: |

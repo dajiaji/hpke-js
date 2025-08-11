@@ -69,12 +69,6 @@ jobs:
         run: npm publish --provenance
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-      - name: Publish @hpke/hybridkem-x25519-kyber768 to npm
-        continue-on-error: true
-        working-directory: ./npm/packages/hybridkem-x25519-kyber768
-        run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - name: Publish @hpke/dhkem-secp256k1 to npm
         continue-on-error: true
         working-directory: ./npm/packages/dhkem-secp256k1
