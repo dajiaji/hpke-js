@@ -204,3 +204,5 @@ guidelines on:
 - [W3C/WICG: Secure Curves in the Web Cryptography API](https://wicg.github.io/webcrypto-secure-curves/)
 - [X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE](https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00)
 - [X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem)
+- [Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
+- [Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
