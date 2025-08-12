@@ -1,4 +1,4 @@
-import { x25519 } from "@noble/curves/ed25519";
+import { x25519 } from "./x25519/x25519.ts";
 
 import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
@@ -81,7 +81,7 @@ export class X25519 implements DhkemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      const rawSk = x25519.utils.randomPrivateKey();
+      const rawSk = await x25519.utils.randomSecretKey();
       const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
       const pk = await this.derivePublicKey(sk);
       return { publicKey: pk, privateKey: sk };

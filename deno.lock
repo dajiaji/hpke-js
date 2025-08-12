@@ -240,7 +240,6 @@
       },
       "packages/dhkem-x25519": {
         "dependencies": [
-          "npm:@noble/curves@^1.9.2",
           "npm:@noble/hashes@^1.8.0"
         ]
       },
