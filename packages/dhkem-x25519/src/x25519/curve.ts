@@ -13,7 +13,7 @@
  * @module
  */
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-import type { Signer } from "./utils.ts";
+import type { Signer } from "../utils.ts";
 
 // import { Field, FpInvertBatch, type IField, validateField } from "./modular.ts";
 
