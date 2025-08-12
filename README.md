@@ -200,9 +200,15 @@ guidelines on:
 
 ## References
 
-- [RFC9180: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/html/rfc9180)
+- [W3C: Web Cryptography API](https://www.w3.org/TR/2017/REC-WebCryptoAPI-20170126/)
 - [W3C/WICG: Secure Curves in the Web Cryptography API](https://wicg.github.io/webcrypto-secure-curves/)
-- [X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE](https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00)
-- [X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem)
-- [Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
-- [Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
+- [W3C: Web Cryptography API Level 2](https://w3c.github.io/webcrypto/)
+- [IETF/HPKE-WG: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
+- [IETF/HPKE-WG: Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
+- [IRTF/CFRG: RFC9180: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/html/rfc9180)
+- [IRTF/CFRG: X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE](https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00)
+- [IRTF/CFRG: X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem)
+- [IRTF/CFRG: Hybrid PQ/T Key Encapsulation Mechanisms](https://datatracker.ietf.org/doc/draft-irtf-cfrg-hybrid-kems/)
+- [IRTF/CFRG: Concrete Hybrid PQ/T Key Encapsulation Mechanisms](https://datatracker.ietf.org/doc/draft-irtf-cfrg-concrete-hybrid-kems/)
+- [IRTF/CFRG: Deterministic Nonce-less Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-irtf-cfrg-dnhpke/)
+- [IRTF/CFRG: SHA-3 for HPKE](https://datatracker.ietf.org/doc/draft-connolly-cfrg-sha3-hpke/)
