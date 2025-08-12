@@ -2,10 +2,6 @@
   "name": "@hpke/dhkem-x448",
   "version": "1.6.3",
   "exports": "./mod.ts",
-  "imports": {
-    "@noble/curves": "npm:@noble/curves@^1.9.2",
-    "@noble/hashes": "npm:@noble/hashes@^1.8.0"
-  },
   "publish": {
     "exclude": [
       "dnt.ts",

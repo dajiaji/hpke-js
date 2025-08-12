@@ -1,4 +1,4 @@
-import { x448 } from "@noble/curves/ed448";
+import { x448 } from "./x448/x448.ts";
 
 import type { DhkemPrimitives, KdfInterface } from "@hpke/common";
 
@@ -81,7 +81,7 @@ export class X448 implements DhkemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      const rawSk = x448.utils.randomPrivateKey();
+      const rawSk = await x448.utils.randomSecretKey();
       const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
       const pk = await this.derivePublicKey(sk);
       return { publicKey: pk, privateKey: sk };

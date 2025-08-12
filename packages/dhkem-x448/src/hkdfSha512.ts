@@ -1,5 +1,5 @@
-import { hmac } from "@noble/hashes/hmac";
-import { sha512 } from "@noble/hashes/sha512";
+import { hmac } from "./hash/hmac.ts";
+import { sha512 } from "./hash/sha2.ts";
 
 import { HkdfSha512Native } from "@hpke/common";
 
