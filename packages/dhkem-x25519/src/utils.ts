@@ -17,6 +17,37 @@ import { loadCrypto } from "@hpke/common";
 
 const _0n = /* @__PURE__ */ BigInt(0);
 
+export interface Hash<T> {
+  blockLen: number; // Bytes per block
+  outputLen: number; // Bytes in output
+  update(buf: Uint8Array): this;
+  digestInto(buf: Uint8Array): void;
+  digest(): Uint8Array;
+  destroy(): void;
+  _cloneInto(to?: T): T;
+  clone(): T;
+}
+
+export type HashInfo = {
+  oid?: Uint8Array; // DER encoded OID in bytes
+};
+
+/** Hash function */
+export type CHash<T extends Hash<T> = Hash<any>, Opts = undefined> =
+  & {
+    outputLen: number;
+    blockLen: number;
+  }
+  & HashInfo
+  & (Opts extends undefined ? {
+      (msg: Uint8Array): Uint8Array;
+      create(): T;
+    }
+    : {
+      (msg: Uint8Array, opts?: Opts): Uint8Array;
+      create(opts?: Opts): T;
+    });
+
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {
   return a instanceof Uint8Array ||
@@ -41,6 +72,32 @@ export function abytes(
   return value;
 }
 
+/** Asserts something is hash */
+export function ahash(h: CHash): void {
+  if (typeof h !== "function" || typeof h.create !== "function") {
+    throw new Error("Hash must wrapped by utils.createHasher");
+  }
+  anumber(h.outputLen);
+  anumber(h.blockLen);
+}
+
+/** Asserts a hash instance has not been destroyed / finished */
+export function aexists(instance: any, checkFinished = true): void {
+  if (instance.destroyed) throw new Error("Hash instance has been destroyed");
+  if (checkFinished && instance.finished) {
+    throw new Error("Hash#digest() has already been called");
+  }
+}
+
+/** Asserts output is properly-sized byte array */
+export function aoutput(out: any, instance: any): void {
+  abytes(out, undefined, "digestInto() output");
+  const min = instance.outputLen;
+  if (out.length < min) {
+    throw new Error('"digestInto() output" expected to be of length >=' + min);
+  }
+}
+
 /** Asserts something is positive integer. */
 export function anumber(n: number): void {
   if (!Number.isSafeInteger(n) || n < 0) {
@@ -54,6 +111,34 @@ function abignumer(n: number | bigint) {
     if (!isPosBig(n)) throw new Error("positive bigint expected, got " + n);
   } else anumber(n);
   return n;
+}
+
+/** Generic type encompassing 8/16/32-byte arrays - but not 64-byte. */
+// prettier-ignore
+export type TypedArray =
+  | Int8Array
+  | Uint8ClampedArray
+  | Uint8Array
+  | Uint16Array
+  | Int16Array
+  | Uint32Array
+  | Int32Array;
+
+/** Zeroize a byte array. Warning: JS provides no guarantees. */
+export function clean(...arrays: TypedArray[]): void {
+  for (let i = 0; i < arrays.length; i++) {
+    arrays[i].fill(0);
+  }
+}
+
+/** Create DataView of an array for easy byte-level manipulation. */
+export function createView(arr: TypedArray): DataView {
+  return new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
+}
+
+/** The rotate right (circular right shift) operation for uint32 */
+export function rotr(word: number, shift: number): number {
+  return (word << (32 - shift)) | (word >>> shift);
 }
 
 // Built-in hex conversion https://caniuse.com/mdn-javascript_builtins_uint8array_fromhex
@@ -260,6 +345,23 @@ export interface Signer extends CryptoKeys {
   verify: (sig: Uint8Array, msg: Uint8Array, publicKey: Uint8Array) => boolean;
 }
 
+export type HasherCons<T, Opts = undefined> = Opts extends undefined ? () => T
+  : (opts?: Opts) => T;
+
+export function createHasher<T extends Hash<T>, Opts = undefined>(
+  hashCons: HasherCons<T, Opts>,
+  info: HashInfo = {},
+): CHash<T, Opts> {
+  const hashC: any = (msg: Uint8Array, opts?: Opts) =>
+    hashCons(opts).update(msg).digest();
+  const tmp = hashCons(undefined);
+  hashC.outputLen = tmp.outputLen;
+  hashC.blockLen = tmp.blockLen;
+  hashC.create = (opts?: Opts) => hashCons(opts);
+  Object.assign(hashC, info);
+  return Object.freeze(hashC);
+}
+
 // /** Cryptographically secure PRNG. Uses internal OS-level `crypto.getRandomValues`. */
 // export function randomBytes(bytesLength = 32): Uint8Array {
 //   const cr = typeof globalThis != null && (globalThis as any).crypto;
@@ -276,3 +378,20 @@ export async function randomBytesAsync(bytesLength = 32): Promise<Uint8Array> {
   api.getRandomValues(rnd);
   return rnd;
 }
+
+// 06 09 60 86 48 01 65 03 04 02
+export const oidNist = (suffix: number): { oid: Uint8Array } => ({
+  oid: Uint8Array.from([
+    0x06,
+    0x09,
+    0x60,
+    0x86,
+    0x48,
+    0x01,
+    0x65,
+    0x03,
+    0x04,
+    0x02,
+    suffix,
+  ]),
+});

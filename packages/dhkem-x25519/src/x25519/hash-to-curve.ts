@@ -14,6 +14,6 @@
  * @module
  */
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-import { asciiToBytes } from "./utils.ts";
+import { asciiToBytes } from "../utils.ts";
 
 export const _DST_scalar: Uint8Array = asciiToBytes("HashToScalar-");

@@ -23,7 +23,7 @@ import {
   numberToBytesLE,
   randomBytesAsync,
   validateObject,
-} from "./utils.ts";
+} from "../utils.ts";
 import { createKeygen, type CurveLengths } from "./curve.ts";
 import { mod } from "./modular.ts";
 
