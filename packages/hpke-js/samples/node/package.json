@@ -10,6 +10,6 @@
     "test": "node app.js"
   },
   "dependencies": {
-    "hpke-js": "^1.6.2"
+    "hpke-js": "^1.6.3"
   }
 }

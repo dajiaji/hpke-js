@@ -10,7 +10,7 @@
     "test": "node app.js"
   },
   "dependencies": {
-    "@hpke/chacha20poly1305": "^1.6.2",
-    "@hpke/core": "^1.7.2"
+    "@hpke/chacha20poly1305": "^1.7.0",
+    "@hpke/core": "^1.7.3"
   }
 }
