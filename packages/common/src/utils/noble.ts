@@ -210,6 +210,23 @@ export function hexToBytes(hex: string): Uint8Array {
   return array;
 }
 
+/**
+ * Converts string to bytes using UTF8 encoding.
+ * @example utf8ToBytes('abc') // Uint8Array.from([97, 98, 99])
+ */
+export function utf8ToBytes(str: string): Uint8Array {
+  if (typeof str !== "string") throw new Error("string expected");
+  return new Uint8Array(new TextEncoder().encode(str)); // https://bugzil.la/1681809
+}
+
+/**
+ * Converts bytes to string using UTF8 encoding.
+ * @example bytesToUtf8(Uint8Array.from([97, 98, 99])) // 'abc'
+ */
+export function bytesToUtf8(bytes: Uint8Array): string {
+  return new TextDecoder().decode(bytes);
+}
+
 export function numberToHexUnpadded(num: number | bigint): string {
   const hex = abignumer(num).toString(16);
   return hex.length & 1 ? "0" + hex : hex;
@@ -247,6 +264,23 @@ export function numberToBytesLE(n: number | bigint, len: number): Uint8Array {
  */
 export function copyBytes(bytes: Uint8Array): Uint8Array {
   return Uint8Array.from(bytes);
+}
+
+/** Copies several Uint8Arrays into one. */
+export function concatBytes(...arrays: Uint8Array[]): Uint8Array {
+  let sum = 0;
+  for (let i = 0; i < arrays.length; i++) {
+    const a = arrays[i];
+    abytes(a);
+    sum += a.length;
+  }
+  const res = new Uint8Array(sum);
+  for (let i = 0, pad = 0; i < arrays.length; i++) {
+    const a = arrays[i];
+    res.set(a, pad);
+    pad += a.length;
+  }
+  return res;
 }
 
 /**
