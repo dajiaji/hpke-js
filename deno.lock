@@ -216,11 +216,6 @@
           "npm:@noble/curves@^1.9.6"
         ]
       },
-      "packages/hpke-js": {
-        "dependencies": [
-          "npm:@noble/hashes@^1.8.0"
-        ]
-      },
       "packages/hybridkem-x-wing": {
         "dependencies": [
           "jsr:@dajiaji/mlkem@^2.5.0"
