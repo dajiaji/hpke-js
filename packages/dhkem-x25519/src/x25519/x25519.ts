@@ -15,17 +15,12 @@
  * @module
  */
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-import type { _DST_scalar } from "./hash-to-curve.ts";
-import { mod, pow2 } from "./modular.ts";
-import { montgomery, type MontgomeryECDH } from "./montgomery.ts";
+import { mod, montgomery, type MontgomeryECDH, pow2 } from "@hpke/common";
 
-// prettier-ignore
-const _0n = /* @__PURE__ */ BigInt(0),
-  _1n = BigInt(1),
-  _2n = BigInt(2),
-  _3n = /* @__PURE__ */ BigInt(3);
-// prettier-ignore
-const _5n = BigInt(5), _8n = BigInt(8);
+const _1n = BigInt(1);
+const _2n = BigInt(2);
+const _3n = BigInt(3);
+const _5n = BigInt(5);
 
 // P = 2n**255n - 19n
 const ed25519_CURVE_p = BigInt(
@@ -33,11 +28,10 @@ const ed25519_CURVE_p = BigInt(
 );
 
 function ed25519_pow_2_252_3(x: bigint) {
-  // prettier-ignore
-  const _10n = BigInt(10),
-    _20n = BigInt(20),
-    _40n = BigInt(40),
-    _80n = BigInt(80);
+  const _10n = BigInt(10);
+  const _20n = BigInt(20);
+  const _40n = BigInt(40);
+  const _80n = BigInt(80);
   const P = ed25519_CURVE_p;
   const x2 = (x * x) % P;
   const b2 = (x2 * x) % P; // x^3, 11
