@@ -107,6 +107,34 @@ The generated packages are placed in the `npm` directory and are ready to be
 published with `npm publish` or similar commands. This task is essential for
 releasing new versions of the library to npm.
 
+- `deno task npm-build`: Build npm packages for all modules using dnt
+
+The `deno task npm-build` command performs the npm package build process for all
+modules in the workspace. This is part of the full `deno task npm` pipeline and
+handles the conversion of Deno modules to npm-compatible packages. It runs the
+individual `npm-build` task for each package, which uses the
+[dnt](https://github.com/denoland/dnt) tool to transform TypeScript code into
+both ESM and CommonJS formats suitable for npm distribution.
+
+- `deno task minify`: Generate minified versions of all packages
+
+The `deno task minify` command creates minified JavaScript files for all
+packages in the workspace. This task runs the individual `minify` task for each
+package, which generates optimized, production-ready minified files suitable for
+browser environments. The minified files are saved to the corresponding npm
+package directories with `.min.js` extensions and can be used for CDN
+distribution or direct browser inclusion.
+
+- `deno task dry-publish`: Test npm package publishing without actually
+  publishing
+
+The `deno task dry-publish` command simulates the npm publishing process for all
+packages without actually publishing them to the npm registry. This is useful
+for verifying that packages are properly structured and contain all necessary
+files before performing an actual release. It runs `npm pack --dry-run` for each
+package, which validates the package contents and shows what would be included
+in the published package.
+
 ### Code Quality
 
 The project enforces code quality through the `deno task test` command, which
