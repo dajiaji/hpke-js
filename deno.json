@@ -188,6 +188,16 @@
     "minify:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task minify > ../../npm/packages/dhkem-secp256k1/hpke-dhkem-secp256k1.min.js",
     "minify:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task minify > ../../npm/packages/hybridkem-x-wing/hpke-hybridkem-x-wing.min.js",
     "minify:hpke-js": "cd packages/hpke-js && deno task minify > ../../npm/packages/hpke-js/hpke-js.min.js",
-    "minify:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js"
+    "minify:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js",
+    "dry-publish": "deno task dry-publish:common && deno task dry-publish:core && deno task dry-publish:chacha20poly1305 && deno task dry-publish:dhkem-x25519 && deno task dry-publish:dhkem-x448 && deno task dry-publish:dhkem-secp256k1 && deno task dry-publish:hybridkem-x-wing && deno task dry-publish:hpke-js && deno task dry-publish:ml-kem",
+    "dry-publish:common": "cd npm/packages/common && npm pack --dry-run",
+    "dry-publish:core": "cd npm/packages/core && npm pack --dry-run",
+    "dry-publish:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm pack --dry-run",
+    "dry-publish:dhkem-x25519": "cd npm/packages/dhkem-x25519 && npm pack --dry-run",
+    "dry-publish:dhkem-x448": "cd npm/packages/dhkem-x448 && npm pack --dry-run",
+    "dry-publish:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm pack --dry-run",
+    "dry-publish:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm pack --dry-run",
+    "dry-publish:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
+    "dry-publish:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run"
   }
 }
