@@ -1,5 +1,14 @@
 # Changes
 
+## Version 1.8.0
+
+Released 2025-08-13
+
+- [(#605) common: remove unused const value.](https://github.com/dajiaji/hpke-js/pull/605)
+- [(#602) common: add utilities for curves.](https://github.com/dajiaji/hpke-js/pull/602)
+- [(#599) common: add test for hmac and sha2.](https://github.com/dajiaji/hpke-js/pull/599)
+- [(#598) common: add hmac and sha2.](https://github.com/dajiaji/hpke-js/pull/598)
+
 ## Version 1.7.3
 
 Released 2025-06-01
