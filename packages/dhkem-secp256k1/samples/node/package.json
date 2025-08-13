@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@hpke/core": "^1.7.3",
-    "@hpke/dhkem-secp256k1": "^1.6.3"
+    "@hpke/dhkem-secp256k1": "^1.6.4"
   }
 }
