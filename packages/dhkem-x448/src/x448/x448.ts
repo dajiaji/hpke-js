@@ -16,9 +16,7 @@
  * @module
  */
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
-import type { _DST_scalar } from "./hash-to-curve.ts";
-import { mod, pow2 } from "./modular.ts";
-import { montgomery, type MontgomeryECDH } from "./montgomery.ts";
+import { mod, montgomery, type MontgomeryECDH, pow2 } from "@hpke/common";
 
 // edwards448 curve
 // a = 1n
@@ -30,16 +28,14 @@ const ed448_CURVE_p = BigInt(
   "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 );
 
-// prettier-ignore
-const _1n = BigInt(1),
-  _2n = BigInt(2),
-  _3n = BigInt(3),
-  _11n = BigInt(11);
-// prettier-ignore
-const _22n = BigInt(22),
-  _44n = BigInt(44),
-  _88n = BigInt(88),
-  _223n = BigInt(223);
+const _1n = BigInt(1);
+const _2n = BigInt(2);
+const _3n = BigInt(3);
+const _11n = BigInt(11);
+const _22n = BigInt(22);
+const _44n = BigInt(44);
+const _88n = BigInt(88);
+const _223n = BigInt(223);
 
 // powPminus3div4 calculates z = x^k mod p, where k = (p-3)/4.
 // Used for efficient square root calculation.
