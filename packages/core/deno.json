@@ -48,6 +48,7 @@
     "test:bun": "cd test/runtimes/bun && bun install && bun test",
     "check": "deno check *.ts src/**/*.ts samples/**/*.ts test/*.ts",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "npm-build": "deno run --import-map=../../npm/import_map.json -A dnt.ts --skip-test",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
     "sample:deno": "cd samples/deno && deno run main.ts",
     "sample:node": "cd samples/node && npm install && node app.js",
