@@ -33,7 +33,6 @@
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@noble/curves@^1.9.6": "1.9.6",
-    "npm:@noble/hashes@^1.8.0": "1.8.0",
     "npm:@playwright/test@^1.54.2": "1.54.2",
     "npm:@types/node@*": "22.13.10"
   },
@@ -207,7 +206,6 @@
       "jsr:@std/path@1.0.8",
       "jsr:@std/testing@1.0.9",
       "npm:@noble/curves@^1.9.6",
-      "npm:@noble/hashes@^1.8.0",
       "npm:@playwright/test@^1.54.2"
     ],
     "members": {
