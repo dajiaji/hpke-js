@@ -46,9 +46,10 @@
     ]
   },
   "tasks": {
-    "test": "deno fmt && deno lint && deno check *.ts src/**/*.ts samples/**/*.ts test/*.ts && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:cloudflare": "cd test/runtimes/cloudflare && npm install && npm link @hpke/common @hpke/dhkem-secp256k1 && npm run test",
     "test:bun": "cd test/runtimes/bun && bun install && bun test",
+    "check": "deno check *.ts src/**/*.ts samples/**/*.ts test/*.ts",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
     "sample:deno": "cd samples/deno && deno run main.ts",
