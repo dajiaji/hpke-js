@@ -1,7 +1,4 @@
-import { hmac } from "./hash/hmac.ts";
-import { sha512 } from "./hash/sha2.ts";
-
-import { HkdfSha512Native } from "@hpke/common";
+import { HkdfSha512Native, hmac, sha512 } from "@hpke/common";
 
 export class HkdfSha512 extends HkdfSha512Native {
   public override async extract(
