@@ -22,7 +22,6 @@
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@noble/curves/secp256k1": "npm:@noble/curves@^1.9.6/secp256k1",
-    "@noble/hashes/sha3": "npm:@noble/hashes@^1.8.0/sha3",
     "@playwright/test": "npm:@playwright/test@^1.54.2",
     "@std/assert": "jsr:@std/assert@1.0.0",
     "@std/fs": "jsr:@std/fs@1.0.14",
