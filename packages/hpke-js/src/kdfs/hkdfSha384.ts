@@ -1,7 +1,4 @@
-import { hmac } from "@noble/hashes/hmac";
-import { sha384 } from "@noble/hashes/sha512";
-
-import { HkdfSha384Native } from "@hpke/common";
+import { HkdfSha384Native, hmac, sha384 } from "@hpke/common";
 
 export class HkdfSha384 extends HkdfSha384Native {
   public override async extract(
