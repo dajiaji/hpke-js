@@ -4,6 +4,7 @@
 
 Released 2025-08-13
 
+- [(#617) base: add deno task dry-publish.](https://github.com/dajiaji/hpke-js/pull/617)
 - [(#616) base: add deno task minify.](https://github.com/dajiaji/hpke-js/pull/616)
 - [(#614) base: add deno task npm-build.](https://github.com/dajiaji/hpke-js/pull/614)
 - [(#613) base: add deno task check.](https://github.com/dajiaji/hpke-js/pull/613)
