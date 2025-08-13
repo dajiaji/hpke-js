@@ -178,6 +178,16 @@
     "update:cloudflare:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/cloudflare && npm audit fix",
     "update:cloudflare:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/cloudflare && npm audit fix",
     "update:cloudflare:hpke-js": "cd packages/hpke-js/test/runtimes/cloudflare && npm audit fix",
-    "update:cloudflare:ml-kem": "cd packages/ml-kem/test/runtimes/cloudflare && npm audit fix"
+    "update:cloudflare:ml-kem": "cd packages/ml-kem/test/runtimes/cloudflare && npm audit fix",
+    "minify": "deno task minify:common && deno task minify:core && deno task minify:chacha20poly1305 && deno task minify:dhkem-x25519 && deno task minify:dhkem-x448 && deno task minify:dhkem-secp256k1 && deno task minify:hybridkem-x-wing && deno task minify:hpke-js && deno task minify:ml-kem",
+    "minify:common": "cd packages/common && deno task minify > ../../npm/packages/common/hpke-common.min.js",
+    "minify:core": "cd packages/core && deno task minify > ../../npm/packages/core/hpke-core.min.js",
+    "minify:chacha20poly1305": "cd packages/chacha20poly1305 && deno task minify > ../../npm/packages/chacha20poly1305/hpke-chacha20poly1305.min.js",
+    "minify:dhkem-x25519": "cd packages/dhkem-x25519 && deno task minify > ../../npm/packages/dhkem-x25519/hpke-dhkem-x25519.min.js",
+    "minify:dhkem-x448": "cd packages/dhkem-x448 && deno task minify > ../../npm/packages/dhkem-x448/hpke-dhkem-x448.min.js",
+    "minify:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task minify > ../../npm/packages/dhkem-secp256k1/hpke-dhkem-secp256k1.min.js",
+    "minify:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task minify > ../../npm/packages/hybridkem-x-wing/hpke-hybridkem-x-wing.min.js",
+    "minify:hpke-js": "cd packages/hpke-js && deno task minify > ../../npm/packages/hpke-js/hpke-js.min.js",
+    "minify:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js"
   }
 }
