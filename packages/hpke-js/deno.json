@@ -2,9 +2,6 @@
   "name": "@hpke/hpke-js",
   "version": "1.6.3",
   "exports": "./mod.ts",
-  "imports": {
-    "@noble/hashes": "npm:@noble/hashes@^1.8.0"
-  },
   "publish": {
     "exclude": [
       "dnt.ts",
