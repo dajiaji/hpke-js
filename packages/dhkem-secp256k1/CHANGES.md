@@ -1,5 +1,15 @@
 # Changes
 
+## Version 1.6.4
+
+Released 2025-08-13
+
+- [(#616) base: add deno task minify.](https://github.com/dajiaji/hpke-js/pull/616)
+- [(#614) base: add deno task npm-build.](https://github.com/dajiaji/hpke-js/pull/614)
+- [(#613) base: add deno task check.](https://github.com/dajiaji/hpke-js/pull/613)
+- [(#612) base: bump common to 1.8.0.](https://github.com/dajiaji/hpke-js/pull/612)
+- [(#610) base: remove path to noble from tsconfig.json.](https://github.com/dajiaji/hpke-js/pull/610)
+
 ## Version 1.6.3
 
 Released 2025-08-12

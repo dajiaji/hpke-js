@@ -29,84 +29,10 @@ jobs:
       - name: Run dnt & minify
         run: |
           npm install -g esbuild
-      - name: Run dnt & minify for /common
-        working-directory: ./packages/common
+      - name: Run dnt & minify
         run: |
           deno task dnt
-          deno task minify > ../../npm/packages/common/hpke-common.min.js
-      - name: Publish to npm (dry) for /packages/common
-        working-directory: ./npm/packages/common
+          deno task minify
+      - name: Publish to npm (dry)
         if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /core
-        working-directory: ./packages/core
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/core/hpke-core.min.js
-      - name: Publish to npm (dry) for /packages/core
-        working-directory: ./npm/packages/core
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/chacha20poly1305
-        working-directory: ./packages/chacha20poly1305
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/chacha20poly1305/hpke-chacha20poly1305.min.js
-      - name: Publish to npm (dry) for /packages/chacha20poly1305
-        working-directory: ./npm/packages/chacha20poly1305
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/dhkem-x25519
-        working-directory: ./packages/dhkem-x25519
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/dhkem-x25519/hpke-dhkem-x25519.min.js
-      - name: Publish to npm (dry) for /packages/dhkem-x25519
-        working-directory: ./npm/packages/dhkem-x25519
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/dhkem-x448
-        working-directory: ./packages/dhkem-x448
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/dhkem-x448/hpke-dhkem-x448.min.js
-      - name: Publish to npm (dry) for /packages/dhkem-x448
-        working-directory: ./npm/packages/dhkem-x448
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/dhkem-secp256k1
-        working-directory: ./packages/dhkem-secp256k1
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/dhkem-secp256k1/hpke-dhkem-secp256k1.min.js
-      - name: Publish to npm (dry) for /packages/dhkem-secp256k1
-        working-directory: ./npm/packages/dhkem-secp256k1
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/hybridkem-x-wing
-        working-directory: ./packages/hybridkem-x-wing
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/hybridkem-x-wing/hpke-hybridkem-x-wing.min.js
-      - name: Publish to npm (dry) for /packages/hybridkem-x-wing
-        working-directory: ./npm/packages/hybridkem-x-wing
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/hpke-js
-        working-directory: ./packages/hpke-js
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/hpke-js/hpke.min.js
-      - name: Publish to npm (dry) for /packages/hpke-js
-        working-directory: ./npm/packages/hpke-js
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
-      - name: Run dnt & minify for /packages/ml-kem
-        working-directory: ./packages/ml-kem
-        run: |
-          deno task dnt
-          deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js
-      - name: Publish to npm (dry) for /packages/ml-kem
-        working-directory: ./npm/packages/ml-kem
-        if: matrix.node-version != 24
-        run: npm publish --dry-run
+        run: deno task dry-publish
