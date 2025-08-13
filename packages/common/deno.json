@@ -40,7 +40,8 @@
     ]
   },
   "tasks": {
-    "test": "deno fmt && deno lint && deno check *.ts src/**/*.ts test/*.ts && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "check": "deno check *.ts src/**/*.ts test/*.ts",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
     "minify": "esbuild ../../npm/packages/common/esm/mod.js --bundle --format=esm --minify"
