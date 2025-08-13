@@ -23,7 +23,7 @@
  *
  * @module
  */
-import { createCipher, createPRG, rotl, type XorPRG } from "./_arx.ts";
+import { createCipher, rotl } from "./_arx.ts";
 import { poly1305 } from "./_poly1305.ts";
 import {
   abytes,
@@ -43,88 +43,6 @@ import {
  * 2. Unrolled loop (chachaCore, hchacha) - 4x faster, but larger & harder to read
  * The specific implementation is selected in `createCipher` below.
  */
-
-// /** quarter-round */
-// // prettier-ignore
-// function chachaQR(x: Uint32Array, a: number, b: number, c: number, d: number) {
-//   x[a] = (x[a] + x[b]) | 0;
-//   x[d] = rotl(x[d] ^ x[a], 16);
-//   x[c] = (x[c] + x[d]) | 0;
-//   x[b] = rotl(x[b] ^ x[c], 12);
-//   x[a] = (x[a] + x[b]) | 0;
-//   x[d] = rotl(x[d] ^ x[a], 8);
-//   x[c] = (x[c] + x[d]) | 0;
-//   x[b] = rotl(x[b] ^ x[c], 7);
-// }
-
-// /** single round */
-// function chachaRound(x: Uint32Array, rounds = 20) {
-//   for (let r = 0; r < rounds; r += 2) {
-//     chachaQR(x, 0, 4, 8, 12);
-//     chachaQR(x, 1, 5, 9, 13);
-//     chachaQR(x, 2, 6, 10, 14);
-//     chachaQR(x, 3, 7, 11, 15);
-//     chachaQR(x, 0, 5, 10, 15);
-//     chachaQR(x, 1, 6, 11, 12);
-//     chachaQR(x, 2, 7, 8, 13);
-//     chachaQR(x, 3, 4, 9, 14);
-//   }
-// }
-//
-// const ctmp = /* @__PURE__ */ new Uint32Array(16);
-
-/** Small version of chacha without loop unrolling. Unused, provided for auditability. */
-// // prettier-ignore
-// function chacha(
-//   s: Uint32Array,
-//   k: Uint32Array,
-//   i: Uint32Array,
-//   out: Uint32Array,
-//   isHChacha: boolean = true,
-//   rounds: number = 20,
-// ): void {
-//   // Create initial array using common pattern
-//   const y = Uint32Array.from([
-//     s[0],
-//     s[1],
-//     s[2],
-//     s[3], // "expa"   "nd 3"  "2-by"  "te k"
-//     k[0],
-//     k[1],
-//     k[2],
-//     k[3], // Key      Key     Key     Key
-//     k[4],
-//     k[5],
-//     k[6],
-//     k[7], // Key      Key     Key     Key
-//     i[0],
-//     i[1],
-//     i[2],
-//     i[3], // Counter  Counter Nonce   Nonce
-//   ]);
-//   const x = ctmp;
-//   x.set(y);
-//   chachaRound(x, rounds);
-//
-//   // hchacha extracts 8 specific bytes, chacha adds orig to result
-//   if (isHChacha) {
-//     const xindexes = [0, 1, 2, 3, 12, 13, 14, 15];
-//     for (let i = 0; i < 8; i++) out[i] = x[xindexes[i]];
-//   } else {
-//     for (let i = 0; i < 16; i++) out[i] = (y[i] + x[i]) | 0;
-//   }
-// }
-
-/** Identical to `chachaCore`. Unused. */
-// // @ts-ignore: to ignore "isHChacha"
-// const chachaCore_small: typeof chachaCore = (s, k, n, out, cnt, rounds) =>
-//   chacha(s, k, Uint32Array.from([n[0], n[1], cnt, 0]), out, false, rounds);
-/** Identical to `hchacha`. Unused. */
-// // @ts-ignore: to ignore "isHChacha"
-// const hchacha_small: typeof hchacha = chacha;
-
-/** Identical to `chachaCore_small`. Unused. */
-// prettier-ignore
 function chachaCore(
   s: Uint32Array,
   k: Uint32Array,
@@ -258,127 +176,7 @@ function chachaCore(
   out[oi++] = (y14 + x14) | 0;
   out[oi++] = (y15 + x15) | 0;
 }
-// /**
-//  * hchacha hashes key and nonce into key' and nonce' for xchacha20.
-//  * Identical to `hchacha_small`.
-//  * Need to find a way to merge it with `chachaCore` without 25% performance hit.
-//  */
-// // prettier-ignore
-// export function hchacha(
-//   s: Uint32Array,
-//   k: Uint32Array,
-//   i: Uint32Array,
-//   out: Uint32Array,
-// ): void {
-//   let x00 = s[0],
-//     x01 = s[1],
-//     x02 = s[2],
-//     x03 = s[3],
-//     x04 = k[0],
-//     x05 = k[1],
-//     x06 = k[2],
-//     x07 = k[3],
-//     x08 = k[4],
-//     x09 = k[5],
-//     x10 = k[6],
-//     x11 = k[7],
-//     x12 = i[0],
-//     x13 = i[1],
-//     x14 = i[2],
-//     x15 = i[3];
-//   for (let r = 0; r < 20; r += 2) {
-//     x00 = (x00 + x04) | 0;
-//     x12 = rotl(x12 ^ x00, 16);
-//     x08 = (x08 + x12) | 0;
-//     x04 = rotl(x04 ^ x08, 12);
-//     x00 = (x00 + x04) | 0;
-//     x12 = rotl(x12 ^ x00, 8);
-//     x08 = (x08 + x12) | 0;
-//     x04 = rotl(x04 ^ x08, 7);
-//
-//     x01 = (x01 + x05) | 0;
-//     x13 = rotl(x13 ^ x01, 16);
-//     x09 = (x09 + x13) | 0;
-//     x05 = rotl(x05 ^ x09, 12);
-//     x01 = (x01 + x05) | 0;
-//     x13 = rotl(x13 ^ x01, 8);
-//     x09 = (x09 + x13) | 0;
-//     x05 = rotl(x05 ^ x09, 7);
-//
-//     x02 = (x02 + x06) | 0;
-//     x14 = rotl(x14 ^ x02, 16);
-//     x10 = (x10 + x14) | 0;
-//     x06 = rotl(x06 ^ x10, 12);
-//     x02 = (x02 + x06) | 0;
-//     x14 = rotl(x14 ^ x02, 8);
-//     x10 = (x10 + x14) | 0;
-//     x06 = rotl(x06 ^ x10, 7);
-//
-//     x03 = (x03 + x07) | 0;
-//     x15 = rotl(x15 ^ x03, 16);
-//     x11 = (x11 + x15) | 0;
-//     x07 = rotl(x07 ^ x11, 12);
-//     x03 = (x03 + x07) | 0;
-//     x15 = rotl(x15 ^ x03, 8);
-//     x11 = (x11 + x15) | 0;
-//     x07 = rotl(x07 ^ x11, 7);
-//
-//     x00 = (x00 + x05) | 0;
-//     x15 = rotl(x15 ^ x00, 16);
-//     x10 = (x10 + x15) | 0;
-//     x05 = rotl(x05 ^ x10, 12);
-//     x00 = (x00 + x05) | 0;
-//     x15 = rotl(x15 ^ x00, 8);
-//     x10 = (x10 + x15) | 0;
-//     x05 = rotl(x05 ^ x10, 7);
-//
-//     x01 = (x01 + x06) | 0;
-//     x12 = rotl(x12 ^ x01, 16);
-//     x11 = (x11 + x12) | 0;
-//     x06 = rotl(x06 ^ x11, 12);
-//     x01 = (x01 + x06) | 0;
-//     x12 = rotl(x12 ^ x01, 8);
-//     x11 = (x11 + x12) | 0;
-//     x06 = rotl(x06 ^ x11, 7);
-//
-//     x02 = (x02 + x07) | 0;
-//     x13 = rotl(x13 ^ x02, 16);
-//     x08 = (x08 + x13) | 0;
-//     x07 = rotl(x07 ^ x08, 12);
-//     x02 = (x02 + x07) | 0;
-//     x13 = rotl(x13 ^ x02, 8);
-//     x08 = (x08 + x13) | 0;
-//     x07 = rotl(x07 ^ x08, 7);
-//
-//     x03 = (x03 + x04) | 0;
-//     x14 = rotl(x14 ^ x03, 16);
-//     x09 = (x09 + x14) | 0;
-//     x04 = rotl(x04 ^ x09, 12);
-//     x03 = (x03 + x04) | 0;
-//     x14 = rotl(x14 ^ x03, 8);
-//     x09 = (x09 + x14) | 0;
-//     x04 = rotl(x04 ^ x09, 7);
-//   }
-//   let oi = 0;
-//   out[oi++] = x00;
-//   out[oi++] = x01;
-//   out[oi++] = x02;
-//   out[oi++] = x03;
-//   out[oi++] = x12;
-//   out[oi++] = x13;
-//   out[oi++] = x14;
-//   out[oi++] = x15;
-// }
 
-/** Original, non-RFC chacha20 from DJB. 8-byte nonce, 8-byte counter. */
-export const chacha20orig: XorStream = /* @__PURE__ */ createCipher(
-  chachaCore,
-  {
-    counterRight: false,
-    counterLength: 8,
-    allowShortKeys: true,
-  },
-);
 /**
  * ChaCha stream cipher. Conforms to RFC 8439 (IETF, TLS). 12-byte nonce, 4-byte counter.
  * With smaller nonce, it's not safe to make it random (CSPRNG), due to collision chance.
@@ -387,31 +185,6 @@ export const chacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
   counterRight: false,
   counterLength: 4,
   allowShortKeys: false,
-});
-
-// /**
-//  * XChaCha eXtended-nonce ChaCha. With 24-byte nonce, it's safe to make it random (CSPRNG).
-//  * See [IRTF draft](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-xchacha).
-//  */
-// export const xchacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
-//   counterRight: false,
-//   counterLength: 8,
-//   extendNonceFn: hchacha,
-//   allowShortKeys: false,
-// });
-
-/** Reduced 8-round chacha, described in original paper. */
-export const chacha8: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
-  counterRight: false,
-  counterLength: 4,
-  rounds: 8,
-});
-
-/** Reduced 12-round chacha, described in original paper. */
-export const chacha12: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
-  counterRight: false,
-  counterLength: 4,
-  rounds: 12,
 });
 
 const ZEROS16 = /* @__PURE__ */ new Uint8Array(16);
@@ -496,38 +269,4 @@ export const _poly1305_aead =
 export const chacha20poly1305: ARXCipher = /* @__PURE__ */ wrapCipher(
   { blockSize: 64, nonceLength: 12, tagLength: 16 },
   _poly1305_aead(chacha20),
-);
-
-// /**
-//  * XChaCha20-Poly1305 extended-nonce chacha.
-//  *
-//  * Can be safely used with random nonces (CSPRNG).
-//  * See [IRTF draft](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-xchacha).
-//  */
-// export const xchacha20poly1305: ARXCipher = /* @__PURE__ */ wrapCipher(
-//   { blockSize: 64, nonceLength: 24, tagLength: 16 },
-//   _poly1305_aead(xchacha20),
-// );
-
-/**
- * Chacha20 CSPRNG (cryptographically secure pseudorandom number generator).
- * It's best to limit usage to non-production, non-critical cases: for example, test-only.
- * Compatible with libtomcrypt. It does not have a specification, so unclear how secure it is.
- */
-export const rngChacha20: XorPRG = /* @__PURE__ */ createPRG(
-  chacha20orig,
-  64,
-  32,
-  8,
-);
-/**
- * Chacha20/8 CSPRNG (cryptographically secure pseudorandom number generator).
- * It's best to limit usage to non-production, non-critical cases: for example, test-only.
- * Faster than `rngChacha20`.
- */
-export const rngChacha8: XorPRG = /* @__PURE__ */ createPRG(
-  chacha8,
-  64,
-  32,
-  12,
 );
