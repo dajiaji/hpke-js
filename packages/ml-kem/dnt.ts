@@ -9,7 +9,7 @@ await build({
   entryPoints: ["./mod.ts"],
   outDir: "../../npm/packages/ml-kem",
   typeCheck: "both",
-  test: true,
+  test: !Deno.args.includes("--skip-test"),
   declaration: "inline",
   scriptModule: "umd",
   importMap: "../../npm/import_map.json",
