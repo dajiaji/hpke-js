@@ -20,6 +20,7 @@ from the community.
   - [Testing Requirements](#testing-requirements)
   - [Documentation](#documentation)
   - [Running Sample Code](#running-sample-code)
+- [Release Process](#release-process)
 - [License](#license)
 
 ## Development Setup
@@ -276,6 +277,16 @@ deno task sample:node:ml-kem                # Run samples for ML-KEM package
 ```
 
 Sample code can be found in the `samples/deno` directory of each package.
+
+## Release Process
+
+For detailed information about creating releases, managing versions, and writing release notes, please refer to our [Release Process Guidelines](.github/RELEASE_PROCESS.md).
+
+Key points for contributors:
+- All releases follow semantic versioning (SemVer)
+- Release notes must include all relevant Pull Requests since the previous release
+- Release branches follow the naming convention: `<package-name>-bump_version_to_<version(X_Y_Z)>`
+- Each release requires comprehensive testing and documentation updates
 
 ## License
 
