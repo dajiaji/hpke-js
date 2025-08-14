@@ -1,4 +1,10 @@
 {
+  "name": "test-browsers-hpke-hybridkem-x25519-kyber768",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test"
+  },
   "devDependencies": {
     "@playwright/test": "^1.45.3",
     "http-server": "^14.1.1"
