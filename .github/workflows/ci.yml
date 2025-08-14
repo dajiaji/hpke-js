@@ -27,7 +27,7 @@ jobs:
       - name: Run deno test
         run: |
           deno fmt --check
-          deno task test
+          deno task test:deno
           deno task cov > coverage.lcov
       - uses: codecov/codecov-action@v2
         if: matrix.deno-version == '2.x'
@@ -37,28 +37,3 @@ jobs:
           flags: unittests
       - name: Run deno publish (dry)
         run: npx jsr publish --dry-run --allow-dirty
-      # - name: Run deno test for /core
-      #   working-directory: ./core
-      #   run: |
-      #     deno fmt --check
-      #     deno task test
-      # - name: Run deno test for /packages/dhkem-x25519
-      #   working-directory: ./packages/dhkem-x25519
-      #   run: |
-      #     deno fmt --check
-      #     deno task test
-      # - name: Run deno test for /packages/dhkem-x448
-      #   working-directory: ./packages/dhkem-x448
-      #   run: |
-      #     deno fmt --check
-      #     deno task test
-      # - name: Run deno test for /packages/chacha20poly1305
-      #   working-directory: ./packages/chacha20poly1305
-      #   run: |
-      #     deno fmt --check
-      #     deno task test
-      # - name: Run deno test for /packages/dhkem-secp256k1
-      #   working-directory: ./packages/dhkem-secp256k1
-      #   run: |
-      #     deno fmt --check
-      #     deno task test

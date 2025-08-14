@@ -26,13 +26,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: 2.x
-      - name: Run dnt & minify
-        run: |
-          npm install -g esbuild
-      - name: Run dnt & minify
-        run: |
-          deno task dnt
-          deno task minify
+      - name: Run test
+        run: deno task test:node
       - name: Publish to npm (dry)
         if: matrix.node-version != 24
         run: deno task dry-publish

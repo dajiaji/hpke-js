@@ -15,9 +15,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: 2.x
-      - name: Run dnt
-        run: |
-          deno task test
+      - name: Run test
+        run: deno task test:deno
       - name: Run deno publish
         run: npx jsr publish
 
@@ -35,10 +34,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: 2.x
-      - name: Run deno task npm
-        run: |
-          npm install -g esbuild
-          deno task npm
+      - name: Build npm packages
+        run: deno task npm
       - name: Publish @hpke/common to npm
         continue-on-error: true
         working-directory: ./npm/packages/common
