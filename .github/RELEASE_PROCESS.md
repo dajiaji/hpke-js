@@ -1,10 +1,12 @@
 # Release Process Guidelines
 
-This document defines the standardized process for creating release notes and versioning packages in the hpke-js project.
+This document defines the standardized process for creating release notes and
+versioning packages in the hpke-js project.
 
 ## Release Note Creation Rules
 
-When creating release notes for any package in the hpke-js monorepo, follow these guidelines:
+When creating release notes for any package in the hpke-js monorepo, follow
+these guidelines:
 
 ### 1. Release Note Format
 
@@ -23,19 +25,23 @@ Released YYYY-MM-DD
 
 For each release, systematically investigate all relevant Pull Requests:
 
-1. **Scope Definition**: Identify the previous release date of the target package
-2. **PR Collection**: Gather all PRs merged to main branch since the previous release that affect:
+1. **Scope Definition**: Identify the previous release date of the target
+   package
+2. **PR Collection**: Gather all PRs merged to main branch since the previous
+   release that affect:
    - The target package directly
    - Base infrastructure that impacts the package
    - Dependencies that the package relies on
-3. **Impact Assessment**: Include PRs that have any impact on the package functionality, testing, or build process
+3. **Impact Assessment**: Include PRs that have any impact on the package
+   functionality, testing, or build process
 
 ### 3. Categories and Descriptions
 
 Use consistent categorization for PR descriptions:
 
 - `base:` - Infrastructure, build system, or cross-package changes
-- `<package-name>:` - Package-specific changes (e.g., `hpke-js:`, `core:`, `dhkem-x25519:`)
+- `<package-name>:` - Package-specific changes (e.g., `hpke-js:`, `core:`,
+  `dhkem-x25519:`)
 - `deps:` - Dependency updates
 - `docs:` - Documentation changes
 - `test:` - Testing improvements
@@ -54,16 +60,19 @@ Ensure no relevant changes are missed by:
 Follow semantic versioning (SemVer) principles:
 
 ### Major Version (X.0.0)
+
 - Breaking API changes
 - Removal of deprecated features
 - Incompatible changes to public interfaces
 
 ### Minor Version (X.Y.0)
+
 - New features added in a backward-compatible manner
 - Deprecation of existing features (without removal)
 - Substantial new functionality
 
 ### Patch Version (X.Y.Z)
+
 - Bug fixes
 - Performance improvements
 - Documentation updates
@@ -73,16 +82,19 @@ Follow semantic versioning (SemVer) principles:
 
 ## Release Branch Creation Process
 
-When instructed to create a release for `<package-name>` with `{major, minor, patch}` version bump:
+When instructed to create a release for `<package-name>` with
+`{major, minor, patch}` version bump:
 
 ### 1. Branch Naming Convention
 
 Create a release branch following this pattern:
+
 ```
 <package-name>-bump-version-to-<new-version(x_y_z)>
 ```
 
 Examples:
+
 - `hpke-js-bump-version-to-1_7_0`
 - `core-bump-version-to-2_0_0`
 - `dhkem-x25519-bump-version-to-1_6_5`
@@ -92,9 +104,11 @@ Examples:
 The release branch should include:
 
 1. **Version Bump**: Update the version in the package's `deno.json`
-2. **Changelog Update**: Add the new version section to the package's `CHANGES.md`
+2. **Changelog Update**: Add the new version section to the package's
+   `CHANGES.md`
 3. **Dependency Updates**: Update any internal package dependencies if needed
-4. **Documentation Updates**: Update version references in README files if applicable
+4. **Documentation Updates**: Update version references in README files if
+   applicable
 
 ### 3. Release Branch Workflow
 
@@ -146,6 +160,7 @@ Before finalizing any release:
 ## Examples
 
 ### Example Release Note Entry
+
 ```markdown
 ## Version 1.6.4
 
@@ -158,6 +173,7 @@ Released 2025-08-15
 ```
 
 ### Example Release Branch
+
 ```
 hpke-js-bump-to-1_7_0
 ├── packages/hpke-js/deno.json (version: "1.7.0")
@@ -165,4 +181,5 @@ hpke-js-bump-to-1_7_0
 └── any other affected files
 ```
 
-This process ensures consistency, completeness, and quality across all releases in the hpke-js project.
+This process ensures consistency, completeness, and quality across all releases
+in the hpke-js project.
