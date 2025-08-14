@@ -96,7 +96,7 @@ jobs:
         with:
           deno-version: 2.x
       - name: Run package-specific node test
-        run:
+        run: |
           deno task npm
           deno task test:node:${{ matrix.package }}
       - name: Publish package to npm (dry)
