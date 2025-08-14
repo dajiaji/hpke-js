@@ -1,6 +1,6 @@
 {
   "name": "@hpke/dhkem-x448",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
