@@ -15,6 +15,7 @@ Released 2025-08-14
 - [(#610) base: remove path to noble from tsconfig.json.](https://github.com/dajiaji/hpke-js/pull/610)
 - [(#608) dhkem-x25519: refine directory structure.](https://github.com/dajiaji/hpke-js/pull/608)
 - [(#603) dhkem-x25519: use curve utils in hpke/common.](https://github.com/dajiaji/hpke-js/pull/603)
+- [(#603) dhkem-x25519: use hmac/sha2 in hpke/common.](https://github.com/dajiaji/hpke-js/pull/600)
 - [(#590) dhkem-x25519: remove dependencies on noble/hashes.](https://github.com/dajiaji/hpke-js/pull/590)
 - [(#589) dhkem-x25519: remove dependencies on noble/curves.](https://github.com/dajiaji/hpke-js/pull/589)
 - [(#565) core: add deriveKeyPair test for browsers.](https://github.com/dajiaji/hpke-js/pull/565)
