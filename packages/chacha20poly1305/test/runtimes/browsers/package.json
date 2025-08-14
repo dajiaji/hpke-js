@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "@playwright/test": "^1.45.3",
+    "@playwright/test": "^1.54.2",
     "http-server": "^14.1.1"
   },
   "dependencies": {
-    "@hpke/core": "npm:@jsr/hpke__core@^1.2.9"
+    "@hpke/core": "npm:@jsr/hpke__core@^1.7.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@playwright/test": "^1.45.3",
+    "@playwright/test": "^1.54.2",
     "http-server": "^14.1.1"
   }
 }
