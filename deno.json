@@ -130,6 +130,7 @@
     "check:hpke-js": "cd packages/hpke-js && deno task check",
     "check:ml-kem": "cd packages/ml-kem && deno task check",
     "npm": "deno task npm-build && deno task npm-link && deno task npm-pack && cd npm && npm install",
+    "npm-clean": "rm -rf npm/packages npm/samples npm/test",
     "npm-build": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem",
     "npm-build:common": "cd packages/common && deno task npm-build",
     "npm-build:core": "cd packages/core && deno task npm-build",
