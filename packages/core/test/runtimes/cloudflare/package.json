@@ -17,6 +17,6 @@
     "wrangler": "^4.29.1"
   },
   "dependencies": {
-    "@hpke/core": "^1.7.3"
+    "@hpke/core": "^1.7.4"
   }
 }
