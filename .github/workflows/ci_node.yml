@@ -11,7 +11,51 @@ on:
       - "**/*.md"
 
 jobs:
-  build:
+  # Check changed files to determine which package tests to run
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run-all: ${{ steps.changes.outputs.run-all }}
+      packages: ${{ steps.changes.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for changes
+        id: changes
+        run: |
+          # Get diff from previous commit
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # For push: diff from previous commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+          else
+            # For PR: diff from base branch
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Run all tests if common, core, CI/CD files, or root files are changed
+          if echo "$CHANGED_FILES" | grep -E '^(packages/(common|core)/|\.github/|deno\.json|\.gitignore)'; then
+            echo "run-all=true" >> $GITHUB_OUTPUT
+            echo "packages=[]" >> $GITHUB_OUTPUT
+          else
+            # Only specific packages are changed
+            CHANGED_PACKAGES=$(echo "$CHANGED_FILES" | grep '^packages/' | cut -d'/' -f2 | sort -u | grep -v -E '^(common|core)$' | jq -R -s -c 'split("\n")[:-1]')
+            if [ "$CHANGED_PACKAGES" = "[]" ] || [ "$CHANGED_PACKAGES" = '[""]' ]; then
+              echo "run-all=false" >> $GITHUB_OUTPUT
+              echo "packages=[]" >> $GITHUB_OUTPUT
+            else
+              echo "run-all=false" >> $GITHUB_OUTPUT
+              echo "packages=$CHANGED_PACKAGES" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  # Job to run all tests
+  build-all:
+    needs: check-changes
+    if: needs.check-changes.outputs.run-all == 'true'
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,3 +75,28 @@ jobs:
       - name: Publish to npm (dry)
         if: matrix.node-version != 24
         run: deno task dry-publish
+
+  # Job to test only specific packages
+  build-packages:
+    needs: check-changes
+    if: needs.check-changes.outputs.run-all == 'false' && needs.check-changes.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16, 18, 19, 20, 21, 22, 23, 24]
+        package: ${{ fromJson(needs.check-changes.outputs.packages) }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: 2.x
+      - name: Run package-specific node test
+        run: deno task test:node:${{ matrix.package }}
+      - name: Publish package to npm (dry)
+        if: matrix.node-version != 24
+        run: deno task dry-publish:${{ matrix.package }}
