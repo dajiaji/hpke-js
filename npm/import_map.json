@@ -5,7 +5,7 @@
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.7.0",
     "@hpke/common": "npm:@hpke/common@^1.8.1",
     "@hpke/core": "npm:@hpke/core@^1.7.4",
-    "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.3",
+    "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.6.4",
     "@hpke/dhkem-x448": "npm:@hpke/dhkem-x448@^1.6.3",
     "@noble/curves/secp256k1": "npm:@noble/curves@^1.9.6/secp256k1",
     "@std/assert": "jsr:@std/assert@1.0.0",
