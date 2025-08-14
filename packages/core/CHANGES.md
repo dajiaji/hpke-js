@@ -1,5 +1,22 @@
 # Changes
 
+## Version 1.7.4
+
+Released 2025-08-14
+
+- [(#625) base: add deno task test:browsers.](https://github.com/dajiaji/hpke-js/pull/625)
+- [(#623) base: update test dependencies.](https://github.com/dajiaji/hpke-js/pull/623)
+- [(#622) base: add deno task update.](https://github.com/dajiaji/hpke-js/pull/622)
+- [(#617) base: add deno task dry-publish.](https://github.com/dajiaji/hpke-js/pull/617)
+- [(#616) base: add deno task minify.](https://github.com/dajiaji/hpke-js/pull/616)
+- [(#615) base: remove dependency on noble/hashes/sha3.](https://github.com/dajiaji/hpke-js/pull/615)
+- [(#614) base: add deno task npm-build.](https://github.com/dajiaji/hpke-js/pull/614)
+- [(#613) base: add deno task check.](https://github.com/dajiaji/hpke-js/pull/613)
+- [(#610) base: remove path to noble from tsconfig.json.](https://github.com/dajiaji/hpke-js/pull/610)
+- [(#565) core: add deriveKeyPair test for browsers.](https://github.com/dajiaji/hpke-js/pull/565)
+- [(#563) core: run secure curves test on safari.](https://github.com/dajiaji/hpke-js/pull/563)
+- [(#550) core: add DhkemX25519HkdfSha256 test for browsers.](https://github.com/dajiaji/hpke-js/pull/550)
+
 ## Version 1.7.3
 
 Released 2025-07-12
