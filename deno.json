@@ -16,7 +16,8 @@
     "./packages/dhkem-secp256k1/samples/deno",
     "./packages/hybridkem-x-wing/samples/deno",
     "./packages/hpke-js/samples/deno",
-    "./packages/ml-kem/samples/deno"
+    "./packages/ml-kem/samples/deno",
+    "./utils"
   ],
   "imports": {
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
