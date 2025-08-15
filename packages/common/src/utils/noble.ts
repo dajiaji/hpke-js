@@ -54,6 +54,14 @@ export function isBytes(a: unknown): a is Uint8Array {
     (ArrayBuffer.isView(a) && a.constructor.name === "Uint8Array");
 }
 
+/** Asserts something is positive integer. */
+export function anumber(n: number, title: string = ""): void {
+  if (!Number.isSafeInteger(n) || n < 0) {
+    const prefix = title && `"${title}" `;
+    throw new Error(`${prefix}expected integer >0, got ${n}`);
+  }
+}
+
 /** Asserts something is Uint8Array. */
 export function abytes(
   value: Uint8Array,
@@ -98,13 +106,6 @@ export function aoutput(out: any, instance: any): void {
   }
 }
 
-/** Asserts something is positive integer. */
-export function anumber(n: number): void {
-  if (!Number.isSafeInteger(n) || n < 0) {
-    throw new Error("positive integer expected, got " + n);
-  }
-}
-
 // Used in weierstrass, der
 function abignumer(n: number | bigint) {
   if (typeof n === "bigint") {
@@ -124,12 +125,54 @@ export type TypedArray =
   | Uint32Array
   | Int32Array;
 
+/** Cast u8 / u16 / u32 to u32. */
+export function u32(arr: TypedArray): Uint32Array {
+  return new Uint32Array(
+    arr.buffer,
+    arr.byteOffset,
+    Math.floor(arr.byteLength / 4),
+  );
+}
+
 /** Zeroize a byte array. Warning: JS provides no guarantees. */
 export function clean(...arrays: TypedArray[]): void {
   for (let i = 0; i < arrays.length; i++) {
     arrays[i].fill(0);
   }
 }
+
+/** Is current platform little-endian? Most are. Big-Endian platform: IBM */
+export const isLE: boolean =
+  /* @__PURE__ */ (() =>
+    new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44)();
+
+/** The byte swap operation for uint32 */
+export function byteSwap(word: number): number {
+  return (
+    ((word << 24) & 0xff000000) |
+    ((word << 8) & 0xff0000) |
+    ((word >>> 8) & 0xff00) |
+    ((word >>> 24) & 0xff)
+  );
+}
+/** Conditionally byte swap if on a big-endian platform */
+export const swap8IfBE: (n: number) => number = isLE
+  ? (n: number) => n
+  : (n: number) => byteSwap(n);
+
+/** @deprecated */
+export const byteSwapIfBE: typeof swap8IfBE = swap8IfBE;
+/** In place byte swap for Uint32Array */
+export function byteSwap32(arr: Uint32Array): Uint32Array {
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = byteSwap(arr[i]);
+  }
+  return arr;
+}
+
+export const swap32IfBE: (u: Uint32Array) => Uint32Array = isLE
+  ? (u: Uint32Array) => u
+  : byteSwap32;
 
 /** Create DataView of an array for easy byte-level manipulation. */
 export function createView(arr: TypedArray): DataView {
@@ -379,8 +422,23 @@ export interface Signer extends CryptoKeys {
   verify: (sig: Uint8Array, msg: Uint8Array, publicKey: Uint8Array) => boolean;
 }
 
+/**
+ * XOF: streaming API to read digest in chunks.
+ * Same as 'squeeze' in keccak/k12 and 'seek' in blake3, but more generic name.
+ * When hash used in XOF mode it is up to user to call '.destroy' afterwards, since we cannot
+ * destroy state, next call can require more bytes.
+ */
+export type HashXOF<T extends Hash<T>> = Hash<T> & {
+  xof(bytes: number): Uint8Array; // Read 'bytes' bytes from digest stream
+  xofInto(buf: Uint8Array): Uint8Array; // read buf.length bytes from digest stream into buf
+};
+
 export type HasherCons<T, Opts = undefined> = Opts extends undefined ? () => T
   : (opts?: Opts) => T;
+
+/** XOF with output */
+export type CHashXOF<T extends HashXOF<T> = HashXOF<any>, Opts = undefined> =
+  CHash<T, Opts>;
 
 export function createHasher<T extends Hash<T>, Opts = undefined>(
   hashCons: HasherCons<T, Opts>,
