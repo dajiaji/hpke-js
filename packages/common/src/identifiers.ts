@@ -43,6 +43,13 @@ export const KdfId = {
   HkdfSha256: 0x0001,
   HkdfSha384: 0x0002,
   HkdfSha512: 0x0003,
+  Sha3256: 0x0004,
+  Sha3384: 0x0005,
+  Sha3512: 0x0006,
+  Shake128: 0x0010,
+  Shake256: 0x0011,
+  TurboShake128: 0x0012,
+  TurboShake256: 0x0013,
 } as const;
 
 /**
