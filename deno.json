@@ -237,6 +237,7 @@
     "dry-publish:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm pack --dry-run",
     "dry-publish:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm pack --dry-run",
     "dry-publish:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
-    "dry-publish:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run"
+    "dry-publish:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",
+    "update-lock": "deno cache --reload **/deno.json --config deno.json"
   }
 }
