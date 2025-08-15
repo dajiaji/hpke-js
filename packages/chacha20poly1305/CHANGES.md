@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.7.1
+
+Released 2025-08-15
+
+- [(#606) chacha20poly1305: remove unused funcs.](https://github.com/dajiaji/hpke-js/pull/606)
+
 ## Version 1.7.0
 
 Released 2025-08-09
