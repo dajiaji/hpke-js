@@ -22,7 +22,6 @@ import { type CHash, createHasher } from "./hash.ts";
  * Round constants:
  * First 32 bits of fractional parts of the cube roots of the first 64 primes 2..311)
  */
-// prettier-ignore
 const SHA256_K = /* @__PURE__ */ Uint32Array.from([
   0x428a2f98,
   0x71374491,
@@ -122,7 +121,6 @@ abstract class SHA2_32B<T extends SHA2_32B<T>> extends HashMD<T> {
     const { A, B, C, D, E, F, G, H } = this;
     return [A, B, C, D, E, F, G, H];
   }
-  // prettier-ignore
   protected set(
     A: number,
     B: number,
@@ -211,7 +209,6 @@ export class _SHA256 extends SHA2_32B<_SHA256> {
 
 // Round contants
 // First 32 bits of the fractional parts of the cube roots of the first 80 primes 2..409
-// prettier-ignore
 const K512 = /* @__PURE__ */ (() =>
   u64.split([
     "0x428a2f98d728ae22",
@@ -327,7 +324,6 @@ abstract class SHA2_64B<T extends SHA2_64B<T>> extends HashMD<T> {
   constructor(outputLen: number) {
     super(128, outputLen, 16, false);
   }
-  // prettier-ignore
   protected get(): [
     number,
     number,
@@ -350,7 +346,6 @@ abstract class SHA2_64B<T extends SHA2_64B<T>> extends HashMD<T> {
       this;
     return [Ah, Al, Bh, Bl, Ch, Cl, Dh, Dl, Eh, El, Fh, Fl, Gh, Gl, Hh, Hl];
   }
-  // prettier-ignore
   protected set(
     Ah: number,
     Al: number,
@@ -432,7 +427,6 @@ abstract class SHA2_64B<T extends SHA2_64B<T>> extends HashMD<T> {
       const CHIh = (Eh & Fh) ^ (~Eh & Gh);
       const CHIl = (El & Fl) ^ (~El & Gl);
       // T1 = H + sigma1 + Chi(E, F, G) + SHA512_K[i] + SHA512_W[i]
-      // prettier-ignore
       const T1ll = u64.add5L(Hl, sigma1l, CHIl, SHA512_Kl[i], SHA512_W_L[i]);
       const T1h = u64.add5H(
         T1ll,

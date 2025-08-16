@@ -18,7 +18,6 @@
 import { N_0 } from "../consts.ts";
 
 // Numbers aren't used in x25519 / x448 builds
-// prettier-ignore
 
 // Calculates a modulo b
 export function mod(a: bigint, b: bigint): bigint {

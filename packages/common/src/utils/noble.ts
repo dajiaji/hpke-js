@@ -76,7 +76,6 @@ function abignumer(n: number | bigint) {
 }
 
 /** Generic type encompassing 8/16/32-byte arrays - but not 64-byte. */
-// prettier-ignore
 export type TypedArray =
   | Int8Array
   | Uint8ClampedArray

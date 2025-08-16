@@ -116,7 +116,6 @@ const add5H = (
   Eh: number,
 ): number => (Ah + Bh + Ch + Dh + Eh + ((low / 2 ** 32) | 0)) | 0;
 
-// prettier-ignore
 export {
   add,
   add3H,
@@ -141,7 +140,6 @@ export {
   split,
   toBig,
 };
-// prettier-ignore
 const u64: {
   fromBig: typeof fromBig;
   split: typeof split;
