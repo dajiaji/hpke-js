@@ -27,9 +27,9 @@ import {
 import { createKeygen, type CurveLengths } from "./curve.ts";
 import { mod } from "./modular.ts";
 
-const _0n = BigInt(0);
-const _1n = BigInt(1);
-const _2n = BigInt(2);
+const _0n = /* @__PURE__ */ BigInt(0);
+const _1n = /* @__PURE__ */ BigInt(1);
+const _2n = /* @__PURE__ */ BigInt(2);
 
 export type CurveType = {
   P: bigint; // finite field prime

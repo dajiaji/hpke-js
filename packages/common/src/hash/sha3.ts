@@ -41,12 +41,12 @@ import {
 // No __PURE__ annotations in sha3 header:
 // EVERYTHING is in fact used on every export.
 // Various per round constants calculations
-const _0n = BigInt(0);
-const _1n = BigInt(1);
-const _2n = BigInt(2);
-const _7n = BigInt(7);
-const _256n = BigInt(256);
-const _0x71n = BigInt(0x71);
+const _0n = /* @__PURE__ */ BigInt(0);
+const _1n = /* @__PURE__ */ BigInt(1);
+const _2n = /* @__PURE__ */ BigInt(2);
+const _7n = /* @__PURE__ */ BigInt(7);
+const _256n = /* @__PURE__ */ BigInt(256);
+const _0x71n = /* @__PURE__ */ BigInt(0x71);
 const SHA3_PI: number[] = [];
 const SHA3_ROTL: number[] = [];
 const _SHA3_IOTA: bigint[] = []; // no pure annotation: var is always used
@@ -64,7 +64,7 @@ for (let round = 0, R = _1n, x = 1, y = 0; round < 24; round++) {
   }
   _SHA3_IOTA.push(t);
 }
-const IOTAS = split(_SHA3_IOTA, true);
+const IOTAS = /* @__PURE__ */ split(_SHA3_IOTA, true);
 const SHA3_IOTA_H = IOTAS[0];
 const SHA3_IOTA_L = IOTAS[1];
 

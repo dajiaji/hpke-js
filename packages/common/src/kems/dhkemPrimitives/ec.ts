@@ -16,13 +16,13 @@ import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
 
 // b"candidate"
 // deno-fmt-ignore
-const LABEL_CANDIDATE = new Uint8Array([
+const LABEL_CANDIDATE = /* @__PURE__ */ new Uint8Array([
   99, 97, 110, 100, 105, 100, 97, 116, 101,
 ]);
 
 // the order of the curve being used.
 // deno-fmt-ignore
-const ORDER_P_256 = new Uint8Array([
+const ORDER_P_256 = /* @__PURE__ */ new Uint8Array([
   0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xbc, 0xe6, 0xfa, 0xad, 0xa7, 0x17, 0x9e, 0x84,
@@ -30,7 +30,7 @@ const ORDER_P_256 = new Uint8Array([
 ]);
 
 // deno-fmt-ignore
-const ORDER_P_384 = new Uint8Array([
+const ORDER_P_384 = /* @__PURE__ */ new Uint8Array([
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -40,7 +40,7 @@ const ORDER_P_384 = new Uint8Array([
 ]);
 
 // deno-fmt-ignore
-const ORDER_P_521 = new Uint8Array([
+const ORDER_P_521 = /* @__PURE__ */ new Uint8Array([
   0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
@@ -53,7 +53,7 @@ const ORDER_P_521 = new Uint8Array([
 ]);
 
 // deno-fmt-ignore
-const PKCS8_ALG_ID_P_256 = new Uint8Array([
+const PKCS8_ALG_ID_P_256 = /* @__PURE__ */ new Uint8Array([
   48, 65, 2, 1, 0, 48, 19, 6, 7, 42,
   134, 72, 206, 61, 2, 1, 6, 8, 42, 134,
   72, 206, 61, 3, 1, 7, 4, 39, 48, 37,
@@ -61,7 +61,7 @@ const PKCS8_ALG_ID_P_256 = new Uint8Array([
 ]);
 
 // deno-fmt-ignore
-const PKCS8_ALG_ID_P_384 = new Uint8Array([
+const PKCS8_ALG_ID_P_384 = /* @__PURE__ */ new Uint8Array([
   48, 78, 2, 1, 0, 48, 16, 6, 7, 42,
   134, 72, 206, 61, 2, 1, 6, 5, 43, 129,
   4, 0, 34, 4, 55, 48, 53, 2, 1, 1,
@@ -69,7 +69,7 @@ const PKCS8_ALG_ID_P_384 = new Uint8Array([
 ]);
 
 // deno-fmt-ignore
-const PKCS8_ALG_ID_P_521 = new Uint8Array([
+const PKCS8_ALG_ID_P_521 = /* @__PURE__ */ new Uint8Array([
   48, 96, 2, 1, 0, 48, 16, 6, 7, 42,
   134, 72, 206, 61, 2, 1, 6, 5, 43, 129,
   4, 0, 35, 4, 73, 48, 71, 2, 1, 1,

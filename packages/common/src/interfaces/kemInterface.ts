@@ -3,7 +3,7 @@ import type { SenderContextParams } from "../interfaces/senderContextParams.ts";
 import type { KemId } from "../identifiers.ts";
 
 // b"KEM"
-export const SUITE_ID_HEADER_KEM: Uint8Array = new Uint8Array([
+export const SUITE_ID_HEADER_KEM: Uint8Array = /* @__PURE__ */ new Uint8Array([
   75,
   69,
   77,

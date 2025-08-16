@@ -7,4 +7,4 @@ export const INFO_LENGTH_LIMIT = 65536;
 export const MINIMUM_PSK_LENGTH = 32;
 
 // b""
-export const EMPTY: Uint8Array = new Uint8Array(0);
+export const EMPTY: Uint8Array = /* @__PURE__ */ new Uint8Array(0);
