@@ -26,10 +26,7 @@ import {
 } from "../utils/noble.ts";
 import { createKeygen, type CurveLengths } from "./curve.ts";
 import { mod } from "./modular.ts";
-
-const _0n = /* @__PURE__ */ BigInt(0);
-const _1n = /* @__PURE__ */ BigInt(1);
-const _2n = /* @__PURE__ */ BigInt(2);
+import { N_0, N_1, N_2 } from "../consts.ts";
 
 export type CurveType = {
   P: bigint; // finite field prime
@@ -83,11 +80,11 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
   // RFC: x25519 "the resulting integer is of the form 2^254 plus
   // eight times a value between 0 and 2^251 - 1 (inclusive)"
   // x448: "2^447 plus four times a value between 0 and 2^445 - 1 (inclusive)"
-  const minScalar = is25519 ? _2n ** BigInt(254) : _2n ** BigInt(447);
+  const minScalar = is25519 ? N_2 ** BigInt(254) : N_2 ** BigInt(447);
   const maxAdded = is25519
-    ? BigInt(8) * _2n ** BigInt(251) - _1n
-    : BigInt(4) * _2n ** BigInt(445) - _1n;
-  const maxScalar = minScalar + maxAdded + _1n; // (inclusive)
+    ? BigInt(8) * N_2 ** BigInt(251) - N_1
+    : BigInt(4) * N_2 ** BigInt(445) - N_1;
+  const maxScalar = minScalar + maxAdded + N_1; // (inclusive)
   const modP = (n: bigint) => mod(n, P);
   const GuBytes = encodeU(Gu);
   function encodeU(u: bigint): Uint8Array {
@@ -114,7 +111,7 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     // Some public keys are useless, of low-order. Curve author doesn't think
     // it needs to be validated, but we do it nonetheless.
     // https://cr.yp.to/ecdh.html#validate
-    if (pu === _0n) throw new Error("invalid private or public key received");
+    if (pu === N_0) throw new Error("invalid private or public key received");
     return encodeU(pu);
   }
   // Computes public key from private. By doing scalar multiplication of base point.
@@ -146,17 +143,17 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
    * @returns new Point on Montgomery curve
    */
   function montgomeryLadder(u: bigint, scalar: bigint): bigint {
-    aInRange("u", u, _0n, P);
+    aInRange("u", u, N_0, P);
     aInRange("scalar", scalar, minScalar, maxScalar);
     const k = scalar;
     const x_1 = u;
-    let x_2 = _1n;
-    let z_2 = _0n;
+    let x_2 = N_1;
+    let z_2 = N_0;
     let x_3 = u;
-    let z_3 = _1n;
-    let swap = _0n;
-    for (let t = BigInt(montgomeryBits - 1); t >= _0n; t--) {
-      const k_t = (k >> t) & _1n;
+    let z_3 = N_1;
+    let swap = N_0;
+    for (let t = BigInt(montgomeryBits - 1); t >= N_0; t--) {
+      const k_t = (k >> t) & N_1;
       swap ^= k_t;
       ({ x_2, x_3 } = cswap(swap, x_2, x_3));
       ({ x_2: z_2, x_3: z_3 } = cswap(swap, z_2, z_3));
@@ -180,7 +177,7 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     }
     ({ x_2, x_3 } = cswap(swap, x_2, x_3));
     ({ x_2: z_2, x_3: z_3 } = cswap(swap, z_2, z_3));
-    const z2 = powPminus2(z_2); // `Fp.pow(x, P - _2n)` is much slower equivalent
+    const z2 = powPminus2(z_2); // `Fp.pow(x, P - N_2)` is much slower equivalent
     return modP(x_2 * z2); // Return x_2 * (z_2^(p - 2))
   }
   const lengths = {

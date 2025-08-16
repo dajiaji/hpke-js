@@ -14,8 +14,7 @@
  */
 
 import { loadCrypto } from "./misc.ts";
-
-const _0n = /* @__PURE__ */ BigInt(0);
+import { N_0 } from "../consts.ts";
 
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {
@@ -245,7 +244,7 @@ export function hexToNumber(hex: string): bigint {
   if (typeof hex !== "string") {
     throw new Error("hex string expected, got " + typeof hex);
   }
-  return hex === "" ? _0n : BigInt("0x" + hex); // Big Endian
+  return hex === "" ? N_0 : BigInt("0x" + hex); // Big Endian
 }
 
 // BE: Big Endian, LE: Little Endian
@@ -313,7 +312,7 @@ export function asciiToBytes(ascii: string): Uint8Array {
 
 // Is positive bigint
 function isPosBig(n: bigint): boolean {
-  return typeof n === "bigint" && _0n <= n;
+  return typeof n === "bigint" && N_0 <= n;
 }
 
 export function inRange(n: bigint, min: bigint, max: bigint): boolean {

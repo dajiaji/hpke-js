@@ -11,8 +11,9 @@
  * @todo re-check https://issues.chromium.org/issues/42212588
  * @module
  */
+import { N_32 } from "../consts.ts";
+
 const U32_MASK64 = /* @__PURE__ */ BigInt(2 ** 32 - 1);
-const _32n = /* @__PURE__ */ BigInt(32);
 
 function fromBig(
   n: bigint,
@@ -22,10 +23,10 @@ function fromBig(
   l: number;
 } {
   if (le) {
-    return { h: Number(n & U32_MASK64), l: Number((n >> _32n) & U32_MASK64) };
+    return { h: Number(n & U32_MASK64), l: Number((n >> N_32) & U32_MASK64) };
   }
   return {
-    h: Number((n >> _32n) & U32_MASK64) | 0,
+    h: Number((n >> N_32) & U32_MASK64) | 0,
     l: Number(n & U32_MASK64) | 0,
   };
 }
@@ -42,7 +43,7 @@ function split(lst: bigint[], le = false): Uint32Array[] {
 }
 
 const toBig = (h: number, l: number): bigint =>
-  (BigInt(h >>> 0) << _32n) | BigInt(l >>> 0);
+  (BigInt(h >>> 0) << N_32) | BigInt(l >>> 0);
 // for Shift in [0, 32)
 const shrSH = (h: number, _l: number, s: number): number => h >>> s;
 const shrSL = (h: number, l: number, s: number): number =>
