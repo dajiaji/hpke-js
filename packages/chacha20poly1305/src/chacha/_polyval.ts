@@ -129,7 +129,6 @@ export class GHASH implements IHash2 {
     for (let w = 0; w < windows; w++) {
       // truth table: 00, 01, 10, 11
       for (let byte = 0; byte < windowSize; byte++) {
-        // prettier-ignore
         let s0 = 0, s1 = 0, s2 = 0, s3 = 0;
         for (let j = 0; j < W; j++) {
           const bit = (byte >>> (W - j - 1)) & 1;
@@ -145,7 +144,6 @@ export class GHASH implements IHash2 {
   protected _updateBlock(s0: number, s1: number, s2: number, s3: number): void {
     (s0 ^= this.s0), (s1 ^= this.s1), (s2 ^= this.s2), (s3 ^= this.s3);
     const { W, t, windowSize } = this;
-    // prettier-ignore
     let o0 = 0, o1 = 0, o2 = 0, o3 = 0;
     const mask = (1 << W) - 1; // 2**W will kill performance.
     let w = 0;

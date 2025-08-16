@@ -26,7 +26,6 @@
  * Based on Public Domain [poly1305-donna](https://github.com/floodyberry/poly1305-donna).
  * @module
  */
-// prettier-ignore
 import {
   abytes,
   aexists,
