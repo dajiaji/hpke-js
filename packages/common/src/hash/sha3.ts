@@ -24,17 +24,19 @@ import {
   aexists,
   anumber,
   aoutput,
-  type CHash,
-  type CHashXOF,
   clean,
-  createHasher,
-  type Hash,
-  type HashInfo,
-  type HashXOF,
   oidNist,
   swap32IfBE,
   u32,
 } from "../utils/noble.ts";
+import {
+  type CHash,
+  type CHashXOF,
+  createHasher,
+  type Hash,
+  type HashInfo,
+  type HashXOF,
+} from "./hash.ts";
 
 // No __PURE__ annotations in sha3 header:
 // EVERYTHING is in fact used on every export.

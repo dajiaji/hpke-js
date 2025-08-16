@@ -15,13 +15,8 @@
  */
 import { Chi, HashMD, Maj, SHA256_IV, SHA384_IV, SHA512_IV } from "./md.ts";
 import * as u64 from "./u64.ts";
-import {
-  type CHash,
-  clean,
-  createHasher,
-  oidNist,
-  rotr,
-} from "../utils/noble.ts";
+import { clean, oidNist, rotr } from "../utils/noble.ts";
+import { type CHash, createHasher } from "./hash.ts";
 
 /**
  * Round constants:
