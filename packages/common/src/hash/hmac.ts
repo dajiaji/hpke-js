@@ -11,14 +11,8 @@
  * HMAC: RFC2104 message authentication code.
  * @module
  */
-import {
-  abytes,
-  aexists,
-  ahash,
-  type CHash,
-  clean,
-  type Hash,
-} from "../utils/noble.ts";
+import { abytes, aexists, clean } from "../utils/noble.ts";
+import { ahash, type CHash, type Hash } from "./hash.ts";
 
 export class _HMAC<T extends Hash<T>> implements Hash<_HMAC<T>> {
   oHash: T;

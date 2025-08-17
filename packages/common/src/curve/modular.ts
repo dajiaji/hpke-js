@@ -15,20 +15,20 @@
  */
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
 
+import { N_0 } from "../consts.ts";
+
 // Numbers aren't used in x25519 / x448 builds
-// prettier-ignore
-const _0n = /* @__PURE__ */ BigInt(0);
 
 // Calculates a modulo b
 export function mod(a: bigint, b: bigint): bigint {
   const result = a % b;
-  return result >= _0n ? result : b + result;
+  return result >= N_0 ? result : b + result;
 }
 
 /** Does `x^(2^power)` mod p. `pow2(30, 4)` == `30^(2^4)` */
 export function pow2(x: bigint, power: bigint, modulo: bigint): bigint {
   let res = x;
-  while (power-- > _0n) {
+  while (power-- > N_0) {
     res *= res;
     res %= modulo;
   }

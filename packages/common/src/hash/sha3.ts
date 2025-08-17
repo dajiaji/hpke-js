@@ -24,45 +24,42 @@ import {
   aexists,
   anumber,
   aoutput,
-  type CHash,
-  type CHashXOF,
   clean,
-  createHasher,
-  type Hash,
-  type HashInfo,
-  type HashXOF,
   oidNist,
   swap32IfBE,
   u32,
 } from "../utils/noble.ts";
+import {
+  type CHash,
+  type CHashXOF,
+  createHasher,
+  type Hash,
+  type HashInfo,
+  type HashXOF,
+} from "./hash.ts";
+import { N_0, N_0x71, N_1, N_2, N_256, N_7 } from "../consts.ts";
 
 // No __PURE__ annotations in sha3 header:
 // EVERYTHING is in fact used on every export.
 // Various per round constants calculations
-const _0n = BigInt(0);
-const _1n = BigInt(1);
-const _2n = BigInt(2);
-const _7n = BigInt(7);
-const _256n = BigInt(256);
-const _0x71n = BigInt(0x71);
 const SHA3_PI: number[] = [];
 const SHA3_ROTL: number[] = [];
 const _SHA3_IOTA: bigint[] = []; // no pure annotation: var is always used
-for (let round = 0, R = _1n, x = 1, y = 0; round < 24; round++) {
+for (let round = 0, R = N_1, x = 1, y = 0; round < 24; round++) {
   // Pi
   [x, y] = [y, (2 * x + 3 * y) % 5];
   SHA3_PI.push(2 * (5 * y + x));
   // Rotational
   SHA3_ROTL.push((((round + 1) * (round + 2)) / 2) % 64);
   // Iota
-  let t = _0n;
+  let t = N_0;
   for (let j = 0; j < 7; j++) {
-    R = ((R << _1n) ^ ((R >> _7n) * _0x71n)) % _256n;
-    if (R & _2n) t ^= _1n << ((_1n << BigInt(j)) - _1n);
+    R = ((R << N_1) ^ ((R >> N_7) * N_0x71)) % N_256;
+    if (R & N_2) t ^= N_1 << ((N_1 << BigInt(j)) - N_1);
   }
   _SHA3_IOTA.push(t);
 }
-const IOTAS = split(_SHA3_IOTA, true);
+const IOTAS = /* @__PURE__ */ split(_SHA3_IOTA, true);
 const SHA3_IOTA_H = IOTAS[0];
 const SHA3_IOTA_L = IOTAS[1];
 

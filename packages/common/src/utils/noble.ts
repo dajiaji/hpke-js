@@ -14,39 +14,7 @@
  */
 
 import { loadCrypto } from "./misc.ts";
-
-const _0n = /* @__PURE__ */ BigInt(0);
-
-export interface Hash<T> {
-  blockLen: number; // Bytes per block
-  outputLen: number; // Bytes in output
-  update(buf: Uint8Array): this;
-  digestInto(buf: Uint8Array): void;
-  digest(): Uint8Array;
-  destroy(): void;
-  _cloneInto(to?: T): T;
-  clone(): T;
-}
-
-export type HashInfo = {
-  oid?: Uint8Array; // DER encoded OID in bytes
-};
-
-/** Hash function */
-export type CHash<T extends Hash<T> = Hash<any>, Opts = undefined> =
-  & {
-    outputLen: number;
-    blockLen: number;
-  }
-  & HashInfo
-  & (Opts extends undefined ? {
-      (msg: Uint8Array): Uint8Array;
-      create(): T;
-    }
-    : {
-      (msg: Uint8Array, opts?: Opts): Uint8Array;
-      create(opts?: Opts): T;
-    });
+import { N_0 } from "../consts.ts";
 
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {
@@ -80,14 +48,7 @@ export function abytes(
   return value;
 }
 
-/** Asserts something is hash */
-export function ahash(h: CHash): void {
-  if (typeof h !== "function" || typeof h.create !== "function") {
-    throw new Error("Hash must wrapped by utils.createHasher");
-  }
-  anumber(h.outputLen);
-  anumber(h.blockLen);
-}
+// ahash function is now imported from ../hash/hash.ts
 
 /** Asserts a hash instance has not been destroyed / finished */
 export function aexists(instance: any, checkFinished = true): void {
@@ -115,7 +76,6 @@ function abignumer(n: number | bigint) {
 }
 
 /** Generic type encompassing 8/16/32-byte arrays - but not 64-byte. */
-// prettier-ignore
 export type TypedArray =
   | Int8Array
   | Uint8ClampedArray
@@ -141,10 +101,14 @@ export function clean(...arrays: TypedArray[]): void {
   }
 }
 
+/** Pre-computed buffer for endianness detection */
+const _endianTestBuffer = /* @__PURE__ */ new Uint32Array([0x11223344]);
+const _endianTestBytes = /* @__PURE__ */ new Uint8Array(
+  _endianTestBuffer.buffer,
+);
+
 /** Is current platform little-endian? Most are. Big-Endian platform: IBM */
-export const isLE: boolean =
-  /* @__PURE__ */ (() =>
-    new Uint8Array(new Uint32Array([0x11223344]).buffer)[0] === 0x44)();
+export const isLE: boolean = /* @__PURE__ */ _endianTestBytes[0] === 0x44;
 
 /** The byte swap operation for uint32 */
 export function byteSwap(word: number): number {
@@ -156,9 +120,9 @@ export function byteSwap(word: number): number {
   );
 }
 /** Conditionally byte swap if on a big-endian platform */
-export const swap8IfBE: (n: number) => number = isLE
-  ? (n: number) => n
-  : (n: number) => byteSwap(n);
+export function swap8IfBE(n: number): number {
+  return isLE ? n : byteSwap(n);
+}
 
 /** @deprecated */
 export const byteSwapIfBE: typeof swap8IfBE = swap8IfBE;
@@ -170,9 +134,9 @@ export function byteSwap32(arr: Uint32Array): Uint32Array {
   return arr;
 }
 
-export const swap32IfBE: (u: Uint32Array) => Uint32Array = isLE
-  ? (u: Uint32Array) => u
-  : byteSwap32;
+export function swap32IfBE(u: Uint32Array): Uint32Array {
+  return isLE ? u : byteSwap32(u);
+}
 
 /** Create DataView of an array for easy byte-level manipulation. */
 export function createView(arr: TypedArray): DataView {
@@ -279,7 +243,7 @@ export function hexToNumber(hex: string): bigint {
   if (typeof hex !== "string") {
     throw new Error("hex string expected, got " + typeof hex);
   }
-  return hex === "" ? _0n : BigInt("0x" + hex); // Big Endian
+  return hex === "" ? N_0 : BigInt("0x" + hex); // Big Endian
 }
 
 // BE: Big Endian, LE: Little Endian
@@ -346,7 +310,9 @@ export function asciiToBytes(ascii: string): Uint8Array {
 }
 
 // Is positive bigint
-const isPosBig = (n: bigint) => typeof n === "bigint" && _0n <= n;
+function isPosBig(n: bigint): boolean {
+  return typeof n === "bigint" && N_0 <= n;
+}
 
 export function inRange(n: bigint, min: bigint, max: bigint): boolean {
   return isPosBig(n) && isPosBig(min) && isPosBig(max) && min <= n && n < max;
@@ -422,37 +388,7 @@ export interface Signer extends CryptoKeys {
   verify: (sig: Uint8Array, msg: Uint8Array, publicKey: Uint8Array) => boolean;
 }
 
-/**
- * XOF: streaming API to read digest in chunks.
- * Same as 'squeeze' in keccak/k12 and 'seek' in blake3, but more generic name.
- * When hash used in XOF mode it is up to user to call '.destroy' afterwards, since we cannot
- * destroy state, next call can require more bytes.
- */
-export type HashXOF<T extends Hash<T>> = Hash<T> & {
-  xof(bytes: number): Uint8Array; // Read 'bytes' bytes from digest stream
-  xofInto(buf: Uint8Array): Uint8Array; // read buf.length bytes from digest stream into buf
-};
-
-export type HasherCons<T, Opts = undefined> = Opts extends undefined ? () => T
-  : (opts?: Opts) => T;
-
-/** XOF with output */
-export type CHashXOF<T extends HashXOF<T> = HashXOF<any>, Opts = undefined> =
-  CHash<T, Opts>;
-
-export function createHasher<T extends Hash<T>, Opts = undefined>(
-  hashCons: HasherCons<T, Opts>,
-  info: HashInfo = {},
-): CHash<T, Opts> {
-  const hashC: any = (msg: Uint8Array, opts?: Opts) =>
-    hashCons(opts).update(msg).digest();
-  const tmp = hashCons(undefined);
-  hashC.outputLen = tmp.outputLen;
-  hashC.blockLen = tmp.blockLen;
-  hashC.create = (opts?: Opts) => hashCons(opts);
-  Object.assign(hashC, info);
-  return Object.freeze(hashC);
-}
+// createHasher function is now exported above with ahash
 
 // /** Cryptographically secure PRNG. Uses internal OS-level `crypto.getRandomValues`. */
 // export function randomBytes(bytesLength = 32): Uint8Array {
@@ -472,18 +408,20 @@ export async function randomBytesAsync(bytesLength = 32): Promise<Uint8Array> {
 }
 
 // 06 09 60 86 48 01 65 03 04 02
-export const oidNist = (suffix: number): { oid: Uint8Array } => ({
-  oid: Uint8Array.from([
-    0x06,
-    0x09,
-    0x60,
-    0x86,
-    0x48,
-    0x01,
-    0x65,
-    0x03,
-    0x04,
-    0x02,
-    suffix,
-  ]),
-});
+export function oidNist(suffix: number): { oid: Uint8Array } {
+  return {
+    oid: Uint8Array.from([
+      0x06,
+      0x09,
+      0x60,
+      0x86,
+      0x48,
+      0x01,
+      0x65,
+      0x03,
+      0x04,
+      0x02,
+      suffix,
+    ]),
+  };
+}

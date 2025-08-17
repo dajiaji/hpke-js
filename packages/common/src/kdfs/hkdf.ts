@@ -6,7 +6,15 @@ import { KdfId } from "../identifiers.ts";
 import { NativeAlgorithm } from "../algorithm.ts";
 
 // b"HPKE-v1"
-const HPKE_VERSION = new Uint8Array([72, 80, 75, 69, 45, 118, 49]);
+const HPKE_VERSION = /* @__PURE__ */ new Uint8Array([
+  72,
+  80,
+  75,
+  69,
+  45,
+  118,
+  49,
+]);
 
 export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;

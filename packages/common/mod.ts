@@ -53,5 +53,6 @@ export { hmac } from "./src/hash/hmac.ts";
 export { sha256, sha384, sha512 } from "./src/hash/sha2.ts";
 export { sha3_256, sha3_512, shake128, shake256 } from "./src/hash/sha3.ts";
 
+export type { CHash, CHashXOF } from "./src/hash/hash.ts";
 export { mod, pow2 } from "./src/curve/modular.ts";
 export { montgomery, type MontgomeryECDH } from "./src/curve/montgomery.ts";

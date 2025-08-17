@@ -13,11 +13,11 @@ import { hmac } from "../src/hash/hmac.ts";
 import { sha256, sha384, sha512 } from "../src/hash/sha2.ts";
 import {
   bytesToHex,
-  type CHash,
   concatBytes,
   hexToBytes,
   utf8ToBytes,
 } from "../src/utils/noble.ts";
+import type { CHash } from "../src/hash/hash.ts";
 import { EMPTY, SPACE, truncate, TYPE_TEST } from "./utils.ts";
 
 // HMAC test vectors from RFC 4231

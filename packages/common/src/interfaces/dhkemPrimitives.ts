@@ -2,7 +2,7 @@
 export const KEM_USAGES: KeyUsage[] = ["deriveBits"];
 
 // b"dkp_prk"
-export const LABEL_DKP_PRK: Uint8Array = new Uint8Array([
+export const LABEL_DKP_PRK: Uint8Array = /* @__PURE__ */ new Uint8Array([
   100,
   107,
   112,
@@ -13,7 +13,7 @@ export const LABEL_DKP_PRK: Uint8Array = new Uint8Array([
 ]);
 
 // b"sk"
-export const LABEL_SK: Uint8Array = new Uint8Array([115, 107]);
+export const LABEL_SK: Uint8Array = /* @__PURE__ */ new Uint8Array([115, 107]);
 
 export interface DhkemPrimitives {
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;

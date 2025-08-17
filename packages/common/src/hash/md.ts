@@ -11,14 +11,8 @@
  * Internal Merkle-Damgard hash utils.
  * @module
  */
-import {
-  abytes,
-  aexists,
-  aoutput,
-  clean,
-  createView,
-  type Hash,
-} from "../utils/noble.ts";
+import { abytes, aexists, aoutput, clean, createView } from "../utils/noble.ts";
+import type { Hash } from "./hash.ts";
 
 /** Choice: a ? b : c */
 export function Chi(a: number, b: number, c: number): number {

@@ -11,10 +11,18 @@ import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
 import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
 // b"eae_prk"
-const LABEL_EAE_PRK = new Uint8Array([101, 97, 101, 95, 112, 114, 107]);
+const LABEL_EAE_PRK = /* @__PURE__ */ new Uint8Array([
+  101,
+  97,
+  101,
+  95,
+  112,
+  114,
+  107,
+]);
 // b"shared_secret"
 // deno-fmt-ignore
-const LABEL_SHARED_SECRET = new Uint8Array([
+const LABEL_SHARED_SECRET = /* @__PURE__ */ new Uint8Array([
   115, 104, 97, 114, 101, 100, 95, 115, 101, 99,
   114, 101, 116,
 ]);
