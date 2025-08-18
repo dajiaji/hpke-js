@@ -320,7 +320,7 @@
     // === MAINTENANCE TASKS ===
     "update-lock": {
       "description": "Update Deno lock file by reloading all dependencies",
-      "command": "deno cache --reload **/deno.json --config deno.jsonc"
+      "command": "deno cache --reload **/deno.jsonc --config deno.jsonc"
     }
   }
 }
