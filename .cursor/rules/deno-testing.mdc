@@ -1,0 +1,46 @@
+---
+description: Mandatory Deno-based testing requirements for HPKE-JS code modifications
+globs: ["**/*.ts", "**/*.js", "test/**/*"]
+alwaysApply: true
+---
+
+# Deno Testing Requirements for HPKE-JS
+
+## Mandatory Testing for Code Changes
+- All code modifications MUST be accompanied by appropriate tests to verify functionality
+- Tests MUST be written using Deno's native testing framework
+- Use `@std/testing/bdd` for behavior-driven testing when appropriate
+- Use `@std/assert` for assertions
+
+## Deno Task Usage
+- ALWAYS use the predefined Deno tasks from `deno.json` instead of running commands directly
+- Primary testing command: `deno task test:deno` for comprehensive testing
+- For specific package testing, use: `deno task test:deno:<package-name>`
+
+Available package-specific test tasks:
+- `deno task test:deno:common`
+- `deno task test:deno:core`
+- `deno task test:deno:chacha20poly1305`
+- `deno task test:deno:dhkem-x25519`
+- `deno task test:deno:dhkem-x448`
+- `deno task test:deno:dhkem-secp256k1`
+- `deno task test:deno:hybridkem-x-wing`
+- `deno task test:deno:hpke-js`
+- `deno task test:deno:ml-kem`
+
+## Testing Workflow
+1. Before making changes: Run relevant tests to establish baseline
+2. After making changes: Run tests to verify functionality
+3. Use `deno task test:deno` for full project testing
+4. Use package-specific tasks for focused testing during development
+
+## Test File Conventions
+- Test files MUST be placed in the `test/` directory within each package
+- Test files MUST follow the naming convention: `*.test.ts`
+- Import test utilities from `@std/assert` and `@std/testing/bdd`
+
+## Code Quality Integration
+- `deno task test:deno` includes formatting, linting, type checking, and tests
+- Individual quality checks: `deno task check` for type checking
+- Coverage enabled with `--coverage=coverage`
+- Use `deno task cov` to generate coverage reports
