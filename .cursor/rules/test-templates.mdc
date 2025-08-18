@@ -1,0 +1,74 @@
+---
+description: Test file templates and patterns for HPKE-JS
+globs: ["test/**/*.ts", "**/*.test.ts"]
+alwaysApply: false
+---
+
+# Test File Templates and Patterns
+
+## Basic Test Structure
+Use this template when creating new test files:
+
+```typescript
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
+
+describe("YourModule", () => {
+  it("should perform expected behavior", () => {
+    // Arrange
+    const input = "test input";
+    
+    // Act
+    const result = yourFunction(input);
+    
+    // Assert
+    assertEquals(result, expectedOutput);
+  });
+
+  it("should handle error cases", () => {
+    assertThrows(() => {
+      yourFunction(invalidInput);
+    }, Error, "Expected error message");
+  });
+});
+```
+
+## Async Test Pattern
+For testing asynchronous operations:
+
+```typescript
+import { assertEquals } from "@std/assert";
+import { describe, it } from "@std/testing/bdd";
+
+describe("AsyncModule", () => {
+  it("should handle async operations", async () => {
+    const result = await yourAsyncFunction();
+    assertEquals(result, expectedValue);
+  });
+
+  it("should reject with proper error", async () => {
+    await assertRejects(
+      async () => await yourAsyncFunction(invalidInput),
+      Error,
+      "Expected error message"
+    );
+  });
+});
+```
+
+## Import Patterns
+Standard imports for HPKE-JS tests:
+
+```typescript
+// For assertions
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
+
+// For BDD-style tests
+import { describe, it, beforeEach, afterEach } from "@std/testing/bdd";
+
+// For cryptographic testing
+import { CipherSuite } from "../src/cipherSuite.ts";
+import type { AeadInterface } from "../src/interfaces/aeadInterface.ts";
+```
+
+@packages/common/test/hmac.test.ts
