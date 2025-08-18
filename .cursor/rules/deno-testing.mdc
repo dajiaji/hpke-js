@@ -13,7 +13,7 @@ alwaysApply: true
 - Use `@std/assert` for assertions
 
 ## Deno Task Usage
-- ALWAYS use the predefined Deno tasks from `deno.json` instead of running commands directly
+- ALWAYS use the predefined Deno tasks from `deno.jsonc` instead of running commands directly
 - Primary testing command: `deno task test:deno` for comprehensive testing
 - For specific package testing, use: `deno task test:deno:<package-name>`
 

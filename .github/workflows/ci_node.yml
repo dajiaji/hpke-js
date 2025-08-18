@@ -37,7 +37,7 @@ jobs:
           echo "$CHANGED_FILES"
 
           # Run all tests if common, core, CI/CD files, or root files are changed
-          if echo "$CHANGED_FILES" | grep -E '^(packages/(common|core)/|\.github/|deno\.json|\.gitignore|tsconfig\.json|npm/|utils/)'; then
+          if echo "$CHANGED_FILES" | grep -E '^(packages/(common|core)/|\.github/|deno\.jsonc|\.gitignore|tsconfig\.json|npm/|utils/)'; then
             echo "run-all=true" >> $GITHUB_OUTPUT
             echo "packages=[]" >> $GITHUB_OUTPUT
           else

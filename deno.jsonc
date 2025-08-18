@@ -1,4 +1,8 @@
 {
+  // HPKE-JS Project Configuration
+  // This file configures the Deno workspace for the HPKE (Hybrid Public Key Encryption) implementation
+
+  // Workspace members - all packages and their sample projects
   "workspace": [
     "./packages/common",
     "./packages/core",
@@ -19,6 +23,7 @@
     "./packages/ml-kem/samples/deno",
     "./utils"
   ],
+  // Import map for dependencies used across the project
   "imports": {
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
@@ -29,7 +34,9 @@
     "@std/path": "jsr:@std/path@1.0.8",
     "@std/testing/bdd": "jsr:@std/testing@1.0.9/bdd"
   },
+  // Code formatting configuration
   "fmt": {
+    // Exclude generated files and external dependencies
     "exclude": [
       "npm/",
       "packages/hybridkem-x25519-kyber768/",
@@ -39,7 +46,9 @@
       "coverage/"
     ]
   },
+  // Linting configuration
   "lint": {
+    // Exclude same files as formatting
     "exclude": [
       "npm/",
       "packages/hybridkem-x25519-kyber768/",
@@ -49,7 +58,9 @@
       "coverage/"
     ]
   },
+  // Test configuration
   "test": {
+    // Exclude non-test files and generated content
     "exclude": [
       "npm/",
       "packages/hybridkem-x25519-kyber768/",
@@ -60,8 +71,18 @@
       "coverage/"
     ]
   },
+  // Task definitions for development workflow
+  // Main tasks use object format with descriptions, sub-tasks use string format for brevity
   "tasks": {
-    "test": "deno task test:deno && deno task npm && deno task test:browsers && deno task test:cloudflare && deno task bun-link && deno task test:bun && deno task test:node",
+    // === MAIN DEVELOPMENT TASKS ===
+    // Primary tasks for daily development workflow
+    "test": {
+      "description": "Run comprehensive test suite across all environments (Deno, browsers, Cloudflare Workers, Bun, Node.js)",
+      "command": "deno task test:deno && deno task npm && deno task test:browsers && deno task test:cloudflare && deno task bun-link && deno task test:bun && deno task test:node"
+    },
+
+    // === TESTING TASKS ===
+    // Deno environment testing
     "test:deno": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:deno:common": "cd packages/common && deno task test",
     "test:deno:core": "cd packages/core && deno task test",
@@ -72,6 +93,8 @@
     "test:deno:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task test",
     "test:deno:hpke-js": "cd packages/hpke-js && deno task test",
     "test:deno:ml-kem": "cd packages/ml-kem && deno task test",
+
+    // Node.js environment testing (via DNT build)
     "test:node": "deno task test:node:common && deno task test:node:core && deno task test:node:chacha20poly1305 && deno task test:node:dhkem-x25519 && deno task test:node:dhkem-x448 && deno task test:node:dhkem-secp256k1 && deno task test:node:hybridkem-x-wing && deno task test:node:hpke-js && deno task test:node:ml-kem",
     "test:node:common": "cd packages/common && deno task dnt",
     "test:node:core": "cd packages/core && deno task dnt",
@@ -82,6 +105,8 @@
     "test:node:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task dnt",
     "test:node:hpke-js": "cd packages/hpke-js && deno task dnt",
     "test:node:ml-kem": "cd packages/ml-kem && deno task dnt",
+
+    // Browser environment testing
     "test:browsers": "deno task test:browsers:prepare && deno task test:browsers:core && deno task test:browsers:chacha20poly1305 && deno task test:browsers:dhkem-x25519 && deno task test:browsers:dhkem-x448 && deno task test:browsers:dhkem-secp256k1 && deno task test:browsers:hybridkem-x-wing && deno task test:browsers:hpke-js && deno task test:browsers:ml-kem",
     "test:browsers:prepare": "deno task test:browsers:prepare:npm && deno task test:browsers:prepare:core && deno task test:browsers:prepare:chacha20poly1305 && deno task test:browsers:prepare:dhkem-x25519 && deno task test:browsers:prepare:dhkem-x448 && deno task test:browsers:prepare:dhkem-secp256k1 && deno task test:browsers:prepare:hybridkem-x-wing && deno task test:browsers:prepare:hpke-js && deno task test:browsers:prepare:ml-kem",
     "test:browsers:prepare:npm": "cd npm && npx playwright install-deps && npx playwright install",
@@ -101,6 +126,8 @@
     "test:browsers:hybridkem-x-wing": "cd npm && npm run test -w test/hybridkem-x-wing/runtimes/browsers",
     "test:browsers:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/browsers",
     "test:browsers:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/browsers",
+
+    // Cloudflare Workers environment testing
     "test:cloudflare": "deno task test:cloudflare:core && deno task test:cloudflare:chacha20poly1305 && deno task test:cloudflare:dhkem-x25519 && deno task test:cloudflare:dhkem-x448 && deno task test:cloudflare:dhkem-secp256k1 && deno task test:cloudflare:hybridkem-x-wing && deno task test:cloudflare:hpke-js && deno task test:cloudflare:ml-kem",
     "test:cloudflare:core": "cd npm && npm run test -w test/core/runtimes/cloudflare",
     "test:cloudflare:chacha20poly1305": "cd npm && npm run test -w test/chacha20poly1305/runtimes/cloudflare",
@@ -110,6 +137,8 @@
     "test:cloudflare:hybridkem-x-wing": "cd npm && npm run test -w test/hybridkem-x-wing/runtimes/cloudflare",
     "test:cloudflare:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/cloudflare",
     "test:cloudflare:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/cloudflare",
+
+    // Bun environment testing
     "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem",
     "test:bun:core": "cd packages/core && deno task test:bun",
     "test:bun:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test:bun",
@@ -119,8 +148,16 @@
     "test:bun:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task test:bun",
     "test:bun:hpke-js": "cd packages/hpke-js && deno task test:bun",
     "test:bun:ml-kem": "cd packages/ml-kem && deno task test:bun",
-    "cov": "deno coverage ./coverage --lcov --exclude='test'",
-    "check": "deno task check:common && deno task check:core && deno task check:chacha20poly1305 && deno task check:dhkem-x25519 && deno task check:dhkem-x448 && deno task check:dhkem-secp256k1 && deno task check:hybridkem-x-wing && deno task check:hpke-js && deno task check:ml-kem",
+
+    // === CODE QUALITY TASKS ===
+    "cov": {
+      "description": "Generate LCOV coverage report from test results",
+      "command": "deno coverage ./coverage --lcov --exclude='test'"
+    },
+    "check": {
+      "description": "Run type checking across all packages",
+      "command": "deno task check:common && deno task check:core && deno task check:chacha20poly1305 && deno task check:dhkem-x25519 && deno task check:dhkem-x448 && deno task check:dhkem-secp256k1 && deno task check:hybridkem-x-wing && deno task check:hpke-js && deno task check:ml-kem"
+    },
     "check:common": "cd packages/common && deno task check",
     "check:core": "cd packages/core && deno task check",
     "check:chacha20poly1305": "cd packages/chacha20poly1305 && deno task check",
@@ -130,9 +167,20 @@
     "check:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task check",
     "check:hpke-js": "cd packages/hpke-js && deno task check",
     "check:ml-kem": "cd packages/ml-kem && deno task check",
-    "npm": "deno task npm-build && deno task npm-link && deno task npm-pack && cd npm && npm install",
-    "npm-clean": "rm -rf npm/packages npm/samples npm/test",
-    "npm-build": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem",
+
+    // === NPM DISTRIBUTION TASKS ===
+    "npm": {
+      "description": "Build, link, pack, and install NPM packages",
+      "command": "deno task npm-build && deno task npm-link && deno task npm-pack && cd npm && npm install"
+    },
+    "npm-clean": {
+      "description": "Clean up generated NPM distribution files",
+      "command": "rm -rf npm/packages npm/samples npm/test"
+    },
+    "npm-build": {
+      "description": "Build NPM packages for all modules using DNT",
+      "command": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem"
+    },
     "npm-build:common": "cd packages/common && deno task npm-build",
     "npm-build:core": "cd packages/core && deno task npm-build",
     "npm-build:chacha20poly1305": "cd packages/chacha20poly1305 && deno task npm-build",
@@ -142,7 +190,10 @@
     "npm-build:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task npm-build",
     "npm-build:hpke-js": "cd packages/hpke-js && deno task npm-build",
     "npm-build:ml-kem": "cd packages/ml-kem && deno task npm-build",
-    "npm-link": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem",
+    "npm-link": {
+      "description": "Create symlinks for all NPM packages for local development",
+      "command": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem"
+    },
     "npm-link:common": "cd npm/packages/common && npm link",
     "npm-link:core": "cd npm/packages/core && npm link",
     "npm-link:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm link",
@@ -152,7 +203,10 @@
     "npm-link:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm link",
     "npm-link:hpke-js": "cd npm/packages/hpke-js && npm link",
     "npm-link:ml-kem": "cd npm/packages/ml-kem && npm link",
-    "npm-pack": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem",
+    "npm-pack": {
+      "description": "Validate NPM package contents with dry-run pack for all modules",
+      "command": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem"
+    },
     "npm-pack:common": "cd npm/packages/common && npm pack --dry-run",
     "npm-pack:core": "cd npm/packages/core && npm pack --dry-run",
     "npm-pack:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm pack --dry-run",
@@ -162,7 +216,12 @@
     "npm-pack:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm pack --dry-run",
     "npm-pack:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
     "npm-pack:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",
-    "bun-link": "deno task bun-link:common && deno task bun-link:core && deno task bun-link:chacha20poly1305 && deno task bun-link:dhkem-x25519 && deno task bun-link:dhkem-x448 && deno task bun-link:dhkem-secp256k1 && deno task bun-link:hybridkem-x-wing && deno task bun-link:hpke-js && deno task bun-link:ml-kem",
+
+    // === DEVELOPMENT ENVIRONMENT SETUP ===
+    "bun-link": {
+      "description": "Create Bun symlinks for all packages for local development",
+      "command": "deno task bun-link:common && deno task bun-link:core && deno task bun-link:chacha20poly1305 && deno task bun-link:dhkem-x25519 && deno task bun-link:dhkem-x448 && deno task bun-link:dhkem-secp256k1 && deno task bun-link:hybridkem-x-wing && deno task bun-link:hpke-js && deno task bun-link:ml-kem"
+    },
     "bun-link:common": "cd npm/packages/common && bun link",
     "bun-link:core": "cd npm/packages/core && bun link",
     "bun-link:chacha20poly1305": "cd npm/packages/chacha20poly1305 && bun link",
@@ -172,7 +231,12 @@
     "bun-link:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && bun link",
     "bun-link:hpke-js": "cd npm/packages/hpke-js && bun link",
     "bun-link:ml-kem": "cd npm/packages/ml-kem && bun link",
-    "sample": "deno task sample:deno && deno task sample:node",
+
+    // === SAMPLE EXECUTION TASKS ===
+    "sample": {
+      "description": "Run sample code demonstrations for Deno and Node.js environments",
+      "command": "deno task sample:deno && deno task sample:node"
+    },
     "sample:deno": "deno task sample:deno:core && deno task sample:deno:chacha20poly1305 && deno task sample:deno:dhkem-x25519 && deno task sample:deno:dhkem-x448 && deno task sample:deno:dhkem-secp256k1 && deno task sample:deno:hybridkem-x-wing && deno task sample:deno:hpke-js && deno task sample:deno:ml-kem",
     "sample:deno:core": "cd packages/core && deno task sample:deno",
     "sample:deno:chacha20poly1305": "cd packages/chacha20poly1305 && deno task sample:deno",
@@ -191,7 +255,12 @@
     "sample:node:hybridkem-x-wing": "cd npm && npm run test -w samples/hybridkem-x-wing",
     "sample:node:hpke-js": "cd npm && npm run test -w samples/hpke-js",
     "sample:node:ml-kem": "cd npm && npm run test -w samples/ml-kem",
-    "update": "deno task update:cloudflare && deno task update:browsers && deno task update:bun",
+
+    // === DEPENDENCY MANAGEMENT ===
+    "update": {
+      "description": "Update dependencies for all test environments (Cloudflare, browsers, Bun)",
+      "command": "deno task update:cloudflare && deno task update:browsers && deno task update:bun"
+    },
     "update:cloudflare": "deno task update:cloudflare:core && deno task update:cloudflare:chacha20poly1305 && deno task update:cloudflare:dhkem-x25519 && deno task update:cloudflare:dhkem-x448 && deno task update:cloudflare:dhkem-secp256k1 && deno task update:cloudflare:hybridkem-x-wing && deno task update:cloudflare:hpke-js && deno task update:cloudflare:ml-kem",
     "update:cloudflare:core": "cd packages/core/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
     "update:cloudflare:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
@@ -219,7 +288,12 @@
     "update:bun:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/bun && bun update",
     "update:bun:hpke-js": "cd packages/hpke-js/test/runtimes/bun && bun update",
     "update:bun:ml-kem": "cd packages/ml-kem/test/runtimes/bun && bun update",
-    "minify": "deno task minify:common && deno task minify:core && deno task minify:chacha20poly1305 && deno task minify:dhkem-x25519 && deno task minify:dhkem-x448 && deno task minify:dhkem-secp256k1 && deno task minify:hybridkem-x-wing && deno task minify:hpke-js && deno task minify:ml-kem",
+
+    // === BUILD AND DISTRIBUTION ===
+    "minify": {
+      "description": "Create minified bundles for all packages for browser distribution",
+      "command": "deno task minify:common && deno task minify:core && deno task minify:chacha20poly1305 && deno task minify:dhkem-x25519 && deno task minify:dhkem-x448 && deno task minify:dhkem-secp256k1 && deno task minify:hybridkem-x-wing && deno task minify:hpke-js && deno task minify:ml-kem"
+    },
     "minify:common": "cd packages/common && deno task minify > ../../npm/packages/common/hpke-common.min.js",
     "minify:core": "cd packages/core && deno task minify > ../../npm/packages/core/hpke-core.min.js",
     "minify:chacha20poly1305": "cd packages/chacha20poly1305 && deno task minify > ../../npm/packages/chacha20poly1305/hpke-chacha20poly1305.min.js",
@@ -229,7 +303,10 @@
     "minify:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task minify > ../../npm/packages/hybridkem-x-wing/hpke-hybridkem-x-wing.min.js",
     "minify:hpke-js": "cd packages/hpke-js && deno task minify > ../../npm/packages/hpke-js/hpke-js.min.js",
     "minify:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/packages/ml-kem/hpke-ml-kem.min.js",
-    "dry-publish": "deno task dry-publish:common && deno task dry-publish:core && deno task dry-publish:chacha20poly1305 && deno task dry-publish:dhkem-x25519 && deno task dry-publish:dhkem-x448 && deno task dry-publish:dhkem-secp256k1 && deno task dry-publish:hybridkem-x-wing && deno task dry-publish:hpke-js && deno task dry-publish:ml-kem",
+    "dry-publish": {
+      "description": "Test package publishing process without actually publishing",
+      "command": "deno task dry-publish:common && deno task dry-publish:core && deno task dry-publish:chacha20poly1305 && deno task dry-publish:dhkem-x25519 && deno task dry-publish:dhkem-x448 && deno task dry-publish:dhkem-secp256k1 && deno task dry-publish:hybridkem-x-wing && deno task dry-publish:hpke-js && deno task dry-publish:ml-kem"
+    },
     "dry-publish:common": "cd npm/packages/common && npm pack --dry-run",
     "dry-publish:core": "cd npm/packages/core && npm pack --dry-run",
     "dry-publish:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm pack --dry-run",
@@ -239,6 +316,11 @@
     "dry-publish:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm pack --dry-run",
     "dry-publish:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
     "dry-publish:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",
-    "update-lock": "deno cache --reload **/deno.json --config deno.json"
+
+    // === MAINTENANCE TASKS ===
+    "update-lock": {
+      "description": "Update Deno lock file by reloading all dependencies",
+      "command": "deno cache --reload **/deno.json --config deno.jsonc"
+    }
   }
 }
