@@ -273,13 +273,13 @@ export const sha3_256: CHash = /* @__PURE__ */ genKeccak(
   /* @__PURE__ */ oidNist(0x08),
 );
 
-// /** SHA3-384 hash function. */
-// export const sha3_384: CHash = /* @__PURE__ */ genKeccak(
-//   0x06,
-//   104,
-//   48,
-//   /* @__PURE__ */ oidNist(0x09),
-// );
+/** SHA3-384 hash function. */
+export const sha3_384: CHash = /* @__PURE__ */ genKeccak(
+  0x06,
+  104,
+  48,
+  /* @__PURE__ */ oidNist(0x09),
+);
 
 /** SHA3-512 hash function. */
 export const sha3_512: CHash = /* @__PURE__ */ genKeccak(

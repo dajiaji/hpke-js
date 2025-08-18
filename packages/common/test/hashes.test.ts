@@ -12,7 +12,13 @@ import { describe, it } from "@std/testing/bdd";
 import { createHash, createHmac } from "node:crypto";
 
 import { sha256, sha384, sha512 } from "../src/hash/sha2.ts";
-import { sha3_256, sha3_512, shake128, shake256 } from "../src/hash/sha3.ts";
+import {
+  sha3_256,
+  sha3_384,
+  sha3_512,
+  shake128,
+  shake256,
+} from "../src/hash/sha3.ts";
 import { hmac } from "../src/hash/hmac.ts";
 import { concatBytes, hexToBytes, utf8ToBytes } from "../src/utils/noble.ts";
 import { repeat, TYPE_TEST } from "./utils.ts";
@@ -143,24 +149,24 @@ const HASHES = {
       "ecbbc42cbf296603 acb2c6bc0410ef43 78bafb24b710357f 12df607758b33e2b",
     ],
   },
-  // SHA3_384: {
-  //   name: "SHA3_384",
-  //   fn: sha3_384,
-  //   obj: sha3_384.create,
-  //   node: (buf: Uint8Array) =>
-  //     Uint8Array.from(
-  //       createHash("sha3-384").update(buf).digest(),
-  //     ),
-  //   node_obj: () => createHash("sha3-384"),
-  //   nist: [
-  //     "ec01498288516fc9 26459f58e2c6ad8d f9b473cb0fc08c25 96da7cf0e49be4b2 98d88cea927ac7f5 39f1edf228376d25",
-  //     "0c63a75b845e4f7d 01107d852e4c2485 c51a50aaaa94fc61 995e71bbee983a2a c3713831264adb47 fb6bd1e058d5f004",
-  //     "991c665755eb3a4b 6bbdfb75c78a492e 8c56a22c5c4d7e42 9bfdbc32b9d4ad5a a04a1f076e62fea1 9eef51acd0657c22",
-  //     "79407d3b5916b59c 3e30b09822974791 c313fb9ecc849e40 6f23592d04f625dc 8c709b98b43b3852 b337216179aa7fc7",
-  //     "eee9e24d78c18553 37983451df97c8ad 9eedf256c6334f8e 948d252d5e0e7684 7aa0774ddb90a842 190d2c558b4b8340",
-  //     "a04296f4fcaae148 71bb5ad33e28dcf6 9238b04204d9941b 8782e816d014bcb7 540e4af54f30d578 f1a1ca2930847a12",
-  //   ],
-  // },
+  SHA3_384: {
+    name: "SHA3_384",
+    fn: sha3_384,
+    obj: sha3_384.create,
+    node: (buf: Uint8Array) =>
+      Uint8Array.from(
+        createHash("sha3-384").update(buf).digest(),
+      ),
+    node_obj: () => createHash("sha3-384"),
+    nist: [
+      "ec01498288516fc9 26459f58e2c6ad8d f9b473cb0fc08c25 96da7cf0e49be4b2 98d88cea927ac7f5 39f1edf228376d25",
+      "0c63a75b845e4f7d 01107d852e4c2485 c51a50aaaa94fc61 995e71bbee983a2a c3713831264adb47 fb6bd1e058d5f004",
+      "991c665755eb3a4b 6bbdfb75c78a492e 8c56a22c5c4d7e42 9bfdbc32b9d4ad5a a04a1f076e62fea1 9eef51acd0657c22",
+      "79407d3b5916b59c 3e30b09822974791 c313fb9ecc849e40 6f23592d04f625dc 8c709b98b43b3852 b337216179aa7fc7",
+      "eee9e24d78c18553 37983451df97c8ad 9eedf256c6334f8e 948d252d5e0e7684 7aa0774ddb90a842 190d2c558b4b8340",
+      "a04296f4fcaae148 71bb5ad33e28dcf6 9238b04204d9941b 8782e816d014bcb7 540e4af54f30d578 f1a1ca2930847a12",
+    ],
+  },
   SHA3_512: {
     name: "SHA3_512",
     fn: sha3_512,
