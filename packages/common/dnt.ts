@@ -2,7 +2,7 @@ import { build, emptyDir } from "@deno/dnt";
 
 await emptyDir("../../npm/packages/common");
 
-const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
 
 await build({
   entryPoints: ["./mod.ts"],

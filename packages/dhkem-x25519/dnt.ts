@@ -1,7 +1,7 @@
 import { build } from "@deno/dnt";
 import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
-const denoPkg = JSON.parse(await Deno.readTextFile("./deno.json"));
+const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
 
 await beforeBuild("dhkem-x25519");
 

@@ -120,7 +120,7 @@ The release branch should include:
    ```
 
 2. **Changes Implementation**:
-   - Update `packages/<package-name>/deno.json` version field
+   - Update `packages/<package-name>/deno.jsonc` version field
    - Add new section to `packages/<package-name>/CHANGES.md`
    - Update any cross-package version dependencies
    - Run tests to ensure everything works
@@ -176,7 +176,7 @@ Released 2025-08-15
 
 ```
 hpke-js-bump-to-1_7_0
-├── packages/hpke-js/deno.json (version: "1.7.0")
+├── packages/hpke-js/deno.jsonc (version: "1.7.0")
 ├── packages/hpke-js/CHANGES.md (new section added)
 └── any other affected files
 ```
