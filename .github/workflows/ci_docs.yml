@@ -1,14 +1,16 @@
-name: Markdown CI
+name: Documentation CI
 
 on:
   push:
     branches: [main]
     paths:
       - "**/*.md"
+      - "**/*.mdc"
   pull_request:
     branches: [main]
     paths:
       - "**/*.md"
+      - "**/*.mdc"
 
 permissions:
   contents: read
