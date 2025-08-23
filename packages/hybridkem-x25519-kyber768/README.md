@@ -1,6 +1,7 @@
 <h1 align="center">@hpke/hybridkem-x25519-kyber768 (deprecated)</h1>
 
 <div align="center">
+<a href="https://www.npmjs.com/package/@hpke/hybridkem-x25519-kyber768"><img src="https://img.shields.io/npm/v/@hpke/hybridkem-x25519-kyber768" alt="npm"/></a>
 <a href="https://jsr.io/@hpke/hybridkem-x25519-kyber768"><img src="https://jsr.io/badges/@hpke/hybridkem-x25519-kyber768" alt="JSR"/></a>
 </div>
 
