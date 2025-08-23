@@ -33,7 +33,8 @@
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@noble/curves@^1.9.6": "1.9.6",
-    "npm:@playwright/test@^1.54.2": "1.54.2",
+    "npm:@noble/curves@^1.9.7": "1.9.7",
+    "npm:@playwright/test@^1.55.0": "1.55.0",
     "npm:@types/node@*": "22.13.10"
   },
   "jsr": {
@@ -158,11 +159,17 @@
         "@noble/hashes"
       ]
     },
+    "@noble/curves@1.9.7": {
+      "integrity": "sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==",
+      "dependencies": [
+        "@noble/hashes"
+      ]
+    },
     "@noble/hashes@1.8.0": {
       "integrity": "sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A=="
     },
-    "@playwright/test@1.54.2": {
-      "integrity": "sha512-A+znathYxPf+72riFd1r1ovOLqsIIB0jKIoPjyK2kqEIe30/6jF6BC7QNluHuwUmsD2tv1XZVugN8GqfTMOxsA==",
+    "@playwright/test@1.55.0": {
+      "integrity": "sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==",
       "dependencies": [
         "playwright"
       ],
@@ -179,12 +186,12 @@
       "os": ["darwin"],
       "scripts": true
     },
-    "playwright-core@1.54.2": {
-      "integrity": "sha512-n5r4HFbMmWsB4twG7tJLDN9gmBUeSPcsBZiWSE4DnYz9mJMAFqr2ID7+eGC9kpEnxExJ1epttwR59LEWCk8mtA==",
+    "playwright-core@1.55.0": {
+      "integrity": "sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==",
       "bin": true
     },
-    "playwright@1.54.2": {
-      "integrity": "sha512-Hu/BMoA1NAdRUuulyvQC0pEqZ4vQbGfn8f7wPXcnqQmM+zct9UliKxsIkLNmz/ku7LElUNqmaiv1TG/aL5ACsw==",
+    "playwright@1.55.0": {
+      "integrity": "sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==",
       "dependencies": [
         "playwright-core"
       ],
@@ -205,8 +212,8 @@
       "jsr:@std/fs@1.0.14",
       "jsr:@std/path@1.0.8",
       "jsr:@std/testing@1.0.9",
-      "npm:@noble/curves@^1.9.6",
-      "npm:@playwright/test@^1.54.2"
+      "npm:@noble/curves@^1.9.7",
+      "npm:@playwright/test@^1.55.0"
     ],
     "members": {
       "packages/dhkem-secp256k1": {
