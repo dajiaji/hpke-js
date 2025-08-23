@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths-ignore:
       - "**/*.md"
+      - "**/*.mdc"
   pull_request:
     branches: [main]
     paths-ignore:
       - "**/*.md"
+      - "**/*.mdc"
 
 jobs:
   # Check changed files to determine which package tests to run

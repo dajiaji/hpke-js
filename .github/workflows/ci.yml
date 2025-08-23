@@ -5,10 +5,12 @@ on:
     branches: [main]
     paths-ignore:
       - "**/*.md"
+      - "**/*.mdc"
   pull_request:
     branches: [main]
     paths-ignore:
       - "**/*.md"
+      - "**/*.mdc"
 
 permissions:
   contents: read
