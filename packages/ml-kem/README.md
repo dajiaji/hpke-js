@@ -1,6 +1,7 @@
 <h1 align="center">@hpke/ml-kem</h1>
 
 <div align="center">
+<a href="https://www.npmjs.com/package/@hpke/ml-kem"><img src="https://img.shields.io/npm/v/@hpke/ml-kem" alt="npm"/></a>
 <a href="https://jsr.io/@hpke/ml-kem"><img src="https://jsr.io/badges/@hpke/ml-kem" alt="JSR"/></a>
 </div>
 

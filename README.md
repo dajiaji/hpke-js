@@ -1,7 +1,8 @@
 <h1 align="center">hpke-js</h1>
 
 <div align="center">
-<a href="https://jsr.io/@hpke/hpke-js"><img src="https://jsr.io/badges/@hpke/hpke-js" alt="JSR"/></a>
+<a href="https://www.npmjs.com/package/@hpke/core"><img src="https://img.shields.io/npm/v/@hpke/core" alt="npm"/></a>
+<a href="https://jsr.io/@hpke/core"><img src="https://jsr.io/badges/@hpke/core" alt="JSR"/></a>
 <img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_browser.yml/badge.svg" alt="Browser CI" />
 <img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci_node.yml/badge.svg" alt="Node.js CI" />
 <img src="https://github.com/dajiaji/hpke-js/actions/workflows/ci.yml/badge.svg" alt="Deno CI" />

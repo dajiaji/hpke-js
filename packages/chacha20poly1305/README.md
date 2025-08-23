@@ -1,6 +1,7 @@
 <h1 align="center">@hpke/chacha20poly1305</h1>
 
 <div align="center">
+<a href="https://www.npmjs.com/package/@hpke/chacha20poly1305"><img src="https://img.shields.io/npm/v/@hpke/chacha20poly1305" alt="npm"/></a>
 <a href="https://jsr.io/@hpke/chacha20poly1305"><img src="https://jsr.io/badges/@hpke/chacha20poly1305" alt="JSR"/></a>
 </div>
 

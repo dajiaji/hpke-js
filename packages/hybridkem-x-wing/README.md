@@ -1,6 +1,7 @@
 <h1 align="center">@hpke/hybridkem-x-wing</h1>
 
 <div align="center">
+<a href="https://www.npmjs.com/package/@hpke/hybridkem-x-wing"><img src="https://img.shields.io/npm/v/@hpke/hybridkem-x-wing" alt="npm"/></a>
 <a href="https://jsr.io/@hpke/hybridkem-x-wing"><img src="https://jsr.io/badges/@hpke/hybridkem-x-wing" alt="JSR"/></a>
 </div>
 

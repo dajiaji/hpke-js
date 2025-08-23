@@ -1,6 +1,7 @@
 <h1 align="center">@hpke/dhkem-x448</h1>
 
 <div align="center">
+<a href="https://www.npmjs.com/package/@hpke/dhkem-x448"><img src="https://img.shields.io/npm/v/@hpke/dhkem-x448" alt="npm"/></a>
 <a href="https://jsr.io/@hpke/dhkem-x448"><img src="https://jsr.io/badges/@hpke/dhkem-x448" alt="JSR"/></a>
 </div>
 
