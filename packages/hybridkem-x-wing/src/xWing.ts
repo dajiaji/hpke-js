@@ -266,6 +266,7 @@ export class XWing implements KemInterface {
       }
       ekm = params.ekm;
     }
+    await this._setup();
     let ekM: Uint8Array | undefined = undefined;
     let ekX: Uint8Array;
     if (ekm !== undefined) {
@@ -286,7 +287,6 @@ export class XWing implements KemInterface {
     if (pk.byteLength !== 1216) {
       throw new InvalidParamError("Invalid length of recipientPublicKey");
     }
-    await this._setup();
     try {
       const pkM = pk.subarray(0, 1184);
       const pkX = pk.subarray(1184, 1216);
