@@ -179,7 +179,7 @@ export class MlKemBase implements KemInterface {
     try {
       const [ct, ss] = await (this._prim as MlKemInterface).encap(pk, ekm);
       return {
-        sharedSecret: ss.buffer as ArrayBuffer,
+        sharedSecret: ss.buffer.slice(ss.byteOffset, ss.byteOffset + ss.byteLength) as ArrayBuffer,
         enc: ct.buffer as ArrayBuffer,
       };
     } catch (e: unknown) {
@@ -201,8 +201,8 @@ export class MlKemBase implements KemInterface {
     }
     try {
       const [_, exSk] = await (this._prim as MlKemInterface).deriveKeyPair(sk);
-      return (await (this._prim as MlKemInterface).decap(ct, exSk))
-        .buffer as ArrayBuffer;
+      const ss = await (this._prim as MlKemInterface).decap(ct, exSk);
+      return ss.buffer.slice(ss.byteOffset, ss.byteOffset + ss.byteLength) as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
     }
