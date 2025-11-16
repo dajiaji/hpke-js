@@ -29,6 +29,8 @@
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@noble/curves/secp256k1": "npm:@noble/curves@^1.9.7/secp256k1",
     "@playwright/test": "npm:@playwright/test@^1.56.1",
+    "playwright": "npm:playwright@^1.56.1",
+    "playwright-core": "npm:playwright-core@^1.56.1",
     "@std/assert": "jsr:@std/assert@1.0.0",
     "@std/fs": "jsr:@std/fs@1.0.14",
     "@std/path": "jsr:@std/path@1.0.8",
@@ -109,7 +111,8 @@
     // Browser environment testing
     "test:browsers": "deno task test:browsers:prepare && deno task test:browsers:core && deno task test:browsers:chacha20poly1305 && deno task test:browsers:dhkem-x25519 && deno task test:browsers:dhkem-x448 && deno task test:browsers:dhkem-secp256k1 && deno task test:browsers:hybridkem-x-wing && deno task test:browsers:hpke-js && deno task test:browsers:ml-kem",
     "test:browsers:prepare": "deno task test:browsers:prepare:npm && deno task test:browsers:prepare:core && deno task test:browsers:prepare:chacha20poly1305 && deno task test:browsers:prepare:dhkem-x25519 && deno task test:browsers:prepare:dhkem-x448 && deno task test:browsers:prepare:dhkem-secp256k1 && deno task test:browsers:prepare:hybridkem-x-wing && deno task test:browsers:prepare:hpke-js && deno task test:browsers:prepare:ml-kem",
-    "test:browsers:prepare:npm": "cd npm && npx playwright install-deps && npx playwright install",
+    // "test:browsers:prepare:npm": "cd npm && npx playwright install-deps && npx playwright install",
+    "test:browsers:prepare:npm": "cd npm && node ./node_modules/playwright/cli.js install-deps && node ./node_modules/playwright/cli.js install",
     "test:browsers:prepare:core": "cd packages/core && deno task minify > ../../npm/test/core/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/chacha20poly1305/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x25519/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x448/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-secp256k1/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hybridkem-x-wing/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hpke-js/runtimes/browsers/pages/src/hpke.js && deno task minify > ../../npm/test/ml-kem/runtimes/browsers/pages/src/hpke-core.js",
     "test:browsers:prepare:chacha20poly1305": "cd packages/chacha20poly1305 && deno task minify > ../../npm/test/chacha20poly1305/runtimes/browsers/pages/src/hpke-chacha20poly1305.js",
     "test:browsers:prepare:dhkem-x25519": "cd packages/dhkem-x25519 && deno task minify > ../../npm/test/dhkem-x25519/runtimes/browsers/pages/src/hpke-dhkem-x25519.js",
