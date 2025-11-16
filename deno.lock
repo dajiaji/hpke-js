@@ -35,7 +35,9 @@
     "npm:@noble/curves@^1.9.6": "1.9.7",
     "npm:@noble/curves@^1.9.7": "1.9.7",
     "npm:@playwright/test@^1.56.1": "1.56.1",
-    "npm:@types/node@*": "22.13.10"
+    "npm:@types/node@*": "22.13.10",
+    "npm:playwright-core@^1.56.1": "1.56.1",
+    "npm:playwright@^1.56.1": "1.56.1"
   },
   "jsr": {
     "@dajiaji/mlkem@2.5.0": {
@@ -207,7 +209,9 @@
       "jsr:@std/path@1.0.8",
       "jsr:@std/testing@1.0.9",
       "npm:@noble/curves@^1.9.7",
-      "npm:@playwright/test@^1.56.1"
+      "npm:@playwright/test@^1.56.1",
+      "npm:playwright-core@^1.56.1",
+      "npm:playwright@^1.56.1"
     ],
     "members": {
       "packages/dhkem-secp256k1": {
