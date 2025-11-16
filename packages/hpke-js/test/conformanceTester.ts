@@ -170,7 +170,13 @@ export class ConformanceTester {
     const pkb = hexToBytes(pk);
     const alg = kemToKeyGenAlgorithm(kemId);
 
-    const cpk = await this._api.importKey("raw", pkb, alg, true, []);
+    const cpk = await this._api.importKey(
+      "raw",
+      pkb.buffer as ArrayBuffer,
+      alg,
+      true,
+      [],
+    );
     const sender = await suite.createSenderContext({
       recipientPublicKey: cpk,
     });
