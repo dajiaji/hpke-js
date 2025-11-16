@@ -28,7 +28,7 @@
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@noble/curves/secp256k1": "npm:@noble/curves@^1.9.7/secp256k1",
-    "@playwright/test": "npm:@playwright/test@^1.55.0",
+    "@playwright/test": "npm:@playwright/test@^1.56.1",
     "@std/assert": "jsr:@std/assert@1.0.0",
     "@std/fs": "jsr:@std/fs@1.0.14",
     "@std/path": "jsr:@std/path@1.0.8",
