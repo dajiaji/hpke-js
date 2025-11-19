@@ -1,5 +1,11 @@
 # Changes
 
+## Version 1.7.5
+
+Released 2025-11-19
+
+- core: introduce mutex to protect nonce reuse. by @panva
+
 ## Version 1.7.4
 
 Released 2025-08-14
