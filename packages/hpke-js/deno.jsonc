@@ -1,6 +1,6 @@
 {
   "name": "@hpke/hpke-js",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
