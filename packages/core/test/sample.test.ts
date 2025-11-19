@@ -949,6 +949,127 @@ describe("README examples", () => {
     });
   });
 
+  describe("Nonce reuse", () => {
+    it("should not allow nonce reuse", async () => {
+      const suite = new CipherSuite({
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
+
+      const keypair = await suite.kem.generateKeyPair();
+      const skR = keypair.privateKey;
+      const pkR = keypair.publicKey;
+
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const [message0, message1] = await Promise.all([
+        sender.seal(
+          new TextEncoder().encode("Secret message 1: Attack at dawn").buffer,
+        ),
+        sender.seal(
+          new TextEncoder().encode("Secret message 2: Withdraw troops").buffer,
+        ),
+      ]);
+
+      const recipient = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      const plaintext0 = await recipient.open(message0);
+      console.log(
+        "✓ Decrypted message seq=0:",
+        new TextDecoder().decode(plaintext0),
+      );
+
+      try {
+        console.log(
+          "✓ Decrypted message seq=1:",
+          new TextDecoder().decode(await recipient.open(message1)),
+        );
+        console.log(
+          "\n✓ nonce-reuse reproduction completed, code is NOT vulnerable",
+        );
+      } catch (_err) {
+        // re-sequence the recipient to verify same nonce was used for two messages
+        (recipient as unknown as { _ctx: { seq: number } })._ctx.seq = 0;
+        console.log(
+          "❌ Decrypted a different message with seq=0",
+          new TextDecoder().decode(await recipient.open(message1)),
+        );
+
+        console.log(
+          "\n✓ nonce-reuse reproduction completed, code is vulnerable, nonces are reused when concurrent calls to .seal() are used",
+        );
+      }
+
+      // Test that failed Open() doesn't increment sequence
+      const recipient2 = await suite.createRecipientContext({
+        recipientKey: skR,
+        enc: sender.enc,
+      });
+
+      const invalidMessage = new Uint8Array(message0.byteLength);
+      invalidMessage.set(new Uint8Array(message0));
+      invalidMessage[0] ^= 0xff; // Corrupt the first byte
+
+      try {
+        await recipient2.open(invalidMessage.buffer);
+      } catch (_err: unknown) {
+        // ignore
+      }
+
+      // Now try to open the first valid message - should still work with seq=0
+      try {
+        await recipient2.open(message0);
+        console.log(
+          "✓ Successfully decrypted message with seq=0 after failed open()",
+        );
+        console.log("✓ Failed open() did NOT increment sequence");
+      } catch (err: unknown) {
+        console.log("❌ Failed to decrypt message:", err);
+      }
+
+      // Test that same message produces same ciphertext due to nonce reuse
+      const sender2 = await suite.createSenderContext({
+        recipientPublicKey: pkR,
+      });
+
+      const sameMessage = new TextEncoder().encode("Identical message").buffer;
+      const [cipher0, cipher1] = await Promise.all([
+        sender2.seal(sameMessage),
+        sender2.seal(sameMessage),
+      ]);
+
+      const cipher0Array = new Uint8Array(cipher0);
+      const cipher1Array = new Uint8Array(cipher1);
+
+      let identical = true;
+      if (cipher0Array.length !== cipher1Array.length) {
+        identical = false;
+      } else {
+        for (let i = 0; i < cipher0Array.length; i++) {
+          if (cipher0Array[i] !== cipher1Array[i]) {
+            identical = false;
+            break;
+          }
+        }
+      }
+      assertEquals(identical, false);
+      // if (identical) {
+      //   console.log(
+      //     "\n❌ Same message produced IDENTICAL ciphertext (nonce reuse confirmed)",
+      //   );
+      // } else {
+      //   console.log(
+      //     "\n✓ Same message produced different ciphertext (nonces are unique)",
+      //   );
+      // }
+    });
+  });
   // describe("Oblivious HTTP with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
   //   it("should work normally", async () => {
   //     const te = new TextEncoder();
