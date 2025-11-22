@@ -17,6 +17,6 @@
     "wrangler": "^4.32.0"
   },
   "dependencies": {
-    "hpke-js": "^1.6.4"
+    "hpke-js": "^1.6.5"
   }
 }
