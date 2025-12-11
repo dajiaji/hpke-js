@@ -101,8 +101,8 @@ yarn add @hpke/hybridkem-x-wing
 pnpm install @hpke/hybridkem-x-wing
 # Using jsr:
 npx jsr add @hpke/hybridkem-x-wing
-yarn dlx jsr add @hpke/hybridkem-x-wing
-pnpm dlx jsr add @@hpke/hybridkem-x-wing
+yarn add jsr:@hpke/hybridkem-x-wing
+pnpm add jsr:@@hpke/hybridkem-x-wing
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,

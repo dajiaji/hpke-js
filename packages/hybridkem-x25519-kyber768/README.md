@@ -43,8 +43,8 @@ yarn add @hpke/hybridkem-x25519-kyber768
 pnpm install @hpke/hybridkem-x25519-kyber768
 # Using jsr:
 npx jsr add @hpke/hybridkem-x25519-kyber768
-yarn dlx jsr add @hpke/hybridkem-x25519-kyber768
-pnpm dlx jsr add @hpke/hybridkem-x25519-kyber768
+yarn add jsr:@hpke/hybridkem-x25519-kyber768
+pnpm add jsr:@hpke/hybridkem-x25519-kyber768
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,

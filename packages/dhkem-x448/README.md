@@ -42,8 +42,8 @@ yarn add @hpke/dhkem-x448
 pnpm install @hpke/dhkem-x448
 # Using jsr:
 npx jsr add @hpke/dhkem-x448
-yarn dlx jsr add @hpke/dhkem-x448
-pnpm dlx jsr add @hpke/dhkem-x448
+yarn add jsr:@hpke/dhkem-x448
+pnpm add jsr:@hpke/dhkem-x448
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,

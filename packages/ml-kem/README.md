@@ -102,8 +102,8 @@ yarn add @hpke/ml-kem
 pnpm install @hpke/ml-kem
 # Using jsr:
 npx jsr add @hpke/ml-kem
-yarn dlx jsr add @hpke/ml-kem
-pnpm dlx jsr add @@hpke/ml-kem
+yarn add jsr:@hpke/ml-kem
+pnpm add jsr:@@hpke/ml-kem
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,
