@@ -39,6 +39,57 @@ describe("i2Osp", () => {
       assertThrows(() => i2Osp(255, -1), Error, "i2Osp: too small size");
     });
   });
+
+  describe("with 32-bit boundary values", () => {
+    it("should handle 2^31-1 correctly", () => {
+      const result = i2Osp(2 ** 31 - 1, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 127, 255, 255, 255]),
+      );
+    });
+
+    it("should handle 2^31 correctly", () => {
+      const result = i2Osp(2 ** 31, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0]),
+      );
+    });
+
+    it("should handle 2^32-1 correctly", () => {
+      const result = i2Osp(2 ** 32 - 1, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255]),
+      );
+    });
+
+    it("should handle 2^32 correctly", () => {
+      const result = i2Osp(2 ** 32, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]),
+      );
+    });
+
+    it("should handle 2^48-1 correctly", () => {
+      const result = i2Osp(2 ** 48 - 1, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255]),
+      );
+    });
+
+    it("should handle Number.MAX_SAFE_INTEGER correctly", () => {
+      // Number.MAX_SAFE_INTEGER = 2^53 - 1 = 0x1FFFFFFFFFFFFF
+      const result = i2Osp(Number.MAX_SAFE_INTEGER, 12);
+      assertEquals(
+        result,
+        new Uint8Array([0, 0, 0, 0, 0, 31, 255, 255, 255, 255, 255, 255]),
+      );
+    });
+  });
 });
 
 describe("xor", () => {

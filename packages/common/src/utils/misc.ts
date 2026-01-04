@@ -39,7 +39,7 @@ export function i2Osp(n: number, w: number): Uint8Array {
   const ret = new Uint8Array(w);
   for (let i = 0; i < w && n; i++) {
     ret[w - (i + 1)] = n % 256;
-    n = n >> 8;
+    n = Math.floor(n / 256);
   }
   return ret;
 }
