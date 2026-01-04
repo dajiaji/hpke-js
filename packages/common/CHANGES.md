@@ -1,5 +1,19 @@
 # Changes
 
+## Unreleased
+
+## Version 1.8.2
+
+Released 2026-01-05
+
+- [(#684) common: fix i2Osp for large integers.](https://github.com/dajiaji/hpke-js/pull/684)
+- [(#667) base: add npm badge to README.](https://github.com/dajiaji/hpke-js/pull/667)
+- [(#663) base: use jsonc for deno.json under packages.](https://github.com/dajiaji/hpke-js/pull/663)
+- [(#662) common: add sha3_384.](https://github.com/dajiaji/hpke-js/pull/662)
+- [(#659) common: refine utils/noble.](https://github.com/dajiaji/hpke-js/pull/659)
+- [(#655) common: add sha3.](https://github.com/dajiaji/hpke-js/pull/655)
+- [(#654) common: add sha3 kdf identifiers.](https://github.com/dajiaji/hpke-js/pull/654)
+
 ## Version 1.8.1
 
 Released 2025-08-14
