@@ -42,8 +42,8 @@ yarn add @hpke/dhkem-secp256k1
 pnpm install @hpke/dhkem-secp256k1
 # Using jsr:
 npx jsr add @hpke/dhkem-secp256k1
-yarn dlx jsr add @hpke/dhkem-secp256k1
-pnpm dlx jsr add @hpke/dhkem-secp256k1
+yarn add jsr:@hpke/dhkem-secp256k1
+pnpm add jsr:@hpke/dhkem-secp256k1
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,

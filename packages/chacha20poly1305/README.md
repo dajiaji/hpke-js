@@ -42,8 +42,8 @@ yarn add @hpke/chacha20poly1305
 pnpm install @hpke/chacha20poly1305
 # Using jsr:
 npx jsr add @hpke/chacha20poly1305
-yarn dlx jsr add @hpke/chacha20poly1305
-pnpm dlx jsr add @hpke/chacha20poly1305
+yarn add jsr:@hpke/chacha20poly1305
+pnpm add jsr:@hpke/chacha20poly1305
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,

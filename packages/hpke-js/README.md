@@ -53,8 +53,8 @@ yarn add hpke-js
 pnpm install hpke-js
 # Using jsr:
 npx jsr add hpke-js
-yarn dlx jsr add hpke-js
-pnpm dlx jsr add hpke-js
+yarn add jsr:hpke-js
+pnpm add jsr:hpke-js
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,
