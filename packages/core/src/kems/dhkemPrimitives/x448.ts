@@ -21,6 +21,12 @@ const PKCS8_ALG_ID_X448 = new Uint8Array([
   0x03, 0x2b, 0x65, 0x6f, 0x04, 0x3a, 0x04, 0x38,
 ]);
 
+const BASE_POINT_X448: Uint8Array = /* @__PURE__ */ (() => {
+  const p = new Uint8Array(56);
+  p[0] = 5;
+  return p;
+})();
+
 export class X448 extends NativeAlgorithm implements DhkemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: KeyAlgorithm;
@@ -151,8 +157,34 @@ export class X448 extends NativeAlgorithm implements DhkemPrimitives {
         true,
         [],
       );
-    } catch (e: unknown) {
-      throw new DeserializeError(e);
+    } catch {
+      try {
+        // Some runtimes cannot export JWK from imported X448 private keys.
+        const bp = await (this._api as SubtleCrypto).importKey(
+          "raw",
+          BASE_POINT_X448.buffer as ArrayBuffer,
+          this._alg,
+          true,
+          [],
+        );
+        const bits = await (this._api as SubtleCrypto).deriveBits(
+          {
+            name: ALG_NAME,
+            public: bp,
+          },
+          key,
+          this._nPk * 8,
+        );
+        return await (this._api as SubtleCrypto).importKey(
+          "raw",
+          bits,
+          this._alg,
+          true,
+          [],
+        );
+      } catch (e: unknown) {
+        throw new DeserializeError(e);
+      }
     }
   }
 

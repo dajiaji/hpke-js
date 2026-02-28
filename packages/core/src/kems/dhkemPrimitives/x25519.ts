@@ -21,6 +21,12 @@ const PKCS8_ALG_ID_X25519 = new Uint8Array([
   0x03, 0x2b, 0x65, 0x6e, 0x04, 0x22, 0x04, 0x20,
 ]);
 
+const BASE_POINT_X25519: Uint8Array = /* @__PURE__ */ (() => {
+  const p = new Uint8Array(32);
+  p[0] = 9;
+  return p;
+})();
+
 export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
   private _hkdf: KdfInterface;
   private _alg: KeyAlgorithm;
@@ -151,8 +157,34 @@ export class X25519 extends NativeAlgorithm implements DhkemPrimitives {
         true,
         [],
       );
-    } catch (e: unknown) {
-      throw new DeserializeError(e);
+    } catch {
+      try {
+        // Firefox fails to export JWK from some imported X25519 private keys.
+        const bp = await (this._api as SubtleCrypto).importKey(
+          "raw",
+          BASE_POINT_X25519.buffer as ArrayBuffer,
+          this._alg,
+          true,
+          [],
+        );
+        const bits = await (this._api as SubtleCrypto).deriveBits(
+          {
+            name: ALG_NAME,
+            public: bp,
+          },
+          key,
+          this._nPk * 8,
+        );
+        return await (this._api as SubtleCrypto).importKey(
+          "raw",
+          bits,
+          this._alg,
+          true,
+          [],
+        );
+      } catch (e: unknown) {
+        throw new DeserializeError(e);
+      }
     }
   }
 
