@@ -262,26 +262,26 @@
     // === DEPENDENCY MANAGEMENT ===
     "update": {
       "description": "Update dependencies for all test environments (Cloudflare, browsers, Bun)",
-      "command": "deno task update:cloudflare && deno task update:browsers && deno task update:bun"
+      "command": "deno task update:cloudflare && deno task update:browsers && deno task update:bun && deno task update-lock"
     },
     "update:cloudflare": "deno task update:cloudflare:core && deno task update:cloudflare:chacha20poly1305 && deno task update:cloudflare:dhkem-x25519 && deno task update:cloudflare:dhkem-x448 && deno task update:cloudflare:dhkem-secp256k1 && deno task update:cloudflare:hybridkem-x-wing && deno task update:cloudflare:hpke-js && deno task update:cloudflare:ml-kem",
-    "update:cloudflare:core": "cd packages/core/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:dhkem-x25519": "cd packages/dhkem-x25519/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:dhkem-x448": "cd packages/dhkem-x448/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:hpke-js": "cd packages/hpke-js/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:cloudflare:ml-kem": "cd packages/ml-kem/test/runtimes/cloudflare && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
+    "update:cloudflare:core": "cd packages/core/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:dhkem-x25519": "cd packages/dhkem-x25519/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:dhkem-x448": "cd packages/dhkem-x448/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:hpke-js": "cd packages/hpke-js/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:cloudflare:ml-kem": "cd packages/ml-kem/test/runtimes/cloudflare && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
     "update:browsers": "deno task update:browsers:core && deno task update:browsers:chacha20poly1305 && deno task update:browsers:dhkem-x25519 && deno task update:browsers:dhkem-x448 && deno task update:browsers:dhkem-secp256k1 && deno task update:browsers:hybridkem-x-wing && deno task update:browsers:hpke-js && deno task update:browsers:ml-kem",
-    "update:browsers:core": "cd packages/core/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:dhkem-x25519": "cd packages/dhkem-x25519/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:dhkem-x448": "cd packages/dhkem-x448/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:hpke-js": "cd packages/hpke-js/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
-    "update:browsers:ml-kem": "cd packages/ml-kem/test/runtimes/browsers && npm update && npm audit fix --force && ncu && ncu -u && rm package-lock.json",
+    "update:browsers:core": "cd packages/core/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:dhkem-x25519": "cd packages/dhkem-x25519/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:dhkem-x448": "cd packages/dhkem-x448/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:dhkem-secp256k1": "cd packages/dhkem-secp256k1/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:hpke-js": "cd packages/hpke-js/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
+    "update:browsers:ml-kem": "cd packages/ml-kem/test/runtimes/browsers && npm update && (npm audit fix || true) && npm exec npm-check-updates -- -u --target minor && rm package-lock.json",
     "update:bun": "deno task update:bun:core && deno task update:bun:chacha20poly1305 && deno task update:bun:dhkem-x25519 && deno task update:bun:dhkem-x448 && deno task update:bun:dhkem-secp256k1 && deno task update:bun:hybridkem-x-wing && deno task update:bun:hpke-js && deno task update:bun:ml-kem",
     "update:bun:core": "cd packages/core/test/runtimes/bun && bun update",
     "update:bun:chacha20poly1305": "cd packages/chacha20poly1305/test/runtimes/bun && bun update",
@@ -322,8 +322,8 @@
 
     // === MAINTENANCE TASKS ===
     "update-lock": {
-      "description": "Update Deno lock file by reloading all dependencies",
-      "command": "deno cache --reload **/deno.jsonc --config deno.jsonc"
+      "description": "Refresh deno.lock from current workspace dependencies",
+      "command": "deno install --lockfile-only --frozen=false --reload --config deno.jsonc"
     }
   }
 }

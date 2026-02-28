@@ -6,10 +6,10 @@
     "test": "npx playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "^1.58.2",
     "http-server": "^14.1.1"
   },
   "dependencies": {
-    "@hpke/core": "npm:@jsr/hpke__core@^1.7.4"
+    "@hpke/core": "npm:@jsr/hpke__core@^1.7.5"
   }
 }
