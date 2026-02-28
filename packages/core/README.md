@@ -41,8 +41,8 @@ yarn add @hpke/core
 pnpm install @hpke/core
 # Using jsr:
 npx jsr add @hpke/core
-yarn dlx jsr add @hpke/core
-pnpm dlx jsr add @@hpke/core
+yarn add jsr:@hpke/core
+pnpm add jsr:@hpke/core
 ```
 
 The above manner can be used with other JavaScript runtimes that support npm,
