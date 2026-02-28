@@ -109,3 +109,6 @@ temp
 **/dist/*
 /dist/esm/*
 !/dist/esm/package.json
+
+# Cursor files
+.cursor/
