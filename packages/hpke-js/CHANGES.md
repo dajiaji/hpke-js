@@ -1,5 +1,21 @@
 # Changes
 
+## Version 1.7.0
+
+Released 2026-03-01
+
+- [(#705) chore(npm): bump @hpke/core to 1.8.0 across workspace.](https://github.com/dajiaji/hpke-js/pull/705)
+- [(#700) chore(npm): bump @hpke/common to 1.9.0 and use ArrayBufferLike | ArrayBufferView instead of ArrayBuffer.](https://github.com/dajiaji/hpke-js/pull/700)
+- [(#695) test(browsers): use assertion timeout instead of fixed wait in Playwright specs.](https://github.com/dajiaji/hpke-js/pull/695)
+- [(#693) build(deps-dev): bump webpack from 5.94.0 to 5.105.3 in /packages/hpke-js/samples/ts-webpack.](https://github.com/dajiaji/hpke-js/pull/693)
+- [(#692) build(deps-dev): bump lodash from 4.17.21 to 4.17.23 in /packages/hpke-js/samples/ts-webpack.](https://github.com/dajiaji/hpke-js/pull/692)
+- [(#691) build(deps-dev): bump qs from 6.13.0 to 6.15.0 in /packages/hpke-js/samples/ts-webpack.](https://github.com/dajiaji/hpke-js/pull/691)
+- [(#690) build(deps): bump @hpke/core from 1.2.9 to 1.7.5 in /packages/hpke-js/samples/ts-webpack.](https://github.com/dajiaji/hpke-js/pull/690)
+- [(#689) chore: update dependencies and deno task scripts.](https://github.com/dajiaji/hpke-js/pull/689)
+- [(#683) docs: pnpm & yarn native jsr & double ats.](https://github.com/dajiaji/hpke-js/pull/683)
+- [(#680) base: update dependency of tests.](https://github.com/dajiaji/hpke-js/pull/680)
+- [(#679) base: update dependency of samples.](https://github.com/dajiaji/hpke-js/pull/679)
+
 ## Version 1.6.5
 
 Released 2025-11-19
