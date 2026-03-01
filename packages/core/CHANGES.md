@@ -1,5 +1,19 @@
 # Changes
 
+## Version 1.8.0
+
+Released 2026-03-01
+
+- [(#700) chore(npm): bump @hpke/common to 1.9.0 and use ArrayBufferLike | ArrayBufferView instead of ArrayBuffer.](https://github.com/dajiaji/hpke-js/pull/700)
+- [(#694) fix: derive public key without JWK export for Firefox compatibility.](https://github.com/dajiaji/hpke-js/pull/694)
+- [(#695) test(browsers): use assertion timeout instead of fixed wait in Playwright specs.](https://github.com/dajiaji/hpke-js/pull/695)
+- [(#685) test(core): simplify secure curves test with deriveKeyPair.](https://github.com/dajiaji/hpke-js/pull/685)
+- [(#689) chore: update dependencies and deno task scripts.](https://github.com/dajiaji/hpke-js/pull/689)
+- [(#680) base: update dependency of tests.](https://github.com/dajiaji/hpke-js/pull/680)
+- [(#679) base: update dependency of samples.](https://github.com/dajiaji/hpke-js/pull/679)
+- [(#683) docs: pnpm & yarn native jsr & double ats.](https://github.com/dajiaji/hpke-js/pull/683)
+- core: document X25519 KEM support in core package.
+
 ## Version 1.7.5
 
 Released 2025-11-19
