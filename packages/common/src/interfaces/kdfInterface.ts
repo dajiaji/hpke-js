@@ -47,8 +47,8 @@ export interface KdfInterface {
    * @returns A pseudorandom key as bytes.
    */
   extract(
-    salt: ArrayBuffer,
-    ikm: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
+    ikm: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer>;
 
   /**
@@ -60,8 +60,8 @@ export interface KdfInterface {
    * @returns An output keying material as bytes.
    */
   expand(
-    prk: ArrayBuffer,
-    info: ArrayBuffer,
+    prk: ArrayBufferLike | ArrayBufferView,
+    info: ArrayBufferLike | ArrayBufferView,
     len: number,
   ): Promise<ArrayBuffer>;
 
@@ -75,9 +75,9 @@ export interface KdfInterface {
    * @returns An output keying material as bytes.
    */
   extractAndExpand(
-    salt: ArrayBuffer,
-    ikm: ArrayBuffer,
-    info: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
+    ikm: ArrayBufferLike | ArrayBufferView,
+    info: ArrayBufferLike | ArrayBufferView,
     len: number,
   ): Promise<ArrayBuffer>;
 
@@ -90,7 +90,7 @@ export interface KdfInterface {
    * @returns A pseudorandom key as bytes.
    */
   labeledExtract(
-    salt: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
     label: Uint8Array,
     ikm: Uint8Array,
   ): Promise<ArrayBuffer>;
@@ -105,7 +105,7 @@ export interface KdfInterface {
    * @returns An output keying material as bytes.
    */
   labeledExpand(
-    prk: ArrayBuffer,
+    prk: ArrayBufferLike | ArrayBufferView,
     label: Uint8Array,
     info: Uint8Array,
     len: number,
