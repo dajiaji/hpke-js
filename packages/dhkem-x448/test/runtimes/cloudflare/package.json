@@ -18,6 +18,6 @@
   },
   "dependencies": {
     "@hpke/core": "^1.8.0",
-    "@hpke/dhkem-x448": "^1.6.4"
+    "@hpke/dhkem-x448": "^1.7.0"
   }
 }
