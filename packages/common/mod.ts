@@ -22,6 +22,8 @@ export {
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
+  toArrayBuffer,
+  toUint8Array,
 } from "./src/kdfs/hkdf.ts";
 
 export { AEAD_USAGES } from "./src/interfaces/aeadEncryptionContext.ts";

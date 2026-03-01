@@ -319,7 +319,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     await this._setup();
     try {
       const dkpPrk = await this._hkdf.labeledExtract(
-        EMPTY.buffer as ArrayBuffer,
+        EMPTY,
         LABEL_DKP_PRK,
         new Uint8Array(ikm),
       );

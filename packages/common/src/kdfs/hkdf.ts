@@ -16,6 +16,25 @@ const HPKE_VERSION = /* @__PURE__ */ new Uint8Array([
   49,
 ]);
 
+export function toUint8Array(
+  input: ArrayBufferLike | ArrayBufferView,
+): Uint8Array {
+  return new Uint8Array(toArrayBuffer(input));
+}
+
+export function toArrayBuffer(
+  input: ArrayBufferLike | ArrayBufferView,
+): ArrayBuffer {
+  if (input instanceof ArrayBuffer) {
+    return input;
+  }
+  if (ArrayBuffer.isView(input)) {
+    return new Uint8Array(input.buffer, input.byteOffset, input.byteLength)
+      .slice().buffer;
+  }
+  return new Uint8Array(input).slice().buffer;
+}
+
 export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   public readonly id: KdfId = KdfId.HkdfSha256;
   public readonly hashSize: number = 0;
@@ -64,39 +83,41 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   }
 
   public async extract(
-    salt: ArrayBuffer,
-    ikm: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
+    ikm: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     await this._setup();
-    if (salt.byteLength === 0) {
-      salt = new ArrayBuffer(this.hashSize);
-    }
-    if (salt.byteLength !== this.hashSize) {
+    const saltBuf = salt.byteLength === 0
+      ? new ArrayBuffer(this.hashSize)
+      : toArrayBuffer(salt);
+    if (saltBuf.byteLength !== this.hashSize) {
       throw new InvalidParamError(
         "The salt length must be the same as the hashSize",
       );
     }
+    const ikmBuf = toArrayBuffer(ikm);
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
-      salt,
+      saltBuf,
       this.algHash,
       false,
       [
         "sign",
       ],
     );
-    return await (this._api as SubtleCrypto).sign("HMAC", key, ikm);
+    return await (this._api as SubtleCrypto).sign("HMAC", key, ikmBuf);
   }
 
   public async expand(
-    prk: ArrayBuffer,
-    info: ArrayBuffer,
+    prk: ArrayBufferLike | ArrayBufferView,
+    info: ArrayBufferLike | ArrayBufferView,
     len: number,
   ): Promise<ArrayBuffer> {
     await this._setup();
+    const prkBuf = toArrayBuffer(prk);
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
-      prk,
+      prkBuf,
       this.algHash,
       false,
       [
@@ -105,9 +126,9 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     );
 
     const okm = new ArrayBuffer(len);
-    const p = new Uint8Array(okm);
+    const okmBytes = new Uint8Array(okm);
     let prev = EMPTY;
-    const mid = new Uint8Array(info);
+    const mid = toUint8Array(info);
     const tail = new Uint8Array(1);
 
     if (len > 255 * this.hashSize) {
@@ -115,7 +136,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     }
 
     const tmp = new Uint8Array(this.hashSize + mid.length + 1);
-    for (let i = 1, cur = 0; cur < p.length; i++) {
+    for (let i = 1, cur = 0; cur < okmBytes.length; i++) {
       tail[0] = i;
       tmp.set(prev, 0);
       tmp.set(mid, prev.length);
@@ -127,27 +148,28 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
           tmp.slice(0, prev.length + mid.length + 1),
         ),
       );
-      if (p.length - cur >= prev.length) {
-        p.set(prev, cur);
+      if (okmBytes.length - cur >= prev.length) {
+        okmBytes.set(prev, cur);
         cur += prev.length;
       } else {
-        p.set(prev.slice(0, p.length - cur), cur);
-        cur += p.length - cur;
+        okmBytes.set(prev.slice(0, okmBytes.length - cur), cur);
+        cur += okmBytes.length - cur;
       }
     }
     return okm;
   }
 
   public async extractAndExpand(
-    salt: ArrayBuffer,
-    ikm: ArrayBuffer,
-    info: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
+    ikm: ArrayBufferLike | ArrayBufferView,
+    info: ArrayBufferLike | ArrayBufferView,
     len: number,
   ): Promise<ArrayBuffer> {
     await this._setup();
+    const ikmBuf = toArrayBuffer(ikm);
     const baseKey = await (this._api as SubtleCrypto).importKey(
       "raw",
-      ikm,
+      ikmBuf,
       "HKDF",
       false,
       ["deriveBits"],
@@ -156,8 +178,8 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
       {
         name: "HKDF",
         hash: this.algHash.hash,
-        salt: salt,
-        info: info,
+        salt: toArrayBuffer(salt),
+        info: toArrayBuffer(info),
       },
       baseKey,
       len * 8,
@@ -165,25 +187,25 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   }
 
   public async labeledExtract(
-    salt: ArrayBuffer,
+    salt: ArrayBufferLike | ArrayBufferView,
     label: Uint8Array,
     ikm: Uint8Array,
   ): Promise<ArrayBuffer> {
     return await this.extract(
       salt,
-      this.buildLabeledIkm(label, ikm).buffer as ArrayBuffer,
+      this.buildLabeledIkm(label, ikm),
     );
   }
 
   public async labeledExpand(
-    prk: ArrayBuffer,
+    prk: ArrayBufferLike | ArrayBufferView,
     label: Uint8Array,
     info: Uint8Array,
     len: number,
   ): Promise<ArrayBuffer> {
     return await this.expand(
       prk,
-      this.buildLabeledInfo(label, info, len).buffer as ArrayBuffer,
+      this.buildLabeledInfo(label, info, len),
       len,
     );
   }
