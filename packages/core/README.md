@@ -6,7 +6,7 @@
 </div>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> core module implemented using only <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>. It does not support the X25519/X448-based KEMs and the ChaCha20Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly.</div>
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> core module implemented using only <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>. It does not support the X448-based KEM and the ChaCha20Poly1305 AEAD, but it has no external module dependencies. It's small in size and tree-shaking friendly.</div>
 <p></p>
 
 <div align="center">
