@@ -21,7 +21,6 @@ import {
  * which supports only the ciphersuites that can be implemented on the native
  * {@link https://www.w3.org/TR/WebCryptoAPI/ | Web Cryptography API}.
  * Therefore, the following cryptographic algorithms are not supported for now:
- * - `DHKEM(X25519, HKDF-SHA256)`
  * - `DHKEM(X448, HKDF-SHA512)`
  * - `ChaCha20Poly1305`
  *
@@ -61,11 +60,15 @@ import {
  * });
  * ```
  *
- * @example Use a ciphersuite which is currently not supported by Web Cryptography API.
+ * @example Use DHKEM(X25519, HKDF-SHA256).
  *
  * ```ts
- * import { Aes128Gcm, HkdfSha256, CipherSuite } from "@hpke/core";
- * import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+ * import {
+ *   Aes128Gcm,
+ *   CipherSuite,
+ *   DhkemX25519HkdfSha256,
+ *   HkdfSha256,
+ * } from "@hpke/core";
  * const suite = new CipherSuite({
  *   kem: new DhkemX25519HkdfSha256(),
  *   kdf: new HkdfSha256(),
