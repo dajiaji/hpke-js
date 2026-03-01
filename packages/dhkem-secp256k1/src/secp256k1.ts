@@ -88,7 +88,7 @@ export class Secp256k1 implements DhkemPrimitives {
   public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
     try {
       const dkpPrk = await this._hkdf.labeledExtract(
-        EMPTY.buffer as ArrayBuffer,
+        EMPTY,
         LABEL_DKP_PRK,
         new Uint8Array(ikm),
       );

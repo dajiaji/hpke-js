@@ -314,7 +314,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
       ? EMPTY
       : new Uint8Array(params.psk.id);
     const pskIdHash = await this._kdf.labeledExtract(
-      EMPTY.buffer as ArrayBuffer,
+      EMPTY,
       LABEL_PSK_ID_HASH,
       pskId,
     );
@@ -323,7 +323,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
       ? EMPTY
       : new Uint8Array(params.info);
     const infoHash = await this._kdf.labeledExtract(
-      EMPTY.buffer as ArrayBuffer,
+      EMPTY,
       LABEL_INFO_HASH,
       info,
     );
@@ -338,14 +338,13 @@ export class CipherSuiteNative extends NativeAlgorithm {
     const psk = params.psk === undefined
       ? EMPTY
       : new Uint8Array(params.psk.key);
-    const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk)
-      .buffer as ArrayBuffer;
+    const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
 
     const exporterSecretInfo = this._kdf.buildLabeledInfo(
       LABEL_EXP,
       keyScheduleContext,
       this._kdf.hashSize,
-    ).buffer as ArrayBuffer;
+    );
     const exporterSecret = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
@@ -361,7 +360,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
       LABEL_KEY,
       keyScheduleContext,
       this._aead.keySize,
-    ).buffer as ArrayBuffer;
+    );
     const key = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
@@ -373,7 +372,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
       LABEL_BASE_NONCE,
       keyScheduleContext,
       this._aead.nonceSize,
-    ).buffer as ArrayBuffer;
+    );
     const baseNonce = await this._kdf.extractAndExpand(
       sharedSecret,
       ikm,
