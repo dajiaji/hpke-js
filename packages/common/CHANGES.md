@@ -6,8 +6,8 @@
 
 Released 2026-03-01
 
-- [(#664) common: widen KDF input types from ArrayBuffer to ArrayBufferLike | ArrayBufferView.](https://github.com/dajiaji/hpke-js/issues/664)
-- [(#664) common: add and export buffer conversion helpers (toArrayBuffer, toUint8Array) and tests.](https://github.com/dajiaji/hpke-js/issues/664)
+- [(#696) common: widen KDF input types from ArrayBuffer to ArrayBufferLike | ArrayBufferView.](https://github.com/dajiaji/hpke-js/pull/664)
+- [(#696) common: add and export buffer conversion helpers (toArrayBuffer, toUint8Array) and tests.](https://github.com/dajiaji/hpke-js/pull/696)
 
 ## Version 1.8.2
 
