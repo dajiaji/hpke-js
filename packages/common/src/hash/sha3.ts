@@ -53,9 +53,9 @@ for (let round = 0, R = N_1, x = 1, y = 0; round < 24; round++) {
   SHA3_ROTL.push((((round + 1) * (round + 2)) / 2) % 64);
   // Iota
   let t = N_0;
-  for (let j = 0; j < 7; j++) {
+  for (let j = 0n; j < 7n; j++) {
     R = ((R << N_1) ^ ((R >> N_7) * N_0x71)) % N_256;
-    if (R & N_2) t ^= N_1 << ((N_1 << BigInt(j)) - N_1);
+    if (R & N_2) t ^= N_1 << ((N_1 << j) - N_1);
   }
   _SHA3_IOTA.push(t);
 }

@@ -47,16 +47,16 @@ function u8to16(a: Uint8Array, i: number) {
 // function poly1305_small(msg: Uint8Array, key: Uint8Array): Uint8Array {
 //   abytes(msg);
 //   abytes(key, 32, "key");
-//   const POW_2_130_5 = BigInt(2) ** BigInt(130) - BigInt(5); // 2^130-5
-//   const POW_2_128_1 = BigInt(2) ** BigInt(128) - BigInt(1); // 2^128-1
-//   const CLAMP_R = BigInt("0x0ffffffc0ffffffc0ffffffc0fffffff");
+//   const POW_2_130_5 = 2n ** 130n - 5n; // 2^130-5
+//   const POW_2_128_1 = 2n ** 128n - 1n; // 2^128-1
+//   const CLAMP_R = 0x0ffffffc0ffffffc0ffffffc0fffffffn;
 //   const r = bytesToNumberLE(key.subarray(0, 16)) & CLAMP_R;
 //   const s = bytesToNumberLE(key.subarray(16));
 //   // Process by 16 byte chunks
-//   let acc = BigInt(0);
+//   let acc = 0n;
 //   for (let i = 0; i < msg.length; i += 16) {
 //     const m = msg.subarray(i, i + 16);
-//     const n = bytesToNumberLE(m) | (BigInt(1) << BigInt(8 * m.length));
+//     const n = bytesToNumberLE(m) | (1n << (8n * mLen)); // mLen: bigint
 //     acc = ((acc + n) * r) % POW_2_130_5;
 //   }
 //   const res = (acc + s) & POW_2_128_1;

@@ -11,6 +11,9 @@
  * Utilities for hex, bytes, CSPRNG.
  * @module
  */
+import { hexToNumber, numberToBigint } from "@hpke/common";
+
+export { hexToNumber };
 
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {
@@ -185,14 +188,6 @@ export function hexToBytes(hex: string): Uint8Array {
     array[ai] = n1 * 16 + n2; // multiply first octet, e.g. 'a3' => 10*16+3 => 160 + 3 => 163
   }
   return array;
-}
-
-// Used in micro
-export function hexToNumber(hex: string): bigint {
-  if (typeof hex !== "string") {
-    throw new Error("hex string expected, got " + typeof hex);
-  }
-  return BigInt(hex === "" ? "0" : "0x" + hex); // Big Endian
 }
 
 // Used in ff1
@@ -472,8 +467,8 @@ export function u64Lengths(
   abool(isLE);
   const num = new Uint8Array(16);
   const view = createView(num);
-  view.setBigUint64(0, BigInt(aadLength), isLE);
-  view.setBigUint64(8, BigInt(dataLength), isLE);
+  view.setBigUint64(0, numberToBigint(aadLength), isLE);
+  view.setBigUint64(8, numberToBigint(dataLength), isLE);
   return num;
 }
 

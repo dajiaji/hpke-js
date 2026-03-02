@@ -11,7 +11,14 @@
  * Internal Merkle-Damgard hash utils.
  * @module
  */
-import { abytes, aexists, aoutput, clean, createView } from "../utils/noble.ts";
+import {
+  abytes,
+  aexists,
+  aoutput,
+  clean,
+  createView,
+  numberToBigint,
+} from "../utils/noble.ts";
 import type { Hash } from "./hash.ts";
 
 /** Choice: a ? b : c */
@@ -111,7 +118,7 @@ export abstract class HashMD<T extends HashMD<T>> implements Hash<T> {
     // Note: sha512 requires length to be 128bit integer, but length in JS will overflow before that
     // You need to write around 2 exabytes (u64_max / 8 / (1024**6)) for this to happen.
     // So we just write lowest 64 bits of that value.
-    view.setBigUint64(blockLen - 8, BigInt(this.length * 8), isLE);
+    view.setBigUint64(blockLen - 8, numberToBigint(this.length * 8), isLE);
     this.process(view, 0);
     const oview = createView(out);
     const len = this.outputLen;

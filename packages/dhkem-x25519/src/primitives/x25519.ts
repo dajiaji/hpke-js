@@ -17,21 +17,20 @@
 /*! noble-curves - MIT License (c) 2022 Paul Miller (paulmillr.com) */
 import { mod, montgomery, type MontgomeryECDH, pow2 } from "@hpke/common";
 
-const _1n = BigInt(1);
-const _2n = BigInt(2);
-const _3n = BigInt(3);
-const _5n = BigInt(5);
+const _1n = 1n;
+const _2n = 2n;
+const _3n = 3n;
+const _5n = 5n;
 
 // P = 2n**255n - 19n
-const ed25519_CURVE_p = BigInt(
-  "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed",
-);
+const ed25519_CURVE_p =
+  0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffedn;
 
 function ed25519_pow_2_252_3(x: bigint) {
-  const _10n = BigInt(10);
-  const _20n = BigInt(20);
-  const _40n = BigInt(40);
-  const _80n = BigInt(80);
+  const _10n = 10n;
+  const _20n = 20n;
+  const _40n = 40n;
+  const _80n = 80n;
   const P = ed25519_CURVE_p;
   const x2 = (x * x) % P;
   const b2 = (x2 * x) % P; // x^3, 11
