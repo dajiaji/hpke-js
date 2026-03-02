@@ -15,6 +15,7 @@ export { NativeAlgorithm } from "./src/algorithm.ts";
 export { AeadId, KdfId, KemId, Mode } from "./src/identifiers.ts";
 export { Dhkem } from "./src/kems/dhkem.ts";
 export { Ec } from "./src/kems/dhkemPrimitives/ec.ts";
+export { XCurveDhkemPrimitives } from "./src/kems/dhkemPrimitives/xCurve.ts";
 export { Hybridkem } from "./src/kems/hybridkem.ts";
 export { XCryptoKey } from "./src/xCryptoKey.ts";
 
