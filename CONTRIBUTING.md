@@ -130,12 +130,11 @@ that contain the built npm packages and related files.
 The `deno task bun-link` command creates Bun links for all packages, enabling
 testing in the Bun runtime environment.
 
-- `deno task minify`: Generate minified versions of all packages
+- `deno task minify:<package>`: Generate a minified bundle for a specific
+  package
 
-The `deno task minify` command creates minified JavaScript files for all
-packages in the workspace. The minified files are saved to the corresponding npm
-package directories with `.min.js` extensions and can be used for CDN
-distribution or direct browser inclusion.
+For example, `deno task minify:core` outputs the minified bundle of `@hpke/core`
+to stdout. You can check the bundle size with `deno task minify:core | wc -c`.
 
 - `deno task dry-publish`: Test npm package publishing without actually
   publishing
