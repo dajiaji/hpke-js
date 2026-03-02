@@ -50,6 +50,7 @@ export {
   loadSubtleCrypto,
   xor,
 } from "./src/utils/misc.ts";
+export { hexToNumber, numberToBigint } from "./src/utils/noble.ts";
 
 export { hmac } from "./src/hash/hmac.ts";
 export { sha256, sha384, sha512 } from "./src/hash/sha2.ts";

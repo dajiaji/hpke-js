@@ -24,18 +24,17 @@ import { mod, montgomery, type MontgomeryECDH, pow2 } from "@hpke/common";
 // Finite field 2n**448n - 2n**224n - 1n
 // Subgroup order
 // 2n**446n - 13818066809895115352007386748515426880336692474882178609894547503885n
-const ed448_CURVE_p = BigInt(
-  "0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-);
+const ed448_CURVE_p =
+  0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffn;
 
-const _1n = BigInt(1);
-const _2n = BigInt(2);
-const _3n = BigInt(3);
-const _11n = BigInt(11);
-const _22n = BigInt(22);
-const _44n = BigInt(44);
-const _88n = BigInt(88);
-const _223n = BigInt(223);
+const _1n = 1n;
+const _2n = 2n;
+const _3n = 3n;
+const _11n = 11n;
+const _22n = 22n;
+const _44n = 44n;
+const _88n = 88n;
+const _223n = 223n;
 
 // powPminus3div4 calculates z = x^k mod p, where k = (p-3)/4.
 // Used for efficient square root calculation.

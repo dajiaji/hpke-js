@@ -160,6 +160,24 @@ const hexes = /* @__PURE__ */ Array.from(
   { length: 256 },
   (_, i) => i.toString(16).padStart(2, "0"),
 );
+const HEX_TO_BIGINT = /* @__PURE__ */ [
+  0n,
+  1n,
+  2n,
+  3n,
+  4n,
+  5n,
+  6n,
+  7n,
+  8n,
+  9n,
+  10n,
+  11n,
+  12n,
+  13n,
+  14n,
+  15n,
+] as const;
 
 /**
  * Convert byte array to hex string. Uses built-in function, when available.
@@ -243,7 +261,31 @@ export function hexToNumber(hex: string): bigint {
   if (typeof hex !== "string") {
     throw new Error("hex string expected, got " + typeof hex);
   }
-  return hex === "" ? N_0 : BigInt("0x" + hex); // Big Endian
+  let out = N_0;
+  for (let i = 0; i < hex.length; i++) {
+    const n = asciiToBase16(hex.charCodeAt(i));
+    if (n === undefined) {
+      throw new Error(
+        'hex string expected, got non-hex character "' + hex[i] +
+          '" at index ' + i,
+      );
+    }
+    out = (out << 4n) | HEX_TO_BIGINT[n];
+  }
+  return out; // Big Endian
+}
+
+export function numberToBigint(num: number): bigint {
+  anumber(num, "numberToBigint");
+  let n = num;
+  let out = N_0;
+  let bit = 1n;
+  while (n > 0) {
+    if (n % 2 === 1) out += bit;
+    n = Math.floor(n / 2);
+    bit <<= 1n;
+  }
+  return out;
 }
 
 // BE: Big Endian, LE: Little Endian

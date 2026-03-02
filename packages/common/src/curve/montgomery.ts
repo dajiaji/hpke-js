@@ -69,21 +69,19 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
   if (!is25519 && type !== "x448") throw new Error("invalid type");
   const randomBytes_ = rand || randomBytesAsync;
 
-  const montgomeryBits = is25519 ? 255 : 448;
+  const montgomeryBits = is25519 ? 255n : 448n;
   const fieldLen = is25519 ? 32 : 56;
-  const Gu = is25519 ? BigInt(9) : BigInt(5);
+  const Gu = is25519 ? 9n : 5n;
   // RFC 7748 #5:
   // The constant a24 is (486662 - 2) / 4 = 121665 for curve25519/X25519 and
   // (156326 - 2) / 4 = 39081 for curve448/X448
   // const a = is25519 ? 156326n : 486662n;
-  const a24 = is25519 ? BigInt(121665) : BigInt(39081);
+  const a24 = is25519 ? 121665n : 39081n;
   // RFC: x25519 "the resulting integer is of the form 2^254 plus
   // eight times a value between 0 and 2^251 - 1 (inclusive)"
   // x448: "2^447 plus four times a value between 0 and 2^445 - 1 (inclusive)"
-  const minScalar = is25519 ? N_2 ** BigInt(254) : N_2 ** BigInt(447);
-  const maxAdded = is25519
-    ? BigInt(8) * N_2 ** BigInt(251) - N_1
-    : BigInt(4) * N_2 ** BigInt(445) - N_1;
+  const minScalar = is25519 ? N_2 ** 254n : N_2 ** 447n;
+  const maxAdded = is25519 ? 8n * N_2 ** 251n - N_1 : 4n * N_2 ** 445n - N_1;
   const maxScalar = minScalar + maxAdded + N_1; // (inclusive)
   const modP = (n: bigint) => mod(n, P);
   const GuBytes = encodeU(Gu);
@@ -152,7 +150,7 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     let x_3 = u;
     let z_3 = N_1;
     let swap = N_0;
-    for (let t = BigInt(montgomeryBits - 1); t >= N_0; t--) {
+    for (let t = montgomeryBits - 1n; t >= N_0; t--) {
       const k_t = (k >> t) & N_1;
       swap ^= k_t;
       ({ x_2, x_3 } = cswap(swap, x_2, x_3));
