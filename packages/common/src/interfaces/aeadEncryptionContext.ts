@@ -14,9 +14,9 @@ export interface AeadEncryptionContext {
    * @returns A cipher text as bytes.
    */
   seal(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer>;
 
   /**
@@ -28,8 +28,8 @@ export interface AeadEncryptionContext {
    * @returns A decrypted plain text as bytes.
    */
   open(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer>;
 }

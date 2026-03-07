@@ -21,5 +21,7 @@ export interface AeadInterface {
    * @param key A byte string of the raw key.
    * @returns An AEAD encryption context.
    */
-  createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext;
+  createEncryptionContext(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): AeadEncryptionContext;
 }

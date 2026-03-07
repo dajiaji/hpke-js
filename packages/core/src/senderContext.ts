@@ -1,5 +1,5 @@
 import type { KdfInterface } from "@hpke/common";
-import { EMPTY, SealError } from "@hpke/common";
+import { EMPTY, SealError, toArrayBuffer } from "@hpke/common";
 
 import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
@@ -22,14 +22,18 @@ export class SenderContextImpl extends EncryptionContextImpl
   }
 
   override async seal(
-    data: ArrayBuffer,
-    aad: ArrayBuffer = EMPTY.buffer as ArrayBuffer,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView = EMPTY.buffer as ArrayBuffer,
   ): Promise<ArrayBuffer> {
     this.#mutex ??= new Mutex();
     const release = await this.#mutex.lock();
     let ct: ArrayBuffer;
     try {
-      ct = await this._ctx.key.seal(this.computeNonce(this._ctx), data, aad);
+      ct = await this._ctx.key.seal(
+        this.computeNonce(this._ctx),
+        toArrayBuffer(data),
+        toArrayBuffer(aad),
+      );
     } catch (e: unknown) {
       throw new SealError(e);
     } finally {

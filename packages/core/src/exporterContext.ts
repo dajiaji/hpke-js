@@ -3,6 +3,7 @@ import {
   ExportError,
   INPUT_LENGTH_LIMIT,
   InvalidParamError,
+  toArrayBuffer,
 } from "@hpke/common";
 
 import type { Encapsulator } from "./interfaces/encapsulator.ts";
@@ -29,31 +30,32 @@ export class ExporterContextImpl implements EncryptionContext {
   }
 
   public async seal(
-    _data: ArrayBuffer,
-    _aad: ArrayBuffer,
+    _data: ArrayBufferLike | ArrayBufferView,
+    _aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     return await emitNotSupported<ArrayBuffer>();
   }
 
   public async open(
-    _data: ArrayBuffer,
-    _aad: ArrayBuffer,
+    _data: ArrayBufferLike | ArrayBufferView,
+    _aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     return await emitNotSupported<ArrayBuffer>();
   }
 
   public async export(
-    exporterContext: ArrayBuffer,
+    exporterContext: ArrayBufferLike | ArrayBufferView,
     len: number,
   ): Promise<ArrayBuffer> {
-    if (exporterContext.byteLength > INPUT_LENGTH_LIMIT) {
+    const rawExporterContext = toArrayBuffer(exporterContext);
+    if (rawExporterContext.byteLength > INPUT_LENGTH_LIMIT) {
       throw new InvalidParamError("Too long exporter context");
     }
     try {
       return await this._kdf.labeledExpand(
         this.exporterSecret,
         LABEL_SEC,
-        new Uint8Array(exporterContext),
+        new Uint8Array(rawExporterContext),
         len,
       );
     } catch (e: unknown) {

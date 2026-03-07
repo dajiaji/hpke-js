@@ -22,6 +22,7 @@ import {
   loadCrypto,
   NotSupportedError,
   SerializeError,
+  toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
 
@@ -108,10 +109,12 @@ export class XWing implements KemInterface {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     await this._setup();
     try {
-      return await this._deserializePublicKey(key);
+      return await this._deserializePublicKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -126,10 +129,12 @@ export class XWing implements KemInterface {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     await this._setup();
     try {
-      return await this._deserializePrivateKey(key);
+      return await this._deserializePrivateKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -187,11 +192,14 @@ export class XWing implements KemInterface {
    * @throws {DeriveKeyPairError} Thrown if the key pair cannot be derived.
    * @throws {InvalidParamError} Thrown if the length of the IKM is not 32 bytes.
    */
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
     await this._setup();
     try {
+      const rawIkm = toArrayBuffer(ikm);
       const sk = shake256.create({ dkLen: 32 })
-        .update(new Uint8Array(ikm))
+        .update(new Uint8Array(rawIkm))
         .digest();
       const [_sk, pk] = await this._generateKeyPairDerand(sk);
       const dSk = await this.deserializePrivateKey(sk.buffer as ArrayBuffer);
@@ -261,10 +269,10 @@ export class XWing implements KemInterface {
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     let ekm: ArrayBuffer | undefined = undefined;
     if (params.ekm !== undefined && !isCryptoKeyPair(params.ekm)) {
-      if (params.ekm.byteLength !== 64) {
+      ekm = toArrayBuffer(params.ekm as ArrayBufferLike);
+      if (ekm.byteLength !== 64) {
         throw new InvalidParamError("ekm must be 64 bytes in length");
       }
-      ekm = params.ekm;
     }
     await this._setup();
     let ekM: Uint8Array | undefined = undefined;
@@ -312,10 +320,11 @@ export class XWing implements KemInterface {
    * @throws {DecapError} Thrown if the shared secret cannot be decapsulated.
    */
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    const enc = toArrayBuffer(params.enc);
     const rSk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
       : params.recipientKey;
-    if (params.enc.byteLength !== 1120) {
+    if (enc.byteLength !== 1120) {
       throw new InvalidParamError("Invalid length of enc");
     }
     const sk = new Uint8Array(await this.serializePrivateKey(rSk));
@@ -325,7 +334,7 @@ export class XWing implements KemInterface {
     await this._setup();
     try {
       const [skM, skX, _pkM, pkX] = await this._expandDecapsulationKey(sk);
-      const ct = new Uint8Array(params.enc);
+      const ct = new Uint8Array(enc);
       const ctM = ct.subarray(0, 1088);
       const ctX = ct.subarray(1088);
       const ssM = await this._m.decap(ctM, skM);

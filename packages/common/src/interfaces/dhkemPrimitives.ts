@@ -18,11 +18,15 @@ export const LABEL_SK: Uint8Array = /* @__PURE__ */ new Uint8Array([115, 107]);
 export interface DhkemPrimitives {
   serializePublicKey(key: CryptoKey): Promise<ArrayBuffer>;
 
-  deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
+  deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey>;
 
   serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer>;
 
-  deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey>;
+  deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey>;
 
   importKey(
     format: "raw" | "jwk",
@@ -32,7 +36,7 @@ export interface DhkemPrimitives {
 
   generateKeyPair(): Promise<CryptoKeyPair>;
 
-  deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
+  deriveKeyPair(ikm: ArrayBufferLike | ArrayBufferView): Promise<CryptoKeyPair>;
 
   // DHKEM-specific function.
   derivePublicKey(key: CryptoKey): Promise<CryptoKey>;

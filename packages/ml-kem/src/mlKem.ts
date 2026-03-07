@@ -26,8 +26,11 @@ import {
   loadCrypto,
   NotSupportedError,
   SerializeError,
+  toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
+
+const HAS_SHARED_ARRAY_BUFFER = typeof SharedArrayBuffer !== "undefined";
 
 interface MlKemInterface {
   generateKeyPair(): Promise<[Uint8Array, Uint8Array]>;
@@ -60,9 +63,11 @@ export class MlKemBase implements KemInterface {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._deserializePublicKey(key);
+      return await this._deserializePublicKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -76,9 +81,11 @@ export class MlKemBase implements KemInterface {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._deserializePrivateKey(key);
+      return await this._deserializePrivateKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -105,12 +112,15 @@ export class MlKemBase implements KemInterface {
     }
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
     try {
+      const rawIkm = toArrayBuffer(ikm);
       const [pk, _] = await (this._prim as MlKemInterface).deriveKeyPair(
-        new Uint8Array(ikm),
+        new Uint8Array(rawIkm),
       );
-      const dSk = await this.deserializePrivateKey(ikm);
+      const dSk = await this.deserializePrivateKey(rawIkm);
       const dPk = await this.deserializePublicKey(pk.buffer as ArrayBuffer);
       return { privateKey: dSk, publicKey: dPk };
     } catch (e: unknown) {
@@ -162,13 +172,17 @@ export class MlKemBase implements KemInterface {
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     let ekm: Uint8Array | undefined = undefined;
     if (params.ekm !== undefined) {
-      if (params.ekm instanceof ArrayBuffer) {
-        ekm = new Uint8Array(params.ekm);
-      } else if (params.ekm instanceof Uint8Array) {
-        ekm = params.ekm;
-      } else {
+      if (isCryptoKeyPair(params.ekm)) {
         throw new InvalidParamError("ekm must be 32 bytes in length");
       }
+      if (
+        !(params.ekm instanceof ArrayBuffer) &&
+        !(HAS_SHARED_ARRAY_BUFFER && params.ekm instanceof SharedArrayBuffer) &&
+        !ArrayBuffer.isView(params.ekm)
+      ) {
+        throw new InvalidParamError("ekm must be 32 bytes in length");
+      }
+      ekm = new Uint8Array(toArrayBuffer(params.ekm));
     }
     const pk = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
@@ -191,13 +205,14 @@ export class MlKemBase implements KemInterface {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    const enc = toArrayBuffer(params.enc);
     const rSk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
       : params.recipientKey;
-    if (params.enc.byteLength !== this.encSize) {
+    if (enc.byteLength !== this.encSize) {
       throw new InvalidParamError("Invalid length of enc");
     }
-    const ct = new Uint8Array(params.enc);
+    const ct = new Uint8Array(enc);
     const sk = new Uint8Array(await this.serializePrivateKey(rSk));
     if (sk.byteLength !== this.privateKeySize) {
       throw new InvalidParamError("Invalid length of recipientKey");

@@ -8,7 +8,7 @@ export interface RecipientContextParams extends KeyScheduleParams {
   recipientKey: CryptoKey | CryptoKeyPair;
 
   /** A byte string of the encapsulated key received from a sender. */
-  enc: ArrayBuffer;
+  enc: ArrayBufferLike | ArrayBufferView;
 
   /** A sender public key for Auth mode. */
   senderPublicKey?: CryptoKey;

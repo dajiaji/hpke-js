@@ -12,5 +12,8 @@ export interface Exporter {
    * @returns A secret string as bytes.
    * @throws {@link ExportError}
    */
-  export(exporterContext: ArrayBuffer, len: number): Promise<ArrayBuffer>;
+  export(
+    exporterContext: ArrayBufferLike | ArrayBufferView,
+    len: number,
+  ): Promise<ArrayBuffer>;
 }

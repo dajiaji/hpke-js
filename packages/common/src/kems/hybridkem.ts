@@ -11,6 +11,7 @@ import {
   NotSupportedError,
   SerializeError,
 } from "../errors.ts";
+import { toArrayBuffer } from "../kdfs/hkdf.ts";
 
 import { KemId } from "../identifiers.ts";
 import { LABEL_DKP_PRK, LABEL_SK } from "../interfaces/dhkemPrimitives.ts";
@@ -52,9 +53,11 @@ export class Hybridkem implements KemInterface {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._deserializePublicKey(key);
+      return await this._deserializePublicKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -68,9 +71,11 @@ export class Hybridkem implements KemInterface {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._deserializePrivateKey(key);
+      return await this._deserializePrivateKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -93,11 +98,14 @@ export class Hybridkem implements KemInterface {
     };
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
+    const rawIkm = toArrayBuffer(ikm);
     const dkpPrk = await this._kdf.labeledExtract(
       EMPTY.buffer as ArrayBuffer,
       LABEL_DKP_PRK,
-      new Uint8Array(ikm),
+      new Uint8Array(rawIkm),
     );
     const seed = new Uint8Array(
       await this._kdf.labeledExpand(
@@ -148,11 +156,12 @@ export class Hybridkem implements KemInterface {
     let ekmA: ArrayBuffer | undefined = undefined;
     let ekmB: ArrayBuffer | undefined = undefined;
     if (params.ekm !== undefined && !isCryptoKeyPair(params.ekm)) {
-      if (params.ekm.byteLength !== 64) {
+      const ekm = toArrayBuffer(params.ekm as ArrayBufferLike);
+      if (ekm.byteLength !== 64) {
         throw new InvalidParamError("ekm must be 64 bytes in length");
       }
-      ekmA = params.ekm.slice(0, 32);
-      ekmB = params.ekm.slice(32);
+      ekmA = ekm.slice(0, 32);
+      ekmB = ekm.slice(32);
     }
     const pkR = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
@@ -176,6 +185,7 @@ export class Hybridkem implements KemInterface {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    const enc = toArrayBuffer(params.enc);
     const sk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
       : params.recipientKey;
@@ -188,11 +198,11 @@ export class Hybridkem implements KemInterface {
     );
     const ssA = await this._a.decap({
       recipientKey: skRA,
-      enc: params.enc.slice(0, this._a.encSize),
+      enc: enc.slice(0, this._a.encSize),
     });
     const ssB = await this._b.decap({
       recipientKey: skRB,
-      enc: params.enc.slice(this._a.encSize),
+      enc: enc.slice(this._a.encSize),
     });
     return concat(new Uint8Array(ssA), new Uint8Array(ssB))
       .buffer as ArrayBuffer;
