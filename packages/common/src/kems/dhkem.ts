@@ -8,6 +8,7 @@ import type { RecipientContextParams } from "../interfaces/recipientContextParam
 import { EMPTY, INPUT_LENGTH_LIMIT } from "../consts.ts";
 import { DecapError, EncapError, InvalidParamError } from "../errors.ts";
 import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
+import { toArrayBuffer } from "../kdfs/hkdf.ts";
 import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 
 // b"eae_prk"
@@ -61,16 +62,20 @@ export class Dhkem implements KemInterface {
     return await this._prim.serializePublicKey(key);
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._prim.deserializePublicKey(key);
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
+    return await this._prim.deserializePublicKey(toArrayBuffer(key));
   }
 
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
     return await this._prim.serializePrivateKey(key);
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
-    return await this._prim.deserializePrivateKey(key);
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
+    return await this._prim.deserializePrivateKey(toArrayBuffer(key));
   }
 
   public async importKey(
@@ -85,11 +90,14 @@ export class Dhkem implements KemInterface {
     return await this._prim.generateKeyPair();
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
+    const rawIkm = toArrayBuffer(ikm);
+    if (rawIkm.byteLength > INPUT_LENGTH_LIMIT) {
       throw new InvalidParamError("Too long ikm");
     }
-    return await this._prim.deriveKeyPair(ikm);
+    return await this._prim.deriveKeyPair(rawIkm);
   }
 
   public async encap(
@@ -103,7 +111,7 @@ export class Dhkem implements KemInterface {
       ke = params.ekm as CryptoKeyPair;
     } else {
       // params.ekm is only used for testing.
-      ke = await this.deriveKeyPair(params.ekm as ArrayBuffer);
+      ke = await this.deriveKeyPair(params.ekm as ArrayBufferLike);
     }
     const enc = await this._prim.serializePublicKey(ke.publicKey);
     const pkrm = await this._prim.serializePublicKey(
@@ -154,7 +162,8 @@ export class Dhkem implements KemInterface {
   }
 
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
-    const pke = await this._prim.deserializePublicKey(params.enc);
+    const enc = toArrayBuffer(params.enc);
+    const pke = await this._prim.deserializePublicKey(enc);
     const skr = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
       : params.recipientKey;
@@ -177,19 +186,19 @@ export class Dhkem implements KemInterface {
 
       let kemContext: Uint8Array;
       if (params.senderPublicKey === undefined) {
-        kemContext = concat(new Uint8Array(params.enc), new Uint8Array(pkrm));
+        kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
       } else {
         const pksm = await this._prim.serializePublicKey(
           params.senderPublicKey,
         );
         kemContext = new Uint8Array(
-          params.enc.byteLength + pkrm.byteLength + pksm.byteLength,
+          enc.byteLength + pkrm.byteLength + pksm.byteLength,
         );
-        kemContext.set(new Uint8Array(params.enc), 0);
-        kemContext.set(new Uint8Array(pkrm), params.enc.byteLength);
+        kemContext.set(new Uint8Array(enc), 0);
+        kemContext.set(new Uint8Array(pkrm), enc.byteLength);
         kemContext.set(
           new Uint8Array(pksm),
-          params.enc.byteLength + pkrm.byteLength,
+          enc.byteLength + pkrm.byteLength,
         );
       }
       return await this._generateSharedSecret(dh, kemContext);

@@ -3,6 +3,7 @@ import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../../algorithm.ts";
 import { BYTE_TO_BIGINT_256, EMPTY } from "../../consts.ts";
+import { toArrayBuffer } from "../../kdfs/hkdf.ts";
 import {
   DeriveKeyPairError,
   DeserializeError,
@@ -233,10 +234,12 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     await this._setup();
     try {
-      return await this._importRawKey(key, true);
+      return await this._importRawKey(toArrayBuffer(key), true);
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -255,10 +258,12 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     await this._setup();
     try {
-      return await this._importRawKey(key, false);
+      return await this._importRawKey(toArrayBuffer(key), false);
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -297,13 +302,16 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     }
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
     await this._setup();
     try {
+      const rawIkm = toArrayBuffer(ikm);
       const dkpPrk = await this._hkdf.labeledExtract(
         EMPTY,
         LABEL_DKP_PRK,
-        new Uint8Array(ikm),
+        new Uint8Array(rawIkm),
       );
       const bn = new Bignum(this._nSk);
       for (

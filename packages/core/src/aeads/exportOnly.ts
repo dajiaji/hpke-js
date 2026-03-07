@@ -31,7 +31,9 @@ export class ExportOnly implements AeadInterface {
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;
 
-  public createEncryptionContext(_key: ArrayBuffer): AeadEncryptionContext {
+  public createEncryptionContext(
+    _key: ArrayBufferLike | ArrayBufferView,
+  ): AeadEncryptionContext {
     throw new NotSupportedError("Export only");
   }
 }

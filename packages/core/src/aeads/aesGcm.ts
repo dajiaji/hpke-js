@@ -1,50 +1,55 @@
 import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-import { AEAD_USAGES, AeadId, NativeAlgorithm } from "@hpke/common";
+import {
+  AEAD_USAGES,
+  AeadId,
+  NativeAlgorithm,
+  toArrayBuffer,
+} from "@hpke/common";
 
 export class AesGcmContext extends NativeAlgorithm
   implements AeadEncryptionContext {
   private _rawKey: ArrayBuffer;
   private _key: CryptoKey | undefined = undefined;
 
-  public constructor(key: ArrayBuffer) {
+  public constructor(key: ArrayBufferLike | ArrayBufferView) {
     super();
-    this._rawKey = key;
+    this._rawKey = toArrayBuffer(key);
   }
 
   public async seal(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     await this._setupKey();
     const alg = {
       name: "AES-GCM",
-      iv: iv,
-      additionalData: aad,
+      iv: toArrayBuffer(iv),
+      additionalData: toArrayBuffer(aad),
     };
     const ct: ArrayBuffer = await (this._api as SubtleCrypto).encrypt(
       alg,
       this._key as CryptoKey,
-      data,
+      toArrayBuffer(data),
     );
     return ct;
   }
 
   public async open(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     await this._setupKey();
     const alg = {
       name: "AES-GCM",
-      iv: iv,
-      additionalData: aad,
+      iv: toArrayBuffer(iv),
+      additionalData: toArrayBuffer(aad),
     };
     const pt: ArrayBuffer = await (this._api as SubtleCrypto).decrypt(
       alg,
       this._key as CryptoKey,
-      data,
+      toArrayBuffer(data),
     );
     return pt;
   }
@@ -104,7 +109,9 @@ export class Aes128Gcm implements AeadInterface {
   /** 16 */
   public readonly tagSize: number = 16;
 
-  public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
+  public createEncryptionContext(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): AeadEncryptionContext {
     return new AesGcmContext(key);
   }
 }

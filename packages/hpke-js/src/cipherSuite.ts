@@ -168,7 +168,9 @@ export class CipherSuite extends CipherSuiteNative {
    * @returns A key pair derived.
    * @throws {@link DeriveKeyPairError}
    */
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
     await this._setup();
     return await (this._kem as KemInterface).deriveKeyPair(ikm);
   }

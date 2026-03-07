@@ -3,8 +3,8 @@
  */
 export interface PreSharedKey {
   /** The key identifier. */
-  id: ArrayBuffer;
+  id: ArrayBufferLike | ArrayBufferView;
 
   /** The body of the pre-shared key. */
-  key: ArrayBuffer;
+  key: ArrayBufferLike | ArrayBufferView;
 }

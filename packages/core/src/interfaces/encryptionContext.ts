@@ -14,7 +14,10 @@ export interface EncryptionContext extends Exporter {
    * @returns A cipher text as bytes.
    * @throws {@link MessageLimitReachedError}, {@link SealError}
    */
-  seal(data: ArrayBuffer, aad?: ArrayBuffer): Promise<ArrayBuffer>;
+  seal(
+    data: ArrayBufferLike | ArrayBufferView,
+    aad?: ArrayBufferLike | ArrayBufferView,
+  ): Promise<ArrayBuffer>;
 
   /**
    * Decrypts data.
@@ -26,7 +29,10 @@ export interface EncryptionContext extends Exporter {
    * @returns A decrypted plain text as bytes.
    * @throws {@link OpenError}
    */
-  open(data: ArrayBuffer, aad?: ArrayBuffer): Promise<ArrayBuffer>;
+  open(
+    data: ArrayBufferLike | ArrayBufferView,
+    aad?: ArrayBufferLike | ArrayBufferView,
+  ): Promise<ArrayBuffer>;
 }
 
 /**

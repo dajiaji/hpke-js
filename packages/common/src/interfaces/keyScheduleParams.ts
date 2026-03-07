@@ -5,7 +5,7 @@ import type { PreSharedKey } from "./preSharedKey.ts";
  */
 export interface KeyScheduleParams {
   /** Application supplied information. The maximum length is 128 bytes. */
-  info?: ArrayBuffer;
+  info?: ArrayBufferLike | ArrayBufferView;
 
   /**
    * A pre-shared key (PSK) held by both the sender and recipient.

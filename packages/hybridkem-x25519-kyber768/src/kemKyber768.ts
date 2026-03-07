@@ -17,6 +17,7 @@ import {
   KemId,
   NotSupportedError,
   SerializeError,
+  toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
 
@@ -50,9 +51,9 @@ export class KemKyber768 implements KemInterface {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(key: ArrayBufferLike | ArrayBufferView): Promise<CryptoKey> {
     try {
-      return await this._deserializePublicKey(key);
+      return await this._deserializePublicKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -66,9 +67,9 @@ export class KemKyber768 implements KemInterface {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(key: ArrayBufferLike | ArrayBufferView): Promise<CryptoKey> {
     try {
-      return await this._deserializePrivateKey(key);
+      return await this._deserializePrivateKey(toArrayBuffer(key));
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -81,12 +82,13 @@ export class KemKyber768 implements KemInterface {
     return { publicKey: pk, privateKey: sk };
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
-    if (ikm.byteLength > INPUT_LENGTH_LIMIT) {
+  public async deriveKeyPair(ikm: ArrayBufferLike | ArrayBufferView): Promise<CryptoKeyPair> {
+    const rawIkm = toArrayBuffer(ikm);
+    if (rawIkm.byteLength > INPUT_LENGTH_LIMIT) {
       throw new InvalidParamError("Too long ikm");
     }
     try {
-      const keys = await this._prim.deriveKeyPair(new Uint8Array(ikm));
+      const keys = await this._prim.deriveKeyPair(new Uint8Array(rawIkm));
       const sk = await this.deserializePrivateKey(
         keys[1].buffer as ArrayBuffer,
       );
@@ -116,11 +118,15 @@ export class KemKyber768 implements KemInterface {
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
     // params.ekm is only used for testing
     let ikm: Uint8Array | undefined = undefined;
-    if (params.ekm !== undefined && !isCryptoKeyPair(params)) {
-      if ((params.ekm as ArrayBuffer).byteLength !== 32) {
+    if (params.ekm !== undefined) {
+      if (isCryptoKeyPair(params.ekm)) {
         throw new InvalidParamError("ekm must be 32 bytes in length");
       }
-      ikm = new Uint8Array(params.ekm as ArrayBuffer);
+      const rawEkm = toArrayBuffer(params.ekm);
+      if (rawEkm.byteLength !== 32) {
+        throw new InvalidParamError("ekm must be 32 bytes in length");
+      }
+      ikm = new Uint8Array(rawEkm);
     }
     const pkR = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
@@ -142,7 +148,7 @@ export class KemKyber768 implements KemInterface {
       : params.recipientKey;
     const serializedSkR = new Uint8Array(await this.serializePrivateKey(skR));
     try {
-      return (await this._prim.decap(new Uint8Array(params.enc), serializedSkR))
+      return (await this._prim.decap(new Uint8Array(toArrayBuffer(params.enc)), serializedSkR))
         .buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);

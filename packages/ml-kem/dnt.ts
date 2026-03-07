@@ -54,6 +54,10 @@ await build({
     engines: {
       "node": ">=16.0.0",
     },
+    devDependencies: {
+      "@deno/shim-deno": "~0.18.0",
+      "picocolors": "^1.0.0",
+    },
     author: "Ajitomi Daisuke",
     bugs: {
       url: "https://github.com/dajiaji/hpke-js/issues",

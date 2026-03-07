@@ -1,29 +1,37 @@
 import { chacha20poly1305 } from "./chacha/chacha.ts";
 
 import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-import { AeadId } from "@hpke/common";
+import { AeadId, toArrayBuffer } from "@hpke/common";
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;
 
-  public constructor(key: ArrayBuffer) {
-    this._key = new Uint8Array(key);
+  public constructor(key: ArrayBufferLike | ArrayBufferView) {
+    this._key = new Uint8Array(toArrayBuffer(key));
   }
 
   public async seal(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
-    return await this._seal(iv, data, aad);
+    return await this._seal(
+      toArrayBuffer(iv),
+      toArrayBuffer(data),
+      toArrayBuffer(aad),
+    );
   }
 
   public async open(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
+    iv: ArrayBufferLike | ArrayBufferView,
+    data: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
-    return await this._open(iv, data, aad);
+    return await this._open(
+      toArrayBuffer(iv),
+      toArrayBuffer(data),
+      toArrayBuffer(aad),
+    );
   }
 
   private _seal(
@@ -96,7 +104,9 @@ export class Chacha20Poly1305 implements AeadInterface {
   /** 16 */
   public readonly tagSize: number = 16;
 
-  public createEncryptionContext(key: ArrayBuffer): AeadEncryptionContext {
+  public createEncryptionContext(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): AeadEncryptionContext {
     return new Chacha20Poly1305Context(key);
   }
 }

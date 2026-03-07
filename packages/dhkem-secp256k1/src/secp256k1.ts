@@ -11,6 +11,7 @@ import {
   LABEL_SK,
   NotSupportedError,
   SerializeError,
+  toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
 
@@ -35,9 +36,11 @@ export class Secp256k1 implements DhkemPrimitives {
     }
   }
 
-  public async deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._importRawKey(key, true);
+      return await this._importRawKey(toArrayBuffer(key), true);
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -51,9 +54,11 @@ export class Secp256k1 implements DhkemPrimitives {
     }
   }
 
-  public async deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey> {
+  public async deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey> {
     try {
-      return await this._importRawKey(key, false);
+      return await this._importRawKey(toArrayBuffer(key), false);
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -85,12 +90,15 @@ export class Secp256k1 implements DhkemPrimitives {
     }
   }
 
-  public async deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair> {
+  public async deriveKeyPair(
+    ikm: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKeyPair> {
     try {
+      const rawIkm = toArrayBuffer(ikm);
       const dkpPrk = await this._hkdf.labeledExtract(
         EMPTY,
         LABEL_DKP_PRK,
-        new Uint8Array(ikm),
+        new Uint8Array(rawIkm),
       );
       const rawSk = await this._hkdf.labeledExpand(
         dkpPrk,

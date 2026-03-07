@@ -46,7 +46,9 @@ export interface KemInterface {
    * @returns A CryptoKey.
    * @throws {@link DeserializeError}
    */
-  deserializePublicKey(key: ArrayBuffer): Promise<CryptoKey>;
+  deserializePublicKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey>;
 
   /**
    * Serializes a private key as CryptoKey to a byte string of length `Nsk`.
@@ -68,7 +70,9 @@ export interface KemInterface {
    * @returns A CryptoKey.
    * @throws {@link DeserializeError}
    */
-  deserializePrivateKey(key: ArrayBuffer): Promise<CryptoKey>;
+  deserializePrivateKey(
+    key: ArrayBufferLike | ArrayBufferView,
+  ): Promise<CryptoKey>;
 
   /**
    * Imports a public or private key and converts to a {@link CryptoKey}.
@@ -113,7 +117,7 @@ export interface KemInterface {
    * @returns A key pair derived.
    * @throws {@link DeriveKeyPairError}
    */
-  deriveKeyPair(ikm: ArrayBuffer): Promise<CryptoKeyPair>;
+  deriveKeyPair(ikm: ArrayBufferLike | ArrayBufferView): Promise<CryptoKeyPair>;
 
   /**
    * Generates an ephemeral, fixed-length symmetric key and

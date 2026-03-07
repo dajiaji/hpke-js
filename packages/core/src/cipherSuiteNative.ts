@@ -17,6 +17,7 @@ import {
   MINIMUM_PSK_LENGTH,
   Mode,
   NativeAlgorithm,
+  toUint8Array,
 } from "@hpke/common";
 
 import type { AeadParams } from "./interfaces/aeadParams.ts";
@@ -255,8 +256,8 @@ export class CipherSuiteNative extends NativeAlgorithm {
    */
   public async seal(
     params: SenderContextParams,
-    pt: ArrayBuffer,
-    aad: ArrayBuffer = EMPTY.buffer as ArrayBuffer,
+    pt: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView = EMPTY.buffer as ArrayBuffer,
   ): Promise<CipherSuiteSealResponse> {
     const ctx = await this.createSenderContext(params);
     return {
@@ -278,8 +279,8 @@ export class CipherSuiteNative extends NativeAlgorithm {
    */
   public async open(
     params: RecipientContextParams,
-    ct: ArrayBuffer,
-    aad: ArrayBuffer = EMPTY.buffer as ArrayBuffer,
+    ct: ArrayBufferLike | ArrayBufferView,
+    aad: ArrayBufferLike | ArrayBufferView = EMPTY.buffer as ArrayBuffer,
   ): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
@@ -312,16 +313,14 @@ export class CipherSuiteNative extends NativeAlgorithm {
 
     const pskId = params.psk === undefined
       ? EMPTY
-      : new Uint8Array(params.psk.id);
+      : toUint8Array(params.psk.id);
     const pskIdHash = await this._kdf.labeledExtract(
       EMPTY,
       LABEL_PSK_ID_HASH,
       pskId,
     );
 
-    const info = params.info === undefined
-      ? EMPTY
-      : new Uint8Array(params.info);
+    const info = params.info === undefined ? EMPTY : toUint8Array(params.info);
     const infoHash = await this._kdf.labeledExtract(
       EMPTY,
       LABEL_INFO_HASH,
@@ -335,9 +334,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
     keyScheduleContext.set(new Uint8Array(pskIdHash), 1);
     keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
 
-    const psk = params.psk === undefined
-      ? EMPTY
-      : new Uint8Array(params.psk.key);
+    const psk = params.psk === undefined ? EMPTY : toUint8Array(params.psk.key);
     const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
 
     const exporterSecretInfo = this._kdf.buildLabeledInfo(
