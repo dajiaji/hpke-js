@@ -26,16 +26,20 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Check for changes
         id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
           # Get diff from previous commit
-          if [ "${{ github.event_name }}" = "push" ]; then
+          if [ "$EVENT_NAME" = "push" ]; then
             # For push: diff from previous commit
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
             # For PR: diff from base branch
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            CHANGED_FILES=$(git diff --name-only origin/"$BASE_REF"...HEAD)
           fi
 
           echo "Changed files:"
@@ -67,6 +71,8 @@ jobs:
         deno-version: [2.x]
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
         with:
           deno-version: ${{ matrix.deno-version }}
@@ -95,15 +101,21 @@ jobs:
         package: ${{ fromJson(needs.check-changes.outputs.packages) }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
         with:
           deno-version: ${{ matrix.deno-version }}
       - name: Run package-specific deno test
+        env:
+          PACKAGE: ${{ matrix.package }}
         run: |
-          deno fmt --check packages/${{ matrix.package }}
-          deno task test:deno:${{ matrix.package }}
-          deno task check:${{ matrix.package }}
+          deno fmt --check packages/"$PACKAGE"
+          deno task test:deno:"$PACKAGE"
+          deno task check:"$PACKAGE"
       - name: Run deno publish (dry) for package
+        env:
+          PACKAGE: ${{ matrix.package }}
         run: |
-          cd packages/${{ matrix.package }}
+          cd packages/"$PACKAGE"
           npx jsr publish --dry-run --allow-dirty

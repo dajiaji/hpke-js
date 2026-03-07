@@ -12,6 +12,9 @@ on:
       - "**/*.md"
       - "**/*.mdc"
 
+permissions:
+  contents: read
+
 jobs:
   # Check changed files to determine which package tests to run
   check-changes:
@@ -23,16 +26,20 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Check for changes
         id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
           # Get diff from previous commit
-          if [ "${{ github.event_name }}" = "push" ]; then
+          if [ "$EVENT_NAME" = "push" ]; then
             # For push: diff from previous commit
             CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
           else
             # For PR: diff from base branch
-            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+            CHANGED_FILES=$(git diff --name-only origin/"$BASE_REF"...HEAD)
           fi
 
           echo "Changed files:"
@@ -66,6 +73,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ matrix.node-version }}
@@ -91,6 +100,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: ${{ matrix.node-version }}
@@ -98,9 +109,13 @@ jobs:
         with:
           deno-version: 2.x
       - name: Run package-specific node test
+        env:
+          PACKAGE: ${{ matrix.package }}
         run: |
           deno task npm
-          deno task test:node:${{ matrix.package }}
+          deno task test:node:"$PACKAGE"
       - name: Publish package to npm (dry)
         if: matrix.node-version != 24
-        run: deno task dry-publish:${{ matrix.package }}
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: deno task dry-publish:"$PACKAGE"
