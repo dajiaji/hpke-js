@@ -1,5 +1,14 @@
 # Changes
 
+## Version 1.8.0
+
+Released 2026-03-08
+
+- [(#726) chore(deps): update Playwright to 1.58.2, rollup and qs; add npm overrides and ml-kem workspaces.](https://github.com/dajiaji/hpke-js/pull/726)
+- [(#725) chore: exclude CHANGES.md from JSR publish and add .npmignore to npm packages.](https://github.com/dajiaji/hpke-js/pull/725)
+- [(#724) chore(deps): bump TypeScript to ^5.9.3 in test and sample package.json.](https://github.com/dajiaji/hpke-js/pull/724)
+- [(#718) refactor: add test:node prepare steps and use BufferSource in HPKE interfaces.](https://github.com/dajiaji/hpke-js/pull/718)
+
 ## Version 1.7.0
 
 Released 2026-03-01
