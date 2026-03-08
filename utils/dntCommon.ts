@@ -58,4 +58,24 @@ export function afterBuild(name: string) {
   );
   Deno.copyFileSync("LICENSE", `../../npm/packages/${name}/LICENSE`);
   Deno.copyFileSync("README.md", `../../npm/packages/${name}/README.md`);
+  writeNpmIgnore(`../../npm/packages/${name}/.npmignore`);
+}
+
+export function writeNpmIgnore(path: string) {
+  Deno.writeTextFileSync(
+    path,
+    [
+      "/src/",
+      "/esm/test/",
+      "/script/test/",
+      "/esm/deps/",
+      "/script/deps/",
+      "/esm/_dnt.test_shims.*",
+      "/script/_dnt.test_shims.*",
+      "/test_runner.js",
+      "yarn.lock",
+      "pnpm-lock.yaml",
+      "",
+    ].join("\n"),
+  );
 }
