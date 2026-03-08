@@ -6,7 +6,10 @@
     "test": "npx playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "^1.58.2",
     "http-server": "^14.1.1"
+  },
+  "overrides": {
+    "qs": "^6.15.0"
   }
 }
