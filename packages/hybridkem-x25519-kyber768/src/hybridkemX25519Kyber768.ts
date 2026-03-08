@@ -1,22 +1,14 @@
 import type { DhkemInterface } from "@hpke/common";
-import { Dhkem, Hybridkem, KemId } from "@hpke/common";
-
-import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
+import { Hybridkem, KemId } from "@hpke/common";
+import {
+  DhkemX25519HkdfSha256 as CoreDhkemX25519HkdfSha256,
+  HkdfSha256,
+} from "@hpke/core";
 
 import { KemKyber768 } from "./kemKyber768.ts";
 
-class DhkemX25519HkdfSha256 extends Dhkem implements DhkemInterface {
-  override id: KemId = KemId.DhkemX25519HkdfSha256;
-  override secretSize: number = 32;
-  override encSize: number = 32;
-  override publicKeySize: number = 32;
-  override privateKeySize: number = 32;
-
-  constructor() {
-    const kdf = new HkdfSha256();
-    super(KemId.DhkemX25519HkdfSha256, new X25519(kdf), kdf);
-  }
-
+class DhkemX25519HkdfSha256 extends CoreDhkemX25519HkdfSha256
+  implements DhkemInterface {
   public get kdf() {
     return this._kdf;
   }
