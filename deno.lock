@@ -34,10 +34,10 @@
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@noble/curves@^1.9.7": "1.9.7",
-    "npm:@playwright/test@^1.56.1": "1.58.2",
+    "npm:@playwright/test@^1.58.2": "1.58.2",
     "npm:@types/node@*": "22.13.10",
-    "npm:playwright-core@^1.56.1": "1.58.2",
-    "npm:playwright@^1.56.1": "1.58.2"
+    "npm:playwright-core@^1.58.2": "1.58.2",
+    "npm:playwright@^1.58.2": "1.58.2"
   },
   "jsr": {
     "@dajiaji/mlkem@2.5.0": {
@@ -213,9 +213,9 @@
       "jsr:@std/path@1.0.8",
       "jsr:@std/testing@1.0.9",
       "npm:@noble/curves@^1.9.7",
-      "npm:@playwright/test@^1.56.1",
-      "npm:playwright-core@^1.56.1",
-      "npm:playwright@^1.56.1"
+      "npm:@playwright/test@^1.58.2",
+      "npm:playwright-core@^1.58.2",
+      "npm:playwright@^1.58.2"
     ],
     "members": {
       "packages/dhkem-secp256k1": {

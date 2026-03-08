@@ -1,6 +1,10 @@
 {
   "name": "hpke-js",
   "private": true,
+  "overrides": {
+    "rollup": "^4.59.0",
+    "qs": "^6.15.0"
+  },
   "workspaces": [
     "packages/common",
     "packages/core",

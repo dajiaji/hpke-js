@@ -14,5 +14,8 @@
   },
   "dependencies": {
     "@hpke/core": "^1.8.0"
+  },
+  "overrides": {
+    "terser-webpack-plugin": "^5.3.17"
   }
 }
