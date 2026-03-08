@@ -158,7 +158,7 @@ export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
 }
 
 export async function loadCrypto(): Promise<Crypto> {
-  if (globalThis !== undefined && globalThis.crypto !== undefined) {
+  if (typeof globalThis !== "undefined" && globalThis.crypto !== undefined) {
     // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
     return globalThis.crypto;
   }
@@ -168,7 +168,7 @@ export async function loadCrypto(): Promise<Crypto> {
     const { webcrypto } = await import("crypto"); // node:crypto
     return (webcrypto as unknown as Crypto);
   } catch (_e: unknown) {
-    throw new Error("Web Cryptograph API not supported");
+    throw new Error("failed to load Crypto");
   }
 }
 

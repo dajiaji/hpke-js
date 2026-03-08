@@ -4,24 +4,16 @@
  * noble-hashes - MIT License (c) 2022 Paul Miller (paulmillr.com)
  *
  * The original file is located at:
- * https://github.com/paulmillr/noble-hashes/blob/2e0c00e1aa134082ba1380bf3afb8b1641f60fed/src/_u64.ts
+ * https://github.com/paulmillr/noble-hashes/blob/4e358a46d682adfb005ae6314ec999f2513086b9/src/_u64.ts
  */
+
 /**
  * Internal helpers for u64. BigUint64Array is too slow as per 2025, so we implement it using Uint32Array.
  * @todo re-check https://issues.chromium.org/issues/42212588
  * @module
  */
-import { BYTE_TO_BIGINT_256, N_32 } from "../consts.ts";
-
-const U32_MASK64 = 0xffff_ffffn;
-
-function u32ToBig(n: number): bigint {
-  const u = n >>> 0;
-  return (BYTE_TO_BIGINT_256[(u >>> 24) & 0xff] << 24n) |
-    (BYTE_TO_BIGINT_256[(u >>> 16) & 0xff] << 16n) |
-    (BYTE_TO_BIGINT_256[(u >>> 8) & 0xff] << 8n) |
-    BYTE_TO_BIGINT_256[u & 0xff];
-}
+const U32_MASK64 = 0xFFFFFFFFn;
+const _32n = 32n;
 
 function fromBig(
   n: bigint,
@@ -31,10 +23,10 @@ function fromBig(
   l: number;
 } {
   if (le) {
-    return { h: Number(n & U32_MASK64), l: Number((n >> N_32) & U32_MASK64) };
+    return { h: Number(n & U32_MASK64), l: Number((n >> _32n) & U32_MASK64) };
   }
   return {
-    h: Number((n >> N_32) & U32_MASK64) | 0,
+    h: Number((n >> _32n) & U32_MASK64) | 0,
     l: Number(n & U32_MASK64) | 0,
   };
 }
@@ -51,7 +43,7 @@ function split(lst: bigint[], le = false): Uint32Array[] {
 }
 
 const toBig = (h: number, l: number): bigint =>
-  (u32ToBig(h) << N_32) | u32ToBig(l);
+  (BigInt(h >>> 0) << _32n) | BigInt(l >>> 0);
 // for Shift in [0, 32)
 const shrSH = (h: number, _l: number, s: number): number => h >>> s;
 const shrSL = (h: number, l: number, s: number): number =>
@@ -124,6 +116,7 @@ const add5H = (
   Eh: number,
 ): number => (Ah + Bh + Ch + Dh + Eh + ((low / 2 ** 32) | 0)) | 0;
 
+// prettier-ignore
 export {
   add,
   add3H,
@@ -148,6 +141,7 @@ export {
   split,
   toBig,
 };
+// prettier-ignore
 const u64: {
   fromBig: typeof fromBig;
   split: typeof split;
