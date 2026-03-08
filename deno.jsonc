@@ -192,7 +192,7 @@
     },
     "npm-build": {
       "description": "Build NPM packages for all modules using DNT",
-      "command": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem"
+      "command": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x25519-kyber768 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem"
     },
     "npm-build:common": "cd packages/common && deno task npm-build",
     "npm-build:core": "cd packages/core && deno task npm-build",
@@ -200,12 +200,13 @@
     "npm-build:dhkem-x25519": "cd packages/dhkem-x25519 && deno task npm-build",
     "npm-build:dhkem-x448": "cd packages/dhkem-x448 && deno task npm-build",
     "npm-build:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task npm-build",
+    "npm-build:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task npm-build",
     "npm-build:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task npm-build",
     "npm-build:hpke-js": "cd packages/hpke-js && deno task npm-build",
     "npm-build:ml-kem": "cd packages/ml-kem && deno task npm-build",
     "npm-link": {
       "description": "Create symlinks for all NPM packages for local development",
-      "command": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem"
+      "command": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x25519-kyber768 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem"
     },
     "npm-link:common": "cd npm/packages/common && npm link",
     "npm-link:core": "cd npm/packages/core && npm link",
@@ -213,12 +214,13 @@
     "npm-link:dhkem-x25519": "cd npm/packages/dhkem-x25519 && npm link",
     "npm-link:dhkem-x448": "cd npm/packages/dhkem-x448 && npm link",
     "npm-link:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm link",
+    "npm-link:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && npm link",
     "npm-link:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm link",
     "npm-link:hpke-js": "cd npm/packages/hpke-js && npm link",
     "npm-link:ml-kem": "cd npm/packages/ml-kem && npm link",
     "npm-pack": {
       "description": "Validate NPM package contents with dry-run pack for all modules",
-      "command": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem"
+      "command": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x25519-kyber768 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem"
     },
     "npm-pack:common": "cd npm/packages/common && npm pack --dry-run",
     "npm-pack:core": "cd npm/packages/core && npm pack --dry-run",
@@ -226,6 +228,7 @@
     "npm-pack:dhkem-x25519": "cd npm/packages/dhkem-x25519 && npm pack --dry-run",
     "npm-pack:dhkem-x448": "cd npm/packages/dhkem-x448 && npm pack --dry-run",
     "npm-pack:dhkem-secp256k1": "cd npm/packages/dhkem-secp256k1 && npm pack --dry-run",
+    "npm-pack:hybridkem-x25519-kyber768": "cd npm/packages/hybridkem-x25519-kyber768 && npm pack --dry-run",
     "npm-pack:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && npm pack --dry-run",
     "npm-pack:hpke-js": "cd npm/packages/hpke-js && npm pack --dry-run",
     "npm-pack:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",

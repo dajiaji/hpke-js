@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## Version 1.10.0
+
+Released 2026-03-08
+
+- [(#728) perf(common): unroll SHA3/Keccak and simplify u64 and kyber utils.](https://github.com/dajiaji/hpke-js/pull/728)
+- [(#716) refactor: share X25519/X448 DhkemPrimitives via common XCurve base.](https://github.com/dajiaji/hpke-js/pull/716)
+- [(#715) refactor: reuse common noble utilities in chacha20poly1305.](https://github.com/dajiaji/hpke-js/pull/715)
+- [(#714) refactor: normalize bigint literals and reuse common helpers.](https://github.com/dajiaji/hpke-js/pull/714)
+- [(#718) refactor: add test:node prepare steps and use BufferSource in HPKE interfaces.](https://github.com/dajiaji/hpke-js/pull/718)
+- [(#725) chore: exclude CHANGES.md from JSR publish and add .npmignore to npm packages.](https://github.com/dajiaji/hpke-js/pull/725)
+
 ## Version 1.9.0
 
 Released 2026-03-01

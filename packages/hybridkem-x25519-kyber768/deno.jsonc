@@ -1,9 +1,10 @@
 {
   "name": "@hpke/hybridkem-x25519-kyber768",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
+      "CHANGES.md",
       "dnt.ts",
       "samples/",
       "test/",

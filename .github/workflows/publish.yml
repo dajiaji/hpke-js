@@ -41,11 +41,9 @@ jobs:
       - name: Build npm packages
         run: deno task npm
       - name: Publish @hpke/common to npm
-        continue-on-error: true
         working-directory: ./npm/packages/common
         run: npm publish
       - name: Publish @hpke/core to npm
-        continue-on-error: true
         working-directory: ./npm/packages/core
         run: npm publish
       - name: Publish @hpke/chacha20poly1305 to npm
@@ -63,6 +61,10 @@ jobs:
       - name: Publish @hpke/dhkem-secp256k1 to npm
         continue-on-error: true
         working-directory: ./npm/packages/dhkem-secp256k1
+        run: npm publish
+      - name: Publish @hpke/hybridkem-x25519-kyber768 to npm
+        continue-on-error: true
+        working-directory: ./npm/packages/hybridkem-x25519-kyber768
         run: npm publish
       - name: Publish @hpke/hybridkem-x-wing to npm
         continue-on-error: true

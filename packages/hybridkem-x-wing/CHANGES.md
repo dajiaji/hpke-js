@@ -1,5 +1,14 @@
 # Changes
 
+## Version 0.7.0
+
+Released 2026-03-08
+
+- [(#669) fix: call _setup earlier in hybridkem-x-wing encap.](https://github.com/dajiaji/hpke-js/pull/669)
+- [(#718) refactor: add test:node prepare steps and use BufferSource in HPKE interfaces.](https://github.com/dajiaji/hpke-js/pull/718)
+- [(#724) chore(deps): bump TypeScript to ^5.9.3 in test and sample package.json.](https://github.com/dajiaji/hpke-js/pull/724)
+- [(#725) chore: exclude CHANGES.md from JSR publish and add .npmignore to npm packages.](https://github.com/dajiaji/hpke-js/pull/725)
+
 ## Version 0.6.1
 
 Released 2025-08-15

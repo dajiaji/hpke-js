@@ -1,5 +1,14 @@
 # Changes
 
+## Version 1.8.0
+
+Released 2026-03-08
+
+- [(#715) refactor: reuse common noble utilities in chacha20poly1305.](https://github.com/dajiaji/hpke-js/pull/715)
+- [(#718) refactor: add test:node prepare steps and use BufferSource in HPKE interfaces.](https://github.com/dajiaji/hpke-js/pull/718)
+- [(#724) chore(deps): bump TypeScript to ^5.9.3 in test and sample package.json.](https://github.com/dajiaji/hpke-js/pull/724)
+- [(#725) chore: exclude CHANGES.md from JSR publish and add .npmignore to npm packages.](https://github.com/dajiaji/hpke-js/pull/725)
+
 ## Version 1.7.1
 
 Released 2025-08-15

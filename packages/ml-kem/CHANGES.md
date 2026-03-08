@@ -1,5 +1,15 @@
 # Changes
 
+## Version 0.3.0
+
+Released 2026-03-08
+
+- [(#671) ml-kem: fix encap/decap.](https://github.com/dajiaji/hpke-js/pull/671)
+- [(#674) ml-kem: apply deno formatter.](https://github.com/dajiaji/hpke-js/pull/674)
+- [(#718) refactor: add test:node prepare steps and use BufferSource in HPKE interfaces.](https://github.com/dajiaji/hpke-js/pull/718)
+- [(#724) chore(deps): bump TypeScript to ^5.9.3 in test and sample package.json.](https://github.com/dajiaji/hpke-js/pull/724)
+- [(#725) chore: exclude CHANGES.md from JSR publish and add .npmignore to npm packages.](https://github.com/dajiaji/hpke-js/pull/725)
+
 ## Version 0.2.1
 
 Released 2025-08-15
