@@ -4,6 +4,7 @@
   "exports": "./mod.ts",
   "publish": {
     "exclude": [
+      "CHANGES.md",
       "dnt.ts",
       "samples/",
       "test/",
