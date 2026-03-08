@@ -1,5 +1,4 @@
-// @ts-ignore: for "npm:"
-import { shake256 } from "@noble/hashes/sha3";
+import { shake256 } from "@hpke/common";
 
 export function byte(n: number): number {
   return n & 0xFF;
