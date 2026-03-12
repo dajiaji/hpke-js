@@ -218,7 +218,7 @@ describe("createRecipientContext", () => {
       await assertRejects(
         () =>
           suite.createSenderContext({
-            info: (new Uint8Array(65537)).buffer,
+            info: (new Uint8Array(268435457)).buffer,
             recipientPublicKey: rkp.publicKey,
           }),
         InvalidParamError,
