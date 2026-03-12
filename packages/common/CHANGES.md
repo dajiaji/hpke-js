@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## Version 1.10.1
+
+Released 2026-03-12
+
+- [(#511) Update info length limit to 268435456 (256 MB).](https://github.com/dajiaji/hpke-js/issues/511)
+
 ## Version 1.10.0
 
 Released 2026-03-08
