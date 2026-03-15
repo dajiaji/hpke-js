@@ -1,0 +1,51 @@
+{
+  "name": "@hpke/cose",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "exclude": [
+      "CHANGES.md",
+      "dnt.ts",
+      "test/",
+      "tsconfig.json"
+    ]
+  },
+  "fmt": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "lint": {
+    "include": [
+      "**/*.md",
+      "**/*.json",
+      "dnt.ts",
+      "mod.ts",
+      "src/",
+      "test/"
+    ],
+    "exclude": [
+      "**/*/*.js",
+      "**/*/npm/",
+      "coverage/*.json"
+    ]
+  },
+  "tasks": {
+    "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "check": "deno check *.ts src/**/*.ts test/*.ts",
+    "cov": "deno coverage ./coverage --lcov --exclude='test'",
+    "npm-build": "deno run --import-map=../../npm/import_map.json -A dnt.ts --skip-test",
+    "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
+    "minify": "esbuild ../../npm/packages/cose/esm/mod.js --bundle --format=esm --minify"
+  }
+}

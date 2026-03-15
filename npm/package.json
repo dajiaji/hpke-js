@@ -16,6 +16,7 @@
     "packages/hybridkem-x-wing",
     "packages/hpke-js",
     "packages/ml-kem",
+    "packages/cose",
     "test/**/*/runtimes/browsers",
     "test/**/*/runtimes/cloudflare",
     "samples/**/*"
