@@ -82,7 +82,12 @@ jobs:
         with:
           deno-version: 2.x
       - name: Run test
-        run: deno task test:node
+        run: |
+          if [ ${{ matrix.node-version }} -lt 20 ]; then
+            deno task test:node:cjs-compat
+          else
+            deno task test:node
+          fi
       - name: Publish to npm (dry)
         if: matrix.node-version != 24
         run: deno task dry-publish
@@ -97,6 +102,14 @@ jobs:
       matrix:
         node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25]
         package: ${{ fromJson(needs.check-changes.outputs.packages) }}
+        exclude:
+          # @hpke/cose requires Node >= 20 (ESM-only)
+          - node-version: 16
+            package: cose
+          - node-version: 18
+            package: cose
+          - node-version: 19
+            package: cose
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
