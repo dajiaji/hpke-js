@@ -1,0 +1,38 @@
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemX25519HkdfSha256,
+  HkdfSha256,
+} from "@hpke/core";
+
+import { type ContentEncAlg, JoseHpkeAlg } from "./alg.ts";
+import { aesGcmContentCrypto } from "./contentAesGcm.ts";
+import type { JoseEncrypt0 } from "./encrypt0.ts";
+import { JoseEncrypt0Impl } from "./encrypt0.ts";
+import type { JoseEncrypt } from "./encrypt.ts";
+import { JoseEncryptImpl } from "./encrypt.ts";
+
+/** DHKEM(X25519), HKDF-SHA256, AES-128-GCM — Integrated Encryption. */
+export function createHpke3(): JoseEncrypt0 {
+  const suite = new CipherSuite({
+    kem: new DhkemX25519HkdfSha256(),
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
+  });
+  return new JoseEncrypt0Impl(suite, JoseHpkeAlg.HPKE_3);
+}
+
+/** DHKEM(X25519), HKDF-SHA256, AES-128-GCM — Key Encryption. */
+export function createHpke3Ke(contentEncAlg: ContentEncAlg): JoseEncrypt {
+  const suite = new CipherSuite({
+    kem: new DhkemX25519HkdfSha256(),
+    kdf: new HkdfSha256(),
+    aead: new Aes128Gcm(),
+  });
+  return new JoseEncryptImpl(
+    suite,
+    JoseHpkeAlg.HPKE_3_KE,
+    contentEncAlg,
+    aesGcmContentCrypto,
+  );
+}
