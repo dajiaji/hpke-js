@@ -17,6 +17,7 @@
     "packages/hpke-js",
     "packages/ml-kem",
     "packages/cose",
+    "packages/jose",
     "test/**/*/runtimes/browsers",
     "test/**/*/runtimes/cloudflare",
     "samples/**/*"

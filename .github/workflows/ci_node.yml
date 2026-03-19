@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Packages that are ESM-only and require Node >= 20
+  ESM_ONLY_PACKAGES: '["cose","jose"]'
+
 jobs:
   # Check changed files to determine which package tests to run
   check-changes:
@@ -102,14 +106,6 @@ jobs:
       matrix:
         node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25]
         package: ${{ fromJson(needs.check-changes.outputs.packages) }}
-        exclude:
-          # @hpke/cose requires Node >= 20 (ESM-only)
-          - node-version: 16
-            package: cose
-          - node-version: 18
-            package: cose
-          - node-version: 19
-            package: cose
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -122,13 +118,14 @@ jobs:
         with:
           deno-version: 2.x
       - name: Run package-specific node test
+        if: matrix.node-version >= 20 || !contains(fromJson(env.ESM_ONLY_PACKAGES), matrix.package)
         env:
           PACKAGE: ${{ matrix.package }}
         run: |
           deno task npm
           deno task test:node:"$PACKAGE"
       - name: Publish package to npm (dry)
-        if: matrix.node-version != 24
+        if: matrix.node-version != 24 && (matrix.node-version >= 20 || !contains(fromJson(env.ESM_ONLY_PACKAGES), matrix.package))
         env:
           PACKAGE: ${{ matrix.package }}
         run: deno task dry-publish:"$PACKAGE"
