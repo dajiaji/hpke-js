@@ -17,14 +17,10 @@ import {
 const ALG_NAME = "ECDH";
 
 // secp256k1 curve parameters
-const P =
-  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2Fn;
-const N =
-  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n;
-const Gx =
-  0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798n;
-const Gy =
-  0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8n;
+const P = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2Fn;
+const N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n;
+const Gx = 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798n;
+const Gy = 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8n;
 
 // secp256k1: y² = x³ + 7 (a = 0, b = 7)
 
@@ -183,7 +179,7 @@ function toWNAF(k: bigint): Int8Array {
     if (n & 1n) {
       let val = Number(n & mask);
       if (val >= half) {
-        val -= (1 << WNAF_W);
+        val -= 1 << WNAF_W;
       }
       n -= BigInt(val);
       wnaf[i] = val;
@@ -237,52 +233,102 @@ function scalarMultWnaf(
 }
 
 // =========================================================================
-// Precomputed table for generator G (wNAF with affine points + batch inv)
-// Computed lazily on first use.
+// Fixed-base windowed multiplication for generator G.
+//
+// Uses w=8 signed-digit decomposition: 256-bit scalar is split into 33
+// windows of 8 bits each (signed, range [-128, 128]).
+// For each window position i, we precompute [1]*B, [2]*B, ..., [128]*B
+// where B = 2^(8*i) * G, stored as affine points.
+//
+// Multiplication is just ~33 mixed additions — no doublings at all.
+// The table (33 * 128 = 4224 affine points) is computed lazily once.
 // =========================================================================
 
-let _gPrecomp: { x: bigint; y: bigint }[] | undefined;
+const G_WIN = 8;
+const G_WIN_SIZE = 1 << (G_WIN - 1); // 128
+const G_WIN_GROUPS = 33; // ceil(256/8) + 1 for carry
 
-function getGPrecomp(): { x: bigint; y: bigint }[] {
-  if (_gPrecomp) return _gPrecomp;
-  // Build Jacobian table then batch-convert to affine
-  const jTable = buildPrecomp(Gx, Gy);
-  // Batch modular inversion (Montgomery's trick)
-  const n = jTable.length;
-  const zs = jTable.map((p) => p[2]);
-  const products = new Array<bigint>(n);
-  products[0] = zs[0];
-  for (let i = 1; i < n; i++) products[i] = products[i - 1] * zs[i] % P;
-  let inv = modInverse(products[n - 1]);
+let _gTable: { x: bigint; y: bigint }[][] | undefined;
+
+function batchJToAffine(
+  pts: [bigint, bigint, bigint][],
+): { x: bigint; y: bigint }[] {
+  const n = pts.length;
+  // Montgomery's trick: one modInverse for all points
+  const zs = new Array<bigint>(n);
+  for (let i = 0; i < n; i++) zs[i] = pts[i][2];
+  const prods = new Array<bigint>(n);
+  prods[0] = zs[0];
+  for (let i = 1; i < n; i++) prods[i] = prods[i - 1] * zs[i] % P;
+  let inv = modInverse(prods[n - 1]);
   const zInvs = new Array<bigint>(n);
   for (let i = n - 1; i > 0; i--) {
-    zInvs[i] = inv * products[i - 1] % P;
+    zInvs[i] = inv * prods[i - 1] % P;
     inv = inv * zs[i] % P;
   }
   zInvs[0] = inv;
-  _gPrecomp = new Array(n);
+  const out = new Array<{ x: bigint; y: bigint }>(n);
   for (let i = 0; i < n; i++) {
     const zi2 = zInvs[i] * zInvs[i] % P;
-    _gPrecomp[i] = {
-      x: jTable[i][0] * zi2 % P,
-      y: jTable[i][1] * zInvs[i] % P * zi2 % P,
+    out[i] = {
+      x: pts[i][0] * zi2 % P,
+      y: pts[i][1] * zInvs[i] % P * zi2 % P,
     };
   }
-  return _gPrecomp;
+  return out;
+}
+
+function getGTable(): { x: bigint; y: bigint }[][] {
+  if (_gTable) return _gTable;
+  // Build all Jacobian points, then batch-convert to affine
+  const allJ: [bigint, bigint, bigint][] = [];
+  let bx = Gx, by = Gy, bz = 1n; // base = 2^(g*8) * G
+  for (let g = 0; g < G_WIN_GROUPS; g++) {
+    // Multiples [1]*base, [2]*base, ..., [128]*base
+    let cx = bx, cy = by, cz = bz;
+    allJ.push([cx, cy, cz]);
+    for (let j = 1; j < G_WIN_SIZE; j++) {
+      // mixed add when base z=1 (only first group), else full Jacobian add
+      if (bz === 1n) {
+        [cx, cy, cz] = jAddMixed(cx, cy, cz, bx, by);
+      } else {
+        [cx, cy, cz] = jAdd(cx, cy, cz, bx, by, bz);
+      }
+      allJ.push([cx, cy, cz]);
+    }
+    // Advance: base = 2^8 * base
+    for (let j = 0; j < G_WIN; j++) [bx, by, bz] = jDouble(bx, by, bz);
+  }
+  // Batch convert to affine
+  const affine = batchJToAffine(allJ);
+  // Organize into groups
+  _gTable = new Array(G_WIN_GROUPS);
+  let idx = 0;
+  for (let g = 0; g < G_WIN_GROUPS; g++) {
+    _gTable[g] = affine.slice(idx, idx + G_WIN_SIZE);
+    idx += G_WIN_SIZE;
+  }
+  return _gTable;
 }
 
 function scalarMultG(k: bigint): Point {
-  const precomp = getGPrecomp();
-  const wnaf = toWNAF(k);
+  const table = getGTable();
+  // Signed-digit decomposition: split k into 8-bit signed windows
+  const mask = 0xFFn;
+  let n = k;
   let rx = 0n, ry = 1n, rz = 0n;
-  for (let i = wnaf.length - 1; i >= 0; i--) {
-    [rx, ry, rz] = jDouble(rx, ry, rz);
-    const d = wnaf[i];
+  for (let g = 0; g < G_WIN_GROUPS; g++) {
+    let d = Number(n & mask);
+    n >>= 8n;
+    if (d >= G_WIN_SIZE) {
+      d -= 1 << G_WIN;
+      n += 1n; // carry
+    }
     if (d > 0) {
-      const p = precomp[(d - 1) >> 1];
+      const p = table[g][d - 1];
       [rx, ry, rz] = jAddMixed(rx, ry, rz, p.x, p.y);
     } else if (d < 0) {
-      const p = precomp[(-d - 1) >> 1];
+      const p = table[g][-d - 1];
       [rx, ry, rz] = jAddMixed(rx, ry, rz, p.x, P - p.y);
     }
   }
