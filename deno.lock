@@ -218,11 +218,6 @@
       "npm:playwright@^1.58.2"
     ],
     "members": {
-      "packages/dhkem-secp256k1": {
-        "dependencies": [
-          "npm:@noble/curves@^1.9.7"
-        ]
-      },
       "packages/hybridkem-x-wing": {
         "dependencies": [
           "jsr:@dajiaji/mlkem@^2.5.0"

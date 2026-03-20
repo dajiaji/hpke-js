@@ -1,13 +1,13 @@
 import { Dhkem, KemId } from "@hpke/common";
-import { HkdfSha256 } from "@hpke/dhkem-x25519";
 
+import { HkdfSha256 } from "./hkdfSha256.ts";
 import { Secp256k1 } from "./secp256k1.ts";
 
 /**
  * The DHKEM(secp256k1, HKDF-SHA256) for HPKE KEM implementing {@link KemInterface}.
  *
- * This class is implemented using
- * {@link https://github.com/paulmillr/noble-curves | @noble/curves}.
+ * This class is implemented using pure TypeScript without any external
+ * cryptographic library dependencies.
  *
  * The public keys are assumed to be compressed.
  *
