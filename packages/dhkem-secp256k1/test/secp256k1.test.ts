@@ -214,19 +214,11 @@ describe("secp256k1 - public key derivation (SEC 2 / Bitcoin)", () => {
 describe("secp256k1 - Wycheproof ECDH (ecdh_secp256k1_test.json, all 752 vectors)", () => {
   // Load all test vectors from the Wycheproof JSON file.
   // Source: https://github.com/google/wycheproof/blob/master/testvectors_v1/ecdh_secp256k1_test.json
-  let data: WycheproofTestFile;
-
-  try {
-    data = JSON.parse(
-      Deno.readTextFileSync("test/vectors/ecdh_secp256k1_test.json"),
-    );
-  } catch {
-    data = JSON.parse(
-      Deno.readTextFileSync(
-        "../../../packages/dhkem-secp256k1/test/vectors/ecdh_secp256k1_test.json",
-      ),
-    );
-  }
+  const data: WycheproofTestFile = JSON.parse(
+    Deno.readTextFileSync(
+      new URL("./vectors/ecdh_secp256k1_test.json", import.meta.url),
+    ),
+  );
 
   const secp = createSecp256k1();
 
