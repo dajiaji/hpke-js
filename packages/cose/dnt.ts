@@ -33,10 +33,15 @@ await build({
     } catch {
       // Test directories not created (--skip-test); skip.
     }
-    // Copy browser test files.
+    // Copy runtime test files.
     copySync(
       "test/runtimes/browsers",
       "../../npm/test/cose/runtimes/browsers",
+      { overwrite: true },
+    );
+    copySync(
+      "test/runtimes/cloudflare",
+      "../../npm/test/cose/runtimes/cloudflare",
       { overwrite: true },
     );
     // Copy package metadata.

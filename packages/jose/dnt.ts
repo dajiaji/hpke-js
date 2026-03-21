@@ -23,10 +23,15 @@ await build({
   },
   testPattern: "test/**/*.test.ts",
   postBuild() {
-    // Copy browser test files.
+    // Copy runtime test files.
     copySync(
       "test/runtimes/browsers",
       "../../npm/test/jose/runtimes/browsers",
+      { overwrite: true },
+    );
+    copySync(
+      "test/runtimes/cloudflare",
+      "../../npm/test/jose/runtimes/cloudflare",
       { overwrite: true },
     );
     // Copy package metadata.
