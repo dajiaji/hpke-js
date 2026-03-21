@@ -2,12 +2,13 @@ import { build } from "@deno/dnt";
 import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
+const outDir = "../../npm/packages/dhkem-x25519";
 
 await beforeBuild("dhkem-x25519");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "../../npm/packages/dhkem-x25519",
+  outDir,
   typeCheck: "both",
   test: !Deno.args.includes("--skip-test"),
   declaration: "inline",
@@ -20,6 +21,24 @@ await build({
     deno: "dev",
   },
   testPattern: "test/**/*.test.ts",
+  postBuild() {
+    // Copy test vectors next to the compiled test files so that
+    // import.meta.url-based resolution works under Node.js too.
+    try {
+      Deno.mkdirSync(`${outDir}/esm/test/vectors`, { recursive: true });
+      Deno.copyFileSync(
+        "test/vectors/x25519_test.json",
+        `${outDir}/esm/test/vectors/x25519_test.json`,
+      );
+      Deno.mkdirSync(`${outDir}/script/test/vectors`, { recursive: true });
+      Deno.copyFileSync(
+        "test/vectors/x25519_test.json",
+        `${outDir}/script/test/vectors/x25519_test.json`,
+      );
+    } catch {
+      // Test directories not created (--skip-test); skip.
+    }
+  },
   package: {
     name: denoPkg.name,
     version: denoPkg.version,
