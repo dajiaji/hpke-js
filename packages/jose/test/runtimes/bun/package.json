@@ -1,0 +1,14 @@
+{
+  "name": "test-bun-hpke-jose",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@hpke/jose": "link:@hpke/jose"
+  }
+}

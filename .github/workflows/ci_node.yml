@@ -94,7 +94,12 @@ jobs:
           fi
       - name: Publish to npm (dry)
         if: matrix.node-version != 24
-        run: deno task dry-publish
+        run: |
+          if [ ${{ matrix.node-version }} -lt 20 ]; then
+            deno task dry-publish:cjs-compat
+          else
+            deno task dry-publish
+          fi
 
   # Job to test only specific packages
   build-packages:
