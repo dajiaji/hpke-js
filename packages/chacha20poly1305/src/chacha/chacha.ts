@@ -23,16 +23,19 @@
  *
  * @module
  */
-import { createCipher, rotl } from "./_arx.ts";
-import { poly1305 } from "./_poly1305.ts";
+import { createCipher, rotl, sigma32_32 } from "./_arx.ts";
+import { Poly1305 } from "./_poly1305.ts";
 import {
   abytes,
   type ARXCipher,
   type CipherWithOutput,
   clean,
+  copyBytes,
+  createView,
   equalBytes,
   getOutput,
-  u64Lengths,
+  isAligned32,
+  u32,
   wrapCipher,
   type XorStream,
 } from "./utils.ts";
@@ -188,36 +191,53 @@ export const chacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
 });
 
 const ZEROS16 = /* @__PURE__ */ new Uint8Array(16);
-// Pad to digest size with zeros
-const updatePadded = (
-  h: ReturnType<typeof poly1305.create>,
-  msg: Uint8Array,
-) => {
-  h.update(msg);
-  const leftover = msg.length % 16;
-  if (leftover) h.update(ZEROS16.subarray(leftover));
-};
 
-const ZEROS32 = /* @__PURE__ */ new Uint8Array(32);
+/**
+ * Compute Poly1305 auth tag for ChaCha20-Poly1305 AEAD.
+ * Uses chachaCore directly to generate the auth key, bypassing the full
+ * createCipher pipeline (validation, key copy, nonce processing) since
+ * all inputs are already validated by wrapCipher.
+ */
 function computeTag(
-  fn: XorStream,
+  _fn: XorStream,
   key: Uint8Array,
   nonce: Uint8Array,
   ciphertext: Uint8Array,
   AAD?: Uint8Array,
 ): Uint8Array {
-  if (AAD !== undefined) abytes(AAD, undefined, "AAD");
-  const authKey = fn(key, nonce, ZEROS32);
-  const lengths = u64Lengths(ciphertext.length, AAD ? AAD.length : 0, true);
+  abytes(key, 32, "arx key");
+  // Generate auth key directly via chachaCore (counter=0).
+  // This avoids a full createCipher call (redundant validation, key copy, etc.)
+  const authKeyBuf = new Uint8Array(64);
+  const authKey32 = u32(authKeyBuf);
+  const k = copyBytes(key);
+  const k32 = u32(k);
+  let nonceCopy: Uint8Array | undefined;
+  if (!isAligned32(nonce)) nonceCopy = copyBytes(nonce);
+  const n32 = u32(nonceCopy ?? nonce);
+  chachaCore(sigma32_32, k32, n32, authKey32, 0, 20);
+  const authKey = authKeyBuf.subarray(0, 32);
 
-  // Methods below can be replaced with
-  // return poly1305_computeTag_small(authKey, lengths, ciphertext, AAD)
-  const h = poly1305.create(authKey);
-  if (AAD) updatePadded(h, AAD);
-  updatePadded(h, ciphertext);
+  // Build lengths inline (avoids u64Lengths + numberToBigint overhead)
+  const lengths = new Uint8Array(16);
+  const lview = createView(lengths);
+  lview.setBigUint64(0, BigInt(AAD ? AAD.length : 0), true);
+  lview.setBigUint64(8, BigInt(ciphertext.length), true);
+
+  // Compute Poly1305 tag — Poly1305 constructor validates authKey internally
+  const h = new Poly1305(authKey);
+  if (AAD) {
+    h.update(AAD);
+    const leftover = AAD.length % 16;
+    if (leftover) h.update(ZEROS16.subarray(leftover));
+  }
+  h.update(ciphertext);
+  const leftover = ciphertext.length % 16;
+  if (leftover) h.update(ZEROS16.subarray(leftover));
   h.update(lengths);
   const res = h.digest();
-  clean(authKey, lengths);
+  clean(authKey32, k, lengths);
+  if (nonceCopy) clean(nonceCopy);
   return res;
 }
 

@@ -20,7 +20,6 @@ import {
   copyBytes,
   createView,
   isLE,
-  numberToBigint,
   type TypedArray,
   u32,
 } from "@hpke/common";
@@ -239,8 +238,8 @@ export function u64Lengths(
   abool(isLE);
   const num = new Uint8Array(16);
   const view = createView(num);
-  view.setBigUint64(0, numberToBigint(aadLength), isLE);
-  view.setBigUint64(8, numberToBigint(dataLength), isLE);
+  view.setBigUint64(0, BigInt(aadLength), isLE);
+  view.setBigUint64(8, BigInt(dataLength), isLE);
   return num;
 }
 
