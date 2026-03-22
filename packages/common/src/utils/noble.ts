@@ -310,12 +310,13 @@ export function numberToBytesBE(n: number | bigint, len: number): Uint8Array {
 }
 export function numberToBytesLE(n: number | bigint, len: number): Uint8Array {
   anumber(len);
+  let v = BigInt(abignumer(n));
   const result = new Uint8Array(len);
-  let v = BigInt(n);
   for (let i = 0; i < len; i++) {
     result[i] = Number(v & 0xffn);
     v >>= 8n;
   }
+  if (v !== N_0) throw new Error("number too large");
   return result;
 }
 

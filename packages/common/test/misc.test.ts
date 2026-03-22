@@ -2,6 +2,7 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { i2Osp, xor } from "../src/utils/misc.ts";
+import { numberToBytesLE } from "../src/utils/noble.ts";
 
 describe("i2Osp", () => {
   describe("with valid params (5, 1)", () => {
@@ -107,5 +108,23 @@ describe("xor", () => {
       const b = new Uint8Array([1, 1]);
       assertThrows(() => xor(a, b), Error, "xor: different length inputs");
     });
+  });
+});
+
+describe("numberToBytesLE", () => {
+  it("should encode valid values", () => {
+    assertEquals(numberToBytesLE(0x1234n, 2), new Uint8Array([0x34, 0x12]));
+  });
+
+  it("should reject values that do not fit in the requested length", () => {
+    assertThrows(() => numberToBytesLE(256n, 1), Error, "number too large");
+  });
+
+  it("should reject negative values", () => {
+    assertThrows(
+      () => numberToBytesLE(-1n, 1),
+      Error,
+      "positive bigint expected, got -1",
+    );
   });
 });
