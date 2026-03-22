@@ -157,18 +157,50 @@ export async function loadSubtleCrypto(): Promise<SubtleCrypto> {
   }
 }
 
-export async function loadCrypto(): Promise<Crypto> {
+/** Cached reference to the Crypto object for synchronous access. */
+let _cryptoApi: Crypto | undefined;
+
+/**
+ * Returns the Crypto object synchronously.
+ * Uses globalThis.crypto on modern runtimes, with a CJS require("crypto")
+ * fallback for Node.js <= v18. The result is cached after the first call.
+ */
+export function getCrypto(): Crypto {
+  if (_cryptoApi) return _cryptoApi;
+  // Modern runtimes: Deno, browsers, Node.js >= 17.6, Bun, Cloudflare Workers
   if (typeof globalThis !== "undefined" && globalThis.crypto !== undefined) {
-    // Browsers, Node.js >= v19, Cloudflare Workers, Bun, etc.
-    return globalThis.crypto;
+    _cryptoApi = globalThis.crypto;
+    return _cryptoApi;
   }
-  // Node.js <= v18
+  // Node.js <= v18 CJS fallback: require is a module-local binding in CJS
+  // (not on globalThis), so we reference it directly.
   try {
-    // @ts-ignore: to ignore "crypto"
-    const { webcrypto } = await import("crypto"); // node:crypto
-    return (webcrypto as unknown as Crypto);
-  } catch (_e: unknown) {
-    throw new Error("failed to load Crypto");
+    // @ts-ignore: require exists in CJS builds via dnt
+    if (typeof require === "function") {
+      // @ts-ignore: require exists in CJS builds via dnt
+      const { webcrypto } = require("crypto");
+      _cryptoApi = webcrypto as Crypto;
+      return _cryptoApi;
+    }
+  } catch {
+    // ignore
+  }
+  throw new Error("crypto.getRandomValues must be defined");
+}
+
+export async function loadCrypto(): Promise<Crypto> {
+  try {
+    return getCrypto();
+  } catch {
+    // ESM fallback for Node.js <= v18 (require not available)
+    try {
+      // @ts-ignore: to ignore "crypto"
+      const { webcrypto } = await import("crypto"); // node:crypto
+      _cryptoApi = webcrypto as unknown as Crypto;
+      return _cryptoApi;
+    } catch (_e: unknown) {
+      throw new Error("failed to load Crypto");
+    }
   }
 }
 
