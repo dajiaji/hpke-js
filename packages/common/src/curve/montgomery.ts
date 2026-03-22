@@ -21,7 +21,7 @@ import {
   copyBytes,
   type CryptoKeys,
   numberToBytesLE,
-  randomBytesAsync,
+  randomBytes,
   validateObject,
 } from "../utils/noble.ts";
 import { createKeygen, type CurveLengths } from "./curve.ts";
@@ -33,7 +33,7 @@ export type CurveType = {
   type: "x25519" | "x448";
   adjustScalarBytes: (bytes: Uint8Array) => Uint8Array;
   powPminus2: (x: bigint) => bigint;
-  randomBytes?: (bytesLength?: number) => Promise<Uint8Array>;
+  randomBytes?: (bytesLength?: number) => Uint8Array;
 };
 
 export type MontgomeryECDH = {
@@ -45,7 +45,7 @@ export type MontgomeryECDH = {
   ) => Uint8Array;
   getPublicKey: (secretKey: Uint8Array) => Uint8Array;
   utils: {
-    randomSecretKey: (seed?: Uint8Array) => Promise<Uint8Array>;
+    randomSecretKey: (seed?: Uint8Array) => Uint8Array;
   };
   GuBytes: Uint8Array;
   lengths: CurveLengths;
@@ -67,9 +67,9 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
   const { P, type, adjustScalarBytes, powPminus2, randomBytes: rand } = CURVE;
   const is25519 = type === "x25519";
   if (!is25519 && type !== "x448") throw new Error("invalid type");
-  const randomBytes_ = rand || randomBytesAsync;
+  const randomBytes_ = rand || randomBytes;
 
-  const montgomeryBits = is25519 ? 255n : 448n;
+  const montgomeryBits = is25519 ? 255 : 448;
   const fieldLen = is25519 ? 32 : 56;
   const Gu = is25519 ? 9n : 5n;
   // RFC 7748 #5:
@@ -88,16 +88,19 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
   function encodeU(u: bigint): Uint8Array {
     return numberToBytesLE(modP(u), fieldLen);
   }
+  // Mask for clearing bit 255 (x25519): (1n << 255n) - 1n
+  const uMask = is25519 ? (N_1 << 255n) - N_1 : N_0;
   function decodeU(u: Uint8Array): bigint {
-    const _u = copyBytes(abytes(u, fieldLen, "uCoordinate"));
+    abytes(u, fieldLen, "uCoordinate");
+    let n = bytesToNumberLE(u);
     // RFC: When receiving such an array, implementations of X25519
     // (but not X448) MUST mask the most significant bit in the final byte.
-    if (is25519) _u[31] &= 127; // 0b0111_1111
+    if (is25519) n &= uMask;
     // RFC: Implementations MUST accept non-canonical values and process them as
     // if they had been reduced modulo the field prime.  The non-canonical
     // values are 2^255 - 19 through 2^255 - 1 for X25519 and 2^448 - 2^224
     // - 1 through 2^448 - 1 for X448.
-    return modP(bytesToNumberLE(_u));
+    return modP(n);
   }
   function decodeScalar(scalar: Uint8Array): bigint {
     return bytesToNumberLE(
@@ -112,30 +115,21 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     if (pu === N_0) throw new Error("invalid private or public key received");
     return encodeU(pu);
   }
+  // Pre-decoded base point u-coordinate (avoids redundant decode on every call)
+  const GuDecoded = modP(Gu);
   // Computes public key from private. By doing scalar multiplication of base point.
   function scalarMultBase(scalar: Uint8Array): Uint8Array {
-    return scalarMult(scalar, GuBytes);
+    const pu = montgomeryLadder(GuDecoded, decodeScalar(scalar));
+    if (pu === N_0) throw new Error("invalid private or public key received");
+    return encodeU(pu);
   }
   const getPublicKey = scalarMultBase;
   const getSharedSecret = scalarMult;
 
-  // cswap from RFC7748 "example code"
-  function cswap(
-    swap: bigint,
-    x_2: bigint,
-    x_3: bigint,
-  ): { x_2: bigint; x_3: bigint } {
-    // dummy = mask(swap) AND (x_2 XOR x_3)
-    // Where mask(swap) is the all-1 or all-0 word of the same length as x_2
-    // and x_3, computed, e.g., as mask(swap) = 0 - swap.
-    const dummy = modP(swap * (x_2 - x_3));
-    x_2 = modP(x_2 - dummy); // x_2 = x_2 XOR dummy
-    x_3 = modP(x_3 + dummy); // x_3 = x_3 XOR dummy
-    return { x_2, x_3 };
-  }
-
   /**
    * Montgomery x-only multiplication ladder.
+   * cswap is inlined to avoid per-iteration object allocations.
+   * Loop counter uses number instead of bigint to avoid BigInt arithmetic overhead.
    * @param pointU u coordinate (x) on Montgomery Curve 25519
    * @param scalar by which the point would be multiplied
    * @returns new Point on Montgomery curve
@@ -150,11 +144,19 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     let x_3 = u;
     let z_3 = N_1;
     let swap = N_0;
-    for (let t = montgomeryBits - 1n; t >= N_0; t--) {
-      const k_t = (k >> t) & N_1;
+    let dummy: bigint;
+    for (let t = montgomeryBits - 1; t >= 0; t--) {
+      const k_t = (k >> BigInt(t)) & N_1;
       swap ^= k_t;
-      ({ x_2, x_3 } = cswap(swap, x_2, x_3));
-      ({ x_2: z_2, x_3: z_3 } = cswap(swap, z_2, z_3));
+      // Masked cswap (best-effort constant-time for BigInt).
+      // Only dummy needs modP; x/z reductions are deferred to the
+      // subsequent multiplications in the ladder body.
+      dummy = modP(swap * (x_2 - x_3));
+      x_2 -= dummy;
+      x_3 += dummy;
+      dummy = modP(swap * (z_2 - z_3));
+      z_2 -= dummy;
+      z_3 += dummy;
       swap = k_t;
 
       const A = x_2 + z_2;
@@ -171,10 +173,17 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
       x_3 = modP(dacb * dacb);
       z_3 = modP(x_1 * modP(da_cb * da_cb));
       x_2 = modP(AA * BB);
-      z_2 = modP(E * (AA + modP(a24 * E)));
+      // a24 is small (17-bit for x25519, 16-bit for x448), so a24 * E adds
+      // only ~17 bits beyond P — negligible impact on the outer multiplication.
+      z_2 = modP(E * (AA + a24 * E));
     }
-    ({ x_2, x_3 } = cswap(swap, x_2, x_3));
-    ({ x_2: z_2, x_3: z_3 } = cswap(swap, z_2, z_3));
+    // Final masked cswap
+    dummy = modP(swap * (x_2 - x_3));
+    x_2 -= dummy;
+    x_3 += dummy;
+    dummy = modP(swap * (z_2 - z_3));
+    z_2 -= dummy;
+    z_3 += dummy;
     const z2 = powPminus2(z_2); // `Fp.pow(x, P - N_2)` is much slower equivalent
     return modP(x_2 * z2); // Return x_2 * (z_2^(p - 2))
   }
@@ -183,9 +192,9 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     publicKey: fieldLen,
     seed: fieldLen,
   };
-  const randomSecretKey = async (seed?: Uint8Array) => {
+  const randomSecretKey = (seed?: Uint8Array) => {
     if (seed === undefined) {
-      seed = await randomBytes_(fieldLen);
+      seed = randomBytes_(fieldLen);
     }
     abytes(seed, lengths.seed, "seed");
     return seed;

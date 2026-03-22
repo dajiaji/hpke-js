@@ -13,8 +13,8 @@
  * @module
  */
 
-import { loadCrypto } from "./misc.ts";
 import { N_0 } from "../consts.ts";
+import { getCrypto } from "./misc.ts";
 
 /** Checks if something is Uint8Array. Be careful: nodejs Buffer will return true. */
 export function isBytes(a: unknown): a is Uint8Array {
@@ -293,7 +293,12 @@ export function bytesToNumberBE(bytes: Uint8Array): bigint {
   return hexToNumber(bytesToHex(bytes));
 }
 export function bytesToNumberLE(bytes: Uint8Array): bigint {
-  return hexToNumber(bytesToHex(copyBytes(abytes(bytes)).reverse()));
+  abytes(bytes);
+  let result = N_0;
+  for (let i = bytes.length - 1; i >= 0; i--) {
+    result = (result << 8n) | BigInt(bytes[i]);
+  }
+  return result;
 }
 
 export function numberToBytesBE(n: number | bigint, len: number): Uint8Array {
@@ -304,7 +309,14 @@ export function numberToBytesBE(n: number | bigint, len: number): Uint8Array {
   return res;
 }
 export function numberToBytesLE(n: number | bigint, len: number): Uint8Array {
-  return numberToBytesBE(n, len).reverse();
+  anumber(len);
+  const result = new Uint8Array(len);
+  let v = BigInt(n);
+  for (let i = 0; i < len; i++) {
+    result[i] = Number(v & 0xffn);
+    v >>= 8n;
+  }
+  return result;
 }
 
 /**
@@ -442,11 +454,8 @@ export interface Signer extends CryptoKeys {
 // }
 
 /** Cryptographically secure PRNG. Uses internal OS-level `crypto.getRandomValues`. */
-export async function randomBytesAsync(bytesLength = 32): Promise<Uint8Array> {
-  const api = await loadCrypto();
-  const rnd = new Uint8Array(bytesLength);
-  api.getRandomValues(rnd);
-  return rnd;
+export function randomBytes(bytesLength = 32): Uint8Array {
+  return getCrypto().getRandomValues(new Uint8Array(bytesLength));
 }
 
 // 06 09 60 86 48 01 65 03 04 02

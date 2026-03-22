@@ -15,7 +15,7 @@ import {
   LABEL_DKP_PRK,
   LABEL_SK,
 } from "../../interfaces/dhkemPrimitives.ts";
-import { base64UrlToBytes } from "../../utils/misc.ts";
+import { base64UrlToBytes, loadCrypto } from "../../utils/misc.ts";
 import { XCryptoKey } from "../../xCryptoKey.ts";
 
 /**
@@ -101,14 +101,23 @@ export class XCurveDhkemPrimitives implements DhkemPrimitives {
 
   public async generateKeyPair(): Promise<CryptoKeyPair> {
     try {
-      const rawSk = await this._curve.utils.randomSecretKey();
+      let rawSk: Uint8Array;
+      try {
+        rawSk = this._curve.utils.randomSecretKey();
+      } catch {
+        // Sync crypto not available (e.g., Node.js <= v18 ESM); async fallback
+        const cryptoApi = await loadCrypto();
+        rawSk = new Uint8Array(this._nSk);
+        cryptoApi.getRandomValues(rawSk);
+      }
       const sk = new XCryptoKey(
         this._algName,
         rawSk,
         "private",
         KEM_USAGES,
       );
-      const pk = await this.derivePublicKey(sk);
+      const rawPk = this._curve.getPublicKey(rawSk);
+      const pk = new XCryptoKey(this._algName, rawPk, "public") as CryptoKey;
       return { publicKey: pk, privateKey: sk };
     } catch (e: unknown) {
       throw new NotSupportedError(e);
