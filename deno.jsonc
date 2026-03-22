@@ -27,11 +27,16 @@
     "./packages/ml-kem/samples/deno",
     "./utils"
   ],
+  // Exclude bench files from module graph so that npm: specifiers for
+  // benchmark-only dependencies (e.g. @noble/ciphers, @noble/curves) do not
+  // pollute deno.lock. Run benchmarks explicitly with `deno bench`.
+  "exclude": [
+    "**/bench/"
+  ],
   // Import map for dependencies used across the project
   "imports": {
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
-    "@noble/curves/secp256k1": "npm:@noble/curves@^1.9.7/secp256k1",
     "@playwright/test": "npm:@playwright/test@^1.58.2",
     "playwright": "npm:playwright@^1.58.2",
     "playwright-core": "npm:playwright-core@^1.58.2",
