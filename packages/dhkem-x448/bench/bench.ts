@@ -20,16 +20,14 @@ function hexToBytes(hex: string): Uint8Array {
 }
 
 // Fixed test keys (deterministic benchmarks) - from RFC 7748 Section 6.2
-const SK_HEX =
-  "9a8f4925d1519f5775cf46b04b5800d4" +
+const SK_HEX = "9a8f4925d1519f5775cf46b04b5800d4" +
   "ee9ee8bae8bc5565d498c28d" +
   "d9c9baf574a94197448973910063" +
   "82a6f127ab1d9ac2d8c0a598726b";
 const SK_BYTES = hexToBytes(SK_HEX);
 const PK_NOBLE = noble.getPublicKey(SK_BYTES); // 56 bytes
 
-const SK2_HEX =
-  "1c306a7ac2a0e2e0990b294470cba339" +
+const SK2_HEX = "1c306a7ac2a0e2e0990b294470cba339" +
   "e6453772b075811d8fad0d1d" +
   "6927c120bb5ee8972b0d3e21" +
   "374c9c921b09d1b0366f10b65173992d";

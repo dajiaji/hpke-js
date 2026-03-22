@@ -6,6 +6,7 @@
   "publish": {
     "exclude": [
       "CHANGES.md",
+      "bench/",
       "dnt.ts",
       "samples/",
       "test/",
