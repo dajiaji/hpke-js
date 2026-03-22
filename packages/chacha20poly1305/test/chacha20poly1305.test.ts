@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { loadCrypto } from "@hpke/common";
@@ -10,6 +10,7 @@ import {
 } from "@hpke/core";
 
 import { Chacha20Poly1305 } from "../mod.ts";
+import { chacha20poly1305 } from "../src/chacha/chacha.ts";
 
 describe("Chacha20Poly1305", () => {
   describe("with valid parameters", () => {
@@ -107,5 +108,49 @@ describe("CipherSuite", () => {
       // assert
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
+  });
+});
+
+describe("chacha20poly1305", () => {
+  it("should accept misaligned nonces for encrypt and decrypt", () => {
+    const key = Uint8Array.from({ length: 32 }, (_, i) => i);
+    const nonceBytes = Uint8Array.from({ length: 12 }, (_, i) => i + 32);
+    const aad = Uint8Array.from([1, 3, 3, 7]);
+    const msg = Uint8Array.from([9, 8, 7, 6, 5, 4, 3, 2]);
+
+    const nonceBacking = new Uint8Array(13);
+    nonceBacking.set(nonceBytes, 1);
+    const misalignedNonce = nonceBacking.subarray(1);
+
+    const alignedCt = chacha20poly1305(key, nonceBytes, aad).encrypt(msg);
+    const misalignedCt = chacha20poly1305(key, misalignedNonce, aad).encrypt(
+      msg,
+    );
+
+    assertEquals(misalignedCt, alignedCt);
+    assertEquals(
+      chacha20poly1305(key, misalignedNonce, aad).decrypt(alignedCt),
+      msg,
+    );
+  });
+
+  it("should reject invalid decrypt keys with the same validation as encrypt", () => {
+    const invalidKey = new Uint8Array(31);
+    const nonce = new Uint8Array(12);
+    const aad = new Uint8Array();
+    const ciphertext = new Uint8Array(16);
+    const expectedMessage =
+      '"arx key" expected Uint8Array of length 32, got length=31';
+
+    assertThrows(
+      () => chacha20poly1305(invalidKey, nonce, aad).encrypt(new Uint8Array(1)),
+      Error,
+      expectedMessage,
+    );
+    assertThrows(
+      () => chacha20poly1305(invalidKey, nonce, aad).decrypt(ciphertext),
+      Error,
+      expectedMessage,
+    );
   });
 });

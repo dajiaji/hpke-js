@@ -87,7 +87,8 @@ export class Poly1305 implements IHash2 {
   readonly blockLen = 16;
   readonly outputLen = 16;
   private buffer = new Uint8Array(16);
-  private r = new Uint16Array(10); // Allocating 1 array with .subarray() here is slower than 3
+  private r = new Uint16Array(10);
+  private r5 = new Uint16Array(10); // Pre-computed 5*r[i] for Poly1305 reduction
   private h = new Uint16Array(10);
   private pad = new Uint16Array(8);
   private pos = 0;
@@ -116,22 +117,34 @@ export class Poly1305 implements IHash2 {
     this.r[7] = ((t5 >>> 11) | (t6 << 5)) & 0x1f81;
     this.r[8] = ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
     this.r[9] = (t7 >>> 5) & 0x007f;
+    // Pre-compute 5*r[i] used in modular reduction (mod 2^130-5)
+    for (let i = 0; i < 10; i++) this.r5[i] = 5 * this.r[i];
     for (let i = 0; i < 8; i++) this.pad[i] = u8to16(key, 16 + 2 * i);
   }
 
   private process(data: Uint8Array, offset: number, isLast = false) {
     const hibit = isLast ? 0 : 1 << 11;
-    const { h, r } = this;
-    const r0 = r[0];
-    const r1 = r[1];
-    const r2 = r[2];
-    const r3 = r[3];
-    const r4 = r[4];
-    const r5 = r[5];
-    const r6 = r[6];
-    const r7 = r[7];
-    const r8 = r[8];
-    const r9 = r[9];
+    const { h, r, r5: s } = this;
+    const r0 = r[0],
+      r1 = r[1],
+      r2 = r[2],
+      r3 = r[3],
+      r4 = r[4],
+      rr5 = r[5],
+      r6 = r[6],
+      r7 = r[7],
+      r8 = r[8],
+      r9 = r[9];
+    // Pre-computed 5*r[i] for modular reduction (mod 2^130-5)
+    const s1 = s[1],
+      s2 = s[2],
+      s3 = s[3],
+      s4 = s[4],
+      s5 = s[5],
+      s6 = s[6],
+      s7 = s[7],
+      s8 = s[8],
+      s9 = s[9];
 
     const t0 = u8to16(data, offset + 0);
     const t1 = u8to16(data, offset + 2);
@@ -155,78 +168,70 @@ export class Poly1305 implements IHash2 {
 
     let c = 0;
 
-    let d0 = c + h0 * r0 + h1 * (5 * r9) + h2 * (5 * r8) + h3 * (5 * r7) +
-      h4 * (5 * r6);
+    let d0 = c + h0 * r0 + h1 * s9 + h2 * s8 + h3 * s7 + h4 * s6;
     c = d0 >>> 13;
     d0 &= 0x1fff;
-    d0 += h5 * (5 * r5) + h6 * (5 * r4) + h7 * (5 * r3) + h8 * (5 * r2) +
-      h9 * (5 * r1);
+    d0 += h5 * s5 + h6 * s4 + h7 * s3 + h8 * s2 + h9 * s1;
     c += d0 >>> 13;
     d0 &= 0x1fff;
 
-    let d1 = c + h0 * r1 + h1 * r0 + h2 * (5 * r9) + h3 * (5 * r8) +
-      h4 * (5 * r7);
+    let d1 = c + h0 * r1 + h1 * r0 + h2 * s9 + h3 * s8 + h4 * s7;
     c = d1 >>> 13;
     d1 &= 0x1fff;
-    d1 += h5 * (5 * r6) + h6 * (5 * r5) + h7 * (5 * r4) + h8 * (5 * r3) +
-      h9 * (5 * r2);
+    d1 += h5 * s6 + h6 * s5 + h7 * s4 + h8 * s3 + h9 * s2;
     c += d1 >>> 13;
     d1 &= 0x1fff;
 
-    let d2 = c + h0 * r2 + h1 * r1 + h2 * r0 + h3 * (5 * r9) + h4 * (5 * r8);
+    let d2 = c + h0 * r2 + h1 * r1 + h2 * r0 + h3 * s9 + h4 * s8;
     c = d2 >>> 13;
     d2 &= 0x1fff;
-    d2 += h5 * (5 * r7) + h6 * (5 * r6) + h7 * (5 * r5) + h8 * (5 * r4) +
-      h9 * (5 * r3);
+    d2 += h5 * s7 + h6 * s6 + h7 * s5 + h8 * s4 + h9 * s3;
     c += d2 >>> 13;
     d2 &= 0x1fff;
 
-    let d3 = c + h0 * r3 + h1 * r2 + h2 * r1 + h3 * r0 + h4 * (5 * r9);
+    let d3 = c + h0 * r3 + h1 * r2 + h2 * r1 + h3 * r0 + h4 * s9;
     c = d3 >>> 13;
     d3 &= 0x1fff;
-    d3 += h5 * (5 * r8) + h6 * (5 * r7) + h7 * (5 * r6) + h8 * (5 * r5) +
-      h9 * (5 * r4);
+    d3 += h5 * s8 + h6 * s7 + h7 * s6 + h8 * s5 + h9 * s4;
     c += d3 >>> 13;
     d3 &= 0x1fff;
 
     let d4 = c + h0 * r4 + h1 * r3 + h2 * r2 + h3 * r1 + h4 * r0;
     c = d4 >>> 13;
     d4 &= 0x1fff;
-    d4 += h5 * (5 * r9) + h6 * (5 * r8) + h7 * (5 * r7) + h8 * (5 * r6) +
-      h9 * (5 * r5);
+    d4 += h5 * s9 + h6 * s8 + h7 * s7 + h8 * s6 + h9 * s5;
     c += d4 >>> 13;
     d4 &= 0x1fff;
 
-    let d5 = c + h0 * r5 + h1 * r4 + h2 * r3 + h3 * r2 + h4 * r1;
+    let d5 = c + h0 * rr5 + h1 * r4 + h2 * r3 + h3 * r2 + h4 * r1;
     c = d5 >>> 13;
     d5 &= 0x1fff;
-    d5 += h5 * r0 + h6 * (5 * r9) + h7 * (5 * r8) + h8 * (5 * r7) +
-      h9 * (5 * r6);
+    d5 += h5 * r0 + h6 * s9 + h7 * s8 + h8 * s7 + h9 * s6;
     c += d5 >>> 13;
     d5 &= 0x1fff;
 
-    let d6 = c + h0 * r6 + h1 * r5 + h2 * r4 + h3 * r3 + h4 * r2;
+    let d6 = c + h0 * r6 + h1 * rr5 + h2 * r4 + h3 * r3 + h4 * r2;
     c = d6 >>> 13;
     d6 &= 0x1fff;
-    d6 += h5 * r1 + h6 * r0 + h7 * (5 * r9) + h8 * (5 * r8) + h9 * (5 * r7);
+    d6 += h5 * r1 + h6 * r0 + h7 * s9 + h8 * s8 + h9 * s7;
     c += d6 >>> 13;
     d6 &= 0x1fff;
 
-    let d7 = c + h0 * r7 + h1 * r6 + h2 * r5 + h3 * r4 + h4 * r3;
+    let d7 = c + h0 * r7 + h1 * r6 + h2 * rr5 + h3 * r4 + h4 * r3;
     c = d7 >>> 13;
     d7 &= 0x1fff;
-    d7 += h5 * r2 + h6 * r1 + h7 * r0 + h8 * (5 * r9) + h9 * (5 * r8);
+    d7 += h5 * r2 + h6 * r1 + h7 * r0 + h8 * s9 + h9 * s8;
     c += d7 >>> 13;
     d7 &= 0x1fff;
 
-    let d8 = c + h0 * r8 + h1 * r7 + h2 * r6 + h3 * r5 + h4 * r4;
+    let d8 = c + h0 * r8 + h1 * r7 + h2 * r6 + h3 * rr5 + h4 * r4;
     c = d8 >>> 13;
     d8 &= 0x1fff;
-    d8 += h5 * r3 + h6 * r2 + h7 * r1 + h8 * r0 + h9 * (5 * r9);
+    d8 += h5 * r3 + h6 * r2 + h7 * r1 + h8 * r0 + h9 * s9;
     c += d8 >>> 13;
     d8 &= 0x1fff;
 
-    let d9 = c + h0 * r9 + h1 * r8 + h2 * r7 + h3 * r6 + h4 * r5;
+    let d9 = c + h0 * r9 + h1 * r8 + h2 * r7 + h3 * r6 + h4 * rr5;
     c = d9 >>> 13;
     d9 &= 0x1fff;
     d9 += h5 * r4 + h6 * r3 + h7 * r2 + h8 * r1 + h9 * r0;
@@ -302,8 +307,6 @@ export class Poly1305 implements IHash2 {
   }
   update(data: Uint8Array): this {
     aexists(this);
-    abytes(data);
-    data = copyBytes(data);
     const { buffer, blockLen } = this;
     const len = data.length;
 
@@ -325,7 +328,7 @@ export class Poly1305 implements IHash2 {
     return this;
   }
   destroy(): void {
-    clean(this.h, this.r, this.buffer, this.pad);
+    clean(this.h, this.r, this.r5, this.buffer, this.pad);
   }
   digestInto(out: Uint8Array): Uint8Array {
     aexists(this);
