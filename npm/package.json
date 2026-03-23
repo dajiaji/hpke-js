@@ -18,6 +18,7 @@
     "packages/ml-kem",
     "packages/cose",
     "packages/jose",
+    "packages/ohttp",
     "test/**/*/runtimes/browsers",
     "test/**/*/runtimes/cloudflare",
     "samples/**/*"

@@ -16,6 +16,7 @@
     "./packages/ml-kem",
     "./packages/cose",
     "./packages/jose",
+    "./packages/ohttp",
     "./packages/core/samples/deno",
     "./packages/chacha20poly1305/samples/deno",
     "./packages/dhkem-x25519/samples/deno",
@@ -35,6 +36,7 @@
   ],
   // Import map for dependencies used across the project
   "imports": {
+    "@dajiaji/bhttp": "jsr:@dajiaji/bhttp@^0.3.6",
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@playwright/test": "npm:@playwright/test@^1.58.2",
@@ -106,13 +108,14 @@
     "test:deno:ml-kem": "cd packages/ml-kem && deno task test",
     "test:deno:cose": "cd packages/cose && deno task test",
     "test:deno:jose": "cd packages/jose && deno task test",
+    "test:deno:ohttp": "cd packages/ohttp && deno task test",
 
     // Node.js environment testing (via DNT build)
     "test:node": "deno task test:node:cjs-compat && deno task test:node:esm-only",
     // Packages that support CJS (Node >= 16)
     "test:node:cjs-compat": "deno task test:node:common && deno task test:node:core && deno task test:node:chacha20poly1305 && deno task test:node:dhkem-x25519 && deno task test:node:dhkem-x448 && deno task test:node:dhkem-secp256k1 && deno task test:node:hybridkem-x-wing && deno task test:node:hpke-js && deno task test:node:ml-kem",
     // ESM-only packages (Node >= 20)
-    "test:node:esm-only": "deno task test:node:cose && deno task test:node:jose",
+    "test:node:esm-only": "deno task test:node:cose && deno task test:node:jose && deno task test:node:ohttp",
     "test:node:common": "cd packages/common && deno task dnt",
     "test:node:prepare:core": "deno task npm-build:common",
     "test:node:prepare:chacha20poly1305": "deno task npm-build:common && deno task npm-build:core",
@@ -134,13 +137,15 @@
     "test:node:ml-kem": "deno task test:node:prepare:ml-kem && cd packages/ml-kem && deno task dnt",
     "test:node:cose": "deno task test:node:prepare:cose && cd packages/cose && deno task dnt",
     "test:node:jose": "deno task test:node:prepare:jose && cd packages/jose && deno task dnt",
+    "test:node:prepare:ohttp": "deno task npm-build:common && deno task npm-build:core",
+    "test:node:ohttp": "deno task test:node:prepare:ohttp && cd packages/ohttp && deno task dnt",
 
     // Browser environment testing
-    "test:browsers": "deno task test:browsers:prepare && deno task test:browsers:core && deno task test:browsers:chacha20poly1305 && deno task test:browsers:dhkem-x25519 && deno task test:browsers:dhkem-x448 && deno task test:browsers:dhkem-secp256k1 && deno task test:browsers:hybridkem-x-wing && deno task test:browsers:hpke-js && deno task test:browsers:ml-kem && deno task test:browsers:cose && deno task test:browsers:jose",
-    "test:browsers:prepare": "deno task test:browsers:prepare:npm && deno task test:browsers:prepare:core && deno task test:browsers:prepare:chacha20poly1305 && deno task test:browsers:prepare:dhkem-x25519 && deno task test:browsers:prepare:dhkem-x448 && deno task test:browsers:prepare:dhkem-secp256k1 && deno task test:browsers:prepare:hybridkem-x-wing && deno task test:browsers:prepare:hpke-js && deno task test:browsers:prepare:ml-kem && deno task test:browsers:prepare:cose && deno task test:browsers:prepare:jose",
+    "test:browsers": "deno task test:browsers:prepare && deno task test:browsers:core && deno task test:browsers:chacha20poly1305 && deno task test:browsers:dhkem-x25519 && deno task test:browsers:dhkem-x448 && deno task test:browsers:dhkem-secp256k1 && deno task test:browsers:hybridkem-x-wing && deno task test:browsers:hpke-js && deno task test:browsers:ml-kem && deno task test:browsers:cose && deno task test:browsers:jose && deno task test:browsers:ohttp",
+    "test:browsers:prepare": "deno task test:browsers:prepare:npm && deno task test:browsers:prepare:core && deno task test:browsers:prepare:chacha20poly1305 && deno task test:browsers:prepare:dhkem-x25519 && deno task test:browsers:prepare:dhkem-x448 && deno task test:browsers:prepare:dhkem-secp256k1 && deno task test:browsers:prepare:hybridkem-x-wing && deno task test:browsers:prepare:hpke-js && deno task test:browsers:prepare:ml-kem && deno task test:browsers:prepare:cose && deno task test:browsers:prepare:jose && deno task test:browsers:prepare:ohttp",
     // "test:browsers:prepare:npm": "cd npm && npx playwright install-deps && npx playwright install",
     "test:browsers:prepare:npm": "cd npm && node ./node_modules/playwright/cli.js install-deps && node ./node_modules/playwright/cli.js install",
-    "test:browsers:prepare:core": "cd packages/core && deno task minify > ../../npm/test/core/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/chacha20poly1305/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x25519/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x448/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-secp256k1/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hybridkem-x-wing/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hpke-js/runtimes/browsers/pages/src/hpke.js && deno task minify > ../../npm/test/ml-kem/runtimes/browsers/pages/src/hpke-core.js",
+    "test:browsers:prepare:core": "cd packages/core && deno task minify > ../../npm/test/core/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/chacha20poly1305/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x25519/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-x448/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/dhkem-secp256k1/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hybridkem-x-wing/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/hpke-js/runtimes/browsers/pages/src/hpke.js && deno task minify > ../../npm/test/ml-kem/runtimes/browsers/pages/src/hpke-core.js && deno task minify > ../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-core.js",
     "test:browsers:prepare:chacha20poly1305": "cd packages/chacha20poly1305 && deno task minify > ../../npm/test/chacha20poly1305/runtimes/browsers/pages/src/hpke-chacha20poly1305.js",
     "test:browsers:prepare:dhkem-x25519": "cd packages/dhkem-x25519 && deno task minify > ../../npm/test/dhkem-x25519/runtimes/browsers/pages/src/hpke-dhkem-x25519.js",
     "test:browsers:prepare:dhkem-x448": "cd packages/dhkem-x448 && deno task minify > ../../npm/test/dhkem-x448/runtimes/browsers/pages/src/hpke-dhkem-x448.js",
@@ -150,6 +155,7 @@
     "test:browsers:prepare:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/test/ml-kem/runtimes/browsers/pages/src/hpke-ml-kem.js",
     "test:browsers:prepare:cose": "cd packages/cose && esbuild ../../npm/packages/cose/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/cose/runtimes/browsers/pages/src/hpke-cose.js",
     "test:browsers:prepare:jose": "cd packages/jose && esbuild ../../npm/packages/jose/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/jose/runtimes/browsers/pages/src/hpke-jose.js",
+    "test:browsers:prepare:ohttp": "cd packages/ohttp && esbuild ../../npm/packages/ohttp/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-ohttp.js",
     "test:browsers:core": "cd npm && npm run test -w test/core/runtimes/browsers",
     "test:browsers:chacha20poly1305": "cd npm && npm run test -w test/chacha20poly1305/runtimes/browsers",
     "test:browsers:dhkem-x25519": "cd npm && npm run test -w test/dhkem-x25519/runtimes/browsers",
@@ -160,6 +166,7 @@
     "test:browsers:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/browsers",
     "test:browsers:cose": "cd npm && npm run test -w test/cose/runtimes/browsers",
     "test:browsers:jose": "cd npm && npm run test -w test/jose/runtimes/browsers",
+    "test:browsers:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/browsers",
 
     // Cloudflare Workers environment testing
     "test:cloudflare": "deno task test:cloudflare:core && deno task test:cloudflare:chacha20poly1305 && deno task test:cloudflare:dhkem-x25519 && deno task test:cloudflare:dhkem-x448 && deno task test:cloudflare:dhkem-secp256k1 && deno task test:cloudflare:hybridkem-x-wing && deno task test:cloudflare:hpke-js && deno task test:cloudflare:ml-kem",
@@ -171,6 +178,7 @@
     "test:cloudflare:hybridkem-x-wing": "cd npm && npm run test -w test/hybridkem-x-wing/runtimes/cloudflare",
     "test:cloudflare:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/cloudflare",
     "test:cloudflare:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/cloudflare",
+    "test:cloudflare:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/cloudflare",
 
     // Bun environment testing
     "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem",
@@ -182,6 +190,7 @@
     "test:bun:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task test:bun",
     "test:bun:hpke-js": "cd packages/hpke-js && deno task test:bun",
     "test:bun:ml-kem": "cd packages/ml-kem && deno task test:bun",
+    "test:bun:ohttp": "cd packages/ohttp && deno task test:bun",
 
     // === CODE QUALITY TASKS ===
     "cov": {
@@ -190,7 +199,7 @@
     },
     "check": {
       "description": "Run type checking across all packages",
-      "command": "deno task check:common && deno task check:core && deno task check:chacha20poly1305 && deno task check:dhkem-x25519 && deno task check:dhkem-x448 && deno task check:dhkem-secp256k1 && deno task check:hybridkem-x-wing && deno task check:hpke-js && deno task check:ml-kem && deno task check:cose && deno task check:jose"
+      "command": "deno task check:common && deno task check:core && deno task check:chacha20poly1305 && deno task check:dhkem-x25519 && deno task check:dhkem-x448 && deno task check:dhkem-secp256k1 && deno task check:hybridkem-x-wing && deno task check:hpke-js && deno task check:ml-kem && deno task check:cose && deno task check:jose && deno task check:ohttp"
     },
     "check:common": "cd packages/common && deno task check",
     "check:core": "cd packages/core && deno task check",
@@ -203,6 +212,7 @@
     "check:ml-kem": "cd packages/ml-kem && deno task check",
     "check:cose": "cd packages/cose && deno task check",
     "check:jose": "cd packages/jose && deno task check",
+    "check:ohttp": "cd packages/ohttp && deno task check",
 
     // === NPM DISTRIBUTION TASKS ===
     "npm": {
@@ -215,7 +225,7 @@
     },
     "npm-build": {
       "description": "Build NPM packages for all modules using DNT",
-      "command": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x25519-kyber768 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem && deno task npm-build:cose && deno task npm-build:jose"
+      "command": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448 && deno task npm-build:dhkem-secp256k1 && deno task npm-build:hybridkem-x25519-kyber768 && deno task npm-build:hybridkem-x-wing && deno task npm-build:hpke-js && deno task npm-build:ml-kem && deno task npm-build:cose && deno task npm-build:jose && deno task npm-build:ohttp"
     },
     "npm-build:common": "cd packages/common && deno task npm-build",
     "npm-build:core": "cd packages/core && deno task npm-build",
@@ -229,9 +239,10 @@
     "npm-build:ml-kem": "cd packages/ml-kem && deno task npm-build",
     "npm-build:cose": "cd packages/cose && deno task npm-build",
     "npm-build:jose": "cd packages/jose && deno task npm-build",
+    "npm-build:ohttp": "cd packages/ohttp && deno task npm-build",
     "npm-link": {
       "description": "Create symlinks for all NPM packages for local development",
-      "command": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x25519-kyber768 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem && deno task npm-link:cose && deno task npm-link:jose"
+      "command": "deno task npm-link:common && deno task npm-link:core && deno task npm-link:chacha20poly1305 && deno task npm-link:dhkem-x25519 && deno task npm-link:dhkem-x448 && deno task npm-link:dhkem-secp256k1 && deno task npm-link:hybridkem-x25519-kyber768 && deno task npm-link:hybridkem-x-wing && deno task npm-link:hpke-js && deno task npm-link:ml-kem && deno task npm-link:cose && deno task npm-link:jose && deno task npm-link:ohttp"
     },
     "npm-link:common": "cd npm/packages/common && npm link",
     "npm-link:core": "cd npm/packages/core && npm link",
@@ -245,9 +256,10 @@
     "npm-link:ml-kem": "cd npm/packages/ml-kem && npm link",
     "npm-link:cose": "cd npm/packages/cose && npm link",
     "npm-link:jose": "cd npm/packages/jose && npm link",
+    "npm-link:ohttp": "cd npm/packages/ohttp && npm link",
     "npm-pack": {
       "description": "Validate NPM package contents with dry-run pack for all modules",
-      "command": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x25519-kyber768 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem && deno task npm-pack:cose && deno task npm-pack:jose"
+      "command": "deno task npm-pack:common && deno task npm-pack:core && deno task npm-pack:chacha20poly1305 && deno task npm-pack:dhkem-x25519 && deno task npm-pack:dhkem-x448 && deno task npm-pack:dhkem-secp256k1 && deno task npm-pack:hybridkem-x25519-kyber768 && deno task npm-pack:hybridkem-x-wing && deno task npm-pack:hpke-js && deno task npm-pack:ml-kem && deno task npm-pack:cose && deno task npm-pack:jose && deno task npm-pack:ohttp"
     },
     "npm-pack:common": "cd npm/packages/common && npm pack --dry-run",
     "npm-pack:core": "cd npm/packages/core && npm pack --dry-run",
@@ -261,6 +273,7 @@
     "npm-pack:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",
     "npm-pack:cose": "cd npm/packages/cose && npm pack --dry-run",
     "npm-pack:jose": "cd npm/packages/jose && npm pack --dry-run",
+    "npm-pack:ohttp": "cd npm/packages/ohttp && npm pack --dry-run",
 
     // === DEVELOPMENT ENVIRONMENT SETUP ===
     "bun-link": {
@@ -349,7 +362,7 @@
       "command": "deno task dry-publish:cjs-compat && deno task dry-publish:esm-only"
     },
     "dry-publish:cjs-compat": "deno task dry-publish:common && deno task dry-publish:core && deno task dry-publish:chacha20poly1305 && deno task dry-publish:dhkem-x25519 && deno task dry-publish:dhkem-x448 && deno task dry-publish:dhkem-secp256k1 && deno task dry-publish:hybridkem-x-wing && deno task dry-publish:hpke-js && deno task dry-publish:ml-kem",
-    "dry-publish:esm-only": "deno task dry-publish:cose && deno task dry-publish:jose",
+    "dry-publish:esm-only": "deno task dry-publish:cose && deno task dry-publish:jose && deno task dry-publish:ohttp",
     "dry-publish:common": "cd npm/packages/common && npm pack --dry-run",
     "dry-publish:core": "cd npm/packages/core && npm pack --dry-run",
     "dry-publish:chacha20poly1305": "cd npm/packages/chacha20poly1305 && npm pack --dry-run",
@@ -361,6 +374,7 @@
     "dry-publish:ml-kem": "cd npm/packages/ml-kem && npm pack --dry-run",
     "dry-publish:cose": "cd npm/packages/cose && npm pack --dry-run",
     "dry-publish:jose": "cd npm/packages/jose && npm pack --dry-run",
+    "dry-publish:ohttp": "cd npm/packages/ohttp && npm pack --dry-run",
 
     // === MAINTENANCE TASKS ===
     "update-lock": {

@@ -1,11 +1,13 @@
 {
   "imports": {
+    "@dajiaji/bhttp": "npm:bhttp-js@^0.3.6",
     "@dajiaji/mlkem": "npm:mlkem@^2.5.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.8.0",
     "@hpke/common": "npm:@hpke/common@^1.10.0",
     "@hpke/cose": "npm:@hpke/cose@^0.1.0",
     "@hpke/jose": "npm:@hpke/jose@^0.1.0",
+    "@hpke/ohttp": "npm:@hpke/ohttp@^0.1.0",
     "@hpke/core": "npm:@hpke/core@^1.9.0",
     "@hpke/dhkem-x25519": "npm:@hpke/dhkem-x25519@^1.8.0",
     "@hpke/dhkem-x448": "npm:@hpke/dhkem-x448@^1.8.0",

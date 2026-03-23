@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@dajiaji/bhttp@~0.3.6": "0.3.6",
     "jsr:@dajiaji/mlkem@^2.5.0": "2.5.0",
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
@@ -34,6 +35,9 @@
     "npm:playwright@^1.58.2": "1.58.2"
   },
   "jsr": {
+    "@dajiaji/bhttp@0.3.6": {
+      "integrity": "22f66e4702831b48cfbcc55e46c8946bc0c3733d17e6c1a1a93b71f86f5bdf2e"
+    },
     "@dajiaji/mlkem@2.5.0": {
       "integrity": "06c64afe0a52cc635db6e30e89eb5eece4525b55a43c3d87da493ac5d664bc80"
     },
@@ -182,6 +186,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@dajiaji/bhttp@~0.3.6",
       "jsr:@dajiaji/mlkem@^2.5.0",
       "jsr:@deno/dnt@0.41.3",
       "jsr:@std/assert@1.0.0",
