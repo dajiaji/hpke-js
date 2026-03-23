@@ -58,7 +58,7 @@ jobs:
       - name: Build docs for @hpke/common
         working-directory: ./packages/common
         run: |
-          npx typedoc --name "@hpke/common" --out ../hpke-js/test/runtimes/browsers/pages/common/docs mod.ts
+          npx typedoc --tsconfig tsconfig.json --name "@hpke/common" --out ../hpke-js/test/runtimes/browsers/pages/common/docs mod.ts
       - name: Build docs for @hpke/core
         working-directory: ./packages/core
         run: |

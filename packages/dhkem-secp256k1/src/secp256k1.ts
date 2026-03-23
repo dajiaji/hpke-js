@@ -496,10 +496,13 @@ export class Secp256k1 implements DhkemPrimitives {
       const cryptoApi = await loadCrypto();
       let rawSk: Uint8Array;
       while (true) {
-        rawSk = new Uint8Array(32);
-        cryptoApi.getRandomValues(rawSk);
-        const k = bytesToBigInt(rawSk);
-        if (k > 0n && k < N) break;
+        const candidate = new Uint8Array(32);
+        cryptoApi.getRandomValues(candidate);
+        const k = bytesToBigInt(candidate);
+        if (k > 0n && k < N) {
+          rawSk = candidate;
+          break;
+        }
       }
       const sk = new XCryptoKey(ALG_NAME, rawSk, "private", KEM_USAGES);
       const pk = await this.derivePublicKey(sk);
