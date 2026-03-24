@@ -107,8 +107,9 @@ export class XCurveDhkemPrimitives implements DhkemPrimitives {
       } catch {
         // Sync crypto not available (e.g., Node.js <= v18 ESM); async fallback
         const cryptoApi = await loadCrypto();
-        rawSk = new Uint8Array(this._nSk);
-        cryptoApi.getRandomValues(rawSk);
+        const fallbackRawSk = new Uint8Array(this._nSk);
+        cryptoApi.getRandomValues(fallbackRawSk);
+        rawSk = fallbackRawSk;
       }
       const sk = new XCryptoKey(
         this._algName,

@@ -17,7 +17,7 @@ permissions:
 
 env:
   # Packages that are ESM-only and require Node >= 20
-  ESM_ONLY_PACKAGES: '["cose","jose"]'
+  ESM_ONLY_PACKAGES: '["cose","jose","ohttp"]'
 
 jobs:
   # Check changed files to determine which package tests to run

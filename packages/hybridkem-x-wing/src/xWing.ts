@@ -282,12 +282,13 @@ export class XWing implements KemInterface {
       ekM = ek.subarray(0, 32);
       ekX = ek.subarray(32, 64);
     } else {
-      ekX = new Uint8Array(32);
+      const randomEkX = new Uint8Array(32);
       try {
-        (this._api as Crypto).getRandomValues(ekX);
+        (this._api as Crypto).getRandomValues(randomEkX);
       } catch (e: unknown) {
         throw new NotSupportedError(e);
       }
+      ekX = randomEkX;
     }
     const pk = new Uint8Array(
       await this.serializePublicKey(params.recipientPublicKey),
