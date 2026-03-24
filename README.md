@@ -14,8 +14,12 @@
 </div>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a>
-implementation build on top of <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
+A modular TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">HPKE</a> ecosystem
+— from core encryption to protocol integrations
+(<a href="https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/">JOSE-HPKE</a>,
+<a href="https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/">COSE-HPKE</a>,
+<a href="https://datatracker.ietf.org/doc/html/rfc9458">OHTTP</a>)
+— built on <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>.
 This module works on web browsers, Node.js, Deno and various other JavaScript runtimes.
 </div>
 
@@ -107,7 +111,9 @@ try {
 
 ## Packages
 
-The hpke-js includes the following packages.
+### HPKE Core & Extensions
+
+The hpke-js includes the following HPKE primitive packages.
 
 | name                                         | registry                                                                                                                                                                                                                                                                  | description                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -121,6 +127,16 @@ The hpke-js includes the following packages.
 | @hpke/hybridkem-x-wing                       | [![npm](https://img.shields.io/npm/v/@hpke/hybridkem-x-wing?color=%23EE3214)](https://www.npmjs.com/package/@hpke/hybridkem-x-wing)<br/>[![JSR](https://jsr.io/badges/@hpke/hybridkem-x-wing)](https://jsr.io/@hpke/hybridkem-x-wing)                                     | **EXPERIMENTAL AND NOT STANDARDIZED**<br/>The HPKE module extension for [X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/draft-connolly-cfrg-xwing-kem/).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/hybridkem-x-wing/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/hybridkem-x-wing/samples)                                                       |
 | @hpke/hybridkem-x25519-kyber768 (deprelated) | [![npm](https://img.shields.io/npm/v/@hpke/hybridkem-x25519-kyber768?color=%23EE3214)](https://www.npmjs.com/package/@hpke/hybridkem-x25519-kyber768)<br/>[![JSR](https://jsr.io/badges/@hpke/hybridkem-x25519-kyber768)](https://jsr.io/@hpke/hybridkem-x25519-kyber768) | **EXPERIMENTAL AND NOT STANDARDIZED**<br/>The HPKE module extension for the hybrid post-quantum KEM currently named [X25519Kyber768Draft00](https://datatracker.ietf.org/doc/draft-westerbaan-cfrg-hpke-xyber768d00/).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/hybridkem-x25519-kyber768/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/hybridkem-x25519-kyber768/samples)          |
 | @hpke/dhkem-secp256k1                        | [![npm](https://img.shields.io/npm/v/@hpke/dhkem-secp256k1?color=%23EE3214)](https://www.npmjs.com/package/@hpke/dhkem-secp256k1)<br/>[![JSR](https://jsr.io/badges/@hpke/dhkem-secp256k1)](https://jsr.io/@hpke/dhkem-secp256k1)                                         | **EXPERIMENTAL AND NOT STANDARDIZED**<br/>The HPKE module extension for DHKEM(secp256k1, HKDF-SHA256).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/dhkem-secp256k1/README.md) / [samples](https://github.com/dajiaji/hpke-js/tree/main/packages/dhkem-secp256k1/samples)                                                                                                                                              |
+
+### Protocol Integrations
+
+Upper-layer protocol packages that build on HPKE.
+
+| name        | registry                                                                                                                                                                              | description                                                                                                                                                                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| @hpke/jose  | [![npm](https://img.shields.io/npm/v/@hpke/jose?color=%23EE3214)](https://www.npmjs.com/package/@hpke/jose)<br/>[![JSR](https://jsr.io/badges/@hpke/jose)](https://jsr.io/@hpke/jose) | HPKE-based encryption for JOSE/JWE ([draft-ietf-jose-hpke-encrypt](https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/)). Integrated Encryption (Compact JWE) and Key Encryption (JSON JWE).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/jose/README.md) |
+| @hpke/cose  | [![npm](https://img.shields.io/npm/v/@hpke/cose?color=%23EE3214)](https://www.npmjs.com/package/@hpke/cose)<br/>[![JSR](https://jsr.io/badges/@hpke/cose)](https://jsr.io/@hpke/cose) | HPKE-based encryption for COSE ([draft-ietf-cose-hpke](https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/)). COSE_Encrypt0 (Integrated Encryption) and COSE_Encrypt (Key Encryption).<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/cose/README.md)               |
+| @hpke/ohttp | [![npm](https://img.shields.io/npm/v/@hpke/ohttp?color=%23EE3214)](https://www.npmjs.com/package/@hpke/ohttp)<br/>[![JSR](https://jsr.io/badges/@hpke/ohttp)](https://jsr.io/@hpke/ohttp) | Oblivious HTTP ([RFC 9458](https://datatracker.ietf.org/doc/html/rfc9458)). Client and server-side OHTTP encapsulation/decapsulation.<br/>[README](https://github.com/dajiaji/hpke-js/blob/main/packages/ohttp/README.md) |
 
 ## Supported Features
 
@@ -204,8 +220,8 @@ guidelines on:
 - [W3C: Web Cryptography API](https://www.w3.org/TR/2017/REC-WebCryptoAPI-20170126/)
 - [W3C/WICG: Secure Curves in the Web Cryptography API](https://wicg.github.io/webcrypto-secure-curves/)
 - [W3C: Web Cryptography API Level 2](https://w3c.github.io/webcrypto/)
-- [IETF/HPKE-WG: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
-- [IETF/HPKE-WG: Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
+- [IETF/HPKE: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-ietf-hpke-hpke/)
+- [IETF/HPKE: Post-Quantum and Post-Quantum/Traditional Hybrid Algorithms for HPKE](https://datatracker.ietf.org/doc/draft-ietf-hpke-pq)
 - [IRTF/CFRG: RFC9180: Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/html/rfc9180)
 - [IRTF/CFRG: X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE](https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00)
 - [IRTF/CFRG: X-Wing: general-purpose hybrid post-quantum KEM](https://datatracker.ietf.org/doc/html/draft-connolly-cfrg-xwing-kem)
@@ -213,3 +229,7 @@ guidelines on:
 - [IRTF/CFRG: Concrete Hybrid PQ/T Key Encapsulation Mechanisms](https://datatracker.ietf.org/doc/draft-irtf-cfrg-concrete-hybrid-kems/)
 - [IRTF/CFRG: Deterministic Nonce-less Hybrid Public Key Encryption](https://datatracker.ietf.org/doc/draft-irtf-cfrg-dnhpke/)
 - [IRTF/CFRG: SHA-3 for HPKE](https://datatracker.ietf.org/doc/draft-connolly-cfrg-sha3-hpke/)
+- [IETF/JOSE: JOSE-HPKE Encryption](https://datatracker.ietf.org/doc/draft-ietf-jose-hpke-encrypt/)
+- [IETF/COSE: Use of HPKE with COSE](https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/)
+- [IETF/: Oblivious HTTP (RFC 9458)](https://datatracker.ietf.org/doc/html/rfc9458)
+- [IETF/: Binary Representation of HTTP Messages (RFC 9292)](https://datatracker.ietf.org/doc/html/rfc9292)
