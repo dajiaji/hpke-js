@@ -96,12 +96,7 @@ Using esm.sh:
 
 <!-- use the latest stable version -->
 <script type="module">
-  import {
-    AeadId,
-    CipherSuite,
-    KdfId,
-    KemId,
-  } from "https://esm.sh/hpke-js";
+  import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
   // import * as hpke from "https://esm.sh/@hpke/core";
   // ...
 </script>
