@@ -21,9 +21,7 @@
           const kp = await e0.suite.kem.generateKeyPair();
           const ct = await e0.seal(kp.publicKey, msg);
           const pt = await e0.open(kp, ct);
-          new TextDecoder().decode(pt) === "hello world!"
-            ? pass++
-            : fail++;
+          new TextDecoder().decode(pt) === "hello world!" ? pass++ : fail++;
         } catch (e) {
           console.error("Encrypt0 HPKE-0:", e);
           fail++;
@@ -35,9 +33,7 @@
           const kp = await e0.suite.kem.generateKeyPair();
           const ct = await e0.seal(kp.publicKey, msg);
           const pt = await e0.open(kp, ct);
-          new TextDecoder().decode(pt) === "hello world!"
-            ? pass++
-            : fail++;
+          new TextDecoder().decode(pt) === "hello world!" ? pass++ : fail++;
         } catch (e) {
           console.error("Encrypt0 HPKE-3:", e);
           fail++;
@@ -52,9 +48,7 @@
             msg,
           );
           const pt = await ke.open(kp, ct);
-          new TextDecoder().decode(pt) === "hello world!"
-            ? pass++
-            : fail++;
+          new TextDecoder().decode(pt) === "hello world!" ? pass++ : fail++;
         } catch (e) {
           console.error("KE HPKE-0-KE:", e);
           fail++;
@@ -69,9 +63,7 @@
             msg,
           );
           const pt = await ke.open(kp, ct);
-          new TextDecoder().decode(pt) === "hello world!"
-            ? pass++
-            : fail++;
+          new TextDecoder().decode(pt) === "hello world!" ? pass++ : fail++;
         } catch (e) {
           console.error("KE HPKE-3-KE:", e);
           fail++;

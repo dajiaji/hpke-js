@@ -14,11 +14,7 @@
         HkdfSha384,
         HkdfSha512,
       } from "./src/hpke-core.js";
-      import {
-        MlKem1024,
-        MlKem512,
-        MlKem768,
-      } from "./src/hpke-ml-kem.js";
+      import { MlKem1024, MlKem512, MlKem768 } from "./src/hpke-ml-kem.js";
 
       const kems = [
         new MlKem512(),
