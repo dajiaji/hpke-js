@@ -1,0 +1,18 @@
+{
+  "name": "test-fastly-hpke-core",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --format=esm --outfile=bin/index.js --external:fastly:* && npx js-compute-runtime bin/index.js bin/main.wasm",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@fastly/cli": "^11.5.0",
+    "@fastly/js-compute": "^3.25.0",
+    "esbuild": "^0.27.3",
+    "vitest": "3.2.4"
+  },
+  "dependencies": {
+    "@hpke/core": "^1.9.0"
+  }
+}

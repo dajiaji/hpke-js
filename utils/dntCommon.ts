@@ -1,5 +1,5 @@
 import { emptyDir } from "@deno/dnt";
-import { copySync } from "@std/fs";
+import { copySync, existsSync } from "@std/fs";
 
 export async function beforeBuild(name: string): Promise<void> {
   // Clean up dist
@@ -7,6 +7,9 @@ export async function beforeBuild(name: string): Promise<void> {
   await emptyDir(`../../npm/samples/${name}`);
   await emptyDir(`../../npm/test/${name}/runtimes/browsers`);
   await emptyDir(`../../npm/test/${name}/runtimes/cloudflare`);
+  if (existsSync("test/runtimes/fastly")) {
+    await emptyDir(`../../npm/test/${name}/runtimes/fastly`);
+  }
 
   // Remove node_modules
   try {
@@ -37,6 +40,15 @@ export async function beforeBuild(name: string): Promise<void> {
   } catch {
     // ignore
   }
+  if (existsSync("test/runtimes/fastly")) {
+    try {
+      await Deno.remove("test/runtimes/fastly/node_modules", {
+        recursive: true,
+      });
+    } catch {
+      // ignore
+    }
+  }
   return;
 }
 
@@ -56,6 +68,13 @@ export function afterBuild(name: string) {
     `../../npm/test/${name}/runtimes/cloudflare`,
     { overwrite: true },
   );
+  if (existsSync("test/runtimes/fastly")) {
+    copySync(
+      "test/runtimes/fastly",
+      `../../npm/test/${name}/runtimes/fastly`,
+      { overwrite: true },
+    );
+  }
   Deno.copyFileSync("LICENSE", `../../npm/packages/${name}/LICENSE`);
   Deno.copyFileSync("README.md", `../../npm/packages/${name}/README.md`);
   writeNpmIgnore(`../../npm/packages/${name}/.npmignore`);

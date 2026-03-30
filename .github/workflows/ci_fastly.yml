@@ -1,0 +1,34 @@
+name: Fastly Compute CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.mdc"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.mdc"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+      - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
+        with:
+          deno-version: 2.x
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 22
+      - name: Prepare test
+        run: deno task npm
+      - name: Run test
+        run: deno task test:fastly
