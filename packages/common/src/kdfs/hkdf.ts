@@ -44,9 +44,15 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     hash: "SHA-256",
     length: 256,
   };
+  protected readonly _fallbackExtract:
+    | ((salt: Uint8Array, ikm: Uint8Array) => Uint8Array)
+    | undefined;
 
-  constructor() {
+  constructor(
+    fallbackExtract?: (salt: Uint8Array, ikm: Uint8Array) => Uint8Array,
+  ) {
     super();
+    this._fallbackExtract = fallbackExtract;
   }
 
   public init(suiteId: Uint8Array): void {
@@ -90,12 +96,18 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     const saltBuf = salt.byteLength === 0
       ? new ArrayBuffer(this.hashSize)
       : toArrayBuffer(salt);
+    const ikmBuf = toArrayBuffer(ikm);
     if (saltBuf.byteLength !== this.hashSize) {
+      if (this._fallbackExtract !== undefined) {
+        return this._fallbackExtract(
+          new Uint8Array(saltBuf),
+          new Uint8Array(ikmBuf),
+        ).buffer as ArrayBuffer;
+      }
       throw new InvalidParamError(
         "The salt length must be the same as the hashSize",
       );
     }
-    const ikmBuf = toArrayBuffer(ikm);
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
       saltBuf,
