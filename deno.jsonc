@@ -180,6 +180,11 @@
     "test:cloudflare:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/cloudflare",
     "test:cloudflare:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/cloudflare",
 
+    // Fastly Compute environment testing
+    "test:fastly": "deno task test:fastly:core && deno task test:fastly:hpke-js",
+    "test:fastly:core": "cd npm && npm run test -w test/core/runtimes/fastly",
+    "test:fastly:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/fastly",
+
     // Bun environment testing
     "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem",
     "test:bun:core": "cd packages/core && deno task test:bun",

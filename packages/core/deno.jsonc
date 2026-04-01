@@ -24,7 +24,8 @@
     "exclude": [
       "**/*/*.js",
       "**/*/npm/",
-      "coverage/*.json"
+      "coverage/*.json",
+      "test/runtimes/fastly/"
     ]
   },
   "lint": {
@@ -40,12 +41,14 @@
     "exclude": [
       "**/*/*.js",
       "**/*/npm/",
-      "coverage/*.json"
+      "coverage/*.json",
+      "test/runtimes/fastly/"
     ]
   },
   "tasks": {
     "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
     "test:cloudflare": "cd test/runtimes/cloudflare && npm install && npm link @hpke/core && npm run test",
+    "test:fastly": "cd test/runtimes/fastly && npm install && npm link @hpke/core && npm run test",
     "test:bun": "cd test/runtimes/bun && bun install && bun test",
     "check": "deno check *.ts src/**/*.ts samples/**/*.ts test/*.ts",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",

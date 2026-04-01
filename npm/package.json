@@ -21,6 +21,7 @@
     "packages/ohttp",
     "test/**/*/runtimes/browsers",
     "test/**/*/runtimes/cloudflare",
+    "test/**/*/runtimes/fastly",
     "samples/**/*"
   ]
 }
