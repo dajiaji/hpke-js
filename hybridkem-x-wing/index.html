@@ -66,9 +66,7 @@
               const pt = await recipient.open(ct);
 
               // hello world!
-              "hello world!" === new TextDecoder().decode(pt)
-                ? pass++
-                : fail++;
+              "hello world!" === new TextDecoder().decode(pt) ? pass++ : fail++;
             } catch (e) {
               fail++;
             }
