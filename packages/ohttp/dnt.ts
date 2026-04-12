@@ -34,6 +34,11 @@ await build({
       "../../npm/test/ohttp/runtimes/cloudflare",
       { overwrite: true },
     );
+    copySync(
+      "test/runtimes/fastly",
+      "../../npm/test/ohttp/runtimes/fastly",
+      { overwrite: true },
+    );
     // Copy package metadata.
     Deno.copyFileSync("LICENSE", `${outDir}/LICENSE`);
     Deno.copyFileSync("README.md", `${outDir}/README.md`);
