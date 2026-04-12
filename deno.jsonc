@@ -91,7 +91,7 @@
     // Primary tasks for daily development workflow
     "test": {
       "description": "Run comprehensive test suite across all environments (Deno, browsers, Cloudflare Workers, Bun, Node.js)",
-      "command": "deno task test:deno && deno task npm && deno task test:browsers && deno task test:cloudflare && deno task bun-link && deno task test:bun && deno task test:node"
+      "command": "deno task test:deno && deno task npm && deno task test:browsers && deno task test:cloudflare && deno task test:fastly && deno task bun-link && deno task test:bun && deno task test:node"
     },
 
     // === TESTING TASKS ===
@@ -181,9 +181,19 @@
     "test:cloudflare:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/cloudflare",
 
     // Fastly Compute environment testing
-    "test:fastly": "deno task test:fastly:core && deno task test:fastly:hpke-js",
+    "test:fastly": "deno task test:fastly:core && deno task test:fastly:chacha20poly1305 && deno task test:fastly:dhkem-x25519 && deno task test:fastly:dhkem-x448 && deno task test:fastly:dhkem-secp256k1 && deno task test:fastly:hybridkem-x-wing && deno task test:fastly:hybridkem-x25519-kyber768 && deno task test:fastly:hpke-js && deno task test:fastly:ml-kem && deno task test:fastly:jose && deno task test:fastly:cose && deno task test:fastly:ohttp",
     "test:fastly:core": "cd npm && npm run test -w test/core/runtimes/fastly",
+    "test:fastly:chacha20poly1305": "cd npm && npm run test -w test/chacha20poly1305/runtimes/fastly",
+    "test:fastly:dhkem-x25519": "cd npm && npm run test -w test/dhkem-x25519/runtimes/fastly",
+    "test:fastly:dhkem-x448": "cd npm && npm run test -w test/dhkem-x448/runtimes/fastly",
+    "test:fastly:dhkem-secp256k1": "cd npm && npm run test -w test/dhkem-secp256k1/runtimes/fastly",
+    "test:fastly:hybridkem-x-wing": "cd npm && npm run test -w test/hybridkem-x-wing/runtimes/fastly",
+    "test:fastly:hybridkem-x25519-kyber768": "cd npm && npm run test -w test/hybridkem-x25519-kyber768/runtimes/fastly",
     "test:fastly:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/fastly",
+    "test:fastly:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/fastly",
+    "test:fastly:jose": "cd npm && npm run test -w test/jose/runtimes/fastly",
+    "test:fastly:cose": "cd npm && npm run test -w test/cose/runtimes/fastly",
+    "test:fastly:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/fastly",
 
     // Bun environment testing
     "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem",

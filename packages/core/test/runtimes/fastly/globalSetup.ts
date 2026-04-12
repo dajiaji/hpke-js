@@ -148,7 +148,7 @@ export async function teardown() {
       exited,
       new Promise((resolve) => setTimeout(resolve, 3000)),
     ]);
-    if (server.exitCode === null && !server.killed) {
+    if (server.exitCode === null) {
       server.kill("SIGKILL");
     }
     server = undefined;

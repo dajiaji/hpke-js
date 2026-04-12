@@ -1,0 +1,6 @@
+manifest_version = 3
+name = "test-fastly-hpke-ohttp"
+language = "javascript"
+
+[scripts]
+  build = "npm run build"
