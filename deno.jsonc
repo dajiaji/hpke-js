@@ -94,6 +94,11 @@
       "command": "deno task test:deno && deno task npm && deno task test:browsers && deno task test:cloudflare && deno task test:fastly && deno task bun-link && deno task test:bun && deno task test:node"
     },
 
+    "fmt": {
+      "description": "Format source files using deno fmt (respects each package's deno.jsonc)",
+      "command": "deno fmt"
+    },
+
     // === TESTING TASKS ===
     // Deno environment testing
     "test:deno": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
