@@ -78,3 +78,15 @@ jobs:
         continue-on-error: true
         working-directory: ./npm/packages/ml-kem
         run: npm publish
+      - name: Publish @hpke/cose to npm
+        continue-on-error: true
+        working-directory: ./npm/packages/cose
+        run: npm publish
+      - name: Publish @hpke/jose to npm
+        continue-on-error: true
+        working-directory: ./npm/packages/jose
+        run: npm publish
+      - name: Publish @hpke/ohttp to npm
+        continue-on-error: true
+        working-directory: ./npm/packages/ohttp
+        run: npm publish
