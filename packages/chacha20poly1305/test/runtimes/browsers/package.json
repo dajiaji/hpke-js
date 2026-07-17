@@ -6,7 +6,7 @@
     "test": "npx playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "^1.61.1",
     "http-server": "^14.1.1"
   },
   "dependencies": {
