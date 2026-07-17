@@ -74,28 +74,22 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    Aes128Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core@<SEMVER>";
-  import {
-    DhkemSecp256k1HkdfSha256,
-  } from "https://esm.sh/@hpke/dhkem-secp256k1@<SEMVER>";
-  // ...
+import {
+  Aes128Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core@<SEMVER>";
+import {
+  DhkemSecp256k1HkdfSha256,
+} from "https://esm.sh/@hpke/dhkem-secp256k1@<SEMVER>";
+// ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import {
-    Aes128Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core";
-  import {
-    DhkemSecp256k1HkdfSha256,
-  } from "https://esm.sh/@hpke/dhkem-secp256k1";
-  // ...
+import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core";
+import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1";
+// ...
 </script>
 ```
 
@@ -104,15 +98,15 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    Aes128Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  import {
-    DhkemSecp256k1HkdfSha256,
-  } from "https://unpkg.com/@hpke/dhkem-secp256k1@<SEMVER>/esm/mod.js";
-  // ...
+import {
+  Aes128Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+import {
+  DhkemSecp256k1HkdfSha256,
+} from "https://unpkg.com/@hpke/dhkem-secp256k1@<SEMVER>/esm/mod.js";
+// ...
 </script>
 ```
 
@@ -212,46 +206,42 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import {
-        Aes128Gcm,
-        CipherSuite,
-        HkdfSha256,
-      } from "https://esm.sh/@hpke/core";
-      import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1";
+    import { Aes128Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core";
+    import { DhkemSecp256k1HkdfSha256 } from "https://esm.sh/@hpke/dhkem-secp256k1";
 
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: new DhkemSecp256k1HkdfSha256(),
-            kdf: new HkdfSha256(),
-            aead: new Aes128Gcm(),
-          });
+    globalThis.doHpke = async () => {
+      try {
+        const suite = new CipherSuite({
+          kem: new DhkemSecp256k1HkdfSha256(),
+          kdf: new HkdfSha256(),
+          aead: new Aes128Gcm(),
+        });
 
-          const rkp = await suite.kem.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
 
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey,
-          });
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey,
+        });
 
-          // encrypt
-          const ct = await sender.seal(
-            new TextEncoder().encode("Hello world!"),
-          );
+        // encrypt
+        const ct = await sender.seal(
+          new TextEncoder().encode("Hello world!"),
+        );
 
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+          enc: sender.enc,
+        });
 
-          // decrypt
-          const pt = await recipient.open(ct);
+        // decrypt
+        const pt = await recipient.open(ct);
 
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      };
+        // Hello world!
+        alert(new TextDecoder().decode(pt));
+      } catch (err) {
+        alert("failed:", err.message);
+      }
+    };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

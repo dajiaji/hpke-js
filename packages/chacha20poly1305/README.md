@@ -74,24 +74,24 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    CipherSuite,
-    DhkemP256HkdfSha256,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core@<SEMVER>";
-  import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@<SEMVER>";
-  // ...
+import {
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core@<SEMVER>";
+import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305@<SEMVER>";
+// ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import {
-    CipherSuite,
-    DhkemP256HkdfSha256,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core";
-  import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305";
-  // ...
+import {
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core";
+import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305";
+// ...
 </script>
 ```
 
@@ -100,13 +100,13 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    CipherSuite,
-    DhkemP256HkdfSha256,
-    HkdfSha256,
-  } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  import { Chacha20Poly1305 } from "https://unpkg.com/@hpke/chacha20poly1305@<SEMVER>/esm/mod.js";
-  // ...
+import {
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+import { Chacha20Poly1305 } from "https://unpkg.com/@hpke/chacha20poly1305@<SEMVER>/esm/mod.js";
+// ...
 </script>
 ```
 
@@ -206,47 +206,47 @@ try {
   <head></head>
   <body>
     <script type="module">
-      // import * as hpke from "https://esm.sh/hpke-js@<SEMVER>";
-      import {
-        CipherSuite,
-        DhkemP256HkdfSha256,
-        HkdfSha256,
-      } from "https://esm.sh/@hpke/core";
-      import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305";
+    // import * as hpke from "https://esm.sh/hpke-js@<SEMVER>";
+    import {
+      CipherSuite,
+      DhkemP256HkdfSha256,
+      HkdfSha256,
+    } from "https://esm.sh/@hpke/core";
+    import { Chacha20Poly1305 } from "https://esm.sh/@hpke/chacha20poly1305";
 
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: new DhkemP256HkdfSha256(),
-            kdf: new HkdfSha256(),
-            aead: new Chacha20Poly1305(),
-          });
+    globalThis.doHpke = async () => {
+      try {
+        const suite = new CipherSuite({
+          kem: new DhkemP256HkdfSha256(),
+          kdf: new HkdfSha256(),
+          aead: new Chacha20Poly1305(),
+        });
 
-          const rkp = await suite.kem.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
 
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey,
-          });
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey,
+        });
 
-          // encrypt
-          const ct = await sender.seal(
-            new TextEncoder().encode("Hello world!"),
-          );
+        // encrypt
+        const ct = await sender.seal(
+          new TextEncoder().encode("Hello world!"),
+        );
 
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+          enc: sender.enc,
+        });
 
-          // decrypt
-          const pt = await recipient.open(ct);
+        // decrypt
+        const pt = await recipient.open(ct);
 
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      };
+        // Hello world!
+        alert(new TextDecoder().decode(pt));
+      } catch (err) {
+        alert("failed:", err.message);
+      }
+    };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>
