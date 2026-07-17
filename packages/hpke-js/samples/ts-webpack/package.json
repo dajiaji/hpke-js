@@ -9,8 +9,8 @@
   "devDependencies": {
     "http-server": "^14.1.1",
     "typescript": "^5.9.3",
-    "webpack": "^5.108.4",
-    "webpack-cli": "^7.2.1"
+    "webpack": "^5.105.3",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@hpke/core": "^1.9.0"

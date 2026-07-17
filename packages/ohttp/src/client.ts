@@ -83,7 +83,7 @@ export class OhttpClient {
     const relayResponse = await fetch(this._relayUrl.toString(), {
       method: "POST",
       headers: { "Content-Type": "message/ohttp-req" },
-      body: ctx.encRequest.slice().buffer as ArrayBuffer,
+      body: ctx.encRequest,
     });
 
     if (!relayResponse.ok) {
