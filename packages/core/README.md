@@ -77,24 +77,24 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    Aes128Gcm,
-    CipherSuite,
-    DhkemP256HkdfSha256,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core@<SEMVER>";
-  // ...
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core@<SEMVER>";
+// ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import {
-    Aes128Gcm,
-    CipherSuite,
-    DhkemP256HkdfSha256,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core";
-  // ...
+import {
+  Aes128Gcm,
+  CipherSuite,
+  DhkemP256HkdfSha256,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core";
+// ...
 </script>
 ```
 
@@ -103,8 +103,8 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  // ...
+import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+// ...
 </script>
 ```
 
@@ -211,46 +211,46 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import {
-        Aes128Gcm,
-        CipherSuite,
-        DhkemP256HkdfSha256,
-        HkdfSha256,
-      } from "https://esm.sh/@hpke/core";
+    import {
+      Aes128Gcm,
+      CipherSuite,
+      DhkemP256HkdfSha256,
+      HkdfSha256,
+    } from "https://esm.sh/@hpke/core";
 
-      globalThis.doHpke = async () => {
-        const suite = new CipherSuite({
-          kem: new DhkemP256HkdfSha256(),
-          kdf: new HkdfSha256(),
-          aead: new Aes128Gcm(),
-        });
+    globalThis.doHpke = async () => {
+      const suite = new CipherSuite({
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
 
-        const rkp = await suite.kem.generateKeyPair();
+      const rkp = await suite.kem.generateKeyPair();
 
-        const sender = await suite.createSenderContext({
-          recipientPublicKey: rkp.publicKey,
-        });
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
 
-        const recipient = await suite.createRecipientContext({
-          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-          enc: sender.enc,
-        });
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+        enc: sender.enc,
+      });
 
-        // encrypt
-        const ct = await sender.seal(
-          new TextEncoder().encode("hello world!"),
-        );
+      // encrypt
+      const ct = await sender.seal(
+        new TextEncoder().encode("hello world!"),
+      );
 
-        // decrypt
-        try {
-          const pt = await recipient.open(ct);
+      // decrypt
+      try {
+        const pt = await recipient.open(ct);
 
-          // hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed to decrypt.");
-        }
-      };
+        // hello world!
+        alert(new TextDecoder().decode(pt));
+      } catch (err) {
+        alert("failed to decrypt.");
+      }
+    };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

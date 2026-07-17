@@ -84,21 +84,21 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    AeadId,
-    CipherSuite,
-    KdfId,
-    KemId,
-  } from "https://esm.sh/hpke-js@<SEMVER>";
-  // import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
-  // ...
+import {
+  AeadId,
+  CipherSuite,
+  KdfId,
+  KemId,
+} from "https://esm.sh/hpke-js@<SEMVER>";
+// import * as hpke from "https://esm.sh/@hpke/core@<SEMVER>";
+// ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
-  // import * as hpke from "https://esm.sh/@hpke/core";
-  // ...
+import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
+// import * as hpke from "https://esm.sh/@hpke/core";
+// ...
 </script>
 ```
 
@@ -107,14 +107,14 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    AeadId,
-    CipherSuite,
-    KdfId,
-    KemId,
-  } from "https://unpkg.com/hpke-js@<SEMVER>/esm/mod.js";
-  // import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  // ...
+import {
+  AeadId,
+  CipherSuite,
+  KdfId,
+  KemId,
+} from "https://unpkg.com/hpke-js@<SEMVER>/esm/mod.js";
+// import * as hpke from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+// ...
 </script>
 ```
 
@@ -208,46 +208,41 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import {
-        AeadId,
-        CipherSuite,
-        KdfId,
-        KemId,
-      } from "https://esm.sh/hpke-js";
+    import { AeadId, CipherSuite, KdfId, KemId } from "https://esm.sh/hpke-js";
 
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: KemId.DhkemP256HkdfSha256,
-            kdf: KdfId.HkdfSha256,
-            aead: AeadId.Aes128Gcm,
-          });
+    globalThis.doHpke = async () => {
+      try {
+        const suite = new CipherSuite({
+          kem: KemId.DhkemP256HkdfSha256,
+          kdf: KdfId.HkdfSha256,
+          aead: AeadId.Aes128Gcm,
+        });
 
-          const rkp = await suite.kem.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
 
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey,
-          });
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey,
+        });
 
-          // encrypt
-          const ct = await sender.seal(
-            new TextEncoder().encode("Hello world!"),
-          );
+        // encrypt
+        const ct = await sender.seal(
+          new TextEncoder().encode("Hello world!"),
+        );
 
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc,
-          });
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+          enc: sender.enc,
+        });
 
-          // decrypt
-          const pt = await recipient.open(ct);
+        // decrypt
+        const pt = await recipient.open(ct);
 
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      };
+        // Hello world!
+        alert(new TextDecoder().decode(pt));
+      } catch (err) {
+        alert("failed:", err.message);
+      }
+    };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>

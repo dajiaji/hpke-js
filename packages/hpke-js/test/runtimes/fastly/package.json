@@ -7,12 +7,12 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@fastly/cli": "^11.5.0",
-    "@fastly/js-compute": "^3.25.0",
-    "esbuild": "^0.27.3",
-    "vitest": "3.2.4"
+    "@fastly/cli": "^15.4.0",
+    "@fastly/js-compute": "^3.43.1",
+    "esbuild": "^0.28.1",
+    "vitest": "4.1.10"
   },
   "dependencies": {
-    "hpke-js": "^1.7.0"
+    "hpke-js": "^1.8.0"
   }
 }

@@ -133,24 +133,20 @@ Using esm.sh:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    Aes256Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core@<SEMVER>";
-  import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing@<SEMVER>";
-  // ...
+import {
+  Aes256Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://esm.sh/@hpke/core@<SEMVER>";
+import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing@<SEMVER>";
+// ...
 </script>
 
 <!-- use the latest stable version -->
 <script type="module">
-  import {
-    Aes256Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://esm.sh/@hpke/core";
-  import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
-  // ...
+import { Aes256Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core";
+import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
+// ...
 </script>
 ```
 
@@ -159,13 +155,13 @@ Using unpkg:
 ```html
 <!-- use a specific version -->
 <script type="module">
-  import {
-    Aes256Gcm,
-    CipherSuite,
-    HkdfSha256,
-  } from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
-  import { XWing } from "https://unpkg.com/@hpke/hybridkem-x-wing@<SEMVER>/esm/mod.js";
-  // ...
+import {
+  Aes256Gcm,
+  CipherSuite,
+  HkdfSha256,
+} from "https://unpkg.com/@hpke/core@<SEMVER>/esm/mod.js";
+import { XWing } from "https://unpkg.com/@hpke/hybridkem-x-wing@<SEMVER>/esm/mod.js";
+// ...
 </script>
 ```
 
@@ -266,46 +262,42 @@ try {
   <head></head>
   <body>
     <script type="module">
-      import {
-        Aes256Gcm,
-        CipherSuite,
-        HkdfSha256,
-      } from "https://esm.sh/@hpke/core";
-      import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
+    import { Aes256Gcm, CipherSuite, HkdfSha256 } from "https://esm.sh/@hpke/core";
+    import { XWing } from "https://esm.sh/@hpke/hybridkem-x-wing";
 
-      globalThis.doHpke = async () => {
-        try {
-          const suite = new CipherSuite({
-            kem: new XWing(),
-            kdf: new HkdfSha256(),
-            aead: new Aes256Gcm(),
-          });
+    globalThis.doHpke = async () => {
+      try {
+        const suite = new CipherSuite({
+          kem: new XWing(),
+          kdf: new HkdfSha256(),
+          aead: new Aes256Gcm(),
+        });
 
-          const rkp = await suite.kem.generateKeyPair();
+        const rkp = await suite.kem.generateKeyPair();
 
-          // Note that the `ct` resulting from X-Wing::Encapsulate() is set to `sender.enc`.
-          const sender = await suite.createSenderContext({
-            recipientPublicKey: rkp.publicKey,
-          });
-          // encrypt
-          const encrypted = await sender.seal(
-            new TextEncoder().encode("Hello world!"),
-          );
+        // Note that the `ct` resulting from X-Wing::Encapsulate() is set to `sender.enc`.
+        const sender = await suite.createSenderContext({
+          recipientPublicKey: rkp.publicKey,
+        });
+        // encrypt
+        const encrypted = await sender.seal(
+          new TextEncoder().encode("Hello world!"),
+        );
 
-          const recipient = await suite.createRecipientContext({
-            recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
-            enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
-          });
+        const recipient = await suite.createRecipientContext({
+          recipientKey: rkp.privateKey, // rkp (CryptoKeyPair) is also acceptable.
+          enc: sender.enc, // == `ct` (ciphertext) in the context of X-Wing
+        });
 
-          // decrypt
-          const pt = await recipient.open(encrypted);
+        // decrypt
+        const pt = await recipient.open(encrypted);
 
-          // Hello world!
-          alert(new TextDecoder().decode(pt));
-        } catch (err) {
-          alert("failed:", err.message);
-        }
-      };
+        // Hello world!
+        alert(new TextDecoder().decode(pt));
+      } catch (err) {
+        alert("failed:", err.message);
+      }
+    };
     </script>
     <button type="button" onclick="doHpke()">do HPKE</button>
   </body>
