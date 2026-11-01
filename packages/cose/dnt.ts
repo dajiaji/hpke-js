@@ -15,6 +15,7 @@ await build({
   declaration: "inline",
   scriptModule: false,
   importMap: "../../npm/import_map.json",
+  packageManager: "../../../utils/dntNpm.ts",
   compilerOptions: {
     lib: ["ES2022", "DOM"],
   },
