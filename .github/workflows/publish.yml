@@ -20,7 +20,7 @@ jobs:
       - name: Run test
         run: deno task test:deno
       - name: Run deno publish
-        run: npx jsr publish
+        run: deno publish
 
   publish-to-npm:
     runs-on: ubuntu-latest
