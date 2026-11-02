@@ -337,7 +337,7 @@
     // === DEPENDENCY MANAGEMENT ===
     "update": {
       "description": "Update dependencies for all test environments",
-      "command": "deno task update:cloudflare && deno task update:browsers && deno task update:bun && deno task update:fastly && deno task update-lock && deno task update:workspace-lock"
+      "command": "deno task update:cloudflare && deno task update:browsers && deno task update:bun && deno task update:fastly && deno task update:samples && deno task update-lock && deno task update:workspace-lock"
     },
     "update:cloudflare": "deno task update:cloudflare:core && deno task update:cloudflare:chacha20poly1305 && deno task update:cloudflare:dhkem-x25519 && deno task update:cloudflare:dhkem-x448 && deno task update:cloudflare:dhkem-secp256k1 && deno task update:cloudflare:hybridkem-x25519-kyber768 && deno task update:cloudflare:hybridkem-x-wing && deno task update:cloudflare:hpke-js && deno task update:cloudflare:ml-kem && deno task update:cloudflare:cose && deno task update:cloudflare:jose && deno task update:cloudflare:ohttp",
     "update:cloudflare:core": "cd packages/core/test/runtimes/cloudflare && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
@@ -361,7 +361,7 @@
     "update:browsers:hybridkem-x-wing": "cd packages/hybridkem-x-wing/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:browsers:hpke-js": "cd packages/hpke-js/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:browsers:ml-kem": "cd packages/ml-kem/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
-    "update:browsers:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor && npm install --package-lock-only --ignore-scripts",
+    "update:browsers:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:browsers:cose": "cd packages/cose/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:browsers:jose": "cd packages/jose/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:browsers:ohttp": "cd packages/ohttp/test/runtimes/browsers && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
@@ -387,7 +387,19 @@
     "update:fastly:cose": "cd packages/cose/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:fastly:jose": "cd packages/jose/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:fastly:ohttp": "cd packages/ohttp/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
-    "update:workspace-lock": "deno task npm-build && cd npm && npm install",
+    "update:samples": "deno task update:samples:core && deno task update:samples:chacha20poly1305 && deno task update:samples:dhkem-x25519 && deno task update:samples:dhkem-x448 && deno task update:samples:dhkem-secp256k1 && deno task update:samples:hybridkem-x25519-kyber768 && deno task update:samples:hybridkem-x-wing && deno task update:samples:hpke-js && deno task update:samples:ml-kem && deno task update:samples:hpke-js:ts-node && deno task update:samples:hpke-js:ts-webpack",
+    "update:samples:core": "cd packages/core/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:chacha20poly1305": "cd packages/chacha20poly1305/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:dhkem-x25519": "cd packages/dhkem-x25519/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:dhkem-x448": "cd packages/dhkem-x448/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:dhkem-secp256k1": "cd packages/dhkem-secp256k1/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:hybridkem-x-wing": "cd packages/hybridkem-x-wing/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:hpke-js": "cd packages/hpke-js/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:ml-kem": "cd packages/ml-kem/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:hpke-js:ts-node": "cd packages/hpke-js/samples/ts-node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:hpke-js:ts-webpack": "cd packages/hpke-js/samples/ts-webpack && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:workspace-lock": "deno task npm-build && cd npm && npm update",
 
     // === BUILD AND DISTRIBUTION ===
     "minify:common": "cd packages/common && deno task minify",

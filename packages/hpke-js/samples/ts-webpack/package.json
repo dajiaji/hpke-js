@@ -1,21 +1,19 @@
 {
-  "name": "ts-webpack",
+  "name": "samples-ts-webpack-hpke-js",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "start": "http-server .",
-    "build": "tsc app.ts",
+    "build": "tsc -p .",
     "bundle": "webpack"
   },
   "devDependencies": {
     "http-server": "^14.1.1",
     "typescript": "^5.9.3",
-    "webpack": "^5.108.4",
-    "webpack-cli": "^7.2.1"
+    "webpack": "^5.112.2",
+    "webpack-cli": "^7.3.1"
   },
   "dependencies": {
     "@hpke/core": "^1.9.0"
-  },
-  "overrides": {
-    "terser-webpack-plugin": "^5.3.17"
   }
 }
