@@ -13,6 +13,6 @@
     "vitest": "4.1.12"
   },
   "dependencies": {
-    "@hpke/cose": "^0.1.0"
+    "@hpke/cose": "^0.0.1"
   }
 }
