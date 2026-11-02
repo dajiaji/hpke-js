@@ -35,6 +35,7 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
         with:
           deno-version: 2.x
