@@ -33,6 +33,10 @@ await build({
       type: "git",
       url: "git+https://github.com/dajiaji/hpke-js.git",
     },
+    funding: {
+      type: "github",
+      url: "https://github.com/sponsors/dajiaji",
+    },
     homepage: "https://github.com/dajiaji/hpke-js/tree/main/common#readme",
     license: "MIT",
     module: "./esm/mod.js",
