@@ -2,6 +2,9 @@
   "name": "hpke-js",
   "private": true,
   "overrides": {
+    "@bytecodealliance/jco-std": {
+      "minimatch": "11.0.1"
+    },
     "rollup": "^4.59.0",
     "qs": "^6.15.0"
   },
