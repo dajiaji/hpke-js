@@ -1,9 +1,12 @@
-import { build } from "@deno/dnt";
+import { build, emptyDir } from "@deno/dnt";
+import { copySync } from "@std/fs";
 import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
 
 await beforeBuild("hpke-js");
+await emptyDir("../../npm/samples/hpke-js-ts-node");
+await emptyDir("../../npm/samples/hpke-js-ts-webpack");
 
 await build({
   entryPoints: ["./mod.ts"],
@@ -72,3 +75,26 @@ await build({
 });
 
 afterBuild("hpke-js");
+
+// Add the TypeScript samples to the npm workspace so that they share
+// npm/package-lock.json.
+const tsSamples: Record<string, string[]> = {
+  "ts-node": ["app.ts", "package.json", "tsconfig.json"],
+  "ts-webpack": [
+    "app.ts",
+    "index.html",
+    "index.js",
+    "package.json",
+    "tsconfig.json",
+    "webpack.config.js",
+  ],
+};
+for (const [sample, files] of Object.entries(tsSamples)) {
+  for (const file of files) {
+    copySync(
+      `samples/${sample}/${file}`,
+      `../../npm/samples/hpke-js-${sample}/${file}`,
+      { overwrite: true },
+    );
+  }
+}
