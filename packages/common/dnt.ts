@@ -1,5 +1,8 @@
 import { build, emptyDir } from "@deno/dnt";
-import { writeNpmIgnore } from "../../utils/dntCommon.ts";
+import {
+  excludeNodeCryptoFromBrowser,
+  writeNpmIgnore,
+} from "../../utils/dntCommon.ts";
 
 await emptyDir("../../npm/packages/common");
 
@@ -69,3 +72,4 @@ await build({
 Deno.copyFileSync("LICENSE", "../../npm/packages/common/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/common/README.md");
 writeNpmIgnore("../../npm/packages/common/.npmignore");
+excludeNodeCryptoFromBrowser("common");

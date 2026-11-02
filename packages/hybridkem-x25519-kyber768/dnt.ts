@@ -1,5 +1,9 @@
 import { build } from "@deno/dnt";
-import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
+import {
+  afterBuild,
+  beforeBuild,
+  excludeNodeCryptoFromBrowser,
+} from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
 
@@ -68,3 +72,4 @@ await build({
 });
 
 afterBuild("hybridkem-x25519-kyber768");
+excludeNodeCryptoFromBrowser("hybridkem-x25519-kyber768");

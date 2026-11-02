@@ -80,6 +80,17 @@ export function afterBuild(name: string) {
   writeNpmIgnore(`../../npm/packages/${name}/.npmignore`);
 }
 
+/**
+ * Excludes the Node.js <= v18 `crypto` fallback from browser bundles.
+ * This must be in esm/package.json. The root package.json has no effect.
+ */
+export function excludeNodeCryptoFromBrowser(name: string) {
+  const path = `../../npm/packages/${name}/esm/package.json`;
+  const pkg = JSON.parse(Deno.readTextFileSync(path));
+  pkg.browser = { crypto: false };
+  Deno.writeTextFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
+}
+
 export function writeNpmIgnore(path: string) {
   Deno.writeTextFileSync(
     path,
