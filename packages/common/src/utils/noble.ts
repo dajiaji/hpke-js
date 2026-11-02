@@ -108,7 +108,7 @@ const _endianTestBytes = /* @__PURE__ */ new Uint8Array(
 );
 
 /** Is current platform little-endian? Most are. Big-Endian platform: IBM */
-export const isLE: boolean = /* @__PURE__ */ _endianTestBytes[0] === 0x44;
+export const isLE: boolean = _endianTestBytes[0] === 0x44;
 
 /** The byte swap operation for uint32 */
 export function byteSwap(word: number): number {
@@ -160,7 +160,7 @@ const hexes = /* @__PURE__ */ Array.from(
   { length: 256 },
   (_, i) => i.toString(16).padStart(2, "0"),
 );
-const HEX_TO_BIGINT = /* @__PURE__ */ [
+const HEX_TO_BIGINT = [
   0n,
   1n,
   2n,

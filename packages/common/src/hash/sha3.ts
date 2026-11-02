@@ -535,14 +535,6 @@ const genKeccak = (
   info: HashInfo = {},
 ) => createHasher(() => new Keccak(blockLen, suffix, outputLen), info);
 
-// /** SHA3-224 hash function. */
-// export const sha3_224: CHash = /* @__PURE__ */ genKeccak(
-//   0x06,
-//   144,
-//   28,
-//   /* @__PURE__ */ oidNist(0x07),
-// );
-
 /** SHA3-256 hash function. Different from keccak-256. */
 export const sha3_256: CHash = /* @__PURE__ */ genKeccak(
   0x06,
@@ -603,12 +595,3 @@ export const shake128: CHashXOF<Keccak, ShakeOpts> =
 export const shake256: CHashXOF<Keccak, ShakeOpts> =
   /* @__PURE__ */
   genShake(0x1f, 136, 32, /* @__PURE__ */ oidNist(0x0c));
-
-// /** SHAKE128 XOF with 256-bit output (NIST version). */
-// export const shake128_32: CHashXOF<Keccak, ShakeOpts> =
-//   /* @__PURE__ */
-//   genShake(0x1f, 168, 32, /* @__PURE__ */ oidNist(0x0b));
-// /** SHAKE256 XOF with 512-bit output (NIST version). */
-// export const shake256_64: CHashXOF<Keccak, ShakeOpts> =
-//   /* @__PURE__ */
-//   genShake(0x1f, 136, 64, /* @__PURE__ */ oidNist(0x0c));
