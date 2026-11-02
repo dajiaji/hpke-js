@@ -3,7 +3,9 @@
 A TypeScript implementation of
 [COSE-HPKE (draft-ietf-cose-hpke)](https://datatracker.ietf.org/doc/draft-ietf-cose-hpke/)
 built on top of
-[@hpke/core](https://github.com/dajiaji/hpke-js/tree/main/packages/core).
+[@hpke/core](https://github.com/dajiaji/hpke-js/tree/main/packages/core). It is
+tested against the test vectors in
+[draft-ietf-cose-hpke-27](https://datatracker.ietf.org/doc/html/draft-ietf-cose-hpke-27).
 
 ## Features
 
