@@ -73,7 +73,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25]
+        node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25, 26]
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -109,7 +109,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25]
+        node-version: [16, 18, 19, 20, 21, 22, 23, 24, 25, 26]
         package: ${{ fromJson(needs.check-changes.outputs.packages) }}
 
     steps:
