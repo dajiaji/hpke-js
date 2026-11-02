@@ -2,9 +2,6 @@
   "name": "hpke-js",
   "private": true,
   "overrides": {
-    "typedoc": {
-      "minimatch": "11.0.1"
-    },
     "rollup": "^4.59.0",
     "qs": "^6.15.0"
   },
@@ -28,6 +25,6 @@
     "samples/**/*"
   ],
   "devDependencies": {
-    "typedoc": "0.28.14"
+    "typedoc": "0.28.20"
   }
 }
