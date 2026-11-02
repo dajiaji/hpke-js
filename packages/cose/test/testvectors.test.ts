@@ -1,5 +1,5 @@
 /**
- * Test vectors from draft-ietf-cose-hpke-24.
+ * Test vectors from draft-ietf-cose-hpke-27 Appendix C.
  *
  * Parameters (from the spec):
  *   Plaintext:  "hpke test payload"
@@ -46,7 +46,7 @@ const EXT_INFO = new TextEncoder().encode("external-info");
 const EXT_HPKE_AAD = new TextEncoder().encode("external-hpke-aad");
 const EMPTY = new Uint8Array(0);
 
-// PSK parameters from draft-ietf-cose-hpke-24
+// PSK parameters from draft-ietf-cose-hpke-27
 const PSK_KEY = hex(
   "0247fd33b913760fa1fa51e1892d9f307fbe65eb171e8132c2af18555a738b82",
 );
@@ -96,6 +96,15 @@ const ALGS: Record<string, AlgConfig> = {
 
 // Algorithms skipped on Deno (P-521 not supported in Deno's WebCrypto)
 const DENO_SKIP_ALGS = new Set(["HPKE-2"]);
+
+// Non-PSK KE vectors skipped on Deno: they use a 32-byte AES-GCM IV, which
+// Deno's WebCrypto rejects (RFC 9053 fixes the AES-GCM nonce at 96 bits).
+const DENO_SKIP_KE_ALGS = new Set([
+  "HPKE-1-KE",
+  "HPKE-5-KE",
+  "HPKE-6-KE",
+  "HPKE-7-KE",
+]);
 
 // Content alg mapping for KE: which content alg is used for each HPKE-X-KE
 const KE_CONTENT_ALG: Record<string, ContentAlg> = {
@@ -266,6 +275,7 @@ describe("Test vectors (non-PSK)", () => {
     const config = ALGS[baseAlgName];
     if (!config) continue;
     if (isDeno() && DENO_SKIP_ALGS.has(baseAlgName)) continue;
+    if (isDeno() && DENO_SKIP_KE_ALGS.has(section.algName)) continue;
 
     const contentAlg = KE_CONTENT_ALG[section.algName];
     if (contentAlg === undefined) continue;
