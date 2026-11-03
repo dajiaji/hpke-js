@@ -9,6 +9,28 @@ export const CoseTag = {
 } as const;
 
 /**
+ * Find a header label present in both the protected and unprotected buckets.
+ *
+ * RFC 9052 Section 3 says applications SHOULD verify that a label does not
+ * occur in both buckets; a message that is not rejected must take the
+ * attribute from the protected bucket. This library chooses to reject such
+ * messages as malformed.
+ *
+ * @returns The first duplicated label, or undefined if the buckets are disjoint.
+ */
+export function findDuplicateHeaderLabel(
+  protectedMap: Map<CborValue, CborValue>,
+  unprotectedMap: Map<CborValue, CborValue>,
+): CborValue | undefined {
+  for (const label of protectedMap.keys()) {
+    if (unprotectedMap.has(label)) {
+      return label;
+    }
+  }
+  return undefined;
+}
+
+/**
  * Remove the optional COSE message tag from a decoded message.
  *
  * Per RFC 9052 Section 2, a COSE message is either untagged or carries the
