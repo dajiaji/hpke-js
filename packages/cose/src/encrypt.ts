@@ -58,7 +58,7 @@ export interface CoseRecipient {
   extraInfo?: Uint8Array;
   /**
    * HPKE AAD for this recipient (Layer 1).
-   * Per draft-ietf-cose-hpke-24, this SHOULD be empty. Only use for
+   * Per draft-ietf-cose-hpke-27, this SHOULD be empty. Only use for
    * special cases where additional authenticated data is needed at the
    * key-wrapping layer. Defaults to empty.
    */
@@ -83,7 +83,7 @@ export interface CoseEncryptOpenOptions {
   extraInfo?: Uint8Array;
   /**
    * HPKE AAD for this recipient (Layer 1).
-   * Per draft-ietf-cose-hpke-24, this SHOULD be empty. Only use for
+   * Per draft-ietf-cose-hpke-27, this SHOULD be empty. Only use for
    * special cases where additional authenticated data is needed at the
    * key-wrapping layer. Defaults to empty.
    */
@@ -110,7 +110,7 @@ export interface CoseEncryptDetachedResult {
 /**
  * COSE_Encrypt (Key Encryption) using HPKE.
  *
- * Implements draft-ietf-cose-hpke-24 Section 5 (Key Agreement with Key Wrap).
+ * Implements draft-ietf-cose-hpke-27 Section 3.3 (HPKE Key Encryption Mode).
  */
 export interface CoseEncrypt {
   /** The underlying HPKE CipherSuite. */

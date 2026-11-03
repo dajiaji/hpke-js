@@ -48,7 +48,7 @@ export interface CoseEncrypt0DetachedResult {
 /**
  * COSE_Encrypt0 (Integrated Encryption) using HPKE.
  *
- * Implements draft-ietf-cose-hpke-24 Section 4 (Direct Key Agreement).
+ * Implements draft-ietf-cose-hpke-27 Section 3.2 (HPKE Integrated Encryption Mode).
  */
 export interface CoseEncrypt0 {
   /** The underlying HPKE CipherSuite. */

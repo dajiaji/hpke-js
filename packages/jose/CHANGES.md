@@ -1,8 +1,8 @@
 # Changes
 
-## Version 0.1.0
+## Version 0.0.1
 
-Released 2026-03-16
+Unreleased
 
 - Initial release implementing draft-ietf-jose-hpke-encrypt-22.
 - JWE Integrated Encryption via `JoseEncrypt0`.
