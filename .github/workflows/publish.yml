@@ -21,7 +21,7 @@ jobs:
         run: deno task test:deno
       - name: Run deno publish
         # Publish in dependency order. Versions that already exist on JSR are
-        # skipped by `deno publish`. jose and ohttp are not released yet.
+        # skipped by `deno publish`. ohttp is not released yet.
         run: |
           for pkg in \
             common \
@@ -34,7 +34,8 @@ jobs:
             ml-kem \
             hybridkem-x-wing \
             hpke-js \
-            cose; do
+            cose \
+            jose; do
             echo "::group::deno publish @hpke/${pkg}"
             (cd "packages/${pkg}" && deno publish)
             echo "::endgroup::"
@@ -118,7 +119,7 @@ jobs:
           stage_if_needed hpke-js
           stage_if_needed ml-kem
           stage_if_needed cose
-          # stage_if_needed jose
+          stage_if_needed jose
           # stage_if_needed ohttp
           if [ ${#failed[@]} -gt 0 ]; then
             echo "::error::Failed to stage: ${failed[*]}"
