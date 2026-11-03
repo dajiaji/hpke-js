@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 
 import {
-  ContentAlg,
+  Aes128Gcm,
   createHpke0,
   createHpke0Ke,
   createHpke3,
@@ -31,7 +31,7 @@ test("bun - Encrypt0 with HPKE-3 (X25519, AES-128-GCM)", async () => {
 });
 
 test("bun - KE with HPKE-0-KE (P-256, A128GCM content)", async () => {
-  const ke = createHpke0Ke(ContentAlg.A128GCM);
+  const ke = createHpke0Ke(new Aes128Gcm());
   const kp = await ke.generateKemKeyPair();
   const ct = await ke.seal(
     [{ recipientPublicKey: kp.publicKey }],
@@ -42,7 +42,7 @@ test("bun - KE with HPKE-0-KE (P-256, A128GCM content)", async () => {
 });
 
 test("bun - KE with HPKE-3-KE (X25519, A128GCM content)", async () => {
-  const ke = createHpke3Ke(ContentAlg.A128GCM);
+  const ke = createHpke3Ke(new Aes128Gcm());
   const kp = await ke.generateKemKeyPair();
   const ct = await ke.seal(
     [{ recipientPublicKey: kp.publicKey }],

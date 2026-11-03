@@ -1,5 +1,5 @@
 import {
-  ContentAlg,
+  Aes128Gcm,
   createHpke0,
   createHpke0Ke,
   createHpke3,
@@ -55,7 +55,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke0": {
-        const ke = createHpke0Ke(ContentAlg.A128GCM);
+        const ke = createHpke0Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
@@ -68,7 +68,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke3": {
-        const ke = createHpke3Ke(ContentAlg.A128GCM);
+        const ke = createHpke3Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
