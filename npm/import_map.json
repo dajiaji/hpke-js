@@ -4,7 +4,7 @@
     "@dajiaji/mlkem": "npm:mlkem@^2.7.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@hpke/chacha20poly1305": "npm:@hpke/chacha20poly1305@^1.8.0",
-    "@hpke/common": "npm:@hpke/common@^1.10.0",
+    "@hpke/common": "npm:@hpke/common@^1.11.0",
     "@hpke/cose": "npm:@hpke/cose@^0.1.0",
     "@hpke/jose": "npm:@hpke/jose@^0.0.1",
     "@hpke/ohttp": "npm:@hpke/ohttp@^0.0.1",
