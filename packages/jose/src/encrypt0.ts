@@ -4,6 +4,11 @@ import { isIntegratedEncryption, type JoseHpkeAlg } from "./alg.ts";
 import { decodeBase64Url, encodeBase64Url } from "./utils.ts";
 import { JoseError } from "./errors.ts";
 import {
+  type JweFlattenedJson,
+  type JweGeneralJson,
+  parseJwe,
+} from "./serialization.ts";
+import {
   extractPrivateKeyBytesFromJwk,
   extractPublicKeyBytesFromJwk,
 } from "./jwk.ts";
@@ -15,17 +20,20 @@ const te = new TextEncoder();
 export interface JoseEncrypt0Options {
   /** HPKE info parameter. Defaults to empty. */
   info?: Uint8Array;
-  /** Pre-shared key for PSK mode. */
-  psk?: { id: string; key: Uint8Array };
+  /**
+   * Pre-shared key for PSK mode. `id` is the HPKE psk_id; it is carried in the
+   * "psk_id" header parameter as BASE64URL(id).
+   */
+  psk?: { id: Uint8Array; key: Uint8Array };
   /** Key identifier to include in the protected header. */
   kid?: string;
 }
 
 /**
- * JWE Integrated Encryption using HPKE (Compact Serialization).
+ * JWE Integrated Encryption using HPKE.
  *
- * Implements draft-ietf-jose-hpke-encrypt-16 Section 3
- * (Direct Key Agreement).
+ * Implements draft-ietf-jose-hpke-encrypt-22 Section 5. seal() produces the
+ * Compact Serialization; open() accepts all JWE serializations.
  */
 export interface JoseEncrypt0 {
   /** The underlying HPKE CipherSuite. */
@@ -43,11 +51,12 @@ export interface JoseEncrypt0 {
   ): Promise<string>;
 
   /**
-   * Decrypt a JWE Compact Serialization string.
+   * Decrypt a JWE in the Compact, Flattened JSON or General JSON Serialization.
+   * The JWE AAD, if any, is taken from the "aad" member.
    */
   open(
     recipientKey: CryptoKeyPair | CryptoKey,
-    jwe: string,
+    jwe: string | JweFlattenedJson | JweGeneralJson,
     options?: JoseEncrypt0Options,
   ): Promise<Uint8Array>;
 
@@ -95,10 +104,7 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
       info,
     };
     if (options?.psk) {
-      senderParams.psk = {
-        id: te.encode(options.psk.id),
-        key: options.psk.key,
-      };
+      senderParams.psk = options.psk;
     }
 
     const ctx = await this._suite.createSenderContext(senderParams);
@@ -110,7 +116,7 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
       header.kid = options.kid;
     }
     if (options?.psk) {
-      header.psk_id = options.psk.id;
+      header.psk_id = encodeBase64Url(options.psk.id);
     }
     const encodedProtectedHeader = encodeBase64Url(
       te.encode(JSON.stringify(header)),
@@ -129,37 +135,22 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
 
   async open(
     recipientKey: CryptoKeyPair | CryptoKey,
-    jwe: string,
+    jwe: string | JweFlattenedJson | JweGeneralJson,
     options?: JoseEncrypt0Options,
   ): Promise<Uint8Array> {
     const info = options?.info ?? EMPTY;
 
-    // Parse compact JWE: header.encryptedKey.iv.ciphertext.tag
-    const parts = jwe.split(".");
-    if (parts.length !== 5) {
-      throw new JoseError("Invalid JWE Compact Serialization");
-    }
-
-    const [encodedProtectedHeader, encodedEncryptedKey, , encodedCiphertext] =
-      parts;
-
-    if (!encodedProtectedHeader || !encodedEncryptedKey || !encodedCiphertext) {
-      throw new JoseError("Invalid JWE Compact Serialization");
-    }
-
-    // Decode and validate protected header
-    let header: Record<string, unknown>;
-    try {
-      header = JSON.parse(
-        new TextDecoder().decode(decodeBase64Url(encodedProtectedHeader)),
+    const parsed = parseJwe(jwe);
+    if (parsed.recipients.length !== 1) {
+      throw new JoseError(
+        "Integrated Encryption requires exactly one recipient",
       );
-    } catch {
-      throw new JoseError("Invalid protected header");
     }
+    const { joseHeader: header, encryptedKey } = parsed.recipients[0];
 
-    // Validate algorithm
-    const algValue = header.alg as string | undefined;
-    if (algValue !== undefined && algValue !== this._alg) {
+    // "alg" MUST be in the protected header for Integrated Encryption
+    const algValue = parsed.protectedHeader.alg;
+    if (algValue !== this._alg) {
       throw new JoseError(
         `Algorithm mismatch: expected ${this._alg}, got ${algValue}`,
       );
@@ -172,15 +163,33 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
       );
     }
 
+    // "ek" MUST NOT be present for Integrated Encryption
+    if ("ek" in header) {
+      throw new JoseError(
+        "ek parameter must not be present for Integrated Encryption",
+      );
+    }
+
+    // The JWE IV and Authentication Tag MUST be empty
+    if (parsed.iv || parsed.tag) {
+      throw new JoseError(
+        "iv and tag must be empty for Integrated Encryption",
+      );
+    }
+
+    if (!encryptedKey || !parsed.ciphertext) {
+      throw new JoseError("Missing encrypted key or ciphertext");
+    }
+
     // PSK consistency validation
     if (options?.psk) {
-      const storedPskId = header.psk_id as string | undefined;
+      const storedPskId = parsed.protectedHeader.psk_id;
       if (storedPskId === undefined) {
         throw new JoseError(
           "Missing psk_id in protected header for PSK mode",
         );
       }
-      if (storedPskId !== options.psk.id) {
+      if (storedPskId !== encodeBase64Url(options.psk.id)) {
         throw new JoseError("psk_id mismatch");
       }
     } else {
@@ -191,11 +200,8 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
       }
     }
 
-    const encBytes = decodeBase64Url(encodedEncryptedKey);
-    const ciphertext = decodeBase64Url(encodedCiphertext);
-
-    // AAD = ASCII(Encoded Protected Header)
-    const aad = te.encode(encodedProtectedHeader);
+    const encBytes = decodeBase64Url(encryptedKey);
+    const ciphertext = decodeBase64Url(parsed.ciphertext);
 
     const privateKey = "privateKey" in recipientKey
       ? (recipientKey as CryptoKeyPair).privateKey
@@ -209,14 +215,11 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
       info,
     };
     if (options?.psk) {
-      recipientParams.psk = {
-        id: te.encode(options.psk.id),
-        key: options.psk.key,
-      };
+      recipientParams.psk = options.psk;
     }
 
     const ctx = await this._suite.createRecipientContext(recipientParams);
-    return new Uint8Array(await ctx.open(ciphertext, aad));
+    return new Uint8Array(await ctx.open(ciphertext, parsed.additionalData));
   }
 
   async importPublicJwk(jwk: JsonWebKey): Promise<CryptoKey> {

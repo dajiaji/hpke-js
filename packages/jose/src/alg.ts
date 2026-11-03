@@ -1,10 +1,11 @@
 import { JoseError } from "./errors.ts";
 
 /**
- * JOSE HPKE algorithm identifiers from draft-ietf-jose-hpke-encrypt-16.
+ * JOSE HPKE algorithm identifiers from draft-ietf-jose-hpke-encrypt-22.
  *
  * Integrated Encryption: "HPKE-0" through "HPKE-7".
- * Key Encryption: "HPKE-0-KE" through "HPKE-7-KE".
+ * Key Encryption: "HPKE-0-KE" through "HPKE-7-KE", except "HPKE-4-KE" and
+ * "HPKE-6-KE", which the draft does not define.
  */
 export const JoseHpkeAlg = {
   /** DHKEM(P-256), HKDF-SHA256, AES-128-GCM */
@@ -31,12 +32,8 @@ export const JoseHpkeAlg = {
   HPKE_2_KE: "HPKE-2-KE",
   /** Key Encryption: DHKEM(X25519), HKDF-SHA256, AES-128-GCM */
   HPKE_3_KE: "HPKE-3-KE",
-  /** Key Encryption: DHKEM(X25519), HKDF-SHA256, ChaCha20Poly1305 */
-  HPKE_4_KE: "HPKE-4-KE",
   /** Key Encryption: DHKEM(X448), HKDF-SHA512, AES-256-GCM */
   HPKE_5_KE: "HPKE-5-KE",
-  /** Key Encryption: DHKEM(X448), HKDF-SHA512, ChaCha20Poly1305 */
-  HPKE_6_KE: "HPKE-6-KE",
   /** Key Encryption: DHKEM(P-256), HKDF-SHA256, AES-256-GCM */
   HPKE_7_KE: "HPKE-7-KE",
 } as const;
@@ -78,9 +75,7 @@ const KEY_ENCRYPTION_ALGS: ReadonlySet<string> = new Set([
   "HPKE-1-KE",
   "HPKE-2-KE",
   "HPKE-3-KE",
-  "HPKE-4-KE",
   "HPKE-5-KE",
-  "HPKE-6-KE",
   "HPKE-7-KE",
 ]);
 const INTEGRATED_ENCRYPTION_ALGS: ReadonlySet<string> = new Set([

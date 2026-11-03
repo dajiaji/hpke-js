@@ -21,12 +21,10 @@ export function getExpectedJwkParams(
     case "HPKE-3":
     case "HPKE-3-KE":
     case "HPKE-4":
-    case "HPKE-4-KE":
       return { kty: "OKP", crv: "X25519" };
     case "HPKE-5":
     case "HPKE-5-KE":
     case "HPKE-6":
-    case "HPKE-6-KE":
       return { kty: "OKP", crv: "X448" };
     default:
       throw new JoseError(`Unknown algorithm: ${alg}`);
