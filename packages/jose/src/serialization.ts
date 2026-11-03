@@ -92,7 +92,7 @@ function buildJoseHeader(
       throw new JoseError("Invalid JOSE Header");
     }
     for (const [name, value] of Object.entries(part)) {
-      if (Object.hasOwn(joseHeader, name)) {
+      if (Object.prototype.hasOwnProperty.call(joseHeader, name)) {
         throw new JoseError(`Duplicate Header Parameter: ${name}`);
       }
       joseHeader[name] = value;
