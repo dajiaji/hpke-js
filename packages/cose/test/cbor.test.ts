@@ -3,7 +3,7 @@ import { describe, it } from "@std/testing/bdd";
 
 import { encode } from "../src/cbor/encoder.ts";
 import { decode } from "../src/cbor/decoder.ts";
-import type { CborValue } from "../src/cbor/types.ts";
+import { CborTag, type CborValue } from "../src/cbor/types.ts";
 
 function hex(s: string): Uint8Array {
   const bytes = new Uint8Array(s.length / 2);
@@ -59,17 +59,21 @@ const APPENDIX_A_SUPPORTED: [string, CborValue][] = [
   ],
 ];
 
-// RFC 8949 Appendix A: tagged data items. Tags are skipped on decoding.
+// RFC 8949 Appendix A: tagged data items. Tags are kept on decoding so that
+// callers can validate them.
 const APPENDIX_A_TAGGED: [string, CborValue][] = [
-  ["c074323031332d30332d32315432303a30343a30305a", "2013-03-21T20:04:00Z"],
-  ["c11a514b67b0", 1363896240],
-  ["c249010000000000000000", hex("010000000000000000")],
-  ["c349010000000000000000", hex("010000000000000000")],
-  ["d74401020304", new Uint8Array([1, 2, 3, 4])],
-  ["d818456449455446", hex("6449455446")],
+  [
+    "c074323031332d30332d32315432303a30343a30305a",
+    new CborTag(0, "2013-03-21T20:04:00Z"),
+  ],
+  ["c11a514b67b0", new CborTag(1, 1363896240)],
+  ["c249010000000000000000", new CborTag(2, hex("010000000000000000"))],
+  ["c349010000000000000000", new CborTag(3, hex("010000000000000000"))],
+  ["d74401020304", new CborTag(23, new Uint8Array([1, 2, 3, 4]))],
+  ["d818456449455446", new CborTag(24, hex("6449455446"))],
   [
     "d82076687474703a2f2f7777772e6578616d706c652e636f6d",
-    "http://www.example.com",
+    new CborTag(32, "http://www.example.com"),
   ],
 ];
 
@@ -323,8 +327,9 @@ describe("CBOR", () => {
     }
 
     for (const [encoded, value] of APPENDIX_A_TAGGED) {
-      it(`should skip the tag of ${encoded}`, () => {
+      it(`should decode and encode the tagged item ${encoded}`, () => {
         assertEquals(decode(hex(encoded)), value);
+        assertEquals(encode(value), hex(encoded));
       });
     }
 
@@ -408,6 +413,15 @@ describe("CBOR", () => {
         Error,
         "CBOR: nesting too deep",
       );
+    });
+
+    it("should keep tags nested inside arrays and maps", () => {
+      // [16(h'01'), {1: 96(2)}]
+      const value = decode(hex("82d04101a101d86002"));
+      assertEquals(value, [
+        new CborTag(16, new Uint8Array([1])),
+        new Map([[1, new CborTag(96, 2)]]),
+      ]);
     });
 
     it("should limit the nesting depth of tags", () => {

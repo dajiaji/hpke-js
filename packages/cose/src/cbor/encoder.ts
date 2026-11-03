@@ -1,4 +1,4 @@
-import type { CborValue } from "./types.ts";
+import { CborTag, type CborValue } from "./types.ts";
 
 function encodeHead(major: number, value: number): Uint8Array {
   const mt = major << 5;
@@ -65,6 +65,11 @@ function encodeValue(value: CborValue): Uint8Array[] {
     return parts;
   }
 
+  if (value instanceof CborTag) {
+    // major 6: tag number followed by the tag content
+    return [encodeHead(6, value.tag), ...encodeValue(value.value)];
+  }
+
   if (value instanceof Map) {
     // COSE deterministic encoding: sort by encoded key bytes (lexicographic)
     const entries: { keyBytes: Uint8Array; valParts: Uint8Array[] }[] = [];
@@ -119,5 +124,5 @@ export function encode(value: CborValue): Uint8Array {
 
 /** Encode a CborValue wrapped in a CBOR tag (major type 6). */
 export function encodeTagged(tag: number, value: CborValue): Uint8Array {
-  return concat([encodeHead(6, tag), ...encodeValue(value)]);
+  return encode(new CborTag(tag, value));
 }
