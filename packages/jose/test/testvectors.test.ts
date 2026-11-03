@@ -19,20 +19,20 @@ import { describe, it } from "@std/testing/bdd";
 import type { JoseEncrypt, JoseEncrypt0, JweJson } from "../mod.ts";
 import {
   type ContentEncAlg,
-  createHpke0,
-  createHpke0Ke,
-  createHpke1,
-  createHpke1Ke,
-  createHpke2,
-  createHpke2Ke,
-  createHpke3,
-  createHpke3Ke,
-  createHpke4,
-  createHpke5,
-  createHpke5Ke,
-  createHpke6,
-  createHpke7,
-  createHpke7Ke,
+  createJoseHpke0,
+  createJoseHpke0Ke,
+  createJoseHpke1,
+  createJoseHpke1Ke,
+  createJoseHpke2,
+  createJoseHpke2Ke,
+  createJoseHpke3,
+  createJoseHpke3Ke,
+  createJoseHpke4,
+  createJoseHpke5,
+  createJoseHpke5Ke,
+  createJoseHpke6,
+  createJoseHpke7,
+  createJoseHpke7Ke,
 } from "../mod.ts";
 import { buildRecipientStructure } from "../src/structures.ts";
 import { decodeBase64Url } from "../src/utils.ts";
@@ -59,23 +59,23 @@ const allVectors: Vector[] = JSON.parse(
 const vectors = allVectors.filter((v) => !REMOVED_FROM_DRAFT.has(v.alg));
 
 const INTEGRATED: Record<string, () => JoseEncrypt0> = {
-  "HPKE-0": createHpke0,
-  "HPKE-1": createHpke1,
-  "HPKE-2": createHpke2,
-  "HPKE-3": createHpke3,
-  "HPKE-4": createHpke4,
-  "HPKE-5": createHpke5,
-  "HPKE-6": createHpke6,
-  "HPKE-7": createHpke7,
+  "HPKE-0": createJoseHpke0,
+  "HPKE-1": createJoseHpke1,
+  "HPKE-2": createJoseHpke2,
+  "HPKE-3": createJoseHpke3,
+  "HPKE-4": createJoseHpke4,
+  "HPKE-5": createJoseHpke5,
+  "HPKE-6": createJoseHpke6,
+  "HPKE-7": createJoseHpke7,
 };
 
 const KEY_ENCRYPTION: Record<string, (enc: ContentEncAlg) => JoseEncrypt> = {
-  "HPKE-0-KE": createHpke0Ke,
-  "HPKE-1-KE": createHpke1Ke,
-  "HPKE-2-KE": createHpke2Ke,
-  "HPKE-3-KE": createHpke3Ke,
-  "HPKE-5-KE": createHpke5Ke,
-  "HPKE-7-KE": createHpke7Ke,
+  "HPKE-0-KE": createJoseHpke0Ke,
+  "HPKE-1-KE": createJoseHpke1Ke,
+  "HPKE-2-KE": createJoseHpke2Ke,
+  "HPKE-3-KE": createJoseHpke3Ke,
+  "HPKE-5-KE": createJoseHpke5Ke,
+  "HPKE-7-KE": createJoseHpke7Ke,
 };
 
 const EXPECTED_PLAINTEXT =
@@ -198,7 +198,7 @@ describe("General JSON example from draft-ietf-jose-hpke-encrypt-16", () => {
   };
 
   it("should decrypt using JoseEncrypt.open()", async () => {
-    const enc = createHpke0Ke("A128GCM");
+    const enc = createJoseHpke0Ke("A128GCM");
     const pt = await enc.open(await enc.importPrivateJwk(jwk), jwe);
     assertEquals(
       td.decode(pt),

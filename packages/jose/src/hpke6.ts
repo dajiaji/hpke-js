@@ -7,7 +7,7 @@ import type { JoseEncrypt0 } from "./encrypt0.ts";
 import { JoseEncrypt0Impl } from "./encrypt0.ts";
 
 /** DHKEM(X448), HKDF-SHA512, ChaCha20Poly1305 — Integrated Encryption. */
-export function createHpke6(): JoseEncrypt0 {
+export function createJoseHpke6(): JoseEncrypt0 {
   const suite = new CipherSuite({
     kem: new DhkemX448HkdfSha512(),
     kdf: new HkdfSha512(),
