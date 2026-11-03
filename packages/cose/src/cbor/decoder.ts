@@ -1,4 +1,4 @@
-import type { CborValue } from "./types.ts";
+import { CborTag, type CborValue } from "./types.ts";
 
 /** Maximum nesting depth of data items. COSE structures stay far below this. */
 const MAX_NESTING_DEPTH = 32;
@@ -49,9 +49,10 @@ class Decoder {
         return this._readArray(this._readUint(additional));
       case 5: // map
         return this._readMap(this._readUint(additional));
-      case 6: // tag (skip tag number, return inner value)
-        this._readUint(additional);
-        return this.decode();
+      case 6: { // tag: keep the tag number so callers can validate it
+        const tag = this._readUint(additional);
+        return new CborTag(tag, this.decode());
+      }
       case 7: // simple/float
         if (additional === 22) {
           return null;

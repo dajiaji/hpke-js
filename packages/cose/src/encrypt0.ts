@@ -6,7 +6,12 @@ import type { CborValue } from "./cbor/types.ts";
 import type { CoseHpkeAlg } from "./alg.ts";
 import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
 import { CoseError } from "./errors.ts";
-import { buildEncStructure, HeaderLabel } from "./structures.ts";
+import {
+  buildEncStructure,
+  CoseTag,
+  HeaderLabel,
+  untagCoseMessage,
+} from "./structures.ts";
 
 const EMPTY = new Uint8Array(0);
 
@@ -129,7 +134,7 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
       ciphertext,
     ];
     if (options?.tagged) {
-      return encodeTagged(16, coseEncrypt0);
+      return encodeTagged(CoseTag.ENCRYPT0, coseEncrypt0);
     }
     return encode(coseEncrypt0);
   }
@@ -147,7 +152,7 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
       null,
     ];
     const message = options?.tagged
-      ? encodeTagged(16, coseEncrypt0)
+      ? encodeTagged(CoseTag.ENCRYPT0, coseEncrypt0)
       : encode(coseEncrypt0);
     return { message, payload: ciphertext };
   }
@@ -213,7 +218,11 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
     const externalAad = options?.externalAad ?? EMPTY;
     const info = options?.info ?? EMPTY;
 
-    const decoded = decode(data);
+    const decoded = untagCoseMessage(
+      decode(data),
+      CoseTag.ENCRYPT0,
+      "COSE_Encrypt0",
+    );
     if (!Array.isArray(decoded) || decoded.length !== 3) {
       throw new CoseError("Invalid COSE_Encrypt0 structure");
     }

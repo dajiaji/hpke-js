@@ -13,7 +13,9 @@ import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
 import {
   buildEncStructureEncrypt,
   buildRecipientStructure,
+  CoseTag,
   HeaderLabel,
+  untagCoseMessage,
 } from "./structures.ts";
 
 const EMPTY = new Uint8Array(0);
@@ -202,7 +204,7 @@ export class CoseEncryptImpl implements CoseEncrypt {
       inner.recipientEntries,
     ];
     if (options?.tagged) {
-      return encodeTagged(96, coseEncrypt);
+      return encodeTagged(CoseTag.ENCRYPT, coseEncrypt);
     }
     return encode(coseEncrypt);
   }
@@ -220,7 +222,7 @@ export class CoseEncryptImpl implements CoseEncrypt {
       inner.recipientEntries,
     ];
     const message = options?.tagged
-      ? encodeTagged(96, coseEncrypt)
+      ? encodeTagged(CoseTag.ENCRYPT, coseEncrypt)
       : encode(coseEncrypt);
     return { message, payload: inner.ciphertext };
   }
@@ -283,7 +285,11 @@ export class CoseEncryptImpl implements CoseEncrypt {
     const extraInfo = options?.extraInfo ?? EMPTY;
     const hpkeAad = options?.aad ?? EMPTY;
 
-    const decoded = decode(data);
+    const decoded = untagCoseMessage(
+      decode(data),
+      CoseTag.ENCRYPT,
+      "COSE_Encrypt",
+    );
     if (!Array.isArray(decoded) || decoded.length !== 4) {
       throw new CoseError("Invalid COSE_Encrypt structure");
     }

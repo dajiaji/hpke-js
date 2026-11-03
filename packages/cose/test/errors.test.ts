@@ -12,7 +12,7 @@ import {
 } from "../mod.ts";
 import { encode, encodeTagged } from "../src/cbor/encoder.ts";
 import { decode } from "../src/cbor/decoder.ts";
-import type { CborValue } from "../src/cbor/types.ts";
+import { CborTag, type CborValue } from "../src/cbor/types.ts";
 import {
   buildOkpCoseKey,
   CoseCrv,
@@ -225,10 +225,10 @@ describe("Tagged COSE structures", () => {
     const plaintext = new TextEncoder().encode("tagged encrypt0");
     const ct = await enc0.seal(rkp.publicKey, plaintext, { tagged: true });
 
-    // Verify it starts with tag
+    // The decoder keeps the tag; its content is the COSE_Encrypt0 array.
     const decoded = decode(ct);
-    // After tag is stripped by decoder, should be an array
-    assertEquals(Array.isArray(decoded), true);
+    assertEquals(decoded instanceof CborTag && decoded.tag, 16);
+    assertEquals(Array.isArray((decoded as CborTag).value), true);
 
     const pt = await enc0.open(rkp, ct);
     assertEquals(pt, plaintext);
@@ -263,6 +263,93 @@ describe("Tagged COSE structures", () => {
 
     const pt = await enc0.open(rkp, tagged);
     assertEquals(pt, plaintext);
+  });
+});
+
+describe("CBOR tag validation", () => {
+  async function sealEncrypt0() {
+    const enc0 = createHpke3();
+    const rkp = await enc0.suite.kem.generateKeyPair();
+    const ct = await enc0.seal(rkp.publicKey, new TextEncoder().encode("x"));
+    return { enc0, rkp, msg: decode(ct) as CborValue[] };
+  }
+
+  async function sealEncrypt() {
+    const enc = createHpke3Ke(new Aes128Gcm());
+    const rkp = await enc.generateKemKeyPair();
+    const ct = await enc.seal(
+      [{ recipientPublicKey: rkp.publicKey }],
+      new TextEncoder().encode("x"),
+    );
+    return { enc, rkp, msg: decode(ct) as CborValue[] };
+  }
+
+  it("Encrypt0: should reject the COSE_Encrypt tag (96)", async () => {
+    const { enc0, rkp, msg } = await sealEncrypt0();
+    await assertRejects(
+      () => enc0.open(rkp, encodeTagged(96, msg)),
+      CoseError,
+      "Unexpected CBOR tag 96 for COSE_Encrypt0 (expected 16)",
+    );
+  });
+
+  it("Encrypt: should reject the COSE_Encrypt0 tag (16)", async () => {
+    const { enc, rkp, msg } = await sealEncrypt();
+    await assertRejects(
+      () => enc.open(rkp, encodeTagged(16, msg)),
+      CoseError,
+      "Unexpected CBOR tag 16 for COSE_Encrypt (expected 96)",
+    );
+  });
+
+  it("Encrypt0: should reject a non-COSE tag", async () => {
+    const { enc0, rkp, msg } = await sealEncrypt0();
+    await assertRejects(
+      () => enc0.open(rkp, encodeTagged(61, msg)),
+      CoseError,
+      "Unexpected CBOR tag 61 for COSE_Encrypt0 (expected 16)",
+    );
+  });
+
+  it("Encrypt0: should reject a doubly tagged message", async () => {
+    const { enc0, rkp, msg } = await sealEncrypt0();
+    await assertRejects(
+      () => enc0.open(rkp, encode(new CborTag(16, new CborTag(16, msg)))),
+      CoseError,
+      "Invalid COSE_Encrypt0 structure",
+    );
+  });
+
+  it("Encrypt0: should reject a tagged ek", async () => {
+    const { enc0, rkp, msg } = await sealEncrypt0();
+    const unprotected = msg[1] as Map<CborValue, CborValue>;
+    unprotected.set(-4, new CborTag(24, unprotected.get(-4) as Uint8Array));
+    await assertRejects(
+      () => enc0.open(rkp, encode(msg)),
+      CoseError,
+      "Missing or invalid ek in unprotected header",
+    );
+  });
+
+  it("Encrypt: should reject a tagged IV", async () => {
+    const { enc, rkp, msg } = await sealEncrypt();
+    const unprotected = msg[1] as Map<CborValue, CborValue>;
+    unprotected.set(5, new CborTag(24, unprotected.get(5) as Uint8Array));
+    await assertRejects(
+      () => enc.open(rkp, encode(msg)),
+      CoseError,
+      "Missing or invalid IV in unprotected header",
+    );
+  });
+
+  it("should accept tagged values in unrecognized header parameters", async () => {
+    const { enc0, rkp, msg } = await sealEncrypt0();
+    // A private-use label carrying a tagged value (e.g. 1(epoch time)).
+    (msg[1] as Map<CborValue, CborValue>).set(-65537, new CborTag(1, 0));
+    assertEquals(
+      await enc0.open(rkp, encode(msg)),
+      new TextEncoder().encode("x"),
+    );
   });
 });
 

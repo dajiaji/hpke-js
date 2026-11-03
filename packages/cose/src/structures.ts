@@ -1,5 +1,37 @@
 import { encode } from "./cbor/encoder.ts";
-import type { CborValue } from "./cbor/types.ts";
+import { CborTag, type CborValue } from "./cbor/types.ts";
+import { CoseError } from "./errors.ts";
+
+/** CBOR tags for COSE messages (RFC 9052 Section 2). */
+export const CoseTag = {
+  ENCRYPT0: 16,
+  ENCRYPT: 96,
+} as const;
+
+/**
+ * Remove the optional COSE message tag from a decoded message.
+ *
+ * Per RFC 9052 Section 2, a COSE message is either untagged or carries the
+ * tag of its own message type. Any other tag (including the tag of a
+ * different COSE message type) is rejected rather than silently ignored.
+ *
+ * @throws {CoseError} if the value carries a tag other than expectedTag.
+ */
+export function untagCoseMessage(
+  value: CborValue,
+  expectedTag: number,
+  name: string,
+): CborValue {
+  if (!(value instanceof CborTag)) {
+    return value;
+  }
+  if (value.tag !== expectedTag) {
+    throw new CoseError(
+      `Unexpected CBOR tag ${value.tag} for ${name} (expected ${expectedTag})`,
+    );
+  }
+  return value.value;
+}
 
 /** COSE header label constants. */
 export const HeaderLabel = {
