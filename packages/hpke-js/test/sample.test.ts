@@ -249,10 +249,6 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemP521HkdfSha512/HkdfSha512/Aes128Gcm", () => {
     it("should work normally with ids", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemP521HkdfSha512,
@@ -284,10 +280,6 @@ describe("README examples", () => {
     });
 
     it("should work normally with instances", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: new DhkemP521HkdfSha512(),
@@ -319,10 +311,6 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: KemId.DhkemP521HkdfSha512,
@@ -1157,9 +1145,6 @@ describe("README examples", () => {
 
   describe("Oblivious HTTP with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
       const te = new TextEncoder();
       const cryptoApi = await loadCrypto();
 

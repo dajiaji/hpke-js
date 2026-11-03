@@ -94,13 +94,11 @@ const ALGS: Record<string, AlgConfig> = {
   },
 };
 
-// Algorithms skipped on Deno (P-521 not supported in Deno's WebCrypto)
-const DENO_SKIP_ALGS = new Set(["HPKE-2"]);
-
 // Non-PSK KE vectors skipped on Deno: they use a 32-byte AES-GCM IV, which
 // Deno's WebCrypto rejects (RFC 9053 fixes the AES-GCM nonce at 96 bits).
 const DENO_SKIP_KE_ALGS = new Set([
   "HPKE-1-KE",
+  "HPKE-2-KE",
   "HPKE-5-KE",
   "HPKE-6-KE",
   "HPKE-7-KE",
@@ -274,7 +272,6 @@ describe("Test vectors (non-PSK)", () => {
     const baseAlgName = section.algName.replace("-KE", "");
     const config = ALGS[baseAlgName];
     if (!config) continue;
-    if (isDeno() && DENO_SKIP_ALGS.has(baseAlgName)) continue;
     if (isDeno() && DENO_SKIP_KE_ALGS.has(section.algName)) continue;
 
     const contentAlg = KE_CONTENT_ALG[section.algName];
@@ -316,7 +313,6 @@ describe("Test vectors (non-PSK)", () => {
   for (const section of e0Sections) {
     const config = ALGS[section.algName];
     if (!config) continue;
-    if (isDeno() && DENO_SKIP_ALGS.has(section.algName)) continue;
 
     describe(`Encrypt0: ${section.algName}`, () => {
       for (const tv of section.vectors) {
@@ -352,7 +348,6 @@ describe("Test vectors (PSK)", () => {
     const baseAlgName = section.algName.replace("-KE", "");
     const config = ALGS[baseAlgName];
     if (!config) continue;
-    if (isDeno() && DENO_SKIP_ALGS.has(baseAlgName)) continue;
 
     const contentAlg = KE_CONTENT_ALG[section.algName];
     if (contentAlg === undefined) continue;
@@ -394,7 +389,6 @@ describe("Test vectors (PSK)", () => {
   for (const section of e0PskSections) {
     const config = ALGS[section.algName];
     if (!config) continue;
-    if (isDeno() && DENO_SKIP_ALGS.has(section.algName)) continue;
 
     describe(`Encrypt0+PSK: ${section.algName}`, () => {
       for (const tv of section.vectors) {

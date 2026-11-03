@@ -1,8 +1,6 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno } from "@hpke/common";
-
 import {
   CoseError,
   createHpke0,
@@ -77,8 +75,7 @@ describe("CoseEncrypt0", () => {
     });
   });
 
-  const describeP521 = isDeno() ? describe.ignore : describe;
-  describeP521("HPKE-2 (P-521, HKDF-SHA512, AES-256-GCM)", () => {
+  describe("HPKE-2 (P-521, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createHpke2();
       const rkp = await enc0.suite.kem.generateKeyPair();

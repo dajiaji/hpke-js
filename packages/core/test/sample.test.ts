@@ -191,10 +191,6 @@ describe("README examples", () => {
 
   describe("Base mode with DhkemP521HkdfSha512/HkdfSha512/Aes128Gcm", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: new DhkemP521HkdfSha512(),
@@ -226,10 +222,6 @@ describe("README examples", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: new DhkemP521HkdfSha512(),
