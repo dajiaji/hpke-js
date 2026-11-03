@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 0.1.0
+
+Released 2026-11-03
+
 - **Breaking:** Renamed the factory functions `createHpkeN()` /
   `createHpkeNKe()` to `createCoseHpkeN()` / `createCoseHpkeNKe()` so they do
   not collide with the `@hpke/jose` factories (now `createJoseHpkeN()` /

@@ -10,6 +10,6 @@
     "test": "node app.js"
   },
   "dependencies": {
-    "@hpke/cose": "^0.0.1"
+    "@hpke/cose": "^0.1.0"
   }
 }
