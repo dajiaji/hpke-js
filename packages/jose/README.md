@@ -56,9 +56,9 @@ const pt = await enc0.open(rkp, jwe);
 ### Key Encryption (JSON JWE) with A128GCM
 
 ```typescript
-import { ContentEncAlg, createJoseHpke3Ke } from "@hpke/jose";
+import { Aes128Gcm, createJoseHpke3Ke } from "@hpke/jose";
 
-const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+const enc = createJoseHpke3Ke(new Aes128Gcm());
 const rkp = await enc.generateKemKeyPair();
 
 const plaintext = new TextEncoder().encode("Hello, JOSE-HPKE KE!");
@@ -71,12 +71,25 @@ const pt = await enc.open(rkp, jwe);
 // pt === plaintext
 ```
 
+The factory selects the HPKE suite for key wrapping; its AEAD argument selects
+content encryption independently. This example uses AES-128-GCM for key wrapping
+and AES-256-GCM for content encryption:
+
+```typescript
+import { Aes256Gcm, createJoseHpke3Ke } from "@hpke/jose";
+
+const enc = createJoseHpke3Ke(new Aes256Gcm());
+```
+
+Supported content AEADs are `Aes128Gcm` and `Aes256Gcm`; other AEADs are
+rejected when constructing the instance.
+
 ### Key Encryption with Multiple Recipients
 
 ```typescript
-import { ContentEncAlg, createJoseHpke3Ke } from "@hpke/jose";
+import { Aes128Gcm, createJoseHpke3Ke } from "@hpke/jose";
 
-const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+const enc = createJoseHpke3Ke(new Aes128Gcm());
 const rkp1 = await enc.generateKemKeyPair();
 const rkp2 = await enc.generateKemKeyPair();
 

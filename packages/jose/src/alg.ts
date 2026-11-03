@@ -1,3 +1,5 @@
+import { AeadId, type AeadInterface } from "@hpke/core";
+
 import { JoseError } from "./errors.ts";
 
 /**
@@ -50,25 +52,39 @@ export const ContentEncAlg = {
 
 export type ContentEncAlg = (typeof ContentEncAlg)[keyof typeof ContentEncAlg];
 
-/** Content key sizes in bytes for each ContentEncAlg. */
-export function contentKeySize(alg: ContentEncAlg): number {
-  switch (alg) {
-    case ContentEncAlg.A128GCM:
-      return 16;
-    case ContentEncAlg.A256GCM:
-      return 32;
+/**
+ * Map an HPKE AEAD object to its supported JWE content-encryption algorithm.
+ *
+ * @throws {JoseError} if the AEAD has no supported JWE equivalent.
+ */
+export function contentEncAlgFromAead(aead: AeadInterface): ContentEncAlg {
+  let alg: ContentEncAlg;
+  let keySize: number;
+  switch (aead.id) {
+    case AeadId.Aes128Gcm:
+      alg = ContentEncAlg.A128GCM;
+      keySize = 16;
+      break;
+    case AeadId.Aes256Gcm:
+      alg = ContentEncAlg.A256GCM;
+      keySize = 32;
+      break;
     default:
-      throw new JoseError(`Unsupported content encryption algorithm: ${alg}`);
+      throw new JoseError(
+        `Unsupported content encryption AEAD: id=0x${
+          aead.id.toString(16).padStart(4, "0")
+        }`,
+      );
   }
+  if (
+    aead.keySize !== keySize || aead.nonceSize !== 12 || aead.tagSize !== 16
+  ) {
+    throw new JoseError(
+      `Invalid content encryption AEAD parameters for ${alg}: expected keySize=${keySize}, nonceSize=12, tagSize=16`,
+    );
+  }
+  return alg;
 }
-
-/** Content nonce sizes in bytes. AES-GCM uses 12-byte nonces. */
-export function contentNonceSize(_alg: ContentEncAlg): number {
-  return 12;
-}
-
-/** AES-GCM authentication tag size in bytes. */
-export const AES_GCM_TAG_SIZE = 16;
 
 const KEY_ENCRYPTION_ALGS: ReadonlySet<string> = new Set([
   "HPKE-0-KE",

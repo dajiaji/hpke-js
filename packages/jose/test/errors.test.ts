@@ -2,7 +2,7 @@ import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import {
-  ContentEncAlg,
+  Aes128Gcm,
   createJoseHpke0,
   createJoseHpke3,
   createJoseHpke3Ke,
@@ -250,7 +250,7 @@ describe("Integrated Encryption JSON Serialization errors", () => {
 
 describe("Key Encryption errors", () => {
   it("should reject a missing iv or tag", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -271,7 +271,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject a missing or mismatched enc", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
     for (const header of [{}, { enc: "A256GCM" }]) {
       await assertRejects(
@@ -290,7 +290,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should not match a recipient without alg", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -309,7 +309,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject the same Header Parameter in two header parts", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -330,7 +330,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject empty recipients", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     await assertRejects(
       async () => {
         await enc.seal([], new Uint8Array([1, 2, 3]));
@@ -341,7 +341,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject missing protected header", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     await assertRejects(
@@ -360,7 +360,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject missing recipients array", async () => {
-    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const header = btoa(JSON.stringify({ enc: "A128GCM" }))
@@ -424,7 +424,7 @@ describe('Empty "aad" member', () => {
 
   describe("Key Encryption", () => {
     it("should not authenticate a JWE that had no JWE AAD", async () => {
-      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
       const jwe = await enc.seal(
         [{ recipientPublicKey: rkp.publicKey }],
@@ -436,7 +436,7 @@ describe('Empty "aad" member', () => {
     });
 
     it("should omit the member when seal() is given an empty aad", async () => {
-      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
       const jwe = await enc.seal(
         [{ recipientPublicKey: rkp.publicKey }],
@@ -449,7 +449,7 @@ describe('Empty "aad" member', () => {
     });
 
     it("should use a trailing '.' in the AAD", async () => {
-      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
       const encodedHeader = encodeHeader({ enc: "A128GCM" });
 

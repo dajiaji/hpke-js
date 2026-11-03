@@ -1,3 +1,7 @@
+// Content encryption AEADs for the Key Encryption factories.
+export type { AeadInterface } from "@hpke/core";
+export { Aes128Gcm, Aes256Gcm } from "@hpke/core";
+
 export { ContentEncAlg, JoseHpkeAlg } from "./src/alg.ts";
 export type { JoseEncrypt0, JoseEncrypt0Options } from "./src/encrypt0.ts";
 export type { JoseEncrypt } from "./src/encrypt.ts";

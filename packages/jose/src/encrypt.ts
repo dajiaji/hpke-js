@@ -1,16 +1,13 @@
-import type { CipherSuite } from "@hpke/core";
+import type { AeadInterface, CipherSuite } from "@hpke/core";
 
 import {
-  AES_GCM_TAG_SIZE,
   type ContentEncAlg,
-  contentKeySize,
-  contentNonceSize,
+  contentEncAlgFromAead,
   isKeyEncryption,
   type JoseHpkeAlg,
 } from "./alg.ts";
 import { decodeBase64Url, encodeBase64Url } from "./utils.ts";
-import type { ContentCrypto } from "./contentAesGcm.ts";
-import { JoseError } from "./errors.ts";
+import { JoseError, withJoseError } from "./errors.ts";
 import {
   extractPrivateKeyBytesFromJwk,
   extractPublicKeyBytesFromJwk,
@@ -107,13 +104,12 @@ export class JoseEncryptImpl implements JoseEncrypt {
   private _suite: CipherSuite;
   private _alg: JoseHpkeAlg;
   private _contentEncAlg: ContentEncAlg;
-  private _contentCrypto: ContentCrypto;
+  private _contentAead: AeadInterface;
 
   constructor(
     suite: CipherSuite,
     alg: JoseHpkeAlg,
-    contentEncAlg: ContentEncAlg,
-    contentCrypto: ContentCrypto,
+    contentAead: AeadInterface,
   ) {
     if (!isKeyEncryption(alg)) {
       throw new JoseError(
@@ -122,8 +118,8 @@ export class JoseEncryptImpl implements JoseEncrypt {
     }
     this._suite = suite;
     this._alg = alg;
-    this._contentEncAlg = contentEncAlg;
-    this._contentCrypto = contentCrypto;
+    this._contentEncAlg = contentEncAlgFromAead(contentAead);
+    this._contentAead = contentAead;
   }
 
   get suite(): CipherSuite {
@@ -143,61 +139,69 @@ export class JoseEncryptImpl implements JoseEncrypt {
       throw new JoseError("At least one recipient is required");
     }
 
-    const keySize = contentKeySize(this._contentEncAlg);
-    const nonceSize = contentNonceSize(this._contentEncAlg);
+    const keySize = this._contentAead.keySize;
+    const nonceSize = this._contentAead.nonceSize;
 
     const cek = crypto.getRandomValues(new Uint8Array(keySize));
-    const nonce = crypto.getRandomValues(new Uint8Array(nonceSize));
+    try {
+      return await withJoseError("Encryption failed", async () => {
+        const nonce = crypto.getRandomValues(new Uint8Array(nonceSize));
 
-    // Build protected header: { "enc": "A128GCM" }
-    const protectedHeaderObj: Record<string, unknown> = {
-      enc: this._contentEncAlg,
-    };
-    const encodedProtectedHeader = encodeBase64Url(
-      te.encode(JSON.stringify(protectedHeaderObj)),
-    );
+        // Build protected header: { "enc": "A128GCM" }
+        const protectedHeaderObj: Record<string, unknown> = {
+          enc: this._contentEncAlg,
+        };
+        const encodedProtectedHeader = encodeBase64Url(
+          te.encode(JSON.stringify(protectedHeaderObj)),
+        );
 
-    // Content AAD = ASCII(EPH) or ASCII(EPH || '.' || BASE64URL(JWE AAD))
-    let contentAad: string;
-    let jweAad: string | undefined;
-    if (options?.aad && options.aad.length > 0) {
-      jweAad = encodeBase64Url(options.aad);
-      contentAad = `${encodedProtectedHeader}.${jweAad}`;
-    } else {
-      contentAad = encodedProtectedHeader;
+        // Content AAD = ASCII(EPH) or ASCII(EPH || '.' || BASE64URL(JWE AAD))
+        let contentAad: string;
+        let jweAad: string | undefined;
+        if (options?.aad && options.aad.length > 0) {
+          jweAad = encodeBase64Url(options.aad);
+          contentAad = `${encodedProtectedHeader}.${jweAad}`;
+        } else {
+          contentAad = encodedProtectedHeader;
+        }
+        const aadBytes = te.encode(contentAad);
+
+        // Encrypt content with CEK
+        const contentCtx = this._contentAead.createEncryptionContext(cek);
+        const combined = new Uint8Array(
+          await contentCtx.seal(nonce, plaintext, aadBytes),
+        );
+
+        // Split ciphertext and tag
+        const ct = combined.slice(
+          0,
+          combined.length - this._contentAead.tagSize,
+        );
+        const tag = combined.slice(combined.length - this._contentAead.tagSize);
+
+        // Wrap CEK for each recipient
+        const recipientEntries: JweRecipientJson[] = [];
+        for (const r of recipients) {
+          const entry = await this._wrapCek(r, cek);
+          recipientEntries.push(entry);
+        }
+
+        const result: JweJson = {
+          protected: encodedProtectedHeader,
+          iv: encodeBase64Url(nonce),
+          ciphertext: encodeBase64Url(ct),
+          tag: encodeBase64Url(tag),
+          recipients: recipientEntries,
+        };
+        if (jweAad) {
+          result.aad = jweAad;
+        }
+        return result;
+      });
+    } finally {
+      // Best effort: crypto contexts may retain their own key copies.
+      cek.fill(0);
     }
-    const aadBytes = te.encode(contentAad);
-
-    // Encrypt content with CEK
-    const combined = await this._contentCrypto.seal(
-      cek,
-      nonce,
-      plaintext,
-      aadBytes,
-    );
-
-    // Split ciphertext and tag
-    const ct = combined.slice(0, combined.length - AES_GCM_TAG_SIZE);
-    const tag = combined.slice(combined.length - AES_GCM_TAG_SIZE);
-
-    // Wrap CEK for each recipient
-    const recipientEntries: JweRecipientJson[] = [];
-    for (const r of recipients) {
-      const entry = await this._wrapCek(r, cek);
-      recipientEntries.push(entry);
-    }
-
-    const result: JweJson = {
-      protected: encodedProtectedHeader,
-      iv: encodeBase64Url(nonce),
-      ciphertext: encodeBase64Url(ct),
-      tag: encodeBase64Url(tag),
-      recipients: recipientEntries,
-    };
-    if (jweAad) {
-      result.aad = jweAad;
-    }
-    return result;
   }
 
   async open(
@@ -285,17 +289,27 @@ export class JoseEncryptImpl implements JoseEncrypt {
       throw new JoseError("No matching recipient found or decryption failed");
     }
 
-    // Combine ciphertext and tag for AES-GCM
-    const combined = new Uint8Array(ct.length + tag.length);
-    combined.set(ct);
-    combined.set(tag, ct.length);
+    try {
+      if (cek.length !== this._contentAead.keySize) {
+        throw new JoseError(
+          `Invalid CEK length: expected ${this._contentAead.keySize}, got ${cek.length}`,
+        );
+      }
+      return await withJoseError("Content decryption failed", async () => {
+        // Combine ciphertext and tag for AES-GCM
+        const combined = new Uint8Array(ct.length + tag.length);
+        combined.set(ct);
+        combined.set(tag, ct.length);
 
-    return await this._contentCrypto.open(
-      cek,
-      nonce,
-      combined,
-      parsed.additionalData,
-    );
+        const contentCtx = this._contentAead.createEncryptionContext(cek);
+        return new Uint8Array(
+          await contentCtx.open(nonce, combined, parsed.additionalData),
+        );
+      });
+    } finally {
+      // Best effort: crypto contexts may retain their own key copies.
+      cek.fill(0);
+    }
   }
 
   private async _wrapCek(

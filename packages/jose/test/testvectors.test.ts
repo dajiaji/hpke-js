@@ -13,12 +13,14 @@
  * The draft does not state the plaintext or AAD; the values below were
  * discovered by decryption and by decoding the "aad" member.
  */
-import { assertEquals } from "@std/assert";
+import { assert, assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import type { JoseEncrypt, JoseEncrypt0, JweJson } from "../mod.ts";
 import {
-  type ContentEncAlg,
+  type AeadInterface,
+  Aes128Gcm,
+  Aes256Gcm,
   createJoseHpke0,
   createJoseHpke0Ke,
   createJoseHpke1,
@@ -69,7 +71,7 @@ const INTEGRATED: Record<string, () => JoseEncrypt0> = {
   "HPKE-7": createJoseHpke7,
 };
 
-const KEY_ENCRYPTION: Record<string, (enc: ContentEncAlg) => JoseEncrypt> = {
+const KEY_ENCRYPTION: Record<string, (aead: AeadInterface) => JoseEncrypt> = {
   "HPKE-0-KE": createJoseHpke0Ke,
   "HPKE-1-KE": createJoseHpke1Ke,
   "HPKE-2-KE": createJoseHpke2Ke,
@@ -77,6 +79,11 @@ const KEY_ENCRYPTION: Record<string, (enc: ContentEncAlg) => JoseEncrypt> = {
   "HPKE-5-KE": createJoseHpke5Ke,
   "HPKE-7-KE": createJoseHpke7Ke,
 };
+
+const CONTENT_AEADS = new Map<string, () => AeadInterface>([
+  ["A128GCM", () => new Aes128Gcm()],
+  ["A256GCM", () => new Aes256Gcm()],
+]);
 
 const EXPECTED_PLAINTEXT =
   "You can trust us to stick with you through thick and thin-to the bitter end. " +
@@ -133,18 +140,19 @@ describe("Test vectors from draft-ietf-jose-hpke-encrypt-22", () => {
           assertEquals(td.decode(pt), EXPECTED_PLAINTEXT);
         });
       } else {
-        const contentEncAlg = decodeHeader(v.flattened.protected)
-          .enc as ContentEncAlg;
+        const contentEncAlg = decodeHeader(v.flattened.protected).enc;
+        const createAead = CONTENT_AEADS.get(contentEncAlg);
+        assert(createAead, `Unsupported vector enc: ${contentEncAlg}`);
 
         it("should decrypt the Compact Serialization", async () => {
-          const enc = KEY_ENCRYPTION[v.alg](contentEncAlg);
+          const enc = KEY_ENCRYPTION[v.alg](createAead());
           const key = await enc.importPrivateJwk(v.jwk);
           const pt = await enc.open(key, v.compact);
           assertEquals(td.decode(pt), EXPECTED_PLAINTEXT);
         });
 
         it("should decrypt the Flattened JSON Serialization", async () => {
-          const enc = KEY_ENCRYPTION[v.alg](contentEncAlg);
+          const enc = KEY_ENCRYPTION[v.alg](createAead());
           const key = await enc.importPrivateJwk(v.jwk);
           const pt = await enc.open(key, v.flattened);
           assertEquals(td.decode(pt), EXPECTED_PLAINTEXT);
@@ -198,7 +206,7 @@ describe("General JSON example from draft-ietf-jose-hpke-encrypt-16", () => {
   };
 
   it("should decrypt using JoseEncrypt.open()", async () => {
-    const enc = createJoseHpke0Ke("A128GCM");
+    const enc = createJoseHpke0Ke(new Aes128Gcm());
     const pt = await enc.open(await enc.importPrivateJwk(jwk), jwe);
     assertEquals(
       td.decode(pt),
