@@ -13,7 +13,7 @@ import type { JoseEncrypt } from "./encrypt.ts";
 import { JoseEncryptImpl } from "./encrypt.ts";
 
 /** DHKEM(X25519), HKDF-SHA256, AES-128-GCM — Integrated Encryption. */
-export function createHpke3(): JoseEncrypt0 {
+export function createJoseHpke3(): JoseEncrypt0 {
   const suite = new CipherSuite({
     kem: new DhkemX25519HkdfSha256(),
     kdf: new HkdfSha256(),
@@ -23,7 +23,7 @@ export function createHpke3(): JoseEncrypt0 {
 }
 
 /** DHKEM(X25519), HKDF-SHA256, AES-128-GCM — Key Encryption. */
-export function createHpke3Ke(contentEncAlg: ContentEncAlg): JoseEncrypt {
+export function createJoseHpke3Ke(contentEncAlg: ContentEncAlg): JoseEncrypt {
   const suite = new CipherSuite({
     kem: new DhkemX25519HkdfSha256(),
     kdf: new HkdfSha256(),

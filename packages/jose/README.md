@@ -41,9 +41,9 @@ Implements
 ### Integrated Encryption (Compact JWE)
 
 ```typescript
-import { createHpke3 } from "@hpke/jose";
+import { createJoseHpke3 } from "@hpke/jose";
 
-const enc0 = createHpke3();
+const enc0 = createJoseHpke3();
 const rkp = await enc0.suite.kem.generateKeyPair();
 
 const plaintext = new TextEncoder().encode("Hello, JOSE-HPKE!");
@@ -56,9 +56,9 @@ const pt = await enc0.open(rkp, jwe);
 ### Key Encryption (JSON JWE) with A128GCM
 
 ```typescript
-import { ContentEncAlg, createHpke3Ke } from "@hpke/jose";
+import { ContentEncAlg, createJoseHpke3Ke } from "@hpke/jose";
 
-const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
 const rkp = await enc.generateKemKeyPair();
 
 const plaintext = new TextEncoder().encode("Hello, JOSE-HPKE KE!");
@@ -74,9 +74,9 @@ const pt = await enc.open(rkp, jwe);
 ### Key Encryption with Multiple Recipients
 
 ```typescript
-import { ContentEncAlg, createHpke3Ke } from "@hpke/jose";
+import { ContentEncAlg, createJoseHpke3Ke } from "@hpke/jose";
 
-const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
 const rkp1 = await enc.generateKemKeyPair();
 const rkp2 = await enc.generateKemKeyPair();
 

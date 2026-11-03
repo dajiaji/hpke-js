@@ -3,20 +3,20 @@ import { describe, it } from "@std/testing/bdd";
 
 import {
   ContentEncAlg,
-  createHpke0Ke,
-  createHpke1Ke,
-  createHpke2Ke,
-  createHpke3,
-  createHpke3Ke,
-  createHpke5Ke,
-  createHpke7Ke,
+  createJoseHpke0Ke,
+  createJoseHpke1Ke,
+  createJoseHpke2Ke,
+  createJoseHpke3,
+  createJoseHpke3Ke,
+  createJoseHpke5Ke,
+  createJoseHpke7Ke,
   JoseError,
 } from "../mod.ts";
 
 describe("JoseEncrypt", () => {
   describe("single recipient with HPKE-3-KE (X25519, AES-128-GCM)", () => {
     it("should seal and open with A128GCM content encryption", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("Key Encryption test");
@@ -30,7 +30,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should seal and open with A256GCM content encryption", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A256GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("A256GCM test");
@@ -44,7 +44,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should produce valid JWE JSON format", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("format check");
@@ -74,7 +74,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should seal and open with JWE AAD", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("with AAD");
@@ -95,7 +95,7 @@ describe("JoseEncrypt", () => {
 
   describe("single recipient with HPKE-0-KE (P-256, AES-128-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke0Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke0Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-256 KE test");
@@ -111,7 +111,7 @@ describe("JoseEncrypt", () => {
 
   describe("HPKE-1-KE (P-384, HKDF-SHA384, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke1Ke(ContentEncAlg.A256GCM);
+      const enc = createJoseHpke1Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-384 KE test");
@@ -127,7 +127,7 @@ describe("JoseEncrypt", () => {
 
   describe("HPKE-2-KE (P-521, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke2Ke(ContentEncAlg.A256GCM);
+      const enc = createJoseHpke2Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-521 KE test");
@@ -143,7 +143,7 @@ describe("JoseEncrypt", () => {
 
   describe("HPKE-5-KE (X448, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke5Ke(ContentEncAlg.A256GCM);
+      const enc = createJoseHpke5Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 KE test");
@@ -159,7 +159,7 @@ describe("JoseEncrypt", () => {
 
   describe("HPKE-7-KE (P-256, HKDF-SHA256, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke7Ke(ContentEncAlg.A256GCM);
+      const enc = createJoseHpke7Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-256 A256 KE test");
@@ -175,7 +175,7 @@ describe("JoseEncrypt", () => {
 
   describe("multiple recipients", () => {
     it("should seal for two recipients and each can open", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -200,7 +200,7 @@ describe("JoseEncrypt", () => {
 
   describe("PSK mode", () => {
     it("should seal and open with PSK", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("KE PSK test");
@@ -218,7 +218,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should carry psk_id as BASE64URL(id)", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
       const psk = {
         id: new Uint8Array([0xff, 0xfe, 0xfd]),
@@ -235,7 +235,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should fail with mismatched psk_id", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("KE PSK mismatch");
@@ -265,7 +265,7 @@ describe("JoseEncrypt", () => {
 
   describe("multiple recipients with PSK", () => {
     it("should seal and open with PSK for multiple recipients", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -289,7 +289,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should seal with mixed PSK/base mode recipients", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -315,7 +315,7 @@ describe("JoseEncrypt", () => {
 
   describe("kid-based recipient matching", () => {
     it("should match recipient by kid", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -333,7 +333,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should fail when kid does not match any recipient", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("kid miss");
@@ -354,7 +354,7 @@ describe("JoseEncrypt", () => {
 
   describe("extraInfo round-trip", () => {
     it("should seal and open with extraInfo", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("extra info test");
@@ -369,7 +369,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should fail to open with wrong extraInfo", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("extra mismatch");
@@ -395,7 +395,7 @@ describe("JoseEncrypt", () => {
 
   describe("PSK wrong key", () => {
     it("should fail with correct psk_id but wrong psk key", async () => {
-      const enc0 = createHpke3();
+      const enc0 = createJoseHpke3();
       const rkp = await enc0.suite.kem.generateKeyPair();
 
       const plaintext = new TextEncoder().encode("wrong key");
@@ -421,7 +421,7 @@ describe("JoseEncrypt", () => {
 
   describe("error cases", () => {
     it("should reject empty recipients", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       await assertRejects(
         async () => {
           await enc.seal([], new Uint8Array([1, 2, 3]));
@@ -432,7 +432,7 @@ describe("JoseEncrypt", () => {
     });
 
     it("should fail to open with wrong key", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
       const wrongKp = await enc.generateKemKeyPair();
 

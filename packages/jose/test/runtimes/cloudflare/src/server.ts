@@ -1,9 +1,9 @@
 import {
   ContentEncAlg,
-  createHpke0,
-  createHpke0Ke,
-  createHpke3,
-  createHpke3Ke,
+  createJoseHpke0,
+  createJoseHpke0Ke,
+  createJoseHpke3,
+  createJoseHpke3Ke,
 } from "@hpke/jose";
 
 export async function testServer(request: Request): Promise<Response> {
@@ -20,7 +20,7 @@ export async function testServer(request: Request): Promise<Response> {
   try {
     switch (testCase) {
       case "integrated-hpke0": {
-        const e0 = createHpke0();
+        const e0 = createJoseHpke0();
         const kp = await e0.suite.kem.generateKeyPair();
         const jwe = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, jwe);
@@ -30,7 +30,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "integrated-hpke3": {
-        const e0 = createHpke3();
+        const e0 = createJoseHpke3();
         const kp = await e0.suite.kem.generateKeyPair();
         const jwe = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, jwe);
@@ -40,7 +40,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke0": {
-        const ke = createHpke0Ke(ContentEncAlg.A128GCM);
+        const ke = createJoseHpke0Ke(ContentEncAlg.A128GCM);
         const kp = await ke.generateKemKeyPair();
         const jwe = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
@@ -53,7 +53,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke3": {
-        const ke = createHpke3Ke(ContentEncAlg.A128GCM);
+        const ke = createJoseHpke3Ke(ContentEncAlg.A128GCM);
         const kp = await ke.generateKemKeyPair();
         const jwe = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],

@@ -15,11 +15,11 @@ export type {
 } from "./src/serialization.ts";
 export { JoseError } from "./src/errors.ts";
 
-export { createHpke0, createHpke0Ke } from "./src/hpke0.ts";
-export { createHpke1, createHpke1Ke } from "./src/hpke1.ts";
-export { createHpke2, createHpke2Ke } from "./src/hpke2.ts";
-export { createHpke3, createHpke3Ke } from "./src/hpke3.ts";
-export { createHpke4 } from "./src/hpke4.ts";
-export { createHpke5, createHpke5Ke } from "./src/hpke5.ts";
-export { createHpke6 } from "./src/hpke6.ts";
-export { createHpke7, createHpke7Ke } from "./src/hpke7.ts";
+export { createJoseHpke0, createJoseHpke0Ke } from "./src/hpke0.ts";
+export { createJoseHpke1, createJoseHpke1Ke } from "./src/hpke1.ts";
+export { createJoseHpke2, createJoseHpke2Ke } from "./src/hpke2.ts";
+export { createJoseHpke3, createJoseHpke3Ke } from "./src/hpke3.ts";
+export { createJoseHpke4 } from "./src/hpke4.ts";
+export { createJoseHpke5, createJoseHpke5Ke } from "./src/hpke5.ts";
+export { createJoseHpke6 } from "./src/hpke6.ts";
+export { createJoseHpke7, createJoseHpke7Ke } from "./src/hpke7.ts";

@@ -3,9 +3,9 @@ import { describe, it } from "@std/testing/bdd";
 
 import {
   ContentEncAlg,
-  createHpke0,
-  createHpke3,
-  createHpke3Ke,
+  createJoseHpke0,
+  createJoseHpke3,
+  createJoseHpke3Ke,
   JoseError,
   JoseHpkeAlg,
 } from "../mod.ts";
@@ -37,7 +37,7 @@ describe("JoseError", () => {
 
 describe("Integrated Encryption errors", () => {
   it("should reject invalid JWE compact serialization (wrong parts)", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
 
     await assertRejects(
@@ -50,7 +50,7 @@ describe("Integrated Encryption errors", () => {
   });
 
   it("should reject invalid JWE compact serialization (empty parts)", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
 
     await assertRejects(
@@ -62,7 +62,7 @@ describe("Integrated Encryption errors", () => {
   });
 
   it("should reject invalid protected header (not JSON)", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
 
     await assertRejects(
@@ -75,8 +75,8 @@ describe("Integrated Encryption errors", () => {
   });
 
   it("should reject algorithm mismatch", async () => {
-    const enc0_hpke0 = createHpke0();
-    const enc0_hpke3 = createHpke3();
+    const enc0_hpke0 = createJoseHpke0();
+    const enc0_hpke3 = createJoseHpke3();
     const rkp = await enc0_hpke3.suite.kem.generateKeyPair();
 
     // Seal with HPKE-3, try to open with HPKE-0 instance
@@ -93,7 +93,7 @@ describe("Integrated Encryption errors", () => {
   });
 
   it("should reject enc parameter in Integrated Encryption", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
 
     // Manually craft a JWE with "enc" in the header
@@ -111,7 +111,7 @@ describe("Integrated Encryption errors", () => {
   });
 
   it("should reject psk_id present without PSK mode", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
 
     const plaintext = new TextEncoder().encode("psk test");
@@ -138,7 +138,7 @@ describe("Integrated Encryption JSON Serialization errors", () => {
 
   const cases: [
     string,
-    Parameters<ReturnType<typeof createHpke3>["open"]>[1],
+    Parameters<ReturnType<typeof createJoseHpke3>["open"]>[1],
     string,
   ][] = [
     [
@@ -207,14 +207,14 @@ describe("Integrated Encryption JSON Serialization errors", () => {
 
   for (const [name, jwe, message] of cases) {
     it(`should reject ${name}`, async () => {
-      const enc0 = createHpke3();
+      const enc0 = createJoseHpke3();
       const rkp = await enc0.suite.kem.generateKeyPair();
       await assertRejects(() => enc0.open(rkp, jwe), JoseError, message);
     });
   }
 
   it("should reject psk_id outside the protected header in PSK mode", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
     const id = te.encode("id");
     const key = new Uint8Array(32);
@@ -231,7 +231,7 @@ describe("Integrated Encryption JSON Serialization errors", () => {
   });
 
   it("should not treat __proto__ in a header as inherited parameters", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createJoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
     const pt = new Uint8Array([1, 2, 3]);
     const compact = await enc0.seal(rkp.publicKey, pt);
@@ -250,7 +250,7 @@ describe("Integrated Encryption JSON Serialization errors", () => {
 
 describe("Key Encryption errors", () => {
   it("should reject a missing iv or tag", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -271,7 +271,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject a missing or mismatched enc", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
     for (const header of [{}, { enc: "A256GCM" }]) {
       await assertRejects(
@@ -290,7 +290,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should not match a recipient without alg", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -309,7 +309,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject the same Header Parameter in two header parts", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
     const jwe = await enc.seal(
       [{ recipientPublicKey: rkp.publicKey }],
@@ -330,7 +330,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject empty recipients", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     await assertRejects(
       async () => {
         await enc.seal([], new Uint8Array([1, 2, 3]));
@@ -341,7 +341,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject missing protected header", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
 
     await assertRejects(
@@ -360,7 +360,7 @@ describe("Key Encryption errors", () => {
   });
 
   it("should reject missing recipients array", async () => {
-    const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+    const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
     const rkp = await enc.generateKemKeyPair();
 
     const header = btoa(JSON.stringify({ enc: "A128GCM" }))
@@ -387,7 +387,7 @@ describe('Empty "aad" member', () => {
 
   describe("Integrated Encryption", () => {
     it("should not authenticate a JWE that had no JWE AAD", async () => {
-      const enc0 = createHpke3();
+      const enc0 = createJoseHpke3();
       const rkp = await enc0.suite.kem.generateKeyPair();
       const [encodedHeader, ek, , ct] = (await enc0.seal(
         rkp.publicKey,
@@ -404,7 +404,7 @@ describe('Empty "aad" member', () => {
     });
 
     it("should use a trailing '.' in the AAD", async () => {
-      const enc0 = createHpke3();
+      const enc0 = createJoseHpke3();
       const rkp = await enc0.suite.kem.generateKeyPair();
       const encodedHeader = encodeHeader({ alg: "HPKE-3" });
       const ctx = await enc0.suite.createSenderContext({
@@ -424,7 +424,7 @@ describe('Empty "aad" member', () => {
 
   describe("Key Encryption", () => {
     it("should not authenticate a JWE that had no JWE AAD", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
       const jwe = await enc.seal(
         [{ recipientPublicKey: rkp.publicKey }],
@@ -436,7 +436,7 @@ describe('Empty "aad" member', () => {
     });
 
     it("should omit the member when seal() is given an empty aad", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
       const jwe = await enc.seal(
         [{ recipientPublicKey: rkp.publicKey }],
@@ -449,7 +449,7 @@ describe('Empty "aad" member', () => {
     });
 
     it("should use a trailing '.' in the AAD", async () => {
-      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const enc = createJoseHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
       const encodedHeader = encodeHeader({ enc: "A128GCM" });
 
@@ -470,7 +470,7 @@ describe('Empty "aad" member', () => {
         ),
       );
       // HPKE-3 and HPKE-3-KE use the same HPKE ciphersuite.
-      const ctx = await createHpke3().suite.createSenderContext({
+      const ctx = await createJoseHpke3().suite.createSenderContext({
         recipientPublicKey: rkp.publicKey,
         info: buildRecipientStructure("A128GCM"),
       });
