@@ -1,3 +1,4 @@
+import { CoseError } from "../errors.ts";
 import { CborTag, type CborValue } from "./types.ts";
 
 function encodeHead(major: number, value: number): Uint8Array {
@@ -39,7 +40,7 @@ function encodeValue(value: CborValue): Uint8Array[] {
 
   if (typeof value === "number") {
     if (!Number.isInteger(value)) {
-      throw new Error("CBOR: float encoding is not supported");
+      throw new CoseError("CBOR: float encoding is not supported");
     }
     if (value >= 0) {
       return [encodeHead(0, value)]; // major 0: unsigned int
@@ -90,7 +91,7 @@ function encodeValue(value: CborValue): Uint8Array[] {
     return parts;
   }
 
-  throw new Error("CBOR: unsupported value type");
+  throw new CoseError("CBOR: unsupported value type");
 }
 
 function compareBytes(a: Uint8Array, b: Uint8Array): number {

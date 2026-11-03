@@ -5,10 +5,11 @@ import { decode } from "./cbor/decoder.ts";
 import type { CborValue } from "./cbor/types.ts";
 import type { CoseHpkeAlg } from "./alg.ts";
 import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
-import { CoseError } from "./errors.ts";
+import { CoseError, withCoseError } from "./errors.ts";
 import {
   buildEncStructure,
   CoseTag,
+  findDuplicateHeaderLabel,
   HeaderLabel,
   untagCoseMessage,
 } from "./structures.ts";
@@ -180,7 +181,10 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
       };
     }
 
-    const ctx = await this._suite.createSenderContext(senderParams);
+    const ctx = await withCoseError(
+      "Encryption failed",
+      () => this._suite.createSenderContext(senderParams),
+    );
     const encBytes = new Uint8Array(ctx.enc);
 
     const protectedMap = new Map<CborValue, CborValue>();
@@ -197,7 +201,9 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
     unprotectedMap.set(HeaderLabel.EK, encBytes);
 
     const aad = buildEncStructure(protectedHeader, externalAad);
-    const ciphertext = new Uint8Array(await ctx.seal(plaintext, aad));
+    const ciphertext = new Uint8Array(
+      await withCoseError("Encryption failed", () => ctx.seal(plaintext, aad)),
+    );
 
     return { protectedHeader, unprotectedMap, ciphertext };
   }
@@ -270,6 +276,12 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
     if (!(unprotectedHeader instanceof Map)) {
       throw new CoseError("Invalid unprotected header");
     }
+    const duplicate = findDuplicateHeaderLabel(headerMap, unprotectedHeader);
+    if (duplicate !== undefined) {
+      throw new CoseError(
+        `Header label ${duplicate} appears in both protected and unprotected headers`,
+      );
+    }
     const encBytes = unprotectedHeader.get(HeaderLabel.EK);
     if (!(encBytes instanceof Uint8Array)) {
       throw new CoseError("Missing or invalid ek in unprotected header");
@@ -318,26 +330,27 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
       };
     }
 
-    const ctx = await this._suite.createRecipientContext(recipientParams);
-
-    return new Uint8Array(await ctx.open(ciphertext, aad));
+    return await withCoseError("Decryption failed", async () => {
+      const ctx = await this._suite.createRecipientContext(recipientParams);
+      return new Uint8Array(await ctx.open(ciphertext, aad));
+    });
   }
 
   async importPublicCoseKey(coseKeyBytes: Uint8Array): Promise<CryptoKey> {
     const rawBytes = extractPublicKeyBytes(coseKeyBytes);
-    return await this._suite.kem.importKey(
-      "raw",
-      rawBytes.buffer as ArrayBuffer,
-      true,
+    return await withCoseError(
+      "Failed to import COSE_Key",
+      () =>
+        this._suite.kem.importKey("raw", rawBytes.buffer as ArrayBuffer, true),
     );
   }
 
   async importPrivateCoseKey(coseKeyBytes: Uint8Array): Promise<CryptoKey> {
     const rawBytes = extractPrivateKeyBytes(coseKeyBytes);
-    return await this._suite.kem.importKey(
-      "raw",
-      rawBytes.buffer as ArrayBuffer,
-      false,
+    return await withCoseError(
+      "Failed to import COSE_Key",
+      () =>
+        this._suite.kem.importKey("raw", rawBytes.buffer as ArrayBuffer, false),
     );
   }
 }

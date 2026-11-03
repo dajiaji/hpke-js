@@ -8,12 +8,13 @@ import {
   contentAlgFromAead,
   type CoseHpkeAlg,
 } from "./alg.ts";
-import { CoseError } from "./errors.ts";
+import { CoseError, withCoseError } from "./errors.ts";
 import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
 import {
   buildEncStructureEncrypt,
   buildRecipientStructure,
   CoseTag,
+  findDuplicateHeaderLabel,
   HeaderLabel,
   untagCoseMessage,
 } from "./structures.ts";
@@ -257,15 +258,29 @@ export class CoseEncryptImpl implements CoseEncrypt {
     unprotectedMap.set(HeaderLabel.IV, nonce);
 
     const aad = buildEncStructureEncrypt(protectedHeader, extAad);
-    const ciphertext = await this._contentEncrypt(cek, nonce, plaintext, aad);
-
-    const recipientEntries: CborValue[] = [];
-    for (const r of recipients) {
-      const entry = await this._wrapCek(r, cek);
-      recipientEntries.push(entry);
+    try {
+      return await withCoseError("Encryption failed", async () => {
+        const ciphertext = await this._contentEncrypt(
+          cek,
+          nonce,
+          plaintext,
+          aad,
+        );
+        const recipientEntries: CborValue[] = [];
+        for (const r of recipients) {
+          recipientEntries.push(await this._wrapCek(r, cek));
+        }
+        return {
+          protectedHeader,
+          unprotectedMap,
+          ciphertext,
+          recipientEntries,
+        };
+      });
+    } finally {
+      // Best effort: the AEAD implementations keep their own key copies.
+      cek.fill(0);
     }
-
-    return { protectedHeader, unprotectedMap, ciphertext, recipientEntries };
   }
 
   /**
@@ -342,6 +357,12 @@ export class CoseEncryptImpl implements CoseEncrypt {
     if (!(unprotectedHeader instanceof Map)) {
       throw new CoseError("Invalid unprotected header");
     }
+    const duplicate = findDuplicateHeaderLabel(headerMap, unprotectedHeader);
+    if (duplicate !== undefined) {
+      throw new CoseError(
+        `Header label ${duplicate} appears in both protected and unprotected headers`,
+      );
+    }
     const nonce = unprotectedHeader.get(HeaderLabel.IV);
     if (!(nonce instanceof Uint8Array)) {
       throw new CoseError("Missing or invalid IV in unprotected header");
@@ -366,21 +387,29 @@ export class CoseEncryptImpl implements CoseEncrypt {
 
       const rHeader = decode(rProtected);
       if (!(rHeader instanceof Map)) continue;
+      if (!(rUnprotected instanceof Map)) continue;
+      // RFC 9052 Section 3 (SHOULD): skip recipients that have a label in
+      // both buckets rather than resolving the conflict.
+      if (findDuplicateHeaderLabel(rHeader, rUnprotected) !== undefined) {
+        continue;
+      }
 
       // If alg is present in recipient header, verify it matches.
       // If absent, try this recipient (Postel's principle).
       const rAlg = rHeader.get(HeaderLabel.ALG);
       if (rAlg !== undefined && rAlg !== this._alg) continue;
 
-      // Match by kid if specified
+      // Match by kid if specified. kid may be in either bucket
+      // (RFC 9052 Section 3.1); it is commonly unprotected.
       if (options?.kid) {
-        const rKid = rHeader.get(HeaderLabel.KID);
+        const rKid = rHeader.has(HeaderLabel.KID)
+          ? rHeader.get(HeaderLabel.KID)
+          : rUnprotected.get(HeaderLabel.KID);
         if (!(rKid instanceof Uint8Array)) continue;
         if (!uint8ArrayEqual(rKid, options.kid)) continue;
       }
 
       // ek is in the unprotected header
-      if (!(rUnprotected instanceof Map)) continue;
       const rEnc = rUnprotected.get(HeaderLabel.EK);
       if (!(rEnc instanceof Uint8Array)) continue;
 
@@ -434,7 +463,15 @@ export class CoseEncryptImpl implements CoseEncrypt {
 
     // Decrypt content with CEK
     const contentAad = buildEncStructureEncrypt(protectedHeader, extAad);
-    return await this._contentDecrypt(cek, nonce, ciphertext, contentAad);
+    try {
+      return await withCoseError(
+        "Content decryption failed",
+        () => this._contentDecrypt(cek, nonce, ciphertext, contentAad),
+      );
+    } finally {
+      // Best effort: the AEAD implementations keep their own key copies.
+      cek.fill(0);
+    }
   }
 
   private async _contentEncrypt(
@@ -510,19 +547,19 @@ export class CoseEncryptImpl implements CoseEncrypt {
 
   async importPublicCoseKey(coseKeyBytes: Uint8Array): Promise<CryptoKey> {
     const rawBytes = extractPublicKeyBytes(coseKeyBytes);
-    return await this._suite.kem.importKey(
-      "raw",
-      rawBytes.buffer as ArrayBuffer,
-      true,
+    return await withCoseError(
+      "Failed to import COSE_Key",
+      () =>
+        this._suite.kem.importKey("raw", rawBytes.buffer as ArrayBuffer, true),
     );
   }
 
   async importPrivateCoseKey(coseKeyBytes: Uint8Array): Promise<CryptoKey> {
     const rawBytes = extractPrivateKeyBytes(coseKeyBytes);
-    return await this._suite.kem.importKey(
-      "raw",
-      rawBytes.buffer as ArrayBuffer,
-      false,
+    return await withCoseError(
+      "Failed to import COSE_Key",
+      () =>
+        this._suite.kem.importKey("raw", rawBytes.buffer as ArrayBuffer, false),
     );
   }
 }
