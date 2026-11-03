@@ -1,6 +1,7 @@
 import { build, emptyDir } from "@deno/dnt";
 import {
   excludeNodeCryptoFromBrowser,
+  markEsmSideEffectFree,
   writeNpmIgnore,
 } from "../../utils/dntCommon.ts";
 
@@ -73,6 +74,7 @@ await build({
 });
 
 // post build steps
+markEsmSideEffectFree("common");
 Deno.copyFileSync("LICENSE", "../../npm/packages/common/LICENSE");
 Deno.copyFileSync("README.md", "../../npm/packages/common/README.md");
 writeNpmIgnore("../../npm/packages/common/.npmignore");

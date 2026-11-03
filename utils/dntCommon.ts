@@ -53,6 +53,7 @@ export async function beforeBuild(name: string): Promise<void> {
 }
 
 export function afterBuild(name: string) {
+  markEsmSideEffectFree(name);
   copySync(
     "samples/node",
     `../../npm/samples/${name}`,
@@ -78,6 +79,17 @@ export function afterBuild(name: string) {
   Deno.copyFileSync("LICENSE", `../../npm/packages/${name}/LICENSE`);
   Deno.copyFileSync("README.md", `../../npm/packages/${name}/README.md`);
   writeNpmIgnore(`../../npm/packages/${name}/.npmignore`);
+}
+
+/**
+ * DNT creates a nested package scope for ESM output. Repeat the root
+ * package's sideEffects flag there so bundlers can drop unused modules.
+ */
+export function markEsmSideEffectFree(name: string) {
+  const path = `../../npm/packages/${name}/esm/package.json`;
+  const pkg = JSON.parse(Deno.readTextFileSync(path));
+  pkg.sideEffects = false;
+  Deno.writeTextFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
 }
 
 /**
