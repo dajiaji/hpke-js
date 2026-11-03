@@ -20,8 +20,25 @@ jobs:
       - name: Run test
         run: deno task test:deno
       - name: Run deno publish
-        working-directory: ./packages/cose
-        run: deno publish
+        # Publish in dependency order. Versions that already exist on JSR are
+        # skipped by `deno publish`. jose and ohttp are not released yet.
+        run: |
+          for pkg in \
+            common \
+            core \
+            chacha20poly1305 \
+            dhkem-x25519 \
+            dhkem-x448 \
+            dhkem-secp256k1 \
+            hybridkem-x25519-kyber768 \
+            ml-kem \
+            hybridkem-x-wing \
+            hpke-js \
+            cose; do
+            echo "::group::deno publish @hpke/${pkg}"
+            (cd "packages/${pkg}" && deno publish)
+            echo "::endgroup::"
+          done
 
   publish-to-npm:
     runs-on: ubuntu-latest
