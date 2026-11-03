@@ -1,0 +1,15 @@
+{
+  "name": "samples-node-hpke-cose",
+  "version": "1.0.0",
+  "description": "A sample code of @hpke/cose.",
+  "type": "module",
+  "main": "app.js",
+  "author": "Ajitomi Daisuke <ajitomi@gmail.com> (https://github.com/dajiaji)",
+  "license": "MIT",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "dependencies": {
+    "@hpke/cose": "^0.0.1"
+  }
+}
