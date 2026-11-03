@@ -34,7 +34,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
-          node-version: 24
+          # Node.js >= 24.18.0 bundles npm >= 11.16.0, which supports
+          # `npm stage publish` (staged publishing requires npm >= 11.15.0).
+          node-version: ^24.18.0
           registry-url: https://registry.npmjs.org/
           package-manager-cache: false
       - uses: denoland/setup-deno@e95548e56dfa95d4e1a28d6f422fafe75c4c26fb # v2.0.3
@@ -42,10 +44,12 @@ jobs:
           deno-version: 2.x
       - name: Build npm packages
         run: deno task npm
-      - name: Publish updated packages to npm
+      - name: Stage updated packages to npm
         run: |
           err_log=$(mktemp)
-          publish_if_needed() {
+          stage_log=$(mktemp)
+          failed=()
+          stage_if_needed() {
             local dir="./npm/packages/$1"
             local name version published
             name=$(node --input-type=module -e "import p from '$dir/package.json' with { type: 'json' }; console.log(p.name)")
@@ -65,23 +69,41 @@ jobs:
               echo "::notice::Skipped $name@$version (already published)"
               return
             fi
-            echo "Publishing $name@$version"
-            if ! npm publish "$dir"; then
-              echo "::error::Failed to publish $name@$version"
-              exit 1
+            echo "Staging $name@$version"
+            if npm stage publish "$dir" >"$stage_log" 2>&1; then
+              cat "$stage_log"
+              echo "::notice::Staged $name@$version (approve it on npmjs.com to publish)"
+              return
             fi
+            cat "$stage_log" >&2
+            # A staged (not yet approved) version is invisible to `npm view`, and
+            # OIDC tokens cannot run `npm stage list`, so a re-run hits a conflict
+            # here. Treat it as already staged so that the remaining packages are
+            # still processed.
+            if grep -Eqi "E409|already (been )?staged|exists as a staged version|cannot publish over" "$stage_log"; then
+              echo "::warning::Skipped $name@$version (already staged and awaiting approval)"
+              return
+            fi
+            echo "::error::Failed to stage $name@$version"
+            failed+=("$name@$version")
           }
-          # Publish in dependency order: common → core → extension packages
-          publish_if_needed common
-          publish_if_needed core
-          publish_if_needed chacha20poly1305
-          publish_if_needed dhkem-x25519
-          publish_if_needed dhkem-x448
-          publish_if_needed dhkem-secp256k1
-          publish_if_needed hybridkem-x25519-kyber768
-          publish_if_needed hybridkem-x-wing
-          publish_if_needed hpke-js
-          publish_if_needed ml-kem
-          publish_if_needed cose
-          # publish_if_needed jose
-          # publish_if_needed ohttp
+          # Stage in dependency order: common → core → extension packages.
+          # A staging failure does not stop the remaining packages; the step
+          # fails at the end if any package could not be staged.
+          stage_if_needed common
+          stage_if_needed core
+          stage_if_needed chacha20poly1305
+          stage_if_needed dhkem-x25519
+          stage_if_needed dhkem-x448
+          stage_if_needed dhkem-secp256k1
+          stage_if_needed hybridkem-x25519-kyber768
+          stage_if_needed hybridkem-x-wing
+          stage_if_needed hpke-js
+          stage_if_needed ml-kem
+          stage_if_needed cose
+          # stage_if_needed jose
+          # stage_if_needed ohttp
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "::error::Failed to stage: ${failed[*]}"
+            exit 1
+          fi
