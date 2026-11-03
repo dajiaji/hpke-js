@@ -42,4 +42,34 @@ describe("Fastly Compute", () => {
       expect(await res.text()).toMatch(/^ng:/);
     });
   });
+
+  describe("CBOR decoder with valid text string", () => {
+    it("should return ok", async () => {
+      const res = await fetch(
+        `${origin}/test?case=text-valid`,
+      );
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("ok");
+    });
+  });
+
+  describe("CBOR decoder with invalid UTF-8 in a text string", () => {
+    it("should return ok", async () => {
+      const res = await fetch(
+        `${origin}/test?case=text-invalid-utf8`,
+      );
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("ok");
+    });
+  });
+
+  describe("CBOR decoder with leading BOM in a text string", () => {
+    it("should return ok", async () => {
+      const res = await fetch(
+        `${origin}/test?case=text-bom`,
+      );
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("ok");
+    });
+  });
 });
