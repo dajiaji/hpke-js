@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DeserializeError, Ec, isDeno, KemId } from "@hpke/common";
+import { DeserializeError, Ec, KemId } from "@hpke/common";
 import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
 import { HkdfSha512, X448 } from "@hpke/dhkem-x448";
 
@@ -44,9 +44,6 @@ describe("derivePublicKey", () => {
     });
 
     it("should return a proper public key with Ec(DhkemP521HkdfSha512)", async () => {
-      if (isDeno()) {
-        return;
-      }
       const kdf = new HkdfSha512();
       const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
       const kp = await prim.generateKeyPair();
@@ -113,9 +110,6 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on Ec(DhkemP256HkdfSha256) with a P-521 private key", async () => {
-      if (isDeno()) {
-        return;
-      }
       const kdf = new HkdfSha256();
       const prim = new Ec(KemId.DhkemP256HkdfSha256, kdf);
       const kdf2 = new HkdfSha512();
@@ -192,9 +186,6 @@ describe("derivePublicKey", () => {
     });
 
     it("should throw DeserializeError on X25519 with a P-521 private key", async () => {
-      if (isDeno()) {
-        return;
-      }
       const kdf = new HkdfSha256();
       const prim = new X25519(kdf);
       const kdf2 = new HkdfSha512();

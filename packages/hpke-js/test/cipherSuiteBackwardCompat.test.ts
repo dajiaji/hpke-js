@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { concat, hexToBytes, isDeno, loadCrypto } from "@hpke/common";
+import { concat, hexToBytes, loadCrypto } from "@hpke/common";
 import {
   DeserializeError,
   InvalidParamError,
@@ -337,10 +337,6 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Base mode (Kem.DhkemP521HkdfSha512/Kdf.HkdfSha512)", () => {
     it("should work normally with generateKeyPair", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP521HkdfSha512,
@@ -372,10 +368,6 @@ describe("CipherSuite(backward-compat)", () => {
     });
 
     it("should work normally with importKey('jwk')", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // setup
       const suite = new CipherSuite({
         kem: Kem.DhkemP521HkdfSha512,
@@ -1488,9 +1480,6 @@ describe("CipherSuite(backward-compat)", () => {
 
   describe("A README example of Oblivious HTTP (HKDF-SHA512)", () => {
     it("should work normally", async () => {
-      if (isDeno()) {
-        return;
-      }
       const te = new TextEncoder();
       const cryptoApi = await loadCrypto();
 

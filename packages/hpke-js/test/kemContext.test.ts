@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno, isDenoV1, loadCrypto } from "@hpke/common";
+import { isDenoV1, loadCrypto } from "@hpke/common";
 import {
   DeriveKeyPairError,
   DeserializeError,
@@ -200,9 +200,6 @@ describe("deriveKeyPair", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
-        return;
-      }
       const cryptoApi = await loadCrypto();
 
       // assert
@@ -326,10 +323,6 @@ describe("serialize/deserializePublicKey", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // assert
       const kemContext = new DhkemP521HkdfSha512();
       const kp = await kemContext.generateKeyPair();
@@ -525,10 +518,6 @@ describe("serialize/deserializePrivateKey", () => {
     });
 
     it("should return a proper instance with DhkemP521HkdfSha512", async () => {
-      if (isDeno()) {
-        return;
-      }
-
       // assert
       const kemContext = new DhkemP521HkdfSha512();
       const kp = await kemContext.generateKeyPair();
@@ -762,9 +751,6 @@ describe("importKey", () => {
     });
 
     it("should return a valid private key for DhkemP521HkdfSha512 from JWK", async () => {
-      if (isDeno()) {
-        return;
-      }
       const kemContext = new DhkemP521HkdfSha512();
 
       const jwk = {
