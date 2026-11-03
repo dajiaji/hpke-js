@@ -71,6 +71,32 @@
         fail++;
       }
 
+      // Tests 5-7: CBOR decoder with text strings. open() decodes the message
+      // before using the key.
+      const textCases = [
+        // "\u00fc" is decoded and then rejected as not being a COSE_Encrypt0.
+        [[0x62, 0xc3, 0xbc], "Invalid COSE_Encrypt0 structure"],
+        [[0x62, 0xc3, 0x28], "CBOR: invalid UTF-8 in text string"],
+        // {"\ufeffa": 1, "a": 2} has duplicate keys if the BOM is dropped.
+        [
+          [0xa2, 0x64, 0xef, 0xbb, 0xbf, 0x61, 0x01, 0x61, 0x61, 0x02],
+          "Invalid COSE_Encrypt0 structure",
+        ],
+      ];
+      for (const [data, expected] of textCases) {
+        try {
+          await createHpke0().open({}, new Uint8Array(data));
+          fail++;
+        } catch (e) {
+          if (e.message === expected) {
+            pass++;
+          } else {
+            console.error("CBOR text string:", e);
+            fail++;
+          }
+        }
+      }
+
       document.getElementById("pass").innerHTML = pass;
       document.getElementById("fail").innerHTML = fail;
     };

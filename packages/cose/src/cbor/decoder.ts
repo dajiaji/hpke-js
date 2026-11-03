@@ -1,12 +1,17 @@
 import type { CborValue } from "./types.ts";
 
+/** Maximum nesting depth of data items. COSE structures stay far below this. */
+const MAX_NESTING_DEPTH = 32;
+
 class Decoder {
   private _data: Uint8Array;
   private _pos: number;
+  private _depth: number;
 
   constructor(data: Uint8Array) {
     this._data = data;
     this._pos = 0;
+    this._depth = 0;
   }
 
   get position(): number {
@@ -14,6 +19,16 @@ class Decoder {
   }
 
   decode(): CborValue {
+    if (this._depth >= MAX_NESTING_DEPTH) {
+      throw new Error("CBOR: nesting too deep");
+    }
+    this._depth++;
+    const value = this._decodeItem();
+    this._depth--;
+    return value;
+  }
+
+  private _decodeItem(): CborValue {
     if (this._pos >= this._data.length) {
       throw new Error("CBOR: unexpected end of input");
     }
@@ -29,9 +44,7 @@ class Decoder {
       case 2: // byte string
         return this._readBytes(this._readUint(additional));
       case 3: // text string
-        return new TextDecoder().decode(
-          this._readBytes(this._readUint(additional)),
-        );
+        return this._readText(this._readUint(additional));
       case 4: // array
         return this._readArray(this._readUint(additional));
       case 5: // map
@@ -91,6 +104,17 @@ class Decoder {
     return slice;
   }
 
+  private _readText(len: number): string {
+    const bytes = this._readBytes(len);
+    try {
+      return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(
+        bytes,
+      );
+    } catch {
+      throw new Error("CBOR: invalid UTF-8 in text string");
+    }
+  }
+
   private _readArray(len: number): CborValue[] {
     const arr: CborValue[] = [];
     for (let i = 0; i < len; i++) {
@@ -103,6 +127,13 @@ class Decoder {
     const map = new Map<CborValue, CborValue>();
     for (let i = 0; i < len; i++) {
       const key = this.decode();
+      if (typeof key !== "number" && typeof key !== "string") {
+        throw new Error("CBOR: unsupported map key type");
+      }
+      // RFC 9052 Section 3: a message with a repeated label MUST be rejected.
+      if (map.has(key)) {
+        throw new Error("CBOR: duplicate map key");
+      }
       const val = this.decode();
       map.set(key, val);
     }
