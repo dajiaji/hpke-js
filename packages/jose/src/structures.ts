@@ -11,7 +11,7 @@ const SEPARATOR = new Uint8Array([0xFF]);
  *                       BYTE(255) ||
  *                       recipient_extra_info
  *
- * See draft-ietf-jose-hpke-encrypt-16 Section 4.1.
+ * See draft-ietf-jose-hpke-encrypt-22 Section 6.1.
  */
 export function buildRecipientStructure(
   contentEncAlg: string,

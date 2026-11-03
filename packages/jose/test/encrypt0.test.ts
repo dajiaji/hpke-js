@@ -14,6 +14,7 @@ import {
   createHpke7,
   JoseError,
 } from "../mod.ts";
+import { decodeBase64Url, encodeBase64Url } from "../src/utils.ts";
 
 describe("JoseEncrypt0", () => {
   describe("HPKE-0 (P-256, HKDF-SHA256, AES-128-GCM)", () => {
@@ -185,12 +186,53 @@ describe("JoseEncrypt0", () => {
 
       const plaintext = new TextEncoder().encode("PSK test");
       const psk = {
-        id: "psk-id-01",
+        id: new TextEncoder().encode("psk-id-01"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc0.seal(rkp.publicKey, plaintext, { psk });
       const pt = await enc0.open(rkp, jwe, { psk });
 
+      assertEquals(pt, plaintext);
+    });
+
+    it("should carry psk_id as BASE64URL(id) and use id as the HPKE psk_id", async () => {
+      const enc0 = createHpke3();
+      const rkp = await enc0.suite.kem.generateKeyPair();
+      // Not valid UTF-8, so it cannot pass through a text encoding unchanged.
+      const psk = {
+        id: new Uint8Array([0xff, 0xfe, 0xfd]),
+        key: crypto.getRandomValues(new Uint8Array(32)),
+      };
+      const plaintext = new TextEncoder().encode("PSK encoding");
+
+      const jwe = await enc0.seal(rkp.publicKey, plaintext, { psk });
+      const header = JSON.parse(
+        new TextDecoder().decode(decodeBase64Url(jwe.split(".")[0])),
+      );
+      assertEquals(header.psk_id, "__79");
+
+      // Encrypt directly with HPKE so the psk_id handling of seal() is not
+      // what open() is being checked against.
+      const encodedHeader = encodeBase64Url(
+        new TextEncoder().encode(
+          JSON.stringify({ alg: "HPKE-3", psk_id: "__79" }),
+        ),
+      );
+      const ctx = await enc0.suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+        psk,
+      });
+      const ct = await ctx.seal(
+        plaintext,
+        new TextEncoder().encode(encodedHeader),
+      );
+      const pt = await enc0.open(
+        rkp,
+        `${encodedHeader}.${encodeBase64Url(new Uint8Array(ctx.enc))}..${
+          encodeBase64Url(new Uint8Array(ct))
+        }.`,
+        { psk },
+      );
       assertEquals(pt, plaintext);
     });
 
@@ -200,7 +242,7 @@ describe("JoseEncrypt0", () => {
 
       const plaintext = new TextEncoder().encode("PSK required");
       const psk = {
-        id: "psk-id-02",
+        id: new TextEncoder().encode("psk-id-02"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc0.seal(rkp.publicKey, plaintext, { psk });
@@ -219,7 +261,7 @@ describe("JoseEncrypt0", () => {
 
       const plaintext = new TextEncoder().encode("PSK mismatch");
       const psk = {
-        id: "psk-id-03",
+        id: new TextEncoder().encode("psk-id-03"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc0.seal(rkp.publicKey, plaintext, { psk });
@@ -228,7 +270,7 @@ describe("JoseEncrypt0", () => {
         async () => {
           await enc0.open(rkp, jwe, {
             psk: {
-              id: "wrong-psk-id",
+              id: new TextEncoder().encode("wrong-psk-id"),
               key: psk.key,
             },
           });

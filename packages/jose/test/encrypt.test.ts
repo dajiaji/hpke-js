@@ -10,9 +10,7 @@ import {
   createHpke2Ke,
   createHpke3,
   createHpke3Ke,
-  createHpke4Ke,
   createHpke5Ke,
-  createHpke6Ke,
   createHpke7Ke,
   JoseError,
 } from "../mod.ts";
@@ -146,44 +144,12 @@ describe("JoseEncrypt", () => {
     });
   });
 
-  describe("HPKE-4-KE (X25519, ChaCha20Poly1305)", () => {
-    it("should seal and open with A128GCM content encryption", async () => {
-      const enc = createHpke4Ke(ContentEncAlg.A128GCM);
-      const rkp = await enc.generateKemKeyPair();
-
-      const plaintext = new TextEncoder().encode("ChaCha KE test");
-      const jwe = await enc.seal(
-        [{ recipientPublicKey: rkp.publicKey }],
-        plaintext,
-      );
-      const pt = await enc.open(rkp, jwe);
-
-      assertEquals(pt, plaintext);
-    });
-  });
-
   describe("HPKE-5-KE (X448, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc = createHpke5Ke(ContentEncAlg.A256GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 KE test");
-      const jwe = await enc.seal(
-        [{ recipientPublicKey: rkp.publicKey }],
-        plaintext,
-      );
-      const pt = await enc.open(rkp, jwe);
-
-      assertEquals(pt, plaintext);
-    });
-  });
-
-  describe("HPKE-6-KE (X448, ChaCha20Poly1305)", () => {
-    it("should seal and open with A256GCM content encryption", async () => {
-      const enc = createHpke6Ke(ContentEncAlg.A256GCM);
-      const rkp = await enc.generateKemKeyPair();
-
-      const plaintext = new TextEncoder().encode("X448 ChaCha KE test");
       const jwe = await enc.seal(
         [{ recipientPublicKey: rkp.publicKey }],
         plaintext,
@@ -242,7 +208,7 @@ describe("JoseEncrypt", () => {
 
       const plaintext = new TextEncoder().encode("KE PSK test");
       const psk = {
-        id: "ke-psk-id-01",
+        id: new TextEncoder().encode("ke-psk-id-01"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc.seal(
@@ -254,13 +220,30 @@ describe("JoseEncrypt", () => {
       assertEquals(pt, plaintext);
     });
 
+    it("should carry psk_id as BASE64URL(id)", async () => {
+      const enc = createHpke3Ke(ContentEncAlg.A128GCM);
+      const rkp = await enc.generateKemKeyPair();
+      const psk = {
+        id: new Uint8Array([0xff, 0xfe, 0xfd]),
+        key: crypto.getRandomValues(new Uint8Array(32)),
+      };
+      const plaintext = new TextEncoder().encode("KE PSK encoding");
+      const jwe = await enc.seal(
+        [{ recipientPublicKey: rkp.publicKey, psk }],
+        plaintext,
+      );
+
+      assertEquals(jwe.recipients[0].header.psk_id, "__79");
+      assertEquals(await enc.open(rkp, jwe, { psk }), plaintext);
+    });
+
     it("should fail with mismatched psk_id", async () => {
       const enc = createHpke3Ke(ContentEncAlg.A128GCM);
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("KE PSK mismatch");
       const psk = {
-        id: "ke-psk-id-02",
+        id: new TextEncoder().encode("ke-psk-id-02"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc.seal(
@@ -272,7 +255,7 @@ describe("JoseEncrypt", () => {
         async () => {
           await enc.open(rkp, jwe, {
             psk: {
-              id: "wrong-psk-id",
+              id: new TextEncoder().encode("wrong-psk-id"),
               key: psk.key,
             },
           });
@@ -291,7 +274,7 @@ describe("JoseEncrypt", () => {
 
       const plaintext = new TextEncoder().encode("multi PSK");
       const psk = {
-        id: "shared-psk",
+        id: new TextEncoder().encode("shared-psk"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc.seal(
@@ -315,7 +298,7 @@ describe("JoseEncrypt", () => {
 
       const plaintext = new TextEncoder().encode("mixed mode");
       const psk = {
-        id: "psk-only-r1",
+        id: new TextEncoder().encode("psk-only-r1"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc.seal(
@@ -420,7 +403,7 @@ describe("JoseEncrypt", () => {
 
       const plaintext = new TextEncoder().encode("wrong key");
       const psk = {
-        id: "psk-wrong-key",
+        id: new TextEncoder().encode("psk-wrong-key"),
         key: crypto.getRandomValues(new Uint8Array(32)),
       };
       const jwe = await enc0.seal(rkp.publicKey, plaintext, { psk });

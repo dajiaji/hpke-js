@@ -6,23 +6,30 @@ encryption based on [@hpke/core](https://github.com/dajiaji/hpke-js).
 
 ## Features
 
-- **JWE Integrated Encryption** (Compact Serialization) — direct HPKE encryption
-  for single-recipient JWE.
-- **JWE Key Encryption** (JSON Serialization) — HPKE key wrapping with standard
-  JWE content encryption (A128GCM, A256GCM) for multi-recipient JWE.
+- **JWE Integrated Encryption** — direct HPKE encryption for single-recipient
+  JWE.
+- **JWE Key Encryption** — HPKE key wrapping with standard JWE content
+  encryption (A128GCM, A256GCM) for multi-recipient JWE.
+- `seal()` produces the Compact Serialization for Integrated Encryption and the
+  General JSON Serialization for Key Encryption. `open()` accepts the Compact,
+  Flattened JSON and General JSON Serializations for both.
+- PSK mode. The `psk_id` header parameter carries `BASE64URL(id)`.
 
 ## Supported Algorithms
 
-| Algorithm | KEM                        | KDF         | AEAD             |
-| --------- | -------------------------- | ----------- | ---------------- |
-| HPKE-0    | DHKEM(P-256, HKDF-SHA256)  | HKDF-SHA256 | AES-128-GCM      |
-| HPKE-1    | DHKEM(P-384, HKDF-SHA384)  | HKDF-SHA384 | AES-256-GCM      |
-| HPKE-2    | DHKEM(P-521, HKDF-SHA512)  | HKDF-SHA512 | AES-256-GCM      |
-| HPKE-3    | DHKEM(X25519, HKDF-SHA256) | HKDF-SHA256 | AES-128-GCM      |
-| HPKE-4    | DHKEM(X25519, HKDF-SHA256) | HKDF-SHA256 | ChaCha20Poly1305 |
-| HPKE-5    | DHKEM(X448, HKDF-SHA512)   | HKDF-SHA512 | AES-256-GCM      |
-| HPKE-6    | DHKEM(X448, HKDF-SHA512)   | HKDF-SHA512 | ChaCha20Poly1305 |
-| HPKE-7    | DHKEM(P-256, HKDF-SHA256)  | HKDF-SHA256 | AES-256-GCM      |
+Implements
+[draft-ietf-jose-hpke-encrypt-22](https://datatracker.ietf.org/doc/html/draft-ietf-jose-hpke-encrypt-22).
+
+| Integrated | Key Encryption | KEM                        | KDF         | AEAD             |
+| ---------- | -------------- | -------------------------- | ----------- | ---------------- |
+| HPKE-0     | HPKE-0-KE      | DHKEM(P-256, HKDF-SHA256)  | HKDF-SHA256 | AES-128-GCM      |
+| HPKE-1     | HPKE-1-KE      | DHKEM(P-384, HKDF-SHA384)  | HKDF-SHA384 | AES-256-GCM      |
+| HPKE-2     | HPKE-2-KE      | DHKEM(P-521, HKDF-SHA512)  | HKDF-SHA512 | AES-256-GCM      |
+| HPKE-3     | HPKE-3-KE      | DHKEM(X25519, HKDF-SHA256) | HKDF-SHA256 | AES-128-GCM      |
+| HPKE-4     | -              | DHKEM(X25519, HKDF-SHA256) | HKDF-SHA256 | ChaCha20Poly1305 |
+| HPKE-5     | HPKE-5-KE      | DHKEM(X448, HKDF-SHA512)   | HKDF-SHA512 | AES-256-GCM      |
+| HPKE-6     | -              | DHKEM(X448, HKDF-SHA512)   | HKDF-SHA512 | ChaCha20Poly1305 |
+| HPKE-7     | HPKE-7-KE      | DHKEM(P-256, HKDF-SHA256)  | HKDF-SHA256 | AES-256-GCM      |
 
 ## Usage
 

@@ -4,10 +4,12 @@
 
 Released 2026-03-16
 
-- Initial release implementing draft-ietf-jose-hpke-encrypt-16.
-- JWE Integrated Encryption (Compact Serialization) via `JoseEncrypt0`.
-- JWE Key Encryption (JSON Serialization) via `JoseEncrypt`.
-- HPKE-0 through HPKE-7 algorithms for both modes.
+- Initial release implementing draft-ietf-jose-hpke-encrypt-22.
+- JWE Integrated Encryption via `JoseEncrypt0`.
+- JWE Key Encryption via `JoseEncrypt`.
+- `open()` accepts the Compact, Flattened JSON and General JSON Serializations.
+- HPKE-0 through HPKE-7 for Integrated Encryption, and HPKE-0-KE through
+  HPKE-7-KE except HPKE-4-KE and HPKE-6-KE for Key Encryption.
 - JWK key import support.
-- PSK mode support.
+- PSK mode support. The `psk_id` header parameter carries `BASE64URL(id)`.
 - Built on @hpke/core.

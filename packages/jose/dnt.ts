@@ -23,6 +23,16 @@ await build({
   },
   testPattern: "test/**/*.test.ts",
   postBuild() {
+    // Copy test fixture files needed by testvectors.test.ts (only when
+    // tests are enabled — the directories do not exist with --skip-test).
+    try {
+      Deno.copyFileSync(
+        "test/jose-vectors.json",
+        `${outDir}/esm/test/jose-vectors.json`,
+      );
+    } catch {
+      // Test directories not created (--skip-test); skip.
+    }
     // Copy runtime test files.
     copySync(
       "test/runtimes/browsers",

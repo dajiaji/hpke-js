@@ -15,27 +15,17 @@ import {
   extractPrivateKeyBytesFromJwk,
   extractPublicKeyBytesFromJwk,
 } from "./jwk.ts";
+import {
+  type JweFlattenedJson,
+  type JweGeneralJson,
+  type JweJson,
+  type JweRecipientJson,
+  parseJwe,
+} from "./serialization.ts";
 import { buildRecipientStructure } from "./structures.ts";
 
 const EMPTY = new Uint8Array(0);
 const te = new TextEncoder();
-
-/** A single JWE JSON recipient entry. */
-export interface JweRecipientJson {
-  header: Record<string, unknown>;
-  encrypted_key: string;
-}
-
-/** JWE JSON Serialization structure. */
-export interface JweJson {
-  protected: string;
-  unprotected?: Record<string, unknown>;
-  iv: string;
-  aad?: string;
-  ciphertext: string;
-  tag: string;
-  recipients: JweRecipientJson[];
-}
 
 /** A recipient descriptor for JoseEncrypt.seal(). */
 export interface JoseRecipient {
@@ -45,8 +35,11 @@ export interface JoseRecipient {
   kid?: string;
   /** Extra info embedded in Recipient_structure. */
   extraInfo?: Uint8Array;
-  /** Pre-shared key for PSK mode. */
-  psk?: { id: string; key: Uint8Array };
+  /**
+   * Pre-shared key for PSK mode. `id` is the HPKE psk_id; it is carried in the
+   * "psk_id" header parameter as BASE64URL(id).
+   */
+  psk?: { id: Uint8Array; key: Uint8Array };
 }
 
 /** Options for JoseEncrypt.seal(). */
@@ -59,17 +52,17 @@ export interface JoseEncryptSealOptions {
 export interface JoseEncryptOpenOptions {
   /** Extra info for Recipient_structure. */
   extraInfo?: Uint8Array;
-  /** Pre-shared key for PSK mode. */
-  psk?: { id: string; key: Uint8Array };
+  /** Pre-shared key for PSK mode. `id` is the HPKE psk_id. */
+  psk?: { id: Uint8Array; key: Uint8Array };
   /** Key identifier to match against recipients. */
   kid?: string;
 }
 
 /**
- * JWE Key Encryption using HPKE (JSON Serialization).
+ * JWE Key Encryption using HPKE.
  *
- * Implements draft-ietf-jose-hpke-encrypt-16 Section 4
- * (Key Agreement with Key Wrap).
+ * Implements draft-ietf-jose-hpke-encrypt-22 Section 6. seal() produces the
+ * General JSON Serialization; open() accepts all JWE serializations.
  */
 export interface JoseEncrypt {
   /** The underlying HPKE CipherSuite. */
@@ -88,11 +81,13 @@ export interface JoseEncrypt {
   ): Promise<JweJson>;
 
   /**
-   * Decrypt a JWE JSON Serialization structure.
+   * Decrypt a JWE in the Compact, Flattened JSON or General JSON Serialization.
+   * Header parameters are read from the union of the protected, shared
+   * unprotected and per-recipient headers.
    */
   open(
     recipientKey: CryptoKeyPair | CryptoKey,
-    jwe: JweJson,
+    jwe: string | JweFlattenedJson | JweGeneralJson,
     options?: JoseEncryptOpenOptions,
   ): Promise<Uint8Array>;
 
@@ -165,7 +160,7 @@ export class JoseEncryptImpl implements JoseEncrypt {
     // Content AAD = ASCII(EPH) or ASCII(EPH || '.' || BASE64URL(JWE AAD))
     let contentAad: string;
     let jweAad: string | undefined;
-    if (options?.aad) {
+    if (options?.aad && options.aad.length > 0) {
       jweAad = encodeBase64Url(options.aad);
       contentAad = `${encodedProtectedHeader}.${jweAad}`;
     } else {
@@ -207,45 +202,23 @@ export class JoseEncryptImpl implements JoseEncrypt {
 
   async open(
     recipientKey: CryptoKeyPair | CryptoKey,
-    jwe: JweJson,
+    jwe: string | JweFlattenedJson | JweGeneralJson,
     options?: JoseEncryptOpenOptions,
   ): Promise<Uint8Array> {
     const extraInfo = options?.extraInfo ?? EMPTY;
 
-    const encodedProtectedHeader = jwe.protected;
-    if (!encodedProtectedHeader) {
-      throw new JoseError("Missing protected header");
-    }
-
-    // Parse protected header
-    let headerObj: Record<string, unknown>;
-    try {
-      headerObj = JSON.parse(
-        new TextDecoder().decode(decodeBase64Url(encodedProtectedHeader)),
-      );
-    } catch {
-      throw new JoseError("Invalid protected header");
-    }
-
-    // Validate enc
-    const encValue = headerObj.enc as string | undefined;
-    if (encValue !== undefined && encValue !== this._contentEncAlg) {
-      throw new JoseError(
-        `Content encryption algorithm mismatch: expected ${this._contentEncAlg}, got ${encValue}`,
-      );
-    }
+    const parsed = parseJwe(jwe);
 
     // Decode IV, ciphertext, tag
-    if (!jwe.iv) {
+    if (!parsed.iv) {
       throw new JoseError("Missing IV");
     }
-    const nonce = decodeBase64Url(jwe.iv);
-    const ct = decodeBase64Url(jwe.ciphertext);
-    const tag = decodeBase64Url(jwe.tag);
-
-    if (!jwe.recipients || !Array.isArray(jwe.recipients)) {
-      throw new JoseError("Missing or invalid recipients array");
+    if (!parsed.tag) {
+      throw new JoseError("Missing authentication tag");
     }
+    const nonce = decodeBase64Url(parsed.iv);
+    const ct = decodeBase64Url(parsed.ciphertext);
+    const tag = decodeBase64Url(parsed.tag);
 
     const privateKey = "privateKey" in recipientKey
       ? (recipientKey as CryptoKeyPair).privateKey
@@ -254,34 +227,33 @@ export class JoseEncryptImpl implements JoseEncrypt {
     // Find matching recipient and unwrap CEK
     let cek: Uint8Array | null = null;
 
-    for (const entry of jwe.recipients) {
-      const rHeader = entry.header;
-      if (!rHeader) continue;
-
-      // Check algorithm matches
-      const rAlg = rHeader.alg as string | undefined;
-      if (rAlg !== undefined && rAlg !== this._alg) continue;
-
-      // Match by kid if specified
-      if (options?.kid) {
-        const rKid = rHeader.kid as string | undefined;
-        if (rKid !== options.kid) continue;
+    for (const { joseHeader, encryptedKey } of parsed.recipients) {
+      // All recipients of a JWE share one content encryption algorithm
+      if (joseHeader.enc !== this._contentEncAlg) {
+        throw new JoseError(
+          `Content encryption algorithm mismatch: expected ${this._contentEncAlg}, got ${joseHeader.enc}`,
+        );
       }
 
+      // Check algorithm matches
+      if (joseHeader.alg !== this._alg) continue;
+
+      // Match by kid if specified
+      if (options?.kid && joseHeader.kid !== options.kid) continue;
+
       // Get ek (encapsulated key)
-      const rEk = rHeader.ek as string | undefined;
-      if (!rEk) continue;
+      const rEk = joseHeader.ek as string | undefined;
+      if (!rEk || !encryptedKey) continue;
 
       // PSK consistency
       if (options?.psk) {
-        const rPskId = rHeader.psk_id as string | undefined;
-        if (rPskId !== options.psk.id) continue;
+        if (joseHeader.psk_id !== encodeBase64Url(options.psk.id)) continue;
       } else {
-        if ("psk_id" in rHeader) continue;
+        if ("psk_id" in joseHeader) continue;
       }
 
       const encBytes = decodeBase64Url(rEk);
-      const encryptedKey = decodeBase64Url(entry.encrypted_key);
+      const wrappedCek = decodeBase64Url(encryptedKey);
 
       // Build HPKE info = Recipient_structure(enc_alg, extra_info)
       const hpkeInfo = buildRecipientStructure(
@@ -298,14 +270,11 @@ export class JoseEncryptImpl implements JoseEncrypt {
           info: hpkeInfo,
         };
         if (options?.psk) {
-          recipientParams.psk = {
-            id: te.encode(options.psk.id),
-            key: options.psk.key,
-          };
+          recipientParams.psk = options.psk;
         }
 
         const ctx = await this._suite.createRecipientContext(recipientParams);
-        cek = new Uint8Array(await ctx.open(encryptedKey, EMPTY));
+        cek = new Uint8Array(await ctx.open(wrappedCek, EMPTY));
         break;
       } catch {
         continue;
@@ -316,21 +285,17 @@ export class JoseEncryptImpl implements JoseEncrypt {
       throw new JoseError("No matching recipient found or decryption failed");
     }
 
-    // Reconstruct content AAD
-    let contentAad: string;
-    if (jwe.aad) {
-      contentAad = `${encodedProtectedHeader}.${jwe.aad}`;
-    } else {
-      contentAad = encodedProtectedHeader;
-    }
-    const aadBytes = te.encode(contentAad);
-
     // Combine ciphertext and tag for AES-GCM
     const combined = new Uint8Array(ct.length + tag.length);
     combined.set(ct);
     combined.set(tag, ct.length);
 
-    return await this._contentCrypto.open(cek, nonce, combined, aadBytes);
+    return await this._contentCrypto.open(
+      cek,
+      nonce,
+      combined,
+      parsed.additionalData,
+    );
   }
 
   private async _wrapCek(
@@ -350,10 +315,7 @@ export class JoseEncryptImpl implements JoseEncrypt {
       info: hpkeInfo,
     };
     if (recipient.psk) {
-      senderParams.psk = {
-        id: te.encode(recipient.psk.id),
-        key: recipient.psk.key,
-      };
+      senderParams.psk = recipient.psk;
     }
 
     const ctx = await this._suite.createSenderContext(senderParams);
@@ -369,7 +331,7 @@ export class JoseEncryptImpl implements JoseEncrypt {
       rHeader.kid = recipient.kid;
     }
     if (recipient.psk) {
-      rHeader.psk_id = recipient.psk.id;
+      rHeader.psk_id = encodeBase64Url(recipient.psk.id);
     }
 
     return {
