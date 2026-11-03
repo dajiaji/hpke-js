@@ -1,9 +1,9 @@
 import {
   Aes128Gcm,
-  createHpke0,
-  createHpke0Ke,
-  createHpke3,
-  createHpke3Ke,
+  createCoseHpke0,
+  createCoseHpke0Ke,
+  createCoseHpke3,
+  createCoseHpke3Ke,
 } from "@hpke/cose";
 
 // Runs only the CBOR decoder: open() decodes the message before using the key,
@@ -13,7 +13,7 @@ async function testOpenError(
   expected: string,
 ): Promise<Response> {
   try {
-    await createHpke0().open({} as CryptoKey, data);
+    await createCoseHpke0().open({} as CryptoKey, data);
   } catch (e: unknown) {
     const message = (e as Error).message;
     return new Response(message === expected ? "ok" : "ng: " + message);
@@ -35,7 +35,7 @@ export async function testServer(request: Request): Promise<Response> {
   try {
     switch (testCase) {
       case "encrypt0-hpke0": {
-        const e0 = createHpke0();
+        const e0 = createCoseHpke0();
         const kp = await e0.suite.kem.generateKeyPair();
         const ct = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, ct);
@@ -45,7 +45,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "encrypt0-hpke3": {
-        const e0 = createHpke3();
+        const e0 = createCoseHpke3();
         const kp = await e0.suite.kem.generateKeyPair();
         const ct = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, ct);
@@ -55,7 +55,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke0": {
-        const ke = createHpke0Ke(new Aes128Gcm());
+        const ke = createCoseHpke0Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
@@ -68,7 +68,7 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "ke-hpke3": {
-        const ke = createHpke3Ke(new Aes128Gcm());
+        const ke = createCoseHpke3Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],

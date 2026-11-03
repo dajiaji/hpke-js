@@ -6,10 +6,10 @@
     <script type="module">
     import {
       Aes128Gcm,
-      createHpke0,
-      createHpke0Ke,
-      createHpke3,
-      createHpke3Ke,
+      createCoseHpke0,
+      createCoseHpke0Ke,
+      createCoseHpke3,
+      createCoseHpke3Ke,
     } from "./src/hpke-cose.js";
 
     globalThis.run = async () => {
@@ -19,7 +19,7 @@
 
       // Test 1: Encrypt0 with HPKE-0 (P-256, AES-128-GCM)
       try {
-        const e0 = createHpke0();
+        const e0 = createCoseHpke0();
         const kp = await e0.suite.kem.generateKeyPair();
         const ct = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, ct);
@@ -31,7 +31,7 @@
 
       // Test 2: Encrypt0 with HPKE-3 (X25519, AES-128-GCM)
       try {
-        const e0 = createHpke3();
+        const e0 = createCoseHpke3();
         const kp = await e0.suite.kem.generateKeyPair();
         const ct = await e0.seal(kp.publicKey, msg);
         const pt = await e0.open(kp, ct);
@@ -43,7 +43,7 @@
 
       // Test 3: KE with HPKE-0-KE (P-256, A128GCM content)
       try {
-        const ke = createHpke0Ke(new Aes128Gcm());
+        const ke = createCoseHpke0Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
@@ -58,7 +58,7 @@
 
       // Test 4: KE with HPKE-3-KE (X25519, A128GCM content)
       try {
-        const ke = createHpke3Ke(new Aes128Gcm());
+        const ke = createCoseHpke3Ke(new Aes128Gcm());
         const kp = await ke.generateKemKeyPair();
         const ct = await ke.seal(
           [{ recipientPublicKey: kp.publicKey }],
@@ -85,7 +85,7 @@
       ];
       for (const [data, expected] of textCases) {
         try {
-          await createHpke0().open({}, new Uint8Array(data));
+          await createCoseHpke0().open({}, new Uint8Array(data));
           fail++;
         } catch (e) {
           if (e.message === expected) {

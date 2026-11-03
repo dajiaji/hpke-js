@@ -2,14 +2,14 @@ import { expect, test } from "bun:test";
 
 import {
   Aes128Gcm,
-  createHpke0,
-  createHpke0Ke,
-  createHpke3,
-  createHpke3Ke,
+  createCoseHpke0,
+  createCoseHpke0Ke,
+  createCoseHpke3,
+  createCoseHpke3Ke,
 } from "@hpke/cose";
 
 test("bun - Encrypt0 with HPKE-0 (P-256, AES-128-GCM)", async () => {
-  const e0 = createHpke0();
+  const e0 = createCoseHpke0();
   const kp = await e0.suite.kem.generateKeyPair();
   const ct = await e0.seal(
     kp.publicKey,
@@ -20,7 +20,7 @@ test("bun - Encrypt0 with HPKE-0 (P-256, AES-128-GCM)", async () => {
 });
 
 test("bun - Encrypt0 with HPKE-3 (X25519, AES-128-GCM)", async () => {
-  const e0 = createHpke3();
+  const e0 = createCoseHpke3();
   const kp = await e0.suite.kem.generateKeyPair();
   const ct = await e0.seal(
     kp.publicKey,
@@ -31,7 +31,7 @@ test("bun - Encrypt0 with HPKE-3 (X25519, AES-128-GCM)", async () => {
 });
 
 test("bun - KE with HPKE-0-KE (P-256, A128GCM content)", async () => {
-  const ke = createHpke0Ke(new Aes128Gcm());
+  const ke = createCoseHpke0Ke(new Aes128Gcm());
   const kp = await ke.generateKemKeyPair();
   const ct = await ke.seal(
     [{ recipientPublicKey: kp.publicKey }],
@@ -42,7 +42,7 @@ test("bun - KE with HPKE-0-KE (P-256, A128GCM content)", async () => {
 });
 
 test("bun - KE with HPKE-3-KE (X25519, A128GCM content)", async () => {
-  const ke = createHpke3Ke(new Aes128Gcm());
+  const ke = createCoseHpke3Ke(new Aes128Gcm());
   const kp = await ke.generateKemKeyPair();
   const ct = await ke.seal(
     [{ recipientPublicKey: kp.publicKey }],
@@ -56,7 +56,7 @@ test("bun - KE with HPKE-3-KE (X25519, A128GCM content)", async () => {
 // before using the key.
 async function openError(data: Uint8Array): Promise<string> {
   try {
-    await createHpke0().open({} as CryptoKey, data);
+    await createCoseHpke0().open({} as CryptoKey, data);
   } catch (e: unknown) {
     return (e as Error).message;
   }

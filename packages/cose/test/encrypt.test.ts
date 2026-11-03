@@ -6,20 +6,20 @@ import {
   Aes256Gcm,
   Chacha20Poly1305,
   CoseError,
-  createHpke0Ke,
-  createHpke1Ke,
-  createHpke2Ke,
-  createHpke3Ke,
-  createHpke4Ke,
-  createHpke5Ke,
-  createHpke6Ke,
-  createHpke7Ke,
+  createCoseHpke0Ke,
+  createCoseHpke1Ke,
+  createCoseHpke2Ke,
+  createCoseHpke3Ke,
+  createCoseHpke4Ke,
+  createCoseHpke5Ke,
+  createCoseHpke6Ke,
+  createCoseHpke7Ke,
 } from "../mod.ts";
 
 describe("CoseEncrypt", () => {
   describe("single recipient with HPKE-3-KE (X25519, AES-128-GCM)", () => {
     it("should seal and open with A128GCM content encryption", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("Key Encryption test");
@@ -33,7 +33,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should seal and open with A256GCM content encryption", async () => {
-      const enc = createHpke3Ke(new Aes256Gcm());
+      const enc = createCoseHpke3Ke(new Aes256Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("A256GCM test");
@@ -47,7 +47,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should seal and open with external AAD", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("with ext AAD");
@@ -65,7 +65,7 @@ describe("CoseEncrypt", () => {
 
   describe("single recipient with HPKE-0-KE (P-256, AES-128-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke0Ke(new Aes128Gcm());
+      const enc = createCoseHpke0Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-256 KE test");
@@ -81,7 +81,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-1-KE (P-384, HKDF-SHA384, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke1Ke(new Aes256Gcm());
+      const enc = createCoseHpke1Ke(new Aes256Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-384 KE test");
@@ -97,7 +97,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-2-KE (P-521, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke2Ke(new Aes256Gcm());
+      const enc = createCoseHpke2Ke(new Aes256Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-521 KE test");
@@ -113,7 +113,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-4-KE (X25519, ChaCha20Poly1305) with ChaCha20 content", () => {
     it("should seal and open with ChaCha20Poly1305 content encryption", async () => {
-      const enc = createHpke4Ke(new Chacha20Poly1305());
+      const enc = createCoseHpke4Ke(new Chacha20Poly1305());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("ChaCha KE test");
@@ -129,7 +129,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-5-KE (X448, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke5Ke(new Aes256Gcm());
+      const enc = createCoseHpke5Ke(new Aes256Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 KE test");
@@ -145,7 +145,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-6-KE (X448, ChaCha20Poly1305) with ChaCha20 content", () => {
     it("should seal and open with ChaCha20Poly1305 content encryption", async () => {
-      const enc = createHpke6Ke(new Chacha20Poly1305());
+      const enc = createCoseHpke6Ke(new Chacha20Poly1305());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 ChaCha KE test");
@@ -161,7 +161,7 @@ describe("CoseEncrypt", () => {
 
   describe("HPKE-7-KE (P-256, HKDF-SHA256, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
-      const enc = createHpke7Ke(new Aes256Gcm());
+      const enc = createCoseHpke7Ke(new Aes256Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-256 A256 KE test");
@@ -177,7 +177,7 @@ describe("CoseEncrypt", () => {
 
   describe("multiple recipients", () => {
     it("should seal for two recipients and each can open", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -202,7 +202,7 @@ describe("CoseEncrypt", () => {
 
   describe("PSK mode", () => {
     it("should seal and open with PSK", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("KE PSK test");
@@ -220,7 +220,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should fail with mismatched psk_id", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("KE PSK mismatch");
@@ -250,7 +250,7 @@ describe("CoseEncrypt", () => {
 
   describe("multiple recipients with PSK", () => {
     it("should seal and open with PSK for multiple recipients", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -274,7 +274,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should seal with different PSKs per recipient", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -302,7 +302,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should seal with mixed PSK/base mode recipients", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -330,8 +330,8 @@ describe("CoseEncrypt", () => {
 
   describe("Encrypt0 PSK wrong key", () => {
     it("should fail with correct psk_id but wrong psk key", async () => {
-      const { createHpke3: createHpke3Ie } = await import("../mod.ts");
-      const enc0 = createHpke3Ie();
+      const { createCoseHpke3: createCoseHpke3Ie } = await import("../mod.ts");
+      const enc0 = createCoseHpke3Ie();
       const rkp = await enc0.suite.kem.generateKeyPair();
 
       const plaintext = new TextEncoder().encode("wrong key");
@@ -357,7 +357,7 @@ describe("CoseEncrypt", () => {
 
   describe("kid-based recipient matching", () => {
     it("should match recipient by kid", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp1 = await enc.generateKemKeyPair();
       const rkp2 = await enc.generateKemKeyPair();
 
@@ -379,7 +379,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should fail when kid does not match any recipient", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("kid miss");
@@ -405,7 +405,7 @@ describe("CoseEncrypt", () => {
 
   describe("extraInfo round-trip", () => {
     it("should seal and open with extraInfo", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("extra info test");
@@ -420,7 +420,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should fail to open with wrong extraInfo", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("extra mismatch");
@@ -446,8 +446,8 @@ describe("CoseEncrypt", () => {
 
   describe("Encrypt0 kid", () => {
     it("should seal and open with kid in protected header", async () => {
-      const { createHpke3: createHpke3Ie } = await import("../mod.ts");
-      const enc0 = createHpke3Ie();
+      const { createCoseHpke3: createCoseHpke3Ie } = await import("../mod.ts");
+      const enc0 = createCoseHpke3Ie();
       const rkp = await enc0.suite.kem.generateKeyPair();
 
       const plaintext = new TextEncoder().encode("kid encrypt0");
@@ -461,7 +461,7 @@ describe("CoseEncrypt", () => {
 
   describe("error cases", () => {
     it("should reject empty recipients", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       await assertRejects(
         async () => {
           await enc.seal([], new Uint8Array([1, 2, 3]));
@@ -472,7 +472,7 @@ describe("CoseEncrypt", () => {
     });
 
     it("should fail to open with wrong key", async () => {
-      const enc = createHpke3Ke(new Aes128Gcm());
+      const enc = createCoseHpke3Ke(new Aes128Gcm());
       const rkp = await enc.generateKemKeyPair();
       const wrongKp = await enc.generateKemKeyPair();
 

@@ -10,14 +10,14 @@ import {
   ContentAlg,
   type CoseEncrypt,
   CoseError,
-  createHpke0Ke,
-  createHpke1Ke,
-  createHpke2Ke,
-  createHpke3Ke,
-  createHpke4Ke,
-  createHpke5Ke,
-  createHpke6Ke,
-  createHpke7Ke,
+  createCoseHpke0Ke,
+  createCoseHpke1Ke,
+  createCoseHpke2Ke,
+  createCoseHpke3Ke,
+  createCoseHpke4Ke,
+  createCoseHpke5Ke,
+  createCoseHpke6Ke,
+  createCoseHpke7Ke,
 } from "../mod.ts";
 import { decode } from "../src/cbor/decoder.ts";
 import {
@@ -27,14 +27,14 @@ import {
 } from "../src/structures.ts";
 
 const FACTORIES: [string, (aead: AeadInterface) => CoseEncrypt][] = [
-  ["HPKE-0-KE", createHpke0Ke],
-  ["HPKE-1-KE", createHpke1Ke],
-  ["HPKE-2-KE", createHpke2Ke],
-  ["HPKE-3-KE", createHpke3Ke],
-  ["HPKE-4-KE", createHpke4Ke],
-  ["HPKE-5-KE", createHpke5Ke],
-  ["HPKE-6-KE", createHpke6Ke],
-  ["HPKE-7-KE", createHpke7Ke],
+  ["HPKE-0-KE", createCoseHpke0Ke],
+  ["HPKE-1-KE", createCoseHpke1Ke],
+  ["HPKE-2-KE", createCoseHpke2Ke],
+  ["HPKE-3-KE", createCoseHpke3Ke],
+  ["HPKE-4-KE", createCoseHpke4Ke],
+  ["HPKE-5-KE", createCoseHpke5Ke],
+  ["HPKE-6-KE", createCoseHpke6Ke],
+  ["HPKE-7-KE", createCoseHpke7Ke],
 ];
 
 // Every content AEAD must be usable with every HPKE-X-KE suite: the Layer 0
