@@ -1,5 +1,22 @@
 # Changes
 
+## Version 1.10.0
+
+Released 2026-11-03
+
+- [(#811) chore(deps): bump @hpke/common to ^1.11.0.](https://github.com/dajiaji/hpke-js/pull/811)
+- [(#747) refactor(dhkem): extract XCurveNativeDhkemPrimitives.](https://github.com/dajiaji/hpke-js/pull/747)
+- [(#788) chore(npm): add funding field to generated package.json.](https://github.com/dajiaji/hpke-js/pull/788)
+- [(#776) fix: isolate DNT npm installs from workspaces.](https://github.com/dajiaji/hpke-js/pull/776)
+- [(#793) test: remove obsolete Deno skips.](https://github.com/dajiaji/hpke-js/pull/793)
+- [(#782) fix(cloudflare): replace deprecated vitest pool plugin.](https://github.com/dajiaji/hpke-js/pull/782)
+- [(#749) ci(fastly): add Fastly runtime tests.](https://github.com/dajiaji/hpke-js/pull/749)
+- [(#750) test: add Fastly Compute runtime fixtures across packages.](https://github.com/dajiaji/hpke-js/pull/750)
+- [(#781) chore(deps): remove vulnerable decompress dependency.](https://github.com/dajiaji/hpke-js/pull/781)
+- [(#778) chore(bun): migrate runtime lockfiles to text format.](https://github.com/dajiaji/hpke-js/pull/778)
+- [(#777) chore(deps): update test runtime dependencies.](https://github.com/dajiaji/hpke-js/pull/777)
+- [(#767) chore(deps): update dependencies.](https://github.com/dajiaji/hpke-js/pull/767)
+
 ## Version 1.9.0
 
 Released 2026-03-08
