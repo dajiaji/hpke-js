@@ -26,6 +26,7 @@
     "./packages/hybridkem-x-wing/samples/deno",
     "./packages/hpke-js/samples/deno",
     "./packages/ml-kem/samples/deno",
+    "./packages/cose/samples/deno",
     "./utils"
   ],
   // Exclude bench files from module graph so that npm: specifiers for
@@ -315,7 +316,7 @@
       "description": "Run sample code demonstrations for Deno and Node.js environments",
       "command": "deno task sample:deno && deno task sample:node"
     },
-    "sample:deno": "deno task sample:deno:core && deno task sample:deno:chacha20poly1305 && deno task sample:deno:dhkem-x25519 && deno task sample:deno:dhkem-x448 && deno task sample:deno:dhkem-secp256k1 && deno task sample:deno:hybridkem-x-wing && deno task sample:deno:hpke-js && deno task sample:deno:ml-kem",
+    "sample:deno": "deno task sample:deno:core && deno task sample:deno:chacha20poly1305 && deno task sample:deno:dhkem-x25519 && deno task sample:deno:dhkem-x448 && deno task sample:deno:dhkem-secp256k1 && deno task sample:deno:hybridkem-x-wing && deno task sample:deno:hpke-js && deno task sample:deno:ml-kem && deno task sample:deno:cose",
     "sample:deno:core": "cd packages/core && deno task sample:deno",
     "sample:deno:chacha20poly1305": "cd packages/chacha20poly1305 && deno task sample:deno",
     "sample:deno:dhkem-x25519": "cd packages/dhkem-x25519 && deno task sample:deno",
@@ -324,7 +325,8 @@
     "sample:deno:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task sample:deno",
     "sample:deno:hpke-js": "cd packages/hpke-js && deno task sample:deno",
     "sample:deno:ml-kem": "cd packages/ml-kem && deno task sample:deno",
-    "sample:node": "deno task sample:node:core && deno task sample:node:chacha20poly1305 && deno task sample:node:dhkem-x25519 && deno task sample:node:dhkem-x448 && deno task sample:node:dhkem-secp256k1 && deno task sample:node:hybridkem-x-wing && deno task sample:node:hpke-js && deno task sample:node:ml-kem",
+    "sample:deno:cose": "cd packages/cose && deno task sample:deno",
+    "sample:node": "deno task sample:node:core && deno task sample:node:chacha20poly1305 && deno task sample:node:dhkem-x25519 && deno task sample:node:dhkem-x448 && deno task sample:node:dhkem-secp256k1 && deno task sample:node:hybridkem-x-wing && deno task sample:node:hpke-js && deno task sample:node:ml-kem && deno task sample:node:cose",
     "sample:node:core": "cd npm && npm run test -w samples/core",
     "sample:node:chacha20poly1305": "cd npm && npm run test -w samples/chacha20poly1305",
     "sample:node:dhkem-x25519": "cd npm && npm run test -w samples/dhkem-x25519",
@@ -333,6 +335,7 @@
     "sample:node:hybridkem-x-wing": "cd npm && npm run test -w samples/hybridkem-x-wing",
     "sample:node:hpke-js": "cd npm && npm run test -w samples/hpke-js",
     "sample:node:ml-kem": "cd npm && npm run test -w samples/ml-kem",
+    "sample:node:cose": "cd npm && npm run test -w samples/cose",
 
     // === DEPENDENCY MANAGEMENT ===
     "update": {
@@ -387,7 +390,7 @@
     "update:fastly:cose": "cd packages/cose/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:fastly:jose": "cd packages/jose/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:fastly:ohttp": "cd packages/ohttp/test/runtimes/fastly && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
-    "update:samples": "deno task update:samples:core && deno task update:samples:chacha20poly1305 && deno task update:samples:dhkem-x25519 && deno task update:samples:dhkem-x448 && deno task update:samples:dhkem-secp256k1 && deno task update:samples:hybridkem-x25519-kyber768 && deno task update:samples:hybridkem-x-wing && deno task update:samples:hpke-js && deno task update:samples:ml-kem && deno task update:samples:hpke-js:ts-node && deno task update:samples:hpke-js:ts-webpack",
+    "update:samples": "deno task update:samples:core && deno task update:samples:chacha20poly1305 && deno task update:samples:dhkem-x25519 && deno task update:samples:dhkem-x448 && deno task update:samples:dhkem-secp256k1 && deno task update:samples:hybridkem-x25519-kyber768 && deno task update:samples:hybridkem-x-wing && deno task update:samples:hpke-js && deno task update:samples:ml-kem && deno task update:samples:cose && deno task update:samples:hpke-js:ts-node && deno task update:samples:hpke-js:ts-webpack",
     "update:samples:core": "cd packages/core/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:chacha20poly1305": "cd packages/chacha20poly1305/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:dhkem-x25519": "cd packages/dhkem-x25519/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
@@ -397,6 +400,7 @@
     "update:samples:hybridkem-x-wing": "cd packages/hybridkem-x-wing/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:hpke-js": "cd packages/hpke-js/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:ml-kem": "cd packages/ml-kem/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
+    "update:samples:cose": "cd packages/cose/samples/node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:hpke-js:ts-node": "cd packages/hpke-js/samples/ts-node && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:samples:hpke-js:ts-webpack": "cd packages/hpke-js/samples/ts-webpack && npm exec --yes npm-check-updates@23.1.1 -- --packageFile package.json -u --target minor",
     "update:workspace-lock": "deno task npm-build && cd npm && npm update",
