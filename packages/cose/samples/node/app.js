@@ -1,7 +1,7 @@
-import { Aes128Gcm, createHpke3, createHpke3Ke } from "@hpke/cose";
+import { Aes128Gcm, createCoseHpke3, createCoseHpke3Ke } from "@hpke/cose";
 
 async function doCoseEncrypt0() {
-  const enc0 = createHpke3();
+  const enc0 = createCoseHpke3();
   const rkp = await enc0.suite.kem.generateKeyPair();
 
   // A sender encrypts a message into a COSE_Encrypt0 structure.
@@ -18,7 +18,7 @@ async function doCoseEncrypt0() {
 }
 
 async function doCoseEncrypt() {
-  const enc = createHpke3Ke(new Aes128Gcm());
+  const enc = createCoseHpke3Ke(new Aes128Gcm());
   const rkp = await enc.generateKemKeyPair();
 
   // A sender encrypts a message into a COSE_Encrypt structure.

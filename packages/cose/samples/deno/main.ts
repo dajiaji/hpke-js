@@ -1,8 +1,8 @@
-import { Aes128Gcm, createHpke3, createHpke3Ke } from "@hpke/cose";
+import { Aes128Gcm, createCoseHpke3, createCoseHpke3Ke } from "@hpke/cose";
 
 async function doCoseEncrypt0() {
   // setup
-  const enc0 = createHpke3();
+  const enc0 = createCoseHpke3();
   const rkp = await enc0.suite.kem.generateKeyPair();
 
   // encrypt
@@ -20,7 +20,7 @@ async function doCoseEncrypt0() {
 
 async function doCoseEncrypt() {
   // setup
-  const enc = createHpke3Ke(new Aes128Gcm());
+  const enc = createCoseHpke3Ke(new Aes128Gcm());
   const rkp = await enc.generateKemKeyPair();
 
   // encrypt

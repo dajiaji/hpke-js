@@ -13,7 +13,7 @@ import type { CoseEncrypt } from "./encrypt.ts";
 import { CoseEncryptImpl } from "./encrypt.ts";
 
 /** DHKEM(P-256), HKDF-SHA256, AES-128-GCM — Integrated Encryption. */
-export function createHpke0(): CoseEncrypt0 {
+export function createCoseHpke0(): CoseEncrypt0 {
   const suite = new CipherSuite({
     kem: new DhkemP256HkdfSha256(),
     kdf: new HkdfSha256(),
@@ -30,7 +30,7 @@ export function createHpke0(): CoseEncrypt0 {
  *   The COSE content algorithm is derived from it.
  * @throws {CoseError} if contentAead has no COSE content-encryption equivalent.
  */
-export function createHpke0Ke(contentAead: AeadInterface): CoseEncrypt {
+export function createCoseHpke0Ke(contentAead: AeadInterface): CoseEncrypt {
   const suite = new CipherSuite({
     kem: new DhkemP256HkdfSha256(),
     kdf: new HkdfSha256(),

@@ -22,14 +22,14 @@ import type { CoseEncrypt } from "../src/encrypt.ts";
 import { decode } from "../src/cbor/decoder.ts";
 import type { CborValue } from "../src/cbor/types.ts";
 
-import { createHpke0, createHpke0Ke } from "../src/hpke0.ts";
-import { createHpke1, createHpke1Ke } from "../src/hpke1.ts";
-import { createHpke2, createHpke2Ke } from "../src/hpke2.ts";
-import { createHpke3, createHpke3Ke } from "../src/hpke3.ts";
-import { createHpke4, createHpke4Ke } from "../src/hpke4.ts";
-import { createHpke5, createHpke5Ke } from "../src/hpke5.ts";
-import { createHpke6, createHpke6Ke } from "../src/hpke6.ts";
-import { createHpke7, createHpke7Ke } from "../src/hpke7.ts";
+import { createCoseHpke0, createCoseHpke0Ke } from "../src/hpke0.ts";
+import { createCoseHpke1, createCoseHpke1Ke } from "../src/hpke1.ts";
+import { createCoseHpke2, createCoseHpke2Ke } from "../src/hpke2.ts";
+import { createCoseHpke3, createCoseHpke3Ke } from "../src/hpke3.ts";
+import { createCoseHpke4, createCoseHpke4Ke } from "../src/hpke4.ts";
+import { createCoseHpke5, createCoseHpke5Ke } from "../src/hpke5.ts";
+import { createCoseHpke6, createCoseHpke6Ke } from "../src/hpke6.ts";
+import { createCoseHpke7, createCoseHpke7Ke } from "../src/hpke7.ts";
 
 // ── helpers ──────────────────────────────────────────────────────────
 
@@ -62,36 +62,36 @@ interface AlgConfig {
 
 const ALGS: Record<string, AlgConfig> = {
   "HPKE-0": {
-    createIe: createHpke0,
-    createKe: createHpke0Ke,
+    createIe: createCoseHpke0,
+    createKe: createCoseHpke0Ke,
   },
   "HPKE-1": {
-    createIe: createHpke1,
-    createKe: createHpke1Ke,
+    createIe: createCoseHpke1,
+    createKe: createCoseHpke1Ke,
   },
   "HPKE-2": {
-    createIe: createHpke2,
-    createKe: createHpke2Ke,
+    createIe: createCoseHpke2,
+    createKe: createCoseHpke2Ke,
   },
   "HPKE-3": {
-    createIe: createHpke3,
-    createKe: createHpke3Ke,
+    createIe: createCoseHpke3,
+    createKe: createCoseHpke3Ke,
   },
   "HPKE-4": {
-    createIe: createHpke4,
-    createKe: createHpke4Ke,
+    createIe: createCoseHpke4,
+    createKe: createCoseHpke4Ke,
   },
   "HPKE-5": {
-    createIe: createHpke5,
-    createKe: createHpke5Ke,
+    createIe: createCoseHpke5,
+    createKe: createCoseHpke5Ke,
   },
   "HPKE-6": {
-    createIe: createHpke6,
-    createKe: createHpke6Ke,
+    createIe: createCoseHpke6,
+    createKe: createCoseHpke6Ke,
   },
   "HPKE-7": {
-    createIe: createHpke7,
-    createKe: createHpke7Ke,
+    createIe: createCoseHpke7,
+    createKe: createCoseHpke7Ke,
   },
 };
 

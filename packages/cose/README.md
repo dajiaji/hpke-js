@@ -39,9 +39,9 @@ Key Encryption variants (HPKE-0-KE through HPKE-7-KE) use COSE values 46–53.
 ### COSE_Encrypt0 (Integrated Encryption)
 
 ```ts
-import { createHpke3 } from "@hpke/cose";
+import { createCoseHpke3 } from "@hpke/cose";
 
-const enc0 = createHpke3();
+const enc0 = createCoseHpke3();
 const rkp = await enc0.suite.kem.generateKeyPair();
 
 const ct = await enc0.seal(rkp.publicKey, new TextEncoder().encode("hello"));
@@ -52,9 +52,9 @@ const pt = await enc0.open(rkp, ct);
 ### COSE_Encrypt (Key Encryption)
 
 ```ts
-import { Aes128Gcm, createHpke3Ke } from "@hpke/cose";
+import { Aes128Gcm, createCoseHpke3Ke } from "@hpke/cose";
 
-const enc = createHpke3Ke(new Aes128Gcm());
+const enc = createCoseHpke3Ke(new Aes128Gcm());
 const rkp = await enc.generateKemKeyPair();
 
 const ct = await enc.seal(

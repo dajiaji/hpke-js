@@ -30,11 +30,11 @@ export {
 } from "./src/coseKey.ts";
 export type { CoseKeyBuildOptions } from "./src/coseKey.ts";
 
-export { createHpke0, createHpke0Ke } from "./src/hpke0.ts";
-export { createHpke1, createHpke1Ke } from "./src/hpke1.ts";
-export { createHpke2, createHpke2Ke } from "./src/hpke2.ts";
-export { createHpke3, createHpke3Ke } from "./src/hpke3.ts";
-export { createHpke4, createHpke4Ke } from "./src/hpke4.ts";
-export { createHpke5, createHpke5Ke } from "./src/hpke5.ts";
-export { createHpke6, createHpke6Ke } from "./src/hpke6.ts";
-export { createHpke7, createHpke7Ke } from "./src/hpke7.ts";
+export { createCoseHpke0, createCoseHpke0Ke } from "./src/hpke0.ts";
+export { createCoseHpke1, createCoseHpke1Ke } from "./src/hpke1.ts";
+export { createCoseHpke2, createCoseHpke2Ke } from "./src/hpke2.ts";
+export { createCoseHpke3, createCoseHpke3Ke } from "./src/hpke3.ts";
+export { createCoseHpke4, createCoseHpke4Ke } from "./src/hpke4.ts";
+export { createCoseHpke5, createCoseHpke5Ke } from "./src/hpke5.ts";
+export { createCoseHpke6, createCoseHpke6Ke } from "./src/hpke6.ts";
+export { createCoseHpke7, createCoseHpke7Ke } from "./src/hpke7.ts";

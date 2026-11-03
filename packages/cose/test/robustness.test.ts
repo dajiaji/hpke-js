@@ -7,9 +7,9 @@ import {
   buildEc2CoseKey,
   CoseCrv,
   CoseError,
-  createHpke0,
-  createHpke3,
-  createHpke3Ke,
+  createCoseHpke0,
+  createCoseHpke3,
+  createCoseHpke3Ke,
 } from "../mod.ts";
 import { encode } from "../src/cbor/encoder.ts";
 import { decode } from "../src/cbor/decoder.ts";
@@ -52,7 +52,7 @@ function recordingAead(
 }
 
 async function sealEncrypt() {
-  const enc = createHpke3Ke(new Aes128Gcm());
+  const enc = createCoseHpke3Ke(new Aes128Gcm());
   const rkp = await enc.generateKemKeyPair();
   const ct = await enc.seal([{ recipientPublicKey: rkp.publicKey }], PLAINTEXT);
   return { enc, rkp, msg: decode(ct) as CborValue[] };
@@ -60,7 +60,7 @@ async function sealEncrypt() {
 
 describe("Errors are reported as CoseError", () => {
   it("CBOR decoding errors", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createCoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
     await assertRejects(
       () => enc0.open(rkp, new Uint8Array([0x83])),
@@ -70,7 +70,7 @@ describe("Errors are reported as CoseError", () => {
   });
 
   it("Encrypt0: HPKE decryption failure keeps the cause", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createCoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
     const other = await enc0.suite.kem.generateKeyPair();
     const ct = await enc0.seal(rkp.publicKey, PLAINTEXT);
@@ -84,9 +84,9 @@ describe("Errors are reported as CoseError", () => {
 
   it("Encrypt0: HPKE encryption failure", async () => {
     // An X25519 key cannot be used with the P-256 suite.
-    const x25519 = await createHpke3().suite.kem.generateKeyPair();
+    const x25519 = await createCoseHpke3().suite.kem.generateKeyPair();
     await assertRejects(
-      () => createHpke0().seal(x25519.publicKey, PLAINTEXT),
+      () => createCoseHpke0().seal(x25519.publicKey, PLAINTEXT),
       CoseError,
       "Encryption failed",
     );
@@ -108,7 +108,7 @@ describe("Errors are reported as CoseError", () => {
     const coord = new Uint8Array(48);
     const coseKey = buildEc2CoseKey(CoseCrv.P384, coord, coord);
     const err = await assertRejects(
-      () => createHpke0().importPublicCoseKey(coseKey),
+      () => createCoseHpke0().importPublicCoseKey(coseKey),
       CoseError,
       "Failed to import COSE_Key",
     );
@@ -119,7 +119,7 @@ describe("Errors are reported as CoseError", () => {
 describe("CEK zeroization", () => {
   it("clears the CEK after seal and open", async () => {
     const { aead, keys } = recordingAead();
-    const enc = createHpke3Ke(aead);
+    const enc = createCoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
 
     const ct = await enc.seal(
@@ -136,7 +136,7 @@ describe("CEK zeroization", () => {
 
   it("clears the CEK when content decryption fails", async () => {
     const { aead, keys } = recordingAead();
-    const enc = createHpke3Ke(aead);
+    const enc = createCoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
     const msg = decode(
       await enc.seal([{ recipientPublicKey: rkp.publicKey }], PLAINTEXT),
@@ -149,7 +149,7 @@ describe("CEK zeroization", () => {
 
   it("clears the CEK when content encryption fails during seal", async () => {
     const { aead, keys } = recordingAead({ failSeal: true });
-    const enc = createHpke3Ke(aead);
+    const enc = createCoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
 
     await assertRejects(
@@ -163,10 +163,10 @@ describe("CEK zeroization", () => {
 
   it("clears the CEK when wrapping it for a recipient fails", async () => {
     const { aead, keys } = recordingAead();
-    const enc = createHpke3Ke(aead);
+    const enc = createCoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
     // A P-256 key cannot be used with the X25519 suite of HPKE-3-KE.
-    const p256 = await createHpke0().suite.kem.generateKeyPair();
+    const p256 = await createCoseHpke0().suite.kem.generateKeyPair();
 
     await assertRejects(
       () =>
@@ -197,7 +197,7 @@ describe("CBOR decoder bounds checks", () => {
   ];
   for (const [name, encoded] of cases) {
     it(`reports a truncated ${name} as unexpected end of input`, async () => {
-      const enc0 = createHpke3();
+      const enc0 = createCoseHpke3();
       const rkp = await enc0.suite.kem.generateKeyPair();
       await assertRejects(
         () => enc0.open(rkp, hex(encoded)),
@@ -210,7 +210,7 @@ describe("CBOR decoder bounds checks", () => {
 
 describe("Recipient kid matching", () => {
   it("matches a kid in the recipient unprotected header", async () => {
-    const enc = createHpke3Ke(new Aes128Gcm());
+    const enc = createCoseHpke3Ke(new Aes128Gcm());
     const rkpA = await enc.generateKemKeyPair();
     const rkpB = await enc.generateKemKeyPair();
     const msg = decode(
@@ -238,7 +238,7 @@ describe("Recipient kid matching", () => {
 
 describe("Header labels in both protected and unprotected buckets", () => {
   it("Encrypt0: rejects a duplicated label", async () => {
-    const enc0 = createHpke3();
+    const enc0 = createCoseHpke3();
     const rkp = await enc0.suite.kem.generateKeyPair();
     const msg = decode(
       await enc0.seal(rkp.publicKey, PLAINTEXT),
@@ -262,7 +262,7 @@ describe("Header labels in both protected and unprotected buckets", () => {
   });
 
   it("Encrypt: skips a recipient with a duplicated label", async () => {
-    const enc = createHpke3Ke(new Aes128Gcm());
+    const enc = createCoseHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
     const msg = decode(
       await enc.seal(
