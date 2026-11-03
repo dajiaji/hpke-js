@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## Version 1.11.0
+
+Released 2026-11-03
+
+- [(#802) chore(npm): mark ESM output as side-effect free for tree shaking.](https://github.com/dajiaji/hpke-js/pull/802)
+- [(#788) chore(npm): add funding field to generated package.json.](https://github.com/dajiaji/hpke-js/pull/788)
+- [(#784) chore(common): remove dead code and invalid pure annotations.](https://github.com/dajiaji/hpke-js/pull/784)
+- [(#783) fix(common): suppress browser crypto externalization.](https://github.com/dajiaji/hpke-js/pull/783)
+- [(#776) fix: isolate DNT npm installs from workspaces.](https://github.com/dajiaji/hpke-js/pull/776)
+- [(#748) refactor(hkdf): share extract fallback across implementations.](https://github.com/dajiaji/hpke-js/pull/748)
+- [(#742) fix(common): validate numberToBytesLE fits output length.](https://github.com/dajiaji/hpke-js/pull/742)
+- [(#738) perf(common): optimize Montgomery ladder and add X25519/X448 benches.](https://github.com/dajiaji/hpke-js/pull/738)
+
 ## Version 1.10.1
 
 Released 2026-03-12
