@@ -2,6 +2,8 @@ import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import {
+  Aes128Gcm,
+  Aes256Gcm,
   ContentAlg,
   CoseError,
   createHpke3,
@@ -129,7 +131,7 @@ describe("Malformed COSE_Encrypt0 structures", () => {
 
 describe("Malformed COSE_Encrypt structures", () => {
   it("should reject non-array input", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const badData = encode("not an array");
@@ -141,7 +143,7 @@ describe("Malformed COSE_Encrypt structures", () => {
   });
 
   it("should reject array with wrong length", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     // Array with only 3 elements (missing recipients)
@@ -157,7 +159,7 @@ describe("Malformed COSE_Encrypt structures", () => {
   });
 
   it("should reject content algorithm mismatch", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     // Use A256GCM in protected header but instance expects A128GCM
@@ -196,7 +198,7 @@ describe("Cross-algorithm rejection", () => {
   });
 
   it("Encrypt: should fail to open with different KE algorithm instance", async () => {
-    const enc3 = createHpke3Ke(ContentAlg.A128GCM);
+    const enc3 = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc3.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("cross-ke-alg");
@@ -206,7 +208,7 @@ describe("Cross-algorithm rejection", () => {
     );
 
     // Open with a different content alg → mismatch at Layer 0
-    const enc3b = createHpke3Ke(ContentAlg.A256GCM);
+    const enc3b = createHpke3Ke(new Aes256Gcm());
     await assertRejects(
       async () => await enc3b.open(rkp, ct),
       CoseError,
@@ -233,7 +235,7 @@ describe("Tagged COSE structures", () => {
   });
 
   it("should open tagged COSE_Encrypt (tag 96)", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("tagged encrypt");
@@ -277,7 +279,7 @@ describe("Large plaintext", () => {
   });
 
   it("Encrypt: should handle 64KB plaintext", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const plaintext = new Uint8Array(64 * 1024).fill(0xab);
@@ -366,7 +368,7 @@ describe("Detached payload", () => {
   });
 
   it("Encrypt: sealDetached + open with detachedPayload", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("detached ke");
@@ -424,7 +426,7 @@ describe("alg-omitted interop", () => {
   });
 
   it("Encrypt: should decrypt when Layer 0 protected header omits alg", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     // Build a normal message first, then rebuild Layer 0 header without alg.
@@ -526,7 +528,7 @@ describe("importCoseKey", () => {
   });
 
   it("Encrypt: should import COSE_Key and use for seal/open", async () => {
-    const enc = createHpke3Ke(ContentAlg.A128GCM);
+    const enc = createHpke3Ke(new Aes128Gcm());
     const rkp = await enc.generateKemKeyPair();
 
     const rawPub = new Uint8Array(

@@ -14,10 +14,11 @@ import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { isDeno } from "@hpke/common";
+import { type AeadInterface, Aes128Gcm, Aes256Gcm } from "@hpke/core";
+import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 
 import type { CoseEncrypt0 } from "../src/encrypt0.ts";
 import type { CoseEncrypt } from "../src/encrypt.ts";
-import { ContentAlg } from "../src/alg.ts";
 import { decode } from "../src/cbor/decoder.ts";
 import type { CborValue } from "../src/cbor/types.ts";
 
@@ -56,7 +57,7 @@ const PSK_ID = hex("456e6e796e20447572696e206172616e204d6f726961");
 
 interface AlgConfig {
   createIe: () => CoseEncrypt0;
-  createKe: (contentAlg: ContentAlg) => CoseEncrypt;
+  createKe: (contentAead: AeadInterface) => CoseEncrypt;
 }
 
 const ALGS: Record<string, AlgConfig> = {
@@ -104,16 +105,16 @@ const DENO_SKIP_KE_ALGS = new Set([
   "HPKE-7-KE",
 ]);
 
-// Content alg mapping for KE: which content alg is used for each HPKE-X-KE
-const KE_CONTENT_ALG: Record<string, ContentAlg> = {
-  "HPKE-0-KE": ContentAlg.A128GCM,
-  "HPKE-1-KE": ContentAlg.A256GCM,
-  "HPKE-2-KE": ContentAlg.A256GCM,
-  "HPKE-3-KE": ContentAlg.A128GCM,
-  "HPKE-4-KE": ContentAlg.CHACHA20POLY1305,
-  "HPKE-5-KE": ContentAlg.A256GCM,
-  "HPKE-6-KE": ContentAlg.A256GCM,
-  "HPKE-7-KE": ContentAlg.A256GCM,
+// Content AEAD for KE: which content encryption each HPKE-X-KE vector uses
+const KE_CONTENT_AEAD: Record<string, () => AeadInterface> = {
+  "HPKE-0-KE": () => new Aes128Gcm(),
+  "HPKE-1-KE": () => new Aes256Gcm(),
+  "HPKE-2-KE": () => new Aes256Gcm(),
+  "HPKE-3-KE": () => new Aes128Gcm(),
+  "HPKE-4-KE": () => new Chacha20Poly1305(),
+  "HPKE-5-KE": () => new Aes256Gcm(),
+  "HPKE-6-KE": () => new Aes256Gcm(),
+  "HPKE-7-KE": () => new Aes256Gcm(),
 };
 
 // ── COSE_Key → CryptoKey import ─────────────────────────────────────
@@ -274,8 +275,8 @@ describe("Test vectors (non-PSK)", () => {
     if (!config) continue;
     if (isDeno() && DENO_SKIP_KE_ALGS.has(section.algName)) continue;
 
-    const contentAlg = KE_CONTENT_ALG[section.algName];
-    if (contentAlg === undefined) continue;
+    const contentAead = KE_CONTENT_AEAD[section.algName];
+    if (contentAead === undefined) continue;
 
     describe(`KE: ${section.algName}`, () => {
       for (const tv of section.vectors) {
@@ -288,7 +289,7 @@ describe("Test vectors (non-PSK)", () => {
           );
           const { aad, info, hpkeAad } = parseParams(tv.label);
 
-          const enc = config.createKe(contentAlg);
+          const enc = config.createKe(contentAead());
           const pt = await enc.open(
             privateKey,
             hex(tv.ciphertextHex),
@@ -349,8 +350,8 @@ describe("Test vectors (PSK)", () => {
     const config = ALGS[baseAlgName];
     if (!config) continue;
 
-    const contentAlg = KE_CONTENT_ALG[section.algName];
-    if (contentAlg === undefined) continue;
+    const contentAead = KE_CONTENT_AEAD[section.algName];
+    if (contentAead === undefined) continue;
 
     describe(`KE+PSK: ${section.algName}`, () => {
       for (const tv of section.vectors) {
@@ -363,7 +364,7 @@ describe("Test vectors (PSK)", () => {
           );
           const { aad, info, hpkeAad } = parseParams(tv.label);
 
-          const enc = config.createKe(contentAlg);
+          const enc = config.createKe(contentAead());
           const pt = await enc.open(
             privateKey,
             hex(tv.ciphertextHex),

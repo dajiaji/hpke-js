@@ -3,7 +3,7 @@ import type { CipherSuite } from "@hpke/core";
 import { encode, encodeTagged } from "./cbor/encoder.ts";
 import { decode } from "./cbor/decoder.ts";
 import type { CborValue } from "./cbor/types.ts";
-import { type CoseHpkeAlg, isIntegratedEncryption } from "./alg.ts";
+import type { CoseHpkeAlg } from "./alg.ts";
 import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
 import { CoseError } from "./errors.ts";
 import { buildEncStructure, HeaderLabel } from "./structures.ts";
@@ -103,15 +103,10 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
 
   /**
    * @param suite The HPKE CipherSuite to use.
-   * @param alg A COSE HPKE algorithm identifier for Integrated Encryption (35-45).
-   * @throws {CoseError} if alg is not an Integrated Encryption algorithm.
+   * @param alg The COSE HPKE Integrated Encryption algorithm identifier. The
+   *   caller (a factory) guarantees that it matches `suite`.
    */
   constructor(suite: CipherSuite, alg: CoseHpkeAlg) {
-    if (!isIntegratedEncryption(alg)) {
-      throw new CoseError(
-        "CoseEncrypt0 requires an Integrated Encryption algorithm (35-45)",
-      );
-    }
     this._alg = alg;
     this._suite = suite;
   }

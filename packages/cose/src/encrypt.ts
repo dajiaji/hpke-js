@@ -1,14 +1,12 @@
-import type { CipherSuite } from "@hpke/core";
+import type { AeadInterface, CipherSuite } from "@hpke/core";
 
 import { encode, encodeTagged } from "./cbor/encoder.ts";
 import { decode } from "./cbor/decoder.ts";
 import type { CborValue } from "./cbor/types.ts";
 import {
   type ContentAlg,
-  contentKeySize,
-  contentNonceSize,
+  contentAlgFromAead,
   type CoseHpkeAlg,
-  isKeyEncryption,
 } from "./alg.ts";
 import { CoseError } from "./errors.ts";
 import { extractPrivateKeyBytes, extractPublicKeyBytes } from "./coseKey.ts";
@@ -26,26 +24,6 @@ function uint8ArrayEqual(a: Uint8Array, b: Uint8Array): boolean {
     if (a[i] !== b[i]) return false;
   }
   return true;
-}
-
-/**
- * Content encryption interface for Layer 0.
- * Each factory provides the appropriate implementation
- * (e.g. AES-GCM via WebCrypto, ChaCha20/Poly1305).
- */
-export interface ContentCrypto {
-  seal(
-    key: Uint8Array,
-    nonce: Uint8Array,
-    plaintext: Uint8Array,
-    aad: Uint8Array,
-  ): Promise<Uint8Array>;
-  open(
-    key: Uint8Array,
-    nonce: Uint8Array,
-    ciphertext: Uint8Array,
-    aad: Uint8Array,
-  ): Promise<Uint8Array>;
 }
 
 /** A recipient descriptor for CoseEncrypt.seal(). */
@@ -168,29 +146,27 @@ export class CoseEncryptImpl implements CoseEncrypt {
   private _suite: CipherSuite;
   private _alg: CoseHpkeAlg;
   private _contentAlg: ContentAlg;
-  private _contentCrypto: ContentCrypto;
+  private _contentAead: AeadInterface;
 
   /**
    * @param suite The HPKE CipherSuite to use for key wrapping.
-   * @param alg A COSE HPKE algorithm identifier for Key Encryption (46-53).
-   * @param contentAlg The content encryption algorithm (A128GCM=1, A256GCM=3, or CHACHA20POLY1305=24).
-   * @param contentCrypto Content encryption implementation for Layer 0.
+   * @param alg The COSE HPKE Key Encryption algorithm identifier. The caller
+   *   (a factory) guarantees that it matches `suite`.
+   * @param contentAead The AEAD used for Layer 0 content encryption
+   *   (e.g. `new Aes128Gcm()`). The COSE content algorithm written into the
+   *   protected header is derived from it, so the two cannot diverge.
+   * @throws {CoseError} if contentAead has no COSE content-encryption
+   *   equivalent.
    */
   constructor(
     suite: CipherSuite,
     alg: CoseHpkeAlg,
-    contentAlg: ContentAlg,
-    contentCrypto: ContentCrypto,
+    contentAead: AeadInterface,
   ) {
-    if (!isKeyEncryption(alg)) {
-      throw new CoseError(
-        `CoseEncrypt requires a Key Encryption algorithm (46-53), got ${alg}`,
-      );
-    }
     this._suite = suite;
     this._alg = alg;
-    this._contentAlg = contentAlg;
-    this._contentCrypto = contentCrypto;
+    this._contentAlg = contentAlgFromAead(contentAead);
+    this._contentAead = contentAead;
   }
 
   /** The underlying HPKE CipherSuite. */
@@ -264,11 +240,12 @@ export class CoseEncryptImpl implements CoseEncrypt {
     }
 
     const extAad = options?.externalAad ?? EMPTY;
-    const keySize = contentKeySize(this._contentAlg);
-    const nonceSize = contentNonceSize(this._contentAlg);
-
-    const cek = crypto.getRandomValues(new Uint8Array(keySize));
-    const nonce = crypto.getRandomValues(new Uint8Array(nonceSize));
+    const cek = crypto.getRandomValues(
+      new Uint8Array(this._contentAead.keySize),
+    );
+    const nonce = crypto.getRandomValues(
+      new Uint8Array(this._contentAead.nonceSize),
+    );
 
     const protectedMap = new Map<CborValue, CborValue>();
     protectedMap.set(HeaderLabel.ALG, this._contentAlg);
@@ -460,7 +437,8 @@ export class CoseEncryptImpl implements CoseEncrypt {
     plaintext: Uint8Array,
     aad: Uint8Array,
   ): Promise<Uint8Array> {
-    return await this._contentCrypto.seal(cek, nonce, plaintext, aad);
+    const ctx = this._contentAead.createEncryptionContext(cek);
+    return new Uint8Array(await ctx.seal(nonce, plaintext, aad));
   }
 
   private async _contentDecrypt(
@@ -469,7 +447,8 @@ export class CoseEncryptImpl implements CoseEncrypt {
     ciphertext: Uint8Array,
     aad: Uint8Array,
   ): Promise<Uint8Array> {
-    return await this._contentCrypto.open(cek, nonce, ciphertext, aad);
+    const ctx = this._contentAead.createEncryptionContext(cek);
+    return new Uint8Array(await ctx.open(nonce, ciphertext, aad));
   }
 
   private async _wrapCek(

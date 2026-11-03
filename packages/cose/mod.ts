@@ -1,3 +1,10 @@
+// Content encryption AEADs for the Key Encryption factories, re-exported so
+// callers do not need a direct dependency on @hpke/core or
+// @hpke/chacha20poly1305.
+export type { AeadInterface } from "@hpke/core";
+export { Aes128Gcm, Aes256Gcm } from "@hpke/core";
+export { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
+
 export { ContentAlg, CoseHpkeAlg } from "./src/alg.ts";
 export type {
   CoseEncrypt0,
@@ -6,7 +13,6 @@ export type {
 } from "./src/encrypt0.ts";
 export type { CoseEncrypt } from "./src/encrypt.ts";
 export type {
-  ContentCrypto,
   CoseEncryptDetachedResult,
   CoseEncryptOpenOptions,
   CoseEncryptSealOptions,

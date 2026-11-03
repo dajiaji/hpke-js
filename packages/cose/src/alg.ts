@@ -1,3 +1,5 @@
+import { AeadId, type AeadInterface } from "@hpke/core";
+
 import { CoseError } from "./errors.ts";
 
 /**
@@ -55,53 +57,26 @@ export const ContentAlg = {
 
 export type ContentAlg = (typeof ContentAlg)[keyof typeof ContentAlg];
 
-/** Content key sizes in bytes for each ContentAlg. */
-export function contentKeySize(alg: ContentAlg): number {
-  switch (alg) {
-    case ContentAlg.A128GCM:
-      return 16;
-    case ContentAlg.A256GCM:
-      return 32;
-    case ContentAlg.CHACHA20POLY1305:
-      return 32;
+/**
+ * Map an HPKE AEAD object (e.g. `new Aes128Gcm()`) to the COSE content
+ * encryption algorithm it implements.
+ *
+ * @throws {CoseError} if the AEAD has no COSE content-encryption equivalent
+ *   (e.g. Export-Only).
+ */
+export function contentAlgFromAead(aead: AeadInterface): ContentAlg {
+  switch (aead.id) {
+    case AeadId.Aes128Gcm:
+      return ContentAlg.A128GCM;
+    case AeadId.Aes256Gcm:
+      return ContentAlg.A256GCM;
+    case AeadId.Chacha20Poly1305:
+      return ContentAlg.CHACHA20POLY1305;
     default:
-      throw new CoseError(`Unsupported content algorithm: ${alg}`);
+      throw new CoseError(
+        `Unsupported content encryption AEAD: id=0x${
+          aead.id.toString(16).padStart(4, "0")
+        }`,
+      );
   }
-}
-
-/** Content nonce sizes in bytes for each ContentAlg. */
-export function contentNonceSize(_alg: ContentAlg): number {
-  // AES-128-GCM, AES-256-GCM, and ChaCha20/Poly1305 all use 12-byte nonces
-  return 12;
-}
-
-const KEY_ENCRYPTION_ALGS: ReadonlySet<number> = new Set([
-  46,
-  47,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-]);
-const INTEGRATED_ENCRYPTION_ALGS: ReadonlySet<number> = new Set([
-  35,
-  37,
-  39,
-  41,
-  42,
-  43,
-  44,
-  45,
-]);
-
-/** Whether the algorithm is for Key Encryption (COSE_Encrypt). */
-export function isKeyEncryption(alg: CoseHpkeAlg): boolean {
-  return KEY_ENCRYPTION_ALGS.has(alg);
-}
-
-/** Whether the algorithm is for Integrated Encryption (COSE_Encrypt0). */
-export function isIntegratedEncryption(alg: CoseHpkeAlg): boolean {
-  return INTEGRATED_ENCRYPTION_ALGS.has(alg);
 }

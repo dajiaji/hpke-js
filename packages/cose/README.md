@@ -52,9 +52,9 @@ const pt = await enc0.open(rkp, ct);
 ### COSE_Encrypt (Key Encryption)
 
 ```ts
-import { ContentAlg, createHpke3Ke } from "@hpke/cose";
+import { Aes128Gcm, createHpke3Ke } from "@hpke/cose";
 
-const enc = createHpke3Ke(ContentAlg.A128GCM);
+const enc = createHpke3Ke(new Aes128Gcm());
 const rkp = await enc.generateKemKeyPair();
 
 const ct = await enc.seal(
