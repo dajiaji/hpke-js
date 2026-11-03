@@ -2,7 +2,7 @@
 
 ## Version 0.0.1
 
-Unreleased
+Released 2026-11-03
 
 - Initial release implementing draft-ietf-cose-hpke-27.
 - COSE_Encrypt0 (Integrated Encryption) via `CoseEncrypt0`.
