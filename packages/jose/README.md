@@ -15,6 +15,11 @@ encryption based on [@hpke/core](https://github.com/dajiaji/hpke-js).
   Flattened JSON and General JSON Serializations for both.
 - PSK mode. The `psk_id` header parameter carries `BASE64URL(id)`.
 
+## Supported Environments
+
+This package is distributed as ESM only. On Node.js, version 20 or later is
+required.
+
 ## Supported Algorithms
 
 Implements

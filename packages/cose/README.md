@@ -14,6 +14,11 @@ tested against the test vectors in
 - **COSE_Encrypt** (Key Encryption) — multi-recipient HPKE key wrapping with a
   content encryption key.
 
+## Supported Environments
+
+This package is distributed as ESM only. On Node.js, version 20 or later is
+required.
+
 ## Supported Algorithms
 
 | Name   | COSE Value | KEM                        | KDF         | AEAD             |
