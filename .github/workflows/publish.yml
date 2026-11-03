@@ -20,6 +20,7 @@ jobs:
       - name: Run test
         run: deno task test:deno
       - name: Run deno publish
+        working-directory: ./packages/cose
         run: deno publish
 
   publish-to-npm:
@@ -82,5 +83,5 @@ jobs:
           publish_if_needed hpke-js
           publish_if_needed ml-kem
           publish_if_needed cose
-          publish_if_needed jose
-          publish_if_needed ohttp
+          # publish_if_needed jose
+          # publish_if_needed ohttp

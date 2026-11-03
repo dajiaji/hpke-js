@@ -1,7 +1,7 @@
 import { CoseError } from "./errors.ts";
 
 /**
- * COSE HPKE algorithm identifiers from draft-ietf-cose-hpke-24.
+ * COSE HPKE algorithm identifiers from draft-ietf-cose-hpke-27.
  *
  * Integrated Encryption (COSE_Encrypt0): values 35–45.
  * Key Encryption (COSE_Encrypt): values 46–53.
