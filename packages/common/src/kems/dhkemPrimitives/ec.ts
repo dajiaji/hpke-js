@@ -2,7 +2,8 @@ import type { DhkemPrimitives } from "../../interfaces/dhkemPrimitives.ts";
 import type { KdfInterface } from "../../interfaces/kdfInterface.ts";
 
 import { NativeAlgorithm } from "../../algorithm.ts";
-import { BYTE_TO_BIGINT_256, EMPTY } from "../../consts.ts";
+import { EMPTY } from "../../consts.ts";
+import { mod } from "../../curve/modular.ts";
 import { toArrayBuffer } from "../../kdfs/hkdf.ts";
 import {
   DeriveKeyPairError,
@@ -12,7 +13,6 @@ import {
 } from "../../errors.ts";
 import { KemId } from "../../identifiers.ts";
 import { KEM_USAGES, LABEL_DKP_PRK } from "../../interfaces/dhkemPrimitives.ts";
-import { Bignum } from "../../utils/bignum.ts";
 import { base64UrlToBytes, i2Osp } from "../../utils/misc.ts";
 
 // b"candidate"
@@ -113,20 +113,15 @@ const EC_P_521_PARAMS: EcCurveParams = {
   coordinateSize: 66,
 };
 
-function mod(a: bigint, p: bigint): bigint {
-  const r = a % p;
-  return r >= 0n ? r : r + p;
-}
-
 function modPow(base: bigint, exponent: bigint, p: bigint): bigint {
   let result = 1n;
   let b = mod(base, p);
   let e = exponent;
   while (e > 0n) {
     if ((e & 1n) === 1n) {
-      result = mod(result * b, p);
+      result = (result * b) % p;
     }
-    b = mod(b * b, p);
+    b = (b * b) % p;
     e >>= 1n;
   }
   return result;
@@ -135,7 +130,7 @@ function modPow(base: bigint, exponent: bigint, p: bigint): bigint {
 function modSqrt(rhs: bigint, p: bigint): bigint {
   // P-256/P-384/P-521 primes satisfy p % 4 == 3.
   const y = modPow(rhs, (p + 1n) >> 2n, p);
-  if (mod(y * y, p) !== mod(rhs, p)) {
+  if ((y * y) % p !== rhs) {
     throw new Error("Invalid ECDH point");
   }
   return y;
@@ -144,7 +139,7 @@ function modSqrt(rhs: bigint, p: bigint): bigint {
 function bytesToBigInt(bytes: Uint8Array): bigint {
   let v = 0n;
   for (const b of bytes) {
-    v = (v << 8n) | BYTE_TO_BIGINT_256[b];
+    v = (v << 8n) | BigInt(b);
   }
   return v;
 }
@@ -160,6 +155,25 @@ function bigIntToBytes(v: bigint, len: number): Uint8Array {
     throw new Error("Invalid coordinate length");
   }
   return out;
+}
+
+// Compares two big-endian byte strings of the same length. Used instead of
+// bigint for secret values so that they can be zeroized after use.
+function lessThan(a: Uint8Array, b: Uint8Array): boolean {
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return a[i] < b[i];
+    }
+  }
+  return false;
+}
+
+function isZero(a: Uint8Array): boolean {
+  let acc = 0;
+  for (let i = 0; i < a.length; i++) {
+    acc |= a[i];
+  }
+  return acc === 0;
 }
 
 function buildRawUncompressedPublicKey(
@@ -313,12 +327,8 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
         LABEL_DKP_PRK,
         new Uint8Array(rawIkm),
       );
-      const bn = new Bignum(this._nSk);
-      for (
-        let counter = 0;
-        bn.isZero() || !bn.lessThan(this._order);
-        counter++
-      ) {
+      let sk: CryptoKey | undefined;
+      for (let counter = 0; sk === undefined; counter++) {
         if (counter > 255) {
           throw new Error("Faild to derive a key pair");
         }
@@ -331,10 +341,11 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
           ),
         );
         bytes[0] = bytes[0] & this._bitmask;
-        bn.set(bytes);
+        if (!isZero(bytes) && lessThan(bytes, this._order)) {
+          sk = await this._deserializePkcs8Key(bytes);
+        }
+        bytes.fill(0);
       }
-      const sk = await this._deserializePkcs8Key(bn.val());
-      bn.reset();
       return {
         privateKey: sk,
         publicKey: await this.derivePublicKey(sk),
@@ -443,13 +454,17 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     );
     pkcs8Key.set(this._pkcs8AlgId, 0);
     pkcs8Key.set(k, this._pkcs8AlgId.length);
-    return await (this._api as SubtleCrypto).importKey(
-      "pkcs8",
-      pkcs8Key,
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
+    try {
+      return await (this._api as SubtleCrypto).importKey(
+        "pkcs8",
+        pkcs8Key,
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+    } finally {
+      pkcs8Key.fill(0);
+    }
   }
 
   private async _derivePublicKeyWithoutJwkExport(
@@ -479,10 +494,7 @@ export class Ec extends NativeAlgorithm implements DhkemPrimitives {
     );
     const p = this._curveParams.p;
     const x = bytesToBigInt(xBytes);
-    const rhs = mod(
-      modPow(x, 3n, p) - 3n * x + this._curveParams.b,
-      p,
-    );
+    const rhs = mod(x * x * x - 3n * x + this._curveParams.b, p);
     let y = modSqrt(rhs, p);
     // Canonicalize sign so the encoded point is deterministic.
     if ((y & 1n) === 1n) {

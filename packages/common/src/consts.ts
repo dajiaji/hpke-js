@@ -17,15 +17,3 @@ export const N_7 = 7n;
 export const N_32 = 32n;
 export const N_256 = 256n;
 export const N_0x71 = 0x71n;
-
-export const BYTE_TO_BIGINT_256: readonly bigint[] = /* @__PURE__ */ (() => {
-  const out = new Array<bigint>(256);
-  let i = 0;
-  let value = 0n;
-  while (i < 256) {
-    out[i] = value;
-    i++;
-    value += 1n;
-  }
-  return out;
-})();
