@@ -9,19 +9,26 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">Ec</a></li></ul>
-<h1>Class Ec</h1></div>
+<h1 class="deprecated">Class Ec</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>The DH-based KEM primitives for P-256, P-384 and P-521, selected by KEM ID.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Use <a href="EcDhkemPrimitives.html" class="tsd-kind-class">EcDhkemPrimitives</a> with <a href="../variables/EC_P_256.html" class="tsd-kind-variable">EC_P_256</a>,
+<a href="../variables/EC_P_384.html" class="tsd-kind-variable">EC_P_384</a> or <a href="../variables/EC_P_521.html" class="tsd-kind-variable">EC_P_521</a> instead. Selecting the curve by KEM ID
+keeps the parameters of all curves in a bundle. This class is kept for
+compatibility with existing <code>@hpke/*</code> packages and will be removed in the
+next major version.</p>
+</div></div></section>
 <section class="tsd-panel tsd-hierarchy" data-refl="405">
 <h4>Hierarchy (<a href="../hierarchy.html#Ec">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><a href="NativeAlgorithm.html" class="tsd-signature-type tsd-kind-class">NativeAlgorithm</a>
+<li class="tsd-hierarchy-item"><a href="EcDhkemPrimitives.html" class="tsd-signature-type tsd-kind-class">EcDhkemPrimitives</a>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">Ec</span></li></ul></li></ul></section>
-<section class="tsd-panel">
-<h4>Implements</h4>
-<ul class="tsd-hierarchy">
-<li><a href="../interfaces/DhkemPrimitives.html" class="tsd-signature-type tsd-kind-interface">DhkemPrimitives</a></li></ul></section><aside class="tsd-sources">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">Ec</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L191">packages/common/src/kems/dhkemPrimitives/ec.ts:191</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ec.ts#L35">packages/common/src/kems/dhkemPrimitives/ec.ts:35</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -29,30 +36,30 @@
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="constructors">Constructors<a href="#constructors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
+<div class="tsd-index-list"><a href="#constructor" class="tsd-index-link deprecated"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#_api" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>api</span></a>
+<div class="tsd-index-list"><a href="#_api" class="tsd-index-link deprecated tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>api</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="methods">Methods<a href="#methods" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#_setup" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>setup</span></a>
-<a href="#derivekeypair" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Key<wbr/>Pair</span></a>
-<a href="#derivepublickey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Public<wbr/>Key</span></a>
-<a href="#deserializeprivatekey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Private<wbr/>Key</span></a>
-<a href="#deserializepublickey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Public<wbr/>Key</span></a>
-<a href="#dh" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dh</span></a>
-<a href="#generatekeypair" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>generate<wbr/>Key<wbr/>Pair</span></a>
-<a href="#importkey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>import<wbr/>Key</span></a>
-<a href="#serializeprivatekey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Private<wbr/>Key</span></a>
-<a href="#serializepublickey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Public<wbr/>Key</span></a>
+<div class="tsd-index-list"><a href="#_setup" class="tsd-index-link deprecated tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>setup</span></a>
+<a href="#derivekeypair" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Key<wbr/>Pair</span></a>
+<a href="#derivepublickey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Public<wbr/>Key</span></a>
+<a href="#deserializeprivatekey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Private<wbr/>Key</span></a>
+<a href="#deserializepublickey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Public<wbr/>Key</span></a>
+<a href="#dh" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dh</span></a>
+<a href="#generatekeypair" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>generate<wbr/>Key<wbr/>Pair</span></a>
+<a href="#importkey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>import<wbr/>Key</span></a>
+<a href="#serializeprivatekey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Private<wbr/>Key</span></a>
+<a href="#serializepublickey" class="tsd-index-link deprecated tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Public<wbr/>Key</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="constructor"><span class="deprecated">constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="constructorec"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">Ec</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">kem</span><span class="tsd-signature-symbol">:</span> <a href="../types/KemId.html" class="tsd-signature-type tsd-kind-type-alias">KemId</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">hkdf</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/KdfInterface.html" class="tsd-signature-type tsd-kind-interface">KdfInterface</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Ec</a><a href="#constructorec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
@@ -60,38 +67,47 @@
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">kem</span>: <a href="../types/KemId.html" class="tsd-signature-type tsd-kind-type-alias">KemId</a></span></li>
-<li><span><span class="tsd-kind-parameter">hkdf</span>: <a href="../interfaces/KdfInterface.html" class="tsd-signature-type tsd-kind-interface">KdfInterface</a></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Ec</a></h4><aside class="tsd-sources">
-<p>Overrides <a href="NativeAlgorithm.html">NativeAlgorithm</a>.<a href="NativeAlgorithm.html#constructor">constructor</a></p>
+<li><span><span class="tsd-kind-parameter">kem</span>: <a href="../types/KemId.html" class="tsd-signature-type tsd-kind-type-alias">KemId</a></span>
+<div class="tsd-comment tsd-typography"><p>The KEM ID (<code>DhkemP256HkdfSha256</code>, <code>DhkemP384HkdfSha384</code> or
+<code>DhkemP521HkdfSha512</code>).</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">hkdf</span>: <a href="../interfaces/KdfInterface.html" class="tsd-signature-type tsd-kind-interface">KdfInterface</a></span>
+<div class="tsd-comment tsd-typography"><p>The KDF used for DeriveKeyPair.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Ec</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-throws">
+<h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>NotSupportedError if <code>kem</code> is not one of the above.</p>
+</div></div><aside class="tsd-sources">
+<p>Overrides <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L204">packages/common/src/kems/dhkemPrimitives/ec.ts:204</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ec.ts#L42">packages/common/src/kems/dhkemPrimitives/ec.ts:42</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
-<h3 class="tsd-anchor-link" id="_api"><code class="tsd-tag">Protected</code><span>_<wbr/>api</span><a href="#_api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="_api"><code class="tsd-tag">Protected</code><span class="deprecated">_<wbr/>api</span><a href="#_api" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">_api</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SubtleCrypto</span><span class="tsd-signature-symbol"> = undefined</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="NativeAlgorithm.html">NativeAlgorithm</a>.<a href="NativeAlgorithm.html#_api">_api</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#_api">_api</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/algorithm.ts#L19">packages/common/src/algorithm.ts:19</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/algorithm.ts#L19">packages/common/src/algorithm.ts:19</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited">
-<h3 class="tsd-anchor-link" id="_setup"><code class="tsd-tag">Protected</code><span>_<wbr/>setup</span><a href="#_setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="_setup"><code class="tsd-tag">Protected</code><span class="deprecated">_<wbr/>setup</span><a href="#_setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
 <li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="_setup-1"><span class="tsd-kind-call-signature">_setup</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#_setup-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Inherited from <a href="NativeAlgorithm.html">NativeAlgorithm</a>.<a href="NativeAlgorithm.html#_setup">_setup</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#_setup">_setup</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/algorithm.ts#L23">packages/common/src/algorithm.ts:23</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="derivekeypair"><span>derive<wbr/>Key<wbr/>Pair</span><a href="#derivekeypair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/algorithm.ts#L23">packages/common/src/algorithm.ts:23</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="derivekeypair"><span class="deprecated">derive<wbr/>Key<wbr/>Pair</span><a href="#derivekeypair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="derivekeypair-1"><span class="tsd-kind-call-signature">deriveKeyPair</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">ikm</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span><a href="#derivekeypair-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -99,13 +115,13 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">ikm</span>: <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#derivekeypair">deriveKeyPair</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#derivekeypair">deriveKeyPair</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L319">packages/common/src/kems/dhkemPrimitives/ec.ts:319</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="derivepublickey"><span>derive<wbr/>Public<wbr/>Key</span><a href="#derivepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L286">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:286</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="derivepublickey"><span class="deprecated">derive<wbr/>Public<wbr/>Key</span><a href="#derivepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="derivepublickey-1"><span class="tsd-kind-call-signature">derivePublicKey</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span><a href="#derivepublickey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -113,13 +129,13 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">CryptoKey</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#derivepublickey">derivePublicKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#derivepublickey">derivePublicKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L358">packages/common/src/kems/dhkemPrimitives/ec.ts:358</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="deserializeprivatekey"><span>deserialize<wbr/>Private<wbr/>Key</span><a href="#deserializeprivatekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L326">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:326</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="deserializeprivatekey"><span class="deprecated">deserialize<wbr/>Private<wbr/>Key</span><a href="#deserializeprivatekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="deserializeprivatekey-1"><span class="tsd-kind-call-signature">deserializePrivateKey</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span><a href="#deserializeprivatekey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -127,13 +143,13 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#deserializeprivatekey">deserializePrivateKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#deserializeprivatekey">deserializePrivateKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L275">packages/common/src/kems/dhkemPrimitives/ec.ts:275</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="deserializepublickey"><span>deserialize<wbr/>Public<wbr/>Key</span><a href="#deserializepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L242">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:242</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="deserializepublickey"><span class="deprecated">deserialize<wbr/>Public<wbr/>Key</span><a href="#deserializepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="deserializepublickey-1"><span class="tsd-kind-call-signature">deserializePublicKey</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span><a href="#deserializepublickey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -141,13 +157,13 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">ArrayBufferLike</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">ArrayBufferView</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#deserializepublickey">deserializePublicKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#deserializepublickey">deserializePublicKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L251">packages/common/src/kems/dhkemPrimitives/ec.ts:251</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="dh"><span>dh</span><a href="#dh" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L218">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:218</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="dh"><span class="deprecated">dh</span><a href="#dh" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="dh-1"><span class="tsd-kind-call-signature">dh</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">sk</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">pk</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#dh-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -156,23 +172,23 @@
 <li><span><span class="tsd-kind-parameter">sk</span>: <span class="tsd-signature-type">CryptoKey</span></span></li>
 <li><span><span class="tsd-kind-parameter">pk</span>: <span class="tsd-signature-type">CryptoKey</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#dh">dh</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#dh">dh</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L381">packages/common/src/kems/dhkemPrimitives/ec.ts:381</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="generatekeypair"><span>generate<wbr/>Key<wbr/>Pair</span><a href="#generatekeypair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L349">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:349</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="generatekeypair"><span class="deprecated">generate<wbr/>Key<wbr/>Pair</span><a href="#generatekeypair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="generatekeypair-1"><span class="tsd-kind-call-signature">generateKeyPair</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span><a href="#generatekeypair-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKeyPair</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#generatekeypair">generateKeyPair</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#generatekeypair">generateKeyPair</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L306">packages/common/src/kems/dhkemPrimitives/ec.ts:306</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="importkey"><span>import<wbr/>Key</span><a href="#importkey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L273">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:273</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="importkey"><span class="deprecated">import<wbr/>Key</span><a href="#importkey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="importkey-1"><span class="tsd-kind-call-signature">importKey</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">format</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;raw&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;jwk&quot;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ArrayBuffer</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">JsonWebKey</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">isPublic</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span><a href="#importkey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -182,13 +198,13 @@
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">ArrayBuffer</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">JsonWebKey</span></span></li>
 <li><span><span class="tsd-kind-parameter">isPublic</span>: <span class="tsd-signature-type">boolean</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#importkey">importKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#importkey">importKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L286">packages/common/src/kems/dhkemPrimitives/ec.ts:286</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="serializeprivatekey"><span>serialize<wbr/>Private<wbr/>Key</span><a href="#serializeprivatekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L253">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:253</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="serializeprivatekey"><span class="deprecated">serialize<wbr/>Private<wbr/>Key</span><a href="#serializeprivatekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="serializeprivatekey-1"><span class="tsd-kind-call-signature">serializePrivateKey</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#serializeprivatekey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -196,13 +212,13 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">CryptoKey</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#serializeprivatekey">serializePrivateKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#serializeprivatekey">serializePrivateKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L262">packages/common/src/kems/dhkemPrimitives/ec.ts:262</a></li></ul></aside></div></li></ul></section>
-<section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="serializepublickey"><span>serialize<wbr/>Public<wbr/>Key</span><a href="#serializepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="">
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L229">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:229</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited">
+<h3 class="tsd-anchor-link" id="serializepublickey"><span class="deprecated">serialize<wbr/>Public<wbr/>Key</span><a href="#serializepublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="serializepublickey-1"><span class="tsd-kind-call-signature">serializePublicKey</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span><a href="#serializepublickey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
@@ -210,9 +226,9 @@
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">CryptoKey</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/DhkemPrimitives.html">DhkemPrimitives</a>.<a href="../interfaces/DhkemPrimitives.html#serializepublickey">serializePublicKey</a></p>
+<p>Inherited from <a href="EcDhkemPrimitives.html">EcDhkemPrimitives</a>.<a href="EcDhkemPrimitives.html#serializepublickey">serializePublicKey</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/424cf2af8bfc82e3bcbd0962d4aaed85832ead46/packages/common/src/kems/dhkemPrimitives/ec.ts#L242">packages/common/src/kems/dhkemPrimitives/ec.ts:242</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/6c5046f19112cc75f4005adfff892c374af54485/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L209">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:209</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -233,7 +249,7 @@
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#_api" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>_<wbr/>api</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#_setup" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>setup</span></a><a href="#derivekeypair"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Key<wbr/>Pair</span></a><a href="#derivepublickey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Public<wbr/>Key</span></a><a href="#deserializeprivatekey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Private<wbr/>Key</span></a><a href="#deserializepublickey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Public<wbr/>Key</span></a><a href="#dh"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dh</span></a><a href="#generatekeypair"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>generate<wbr/>Key<wbr/>Pair</span></a><a href="#importkey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>import<wbr/>Key</span></a><a href="#serializeprivatekey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Private<wbr/>Key</span></a><a href="#serializepublickey"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Public<wbr/>Key</span></a></div></details></div></details></div>
+<div><a href="#_setup" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>_<wbr/>setup</span></a><a href="#derivekeypair" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Key<wbr/>Pair</span></a><a href="#derivepublickey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>derive<wbr/>Public<wbr/>Key</span></a><a href="#deserializeprivatekey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Private<wbr/>Key</span></a><a href="#deserializepublickey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>deserialize<wbr/>Public<wbr/>Key</span></a><a href="#dh" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>dh</span></a><a href="#generatekeypair" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>generate<wbr/>Key<wbr/>Pair</span></a><a href="#importkey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>import<wbr/>Key</span></a><a href="#serializeprivatekey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Private<wbr/>Key</span></a><a href="#serializepublickey" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>serialize<wbr/>Public<wbr/>Key</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html">@hpke/common</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
