@@ -86,3 +86,4 @@ export {
 export type { CHash, CHashXOF } from "./src/hash/hash.ts";
 export { mod, pow2 } from "./src/curve/modular.ts";
 export { montgomery, type MontgomeryECDH } from "./src/curve/montgomery.ts";
+export { x25519 } from "./src/curve/x25519.ts";

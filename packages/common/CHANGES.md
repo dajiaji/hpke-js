@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Export raw X25519 primitives shared by DHKEM and X-Wing.
+
 ## Version 1.11.0
 
 Released 2026-11-03

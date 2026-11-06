@@ -129,7 +129,7 @@
     "test:node:prepare:dhkem-x25519": "deno task npm-build:common && deno task npm-build:core",
     "test:node:prepare:dhkem-x448": "deno task npm-build:common && deno task npm-build:core",
     "test:node:prepare:dhkem-secp256k1": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:dhkem-x25519",
-    "test:node:prepare:hybridkem-x-wing": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:dhkem-x25519",
+    "test:node:prepare:hybridkem-x-wing": "deno task npm-build:common && deno task npm-build:core",
     "test:node:prepare:hpke-js": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x25519 && deno task npm-build:dhkem-x448",
     "test:node:prepare:ml-kem": "deno task npm-build:common && deno task npm-build:core",
     "test:node:prepare:cose": "deno task npm-build:common && deno task npm-build:core && deno task npm-build:chacha20poly1305 && deno task npm-build:dhkem-x448",
