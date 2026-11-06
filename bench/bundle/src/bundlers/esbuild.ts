@@ -46,7 +46,7 @@ const hpkeSources: esbuild.Plugin = {
       };
     });
     for (const [from, to] of Object.entries(NPM_ALIASES)) {
-      const filter = new RegExp(`^${from.replace(/[/]/g, "\\/")}$`);
+      const filter = new RegExp(`^${from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`);
       build.onResolve(
         { filter },
         (args) => build.resolve(to, { kind: args.kind, resolveDir: TOOL_ROOT }),
