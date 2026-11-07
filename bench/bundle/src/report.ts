@@ -5,6 +5,7 @@
 import type { BundlerId } from "./bundlers/index.ts";
 import type { LibId, Role } from "./libs.ts";
 import type { Sizes } from "./measure.ts";
+import type { JoseResult } from "./jose.ts";
 
 export interface LibResult extends Sizes {
   /** Bytes in the minified output per source module (esbuild only). */
@@ -82,7 +83,7 @@ export function toMarkdown(
     `- OHTTP BHTTP dependency: \`bhttp-js@${meta.bhttpVersion}\``,
     "- `sideEffects: false` is honored for all packages on both sides",
     meta.verified
-      ? "- HPKE bundles verified by seal/open; OHTTP bundles by HTTP request/response round-trips"
+      ? "- HPKE and JOSE bundles verified by seal/open; OHTTP bundles by HTTP request/response round-trips"
       : "- **bundles NOT verified** (`--no-verify`)",
     "- sizes in bytes (min / gzip -9 / brotli -11); ratios = @hpke / panva",
     "",
@@ -112,6 +113,62 @@ export function toMarkdown(
           } | ${fmt(p[format])} | ${ratio(s, format)} |`,
         );
       }
+    }
+  }
+  lines.push("");
+  return lines.join("\n");
+}
+
+export function printJoseTable(
+  results: JoseResult[],
+  bundlers: BundlerId[],
+): void {
+  console.log("\nJOSE");
+  console.table(bundlers.flatMap((b) =>
+    results.map((r) => {
+      const s = r.sizes[b]!;
+      return {
+        suite: r.id,
+        role: r.role,
+        bundler: b,
+        min: s.min,
+        gzip: s.gzip,
+        br: s.brotli,
+      };
+    })
+  ));
+}
+
+export function joseToMarkdown(
+  results: JoseResult[],
+  meta: Meta,
+  bundlers: BundlerId[],
+): string {
+  if (results.length === 0) return "";
+  const lines = [
+    "",
+    "## JOSE",
+    "",
+    `- @hpke/jose: repository sources @ \`${meta.revision}\``,
+    "Sender imports a public JWK and encrypts a Compact JWE; recipient imports a private JWK and decrypts it.",
+    "JOSE is reported independently of the panva HPKE comparison.",
+    "Sizes in bytes (min / gzip -9 / brotli -11).",
+  ];
+  for (const b of bundlers) {
+    lines.push(
+      "",
+      `### ${b}`,
+      "",
+      "| Suite | Role | Packages | min | gzip | br |",
+      "| --- | --- | --- | ---: | ---: | ---: |",
+    );
+    for (const r of results) {
+      const s = r.sizes[b]!;
+      lines.push(
+        `| ${r.label} | ${r.role} | ${
+          pkgs(r.packages)
+        } | ${s.min} | ${s.gzip} | ${s.brotli} |`,
+      );
     }
   }
   lines.push("");
