@@ -33,25 +33,30 @@ export interface Meta {
 const fmt = (n: number): string => n.toLocaleString("en-US");
 const pkgs = (list: string[]): string =>
   list.map((p) => `\`${p}\``).join(" + ");
-const ratio = (s: Record<LibId, LibResult>): string =>
-  (s["@hpke"].gzip / s["panva/hpke"].gzip).toFixed(2);
+const ratio = (
+  s: Record<LibId, LibResult>,
+  format: "gzip" | "brotli",
+): string => (s["@hpke"][format] / s["panva/hpke"][format]).toFixed(2);
 
 export function printTable(results: Result[], bundlers: BundlerId[]): void {
-  console.table(
-    results.map((r) => {
-      const row: Record<string, string | number> = {
-        suite: r.id,
-        role: r.role,
-      };
-      for (const b of bundlers) {
-        const s = r.sizes[b]!;
-        row[`${b} @hpke gz`] = s["@hpke"].gzip;
-        row[`${b} panva gz`] = s["panva/hpke"].gzip;
-        row[`${b} ratio`] = ratio(s);
-      }
-      return row;
-    }),
-  );
+  for (const format of ["gzip", "brotli"] as const) {
+    console.log(`\n${format}`);
+    console.table(
+      results.map((r) => {
+        const row: Record<string, string | number> = {
+          suite: r.id,
+          role: r.role,
+        };
+        for (const b of bundlers) {
+          const s = r.sizes[b]!;
+          row[`${b} @hpke`] = s["@hpke"][format];
+          row[`${b} panva`] = s["panva/hpke"][format];
+          row[`${b} ratio`] = ratio(s, format);
+        }
+        return row;
+      }),
+    );
+  }
 }
 
 export function printModules(
@@ -79,31 +84,34 @@ export function toMarkdown(
     meta.verified
       ? "- HPKE bundles verified by seal/open; OHTTP bundles by HTTP request/response round-trips"
       : "- **bundles NOT verified** (`--no-verify`)",
-    "- sizes in bytes (min / gzip -9 / brotli -11); ratio = @hpke gzip / panva gzip",
+    "- sizes in bytes (min / gzip -9 / brotli -11); ratios = @hpke / panva",
     "",
     "Bundlers:",
     "",
     ...bundlers.map((b) => `- **${b}**: ${meta.bundlers[b]}`),
   ];
   for (const b of results.length ? bundlers : []) {
-    lines.push(
-      "",
-      `## ${b}`,
-      "",
-      "| Suite | Role | @hpke packages | @hpke min | @hpke gzip | @hpke br | panva packages | panva min | panva gzip | panva br | ratio |",
-      "| --- | --- | --- | ---: | ---: | ---: | --- | ---: | ---: | ---: | ---: |",
-    );
-    for (const r of results) {
-      const s = r.sizes[b]!;
-      const a = s["@hpke"];
-      const p = s["panva/hpke"];
+    lines.push("", `## ${b}`);
+    for (const format of ["gzip", "brotli"] as const) {
       lines.push(
-        `| ${r.label} | ${r.role} | ${pkgs(r.packages["@hpke"])} | ${
-          fmt(a.min)
-        } | ${fmt(a.gzip)} | ${fmt(a.brotli)} | ${
-          pkgs(r.packages["panva/hpke"])
-        } | ${fmt(p.min)} | ${fmt(p.gzip)} | ${fmt(p.brotli)} | ${ratio(s)} |`,
+        "",
+        `### ${format}`,
+        "",
+        `| Suite | Role | @hpke packages | @hpke min | @hpke ${format} | panva packages | panva min | panva ${format} | ratio |`,
+        "| --- | --- | --- | ---: | ---: | --- | ---: | ---: | ---: |",
       );
+      for (const r of results) {
+        const s = r.sizes[b]!;
+        const a = s["@hpke"];
+        const p = s["panva/hpke"];
+        lines.push(
+          `| ${r.label} | ${r.role} | ${pkgs(r.packages["@hpke"])} | ${
+            fmt(a.min)
+          } | ${fmt(a[format])} | ${pkgs(r.packages["panva/hpke"])} | ${
+            fmt(p.min)
+          } | ${fmt(p[format])} | ${ratio(s, format)} |`,
+        );
+      }
     }
   }
   lines.push("");
