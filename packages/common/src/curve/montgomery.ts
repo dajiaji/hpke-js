@@ -24,7 +24,6 @@ import {
   type CryptoKeys,
   numberToBytesLE,
   randomBytes,
-  validateObject,
 } from "../utils/noble.ts";
 import { createKeygen, type CurveLengths } from "./curve.ts";
 import { mod } from "./modular.ts";
@@ -109,10 +108,17 @@ export const __TEST: { cmask: typeof cmask; cswap: typeof cswap } =
   /* @__PURE__ */ Object.freeze({ cmask, cswap });
 
 function validateOpts(curve: CurveType) {
-  validateObject(curve, {
-    adjustScalarBytes: "function",
-    powPminus2: "function",
-  });
+  if (!curve || typeof curve !== "object") {
+    throw new Error("expected valid options object");
+  }
+  for (const name of ["adjustScalarBytes", "powPminus2"] as const) {
+    const current = typeof curve[name];
+    if (current !== "function") {
+      throw new Error(
+        `param "${name}" is invalid: expected function, got ${current}`,
+      );
+    }
+  }
   return Object.freeze({ ...curve } as const);
 }
 

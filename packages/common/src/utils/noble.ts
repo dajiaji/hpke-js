@@ -396,31 +396,6 @@ export function aInRange(
   }
 }
 
-export function validateObject(
-  object: Record<string, any>,
-  fields: Record<string, string> = {},
-  optFields: Record<string, string> = {},
-): void {
-  if (!object || typeof object !== "object") {
-    throw new Error("expected valid options object");
-  }
-  type Item = keyof typeof object;
-  function checkField(fieldName: Item, expectedType: string, isOpt: boolean) {
-    const val = object[fieldName];
-    if (isOpt && val === undefined) return;
-    const current = typeof val;
-    if (current !== expectedType || val === null) {
-      throw new Error(
-        `param "${fieldName}" is invalid: expected ${expectedType}, got ${current}`,
-      );
-    }
-  }
-  const iter = (f: typeof fields, isOpt: boolean) =>
-    Object.entries(f).forEach(([k, v]) => checkField(k, v, isOpt));
-  iter(fields, false);
-  iter(optFields, true);
-}
-
 export interface CryptoKeys {
   lengths: { seed?: number; public?: number; secret?: number };
   keygen: (
