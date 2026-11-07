@@ -8,62 +8,32 @@
  */
 
 /**
- * Basic utils for ARX (add-rotate-xor) salsa and chacha ciphers.
+ * ChaCha20-specific helpers.
 
-RFC8439 requires multi-step cipher stream, where
-authKey starts with counter: 0, actual msg with counter: 1.
-
-For this, we need a way to re-use nonce / counter:
-
-    const counter = new Uint8Array(4);
-    chacha(..., counter, ...); // counter is now 1
-    chacha(..., counter, ...); // counter is now 2
-
-This is complicated:
-
-- 32-bit counters are enough, no need for 64-bit: max ArrayBuffer size in JS is 4GB
-- Original papers don't allow mutating counters
-- Counter overflow is undefined [^1]
-- Idea A: allow providing (nonce | counter) instead of just nonce, re-use it
-- Caveat: Cannot be re-used through all cases:
-- * chacha has (counter | nonce)
-- * xchacha has (nonce16 | counter | nonce16)
-- Idea B: separate nonce / counter and provide separate API for counter re-use
-- Caveat: there are different counter sizes depending on an algorithm.
-- salsa & chacha also differ in structures of key & sigma:
-  salsa20:      s[0] | k(4) | s[1] | nonce(2) | cnt(2) | s[2] | k(4) | s[3]
-  chacha:       s(4) | k(8) | cnt(1) | nonce(3)
-  chacha20orig: s(4) | k(8) | cnt(2) | nonce(2)
-- Idea C: helper method such as `setSalsaState(key, nonce, sigma, data)`
-- Caveat: we can't re-use counter array
-
-xchacha [^2] uses the subkey and remaining 8 byte nonce with ChaCha20 as normal
-(prefixed by 4 NUL bytes, since [RFC8439] specifies a 12-byte nonce).
-
-[^1]: https://mailarchive.ietf.org/arch/msg/cfrg/gsOnTJzcbgG6OqD8Sc0GO5aR_tU/
-[^2]: https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-xchacha#appendix-A.2
+RFC 8439 ChaCha20 uses a 32-byte key, a 12-byte nonce and a 32-bit block
+counter. The AEAD construction uses the same key/nonce twice: the Poly1305
+one-time key is taken from the keystream block with counter 0, and the message
+is encrypted starting from counter 1. The initial counter is therefore passed
+explicitly instead of being kept as mutable state.
 
  * @module
  */
 import {
-  abool,
   abytes,
-  anumber,
-  checkOpts,
   clean,
   copyBytes,
+  isAligned32,
   u32,
   type XorStream,
 } from "./utils.ts";
 
-// Can't use similar utils.utf8ToBytes, because it uses `TextEncoder` - not available in all envs
-const _utf8ToBytes = (str: string) =>
-  Uint8Array.from(str.split("").map((c) => c.charCodeAt(0)));
-const sigma16 = _utf8ToBytes("expand 16-byte k");
-const sigma32 = _utf8ToBytes("expand 32-byte k");
-const sigma16_32 = u32(sigma16);
 /** "expand 32-byte k" as Uint32Array (ChaCha20 sigma constant). */
-export const sigma32_32 = u32(sigma32);
+export const sigma32_32 = Uint32Array.of(
+  0x61707865,
+  0x3320646e,
+  0x79622d32,
+  0x6b206574,
+);
 
 /** Rotate left. */
 export function rotl(a: number, b: number): number {
@@ -80,33 +50,7 @@ export type CipherCoreFn = (
   rounds?: number,
 ) => void;
 
-/** Method which extends key + short nonce into larger nonce / diff key. */
-export type ExtendNonceFn = (
-  sigma: Uint32Array,
-  key: Uint32Array,
-  input: Uint32Array,
-  output: Uint32Array,
-) => void;
-
-/** ARX cipher options.
- * * `allowShortKeys` for 16-byte keys
- * * `counterLength` in bytes
- * * `counterRight`: right: `nonce|counter`; left: `counter|nonce`
- */
-export type CipherOpts = {
-  allowShortKeys?: boolean; // Original salsa / chacha allow 16-byte keys
-  extendNonceFn?: ExtendNonceFn;
-  counterLength?: number;
-  counterRight?: boolean;
-  rounds?: number;
-};
-
-// Is byte array aligned to 4 byte offset (u32)?
-function isAligned32(b: Uint8Array) {
-  return b.byteOffset % 4 === 0;
-}
-
-// Salsa and Chacha block length is always 512-bit
+// ChaCha20 block length is 512-bit
 const BLOCK_LEN = 64;
 const BLOCK_LEN32 = 16;
 
@@ -124,7 +68,6 @@ function runCipher(
   data: Uint8Array,
   output: Uint8Array,
   counter: number,
-  rounds: number,
 ): void {
   const len = data.length;
   const block = new Uint8Array(BLOCK_LEN);
@@ -134,7 +77,7 @@ function runCipher(
   const d32 = isAligned ? u32(data) : U32_EMPTY;
   const o32 = isAligned ? u32(output) : U32_EMPTY;
   for (let pos = 0; pos < len; counter++) {
-    core(sigma, key, nonce, b32, counter, rounds);
+    core(sigma, key, nonce, b32, counter, 20);
     if (counter >= MAX_COUNTER) throw new Error("arx: counter overflow");
     const take = Math.min(BLOCK_LEN, len - pos);
     // aligned to 4 bytes
@@ -156,23 +99,9 @@ function runCipher(
   }
 }
 
-/** Creates ARX-like (ChaCha, Salsa) cipher stream from core function. */
-export function createCipher(core: CipherCoreFn, opts: CipherOpts): XorStream {
-  const { allowShortKeys, extendNonceFn, counterLength, counterRight, rounds } =
-    checkOpts(
-      {
-        allowShortKeys: false,
-        counterLength: 8,
-        counterRight: false,
-        rounds: 20,
-      },
-      opts,
-    );
+/** Creates the RFC 8439 ChaCha20 cipher stream. */
+export function createCipher(core: CipherCoreFn): XorStream {
   if (typeof core !== "function") throw new Error("core must be a function");
-  anumber(counterLength);
-  anumber(rounds);
-  abool(counterRight);
-  abool(allowShortKeys);
   return (
     key: Uint8Array,
     nonce: Uint8Array,
@@ -180,14 +109,15 @@ export function createCipher(core: CipherCoreFn, opts: CipherOpts): XorStream {
     output?: Uint8Array,
     counter = 0,
   ): Uint8Array => {
-    abytes(key, undefined, "key");
-    abytes(nonce, undefined, "nonce");
+    abytes(key, 32, "arx key");
+    abytes(nonce, 12, "nonce");
     abytes(data, undefined, "data");
     const len = data.length;
     if (output === undefined) output = new Uint8Array(len);
     abytes(output, undefined, "output");
-    anumber(counter);
-    if (counter < 0 || counter >= MAX_COUNTER) {
+    if (
+      !Number.isSafeInteger(counter) || counter < 0 || counter >= MAX_COUNTER
+    ) {
       throw new Error("arx: counter overflow");
     }
     if (output.length < len) {
@@ -195,64 +125,23 @@ export function createCipher(core: CipherCoreFn, opts: CipherOpts): XorStream {
         `arx: output (${output.length}) is shorter than data (${len})`,
       );
     }
-    const toClean = [];
+    const keyCopy = copyBytes(key);
 
-    // Key & sigma
-    // key=16 -> sigma16, k=key|key
-    // key=32 -> sigma32, k=key
-    const l = key.length;
-    let k: Uint8Array;
-    let sigma: Uint32Array;
-    if (l === 32) {
-      toClean.push(k = copyBytes(key));
-      sigma = sigma32_32;
-    } else if (l === 16 && allowShortKeys) {
-      k = new Uint8Array(32);
-      k.set(key);
-      k.set(key, 16);
-      sigma = sigma16_32;
-      toClean.push(k);
-    } else {
-      abytes(key, 32, "arx key");
-      throw new Error("invalid key size");
-      // throw new Error(`"arx key" expected Uint8Array of length 32, got length=${l}`);
-    }
+    // Copy a misaligned nonce before creating a Uint32Array view.
+    const nonceCopy = isAligned32(nonce) ? undefined : copyBytes(nonce);
 
-    // Nonce
-    // salsa20:      8   (8-byte counter)
-    // chacha20orig: 8   (8-byte counter)
-    // chacha20:     12  (4-byte counter)
-    // xsalsa20:     24  (16 -> hsalsa,  8 -> old nonce)
-    // xchacha20:    24  (16 -> hchacha, 8 -> old nonce)
-    // Align nonce to 4 bytes
-    if (!isAligned32(nonce)) toClean.push(nonce = copyBytes(nonce));
-
-    const k32 = u32(k);
-    // hsalsa & hchacha: handle extended nonce
-    if (extendNonceFn) {
-      if (nonce.length !== 24) {
-        throw new Error(`arx: extended nonce must be 24 bytes`);
-      }
-      extendNonceFn(sigma, k32, u32(nonce.subarray(0, 16)), k32);
-      nonce = nonce.subarray(16);
-    }
-
-    // Handle nonce counter
-    const nonceNcLen = 16 - counterLength;
-    if (nonceNcLen !== nonce.length) {
-      throw new Error(`arx: nonce must be ${nonceNcLen} or 16 bytes`);
-    }
-
-    // Pad counter when nonce is 64 bit
-    if (nonceNcLen !== 12) {
-      const nc = new Uint8Array(12);
-      nc.set(nonce, counterRight ? 0 : 12 - nonce.length);
-      nonce = nc;
-      toClean.push(nonce);
-    }
-    const n32 = u32(nonce);
-    runCipher(core, sigma, k32, n32, data, output, counter, rounds);
-    clean(...toClean);
+    const k32 = u32(keyCopy);
+    runCipher(
+      core,
+      sigma32_32,
+      k32,
+      u32(nonceCopy ?? nonce),
+      data,
+      output,
+      counter,
+    );
+    clean(keyCopy);
+    if (nonceCopy) clean(nonceCopy);
     return output;
   };
 }

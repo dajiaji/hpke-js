@@ -37,11 +37,6 @@ export {
   u32,
 };
 
-/** Asserts something is boolean. */
-export function abool(b: boolean): void {
-  if (typeof b !== "boolean") throw new Error(`boolean expected, not ${b}`);
-}
-
 /** Cast u8 / u16 / u32 to u8. */
 export function u8(arr: TypedArray): Uint8Array {
   return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength);
@@ -185,21 +180,6 @@ export type XorStream = (
   counter?: number,
 ) => Uint8Array;
 
-// Used in ARX only
-// deno-lint-ignore ban-types
-type EmptyObj = {};
-
-export function checkOpts<T1 extends EmptyObj, T2 extends EmptyObj>(
-  defaults: T1,
-  opts: T2,
-): T1 & T2 {
-  if (opts == null || typeof opts !== "object") {
-    throw new Error("options must be defined");
-  }
-  const merged = Object.assign(defaults, opts);
-  return merged as T1 & T2;
-}
-
 /** Compares 2 uint8array-s in kinda constant time. */
 export function equalBytes(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false;
@@ -228,19 +208,6 @@ export function getOutput(
     throw new Error("invalid output, must be aligned");
   }
   return out;
-}
-
-export function u64Lengths(
-  dataLength: number,
-  aadLength: number,
-  isLE: boolean,
-): Uint8Array {
-  abool(isLE);
-  const num = new Uint8Array(16);
-  const view = createView(num);
-  view.setBigUint64(0, BigInt(aadLength), isLE);
-  view.setBigUint64(8, BigInt(dataLength), isLE);
-  return num;
 }
 
 // Is byte array aligned to 4 byte offset (u32)?
