@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "@std/assert";
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { loadCrypto } from "@hpke/common";
@@ -13,6 +13,7 @@ import {
 } from "@hpke/core";
 
 import { DhkemX448HkdfSha512 } from "../mod.ts";
+import { x448 } from "../src/primitives/x448.ts";
 
 describe("DhkemX448HkdfSha512", () => {
   describe("with valid parameters", () => {
@@ -221,4 +222,30 @@ describe("CipherSuite", () => {
       assertEquals(new TextDecoder().decode(pt), "my-secret-message");
     });
   });
+});
+
+describe("x448 low-order public keys", () => {
+  // Every u whose order divides the cofactor, plus non-canonical encodings
+  // of 0 and 1. They must be rejected before the Montgomery ladder runs.
+  const P448 = 2n ** 448n - 2n ** 224n - 1n;
+  const toBytesLE = (n: bigint): Uint8Array => {
+    const out = new Uint8Array(56);
+    for (let i = 0; i < 56; i++) {
+      out[i] = Number(n & 0xffn);
+      n >>= 8n;
+    }
+    return out;
+  };
+  // Fixed key: utils.randomSecretKey() needs a global
+  // crypto, which Node.js 18 ESM builds do not provide.
+  const sk = new Uint8Array(56).fill(0x42);
+  for (const u of [0n, 1n, P448 - 1n, P448, P448 + 1n]) {
+    it(`should reject u=${u}`, () => {
+      assertThrows(
+        () => x448.getSharedSecret(sk, toBytesLE(u)),
+        Error,
+        "invalid private or public key received",
+      );
+    });
+  }
 });

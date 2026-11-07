@@ -1,7 +1,13 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { DeserializeError, hexToBytes, loadCrypto } from "@hpke/common";
+import {
+  DecapError,
+  DeserializeError,
+  EncapError,
+  hexToBytes,
+  loadCrypto,
+} from "@hpke/common";
 import { Aes256Gcm, CipherSuite, HkdfSha256, KemId } from "@hpke/core";
 import { XWing } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
@@ -72,6 +78,34 @@ describe("XWing", () => {
         assertEquals(res.sharedSecret, ss.buffer as ArrayBuffer);
         // assertEquals(ssR, ss);
       }
+    });
+  });
+
+  describe("low-order X25519 public keys", () => {
+    it("should reject encapsulation with an all-zero X25519 key", async () => {
+      const kem = new XWing();
+      const pk = hexToBytes(TEST_VECTORS[0].pk);
+      pk.fill(0, 1184);
+      const recipientPublicKey = await kem.deserializePublicKey(pk);
+      await assertRejects(
+        () => kem.encap({ recipientPublicKey }),
+        EncapError,
+        "invalid private or public key received",
+      );
+    });
+
+    it("should reject decapsulation with an all-zero X25519 ciphertext", async () => {
+      const kem = new XWing();
+      const ct = hexToBytes(TEST_VECTORS[0].ct);
+      ct.fill(0, 1088);
+      const recipientKey = await kem.deserializePrivateKey(
+        hexToBytes(TEST_VECTORS[0].sk),
+      );
+      await assertRejects(
+        () => kem.decap({ enc: ct, recipientKey }),
+        DecapError,
+        "invalid private or public key received",
+      );
     });
   });
 
