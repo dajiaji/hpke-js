@@ -1,5 +1,9 @@
 # Changes
 
+## Unreleased
+
+- Use raw X25519 primitives from common to avoid bundling DHKEM and HKDF-SHA256.
+
 ## Version 0.7.0
 
 Released 2026-03-08
