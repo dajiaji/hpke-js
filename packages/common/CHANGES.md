@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reduce bundle size by sharing DH and KEM context construction between base and
+  authenticated DHKEM operations.
 - Export raw X25519 primitives shared by DHKEM and X-Wing.
 - Move `XCurveNativeDhkemPrimitives` from core and add `X_CURVE_X25519` /
   `X_CURVE_X448` curve parameters.

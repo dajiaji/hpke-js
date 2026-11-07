@@ -119,38 +119,28 @@ export class Dhkem implements KemInterface {
     );
 
     try {
-      let dh: Uint8Array;
-      if (params.senderKey === undefined) {
-        dh = new Uint8Array(
-          await this._prim.dh(ke.privateKey, params.recipientPublicKey),
-        );
-      } else {
+      let dh: Uint8Array = new Uint8Array(
+        await this._prim.dh(ke.privateKey, params.recipientPublicKey),
+      );
+      let pksm = EMPTY;
+      if (params.senderKey !== undefined) {
         const sks = isCryptoKeyPair(params.senderKey)
           ? params.senderKey.privateKey
           : params.senderKey;
-        const dh1 = new Uint8Array(
-          await this._prim.dh(ke.privateKey, params.recipientPublicKey),
+        dh = concat(
+          dh,
+          new Uint8Array(await this._prim.dh(sks, params.recipientPublicKey)),
         );
-        const dh2 = new Uint8Array(
-          await this._prim.dh(sks, params.recipientPublicKey),
-        );
-        dh = concat(dh1, dh2);
-      }
-
-      let kemContext: Uint8Array;
-      if (params.senderKey === undefined) {
-        kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
-      } else {
         const pks = isCryptoKeyPair(params.senderKey)
           ? params.senderKey.publicKey
           : await this._prim.derivePublicKey(params.senderKey);
-        const pksm = await this._prim.serializePublicKey(pks);
-        kemContext = concat3(
-          new Uint8Array(enc),
-          new Uint8Array(pkrm),
-          new Uint8Array(pksm),
-        );
+        pksm = new Uint8Array(await this._prim.serializePublicKey(pks));
       }
+      const kemContext = concat3(
+        new Uint8Array(enc),
+        new Uint8Array(pkrm),
+        pksm,
+      );
       const sharedSecret = await this._generateSharedSecret(dh, kemContext);
       return {
         enc: enc,
@@ -173,34 +163,22 @@ export class Dhkem implements KemInterface {
     const pkrm = await this._prim.serializePublicKey(pkr);
 
     try {
-      let dh: Uint8Array;
-      if (params.senderPublicKey === undefined) {
-        dh = new Uint8Array(await this._prim.dh(skr, pke));
-      } else {
-        const dh1 = new Uint8Array(await this._prim.dh(skr, pke));
-        const dh2 = new Uint8Array(
-          await this._prim.dh(skr, params.senderPublicKey),
+      let dh: Uint8Array = new Uint8Array(await this._prim.dh(skr, pke));
+      let pksm = EMPTY;
+      if (params.senderPublicKey !== undefined) {
+        dh = concat(
+          dh,
+          new Uint8Array(await this._prim.dh(skr, params.senderPublicKey)),
         );
-        dh = concat(dh1, dh2);
-      }
-
-      let kemContext: Uint8Array;
-      if (params.senderPublicKey === undefined) {
-        kemContext = concat(new Uint8Array(enc), new Uint8Array(pkrm));
-      } else {
-        const pksm = await this._prim.serializePublicKey(
-          params.senderPublicKey,
-        );
-        kemContext = new Uint8Array(
-          enc.byteLength + pkrm.byteLength + pksm.byteLength,
-        );
-        kemContext.set(new Uint8Array(enc), 0);
-        kemContext.set(new Uint8Array(pkrm), enc.byteLength);
-        kemContext.set(
-          new Uint8Array(pksm),
-          enc.byteLength + pkrm.byteLength,
+        pksm = new Uint8Array(
+          await this._prim.serializePublicKey(params.senderPublicKey),
         );
       }
+      const kemContext = concat3(
+        new Uint8Array(enc),
+        new Uint8Array(pkrm),
+        pksm,
+      );
       return await this._generateSharedSecret(dh, kemContext);
     } catch (e: unknown) {
       throw new DecapError(e);
