@@ -126,6 +126,9 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     len: number,
   ): Promise<ArrayBuffer> {
     await this._setup();
+    if (len > 255 * this.hashSize) {
+      throw new Error("Entropy limit reached");
+    }
     const prkBuf = toArrayBuffer(prk);
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
@@ -137,38 +140,30 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
       ],
     );
 
-    const okm = new ArrayBuffer(len);
-    const okmBytes = new Uint8Array(okm);
+    const okm = new Uint8Array(len);
     let prev = EMPTY;
     const mid = toUint8Array(info);
-    const tail = new Uint8Array(1);
 
-    if (len > 255 * this.hashSize) {
-      throw new Error("Entropy limit reached");
-    }
-
-    const tmp = new Uint8Array(this.hashSize + mid.length + 1);
-    for (let i = 1, cur = 0; cur < okmBytes.length; i++) {
-      tail[0] = i;
-      tmp.set(prev, 0);
-      tmp.set(mid, prev.length);
-      tmp.set(tail, prev.length + mid.length);
+    for (let counter = 1, offset = 0; offset < okm.length; counter++) {
+      const input = new Uint8Array(prev.length + mid.length + 1);
+      input.set(prev);
+      input.set(mid, prev.length);
+      input[input.length - 1] = counter;
       prev = new Uint8Array(
         await (this._api as SubtleCrypto).sign(
           "HMAC",
           key,
-          tmp.slice(0, prev.length + mid.length + 1),
+          input,
         ),
       );
-      if (okmBytes.length - cur >= prev.length) {
-        okmBytes.set(prev, cur);
-        cur += prev.length;
-      } else {
-        okmBytes.set(prev.slice(0, okmBytes.length - cur), cur);
-        cur += okmBytes.length - cur;
-      }
+      const block = prev.subarray(
+        0,
+        Math.min(prev.length, okm.length - offset),
+      );
+      okm.set(block, offset);
+      offset += block.length;
     }
-    return okm;
+    return okm.buffer;
   }
 
   public async extractAndExpand(

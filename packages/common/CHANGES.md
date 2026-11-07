@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Reduce X-Wing bundle size by specializing Montgomery curve option validation.
+- Reduce bundle size and temporary copies in the HKDF expand loop.
+- Reject oversized HKDF expansion requests before key import and buffer
+  allocation.
 - Reduce bundle size by sharing DH and KEM context construction between base and
   authenticated DHKEM operations.
 - Export raw X25519 primitives shared by DHKEM and X-Wing.
