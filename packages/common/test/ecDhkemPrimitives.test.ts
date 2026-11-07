@@ -1,7 +1,8 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import {
+  DeserializeError,
   EC_P_256,
   EC_P_384,
   EC_P_521,
@@ -30,9 +31,25 @@ const CURVES: [EcCurve, () => KdfInterface][] = [
 const hex = (s: string) =>
   new Uint8Array(s.match(/../g)!.map((b) => parseInt(b, 16)));
 
-// Exposes the private fallback used when JWK export fails (Firefox).
-interface EcWithFallback {
-  _derivePublicKeyWithoutJwkExport(key: CryptoKey): Promise<CryptoKey>;
+// Simulates Firefox (Mozilla bug 2000795), which cannot export a JWK from an
+// ECDH private key imported from a PKCS#8 without the public key.
+function rejectJwkExportOf(ec: EcDhkemPrimitives, target: CryptoKey): void {
+  const holder = ec as unknown as { _api: SubtleCrypto };
+  const api = holder._api;
+  holder._api = new Proxy(api, {
+    get(obj, prop) {
+      if (prop === "exportKey") {
+        return (format: KeyFormat, key: CryptoKey) => {
+          if (format === "jwk" && key === target) {
+            return Promise.reject(new DOMException("", "OperationError"));
+          }
+          return obj.exportKey(format as "pkcs8", key);
+        };
+      }
+      const v = Reflect.get(obj, prop);
+      return typeof v === "function" ? v.bind(obj) : v;
+    },
+  });
 }
 
 describe("EcDhkemPrimitives", () => {
@@ -80,27 +97,40 @@ describe("EcDhkemPrimitives", () => {
         );
       });
 
-      it("derivePublicKey fallback should recover the public key up to sign", async () => {
+      it("derivePublicKey should recover the exact public key when JWK export fails", async () => {
+        const ec = new EcDhkemPrimitives(curve, kdf());
+        for (let i = 0; i < 8; i++) {
+          const kp = await ec.generateKeyPair();
+          const expected = new Uint8Array(
+            await ec.serializePublicKey(kp.publicKey),
+          );
+          const sk = await ec.deserializePrivateKey(
+            await ec.serializePrivateKey(kp.privateKey),
+          );
+          rejectJwkExportOf(ec, sk);
+          const derived = await ec.derivePublicKey(sk);
+          assertEquals(
+            new Uint8Array(await ec.serializePublicKey(derived)),
+            expected,
+          );
+        }
+      });
+
+      it("derivePublicKey should throw DeserializeError when the key cannot be exported", async () => {
         const ec = new EcDhkemPrimitives(curve, kdf());
         const kp = await ec.generateKeyPair();
-        const expected = new Uint8Array(
-          await ec.serializePublicKey(kp.publicKey),
+        const raw = await ec.serializePrivateKey(kp.privateKey);
+        const pkcs8 = new Uint8Array(curve.pkcs8AlgId.length + raw.byteLength);
+        pkcs8.set(curve.pkcs8AlgId, 0);
+        pkcs8.set(new Uint8Array(raw), curve.pkcs8AlgId.length);
+        const sk = await crypto.subtle.importKey(
+          "pkcs8",
+          pkcs8,
+          { name: "ECDH", namedCurve: curve.namedCurve },
+          false,
+          ["deriveBits"],
         );
-        const derived = await (ec as unknown as EcWithFallback)
-          ._derivePublicKeyWithoutJwkExport(kp.privateKey);
-        const actual = new Uint8Array(await ec.serializePublicKey(derived));
-
-        // Same x-coordinate, and the ECDH result is identical.
-        assertEquals(actual.length, expected.length);
-        assertEquals(
-          actual.subarray(0, 1 + curve.size),
-          expected.subarray(0, 1 + curve.size),
-        );
-        const other = await ec.generateKeyPair();
-        assertEquals(
-          new Uint8Array(await ec.dh(other.privateKey, derived)),
-          new Uint8Array(await ec.dh(other.privateKey, kp.publicKey)),
-        );
+        await assertRejects(() => ec.derivePublicKey(sk), DeserializeError);
       });
     });
   }
