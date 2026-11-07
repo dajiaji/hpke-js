@@ -54,6 +54,7 @@ export async function beforeBuild(name: string): Promise<void> {
 
 export function afterBuild(name: string) {
   markEsmSideEffectFree(name);
+  removeDevDependencies(name);
   copySync(
     "samples/node",
     `../../npm/samples/${name}`,
@@ -89,6 +90,18 @@ export function markEsmSideEffectFree(name: string) {
   const path = `../../npm/packages/${name}/esm/package.json`;
   const pkg = JSON.parse(Deno.readTextFileSync(path));
   pkg.sideEffects = false;
+  Deno.writeTextFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
+}
+
+/**
+ * Removes devDependencies from the published package.json. They are only
+ * needed by dnt's test run (e.g. `@deno/shim-deno`, `picocolors`), which has
+ * already finished, so consumers do not need to see them on npm.
+ */
+export function removeDevDependencies(name: string) {
+  const path = `../../npm/packages/${name}/package.json`;
+  const pkg = JSON.parse(Deno.readTextFileSync(path));
+  delete pkg.devDependencies;
   Deno.writeTextFileSync(path, JSON.stringify(pkg, null, 2) + "\n");
 }
 
