@@ -38,24 +38,15 @@ import {
   type HashXOF,
 } from "./hash.ts";
 
-// No __PURE__ annotations in sha3 header:
-// EVERYTHING is in fact used on every export.
-// Various per round constants calculations
+// Iota round constants. Rho and Pi are fully unrolled in keccakP.
 const _0n = 0n;
 const _1n = 1n;
 const _2n = 2n;
 const _7n = 7n;
 const _256n = 256n;
 const _0x71n = 0x71n;
-const SHA3_PI: number[] = [];
-const SHA3_ROTL: number[] = [];
 const _SHA3_IOTA: bigint[] = []; // no pure annotation: var is always used
-for (let round = 0, R = _1n, x = 1, y = 0; round < 24; round++) {
-  // Pi
-  [x, y] = [y, (2 * x + 3 * y) % 5];
-  SHA3_PI.push(2 * (5 * y + x));
-  // Rotational
-  SHA3_ROTL.push((((round + 1) * (round + 2)) / 2) % 64);
+for (let round = 0, R = _1n; round < 24; round++) {
   // Iota
   let t = _0n;
   for (let j = 0; j < 7; j++) {
@@ -67,18 +58,6 @@ for (let round = 0, R = _1n, x = 1, y = 0; round < 24; round++) {
 const IOTAS = split(_SHA3_IOTA, true);
 const SHA3_IOTA_H = IOTAS[0];
 const SHA3_IOTA_L = IOTAS[1];
-
-// Left rotation (without 0, 32, 64)
-const rotlH = (
-  h: number,
-  l: number,
-  s: number,
-) => (s > 32 ? rotlBH(h, l, s) : rotlSH(h, l, s));
-const rotlL = (
-  h: number,
-  l: number,
-  s: number,
-) => (s > 32 ? rotlBL(h, l, s) : rotlSL(h, l, s));
 
 /** `keccakf1600` internal function, additionally allows to adjust round count. */
 export function keccakP(
@@ -93,21 +72,9 @@ export function keccakP(
     for (let x = 0; x < 10; x++) {
       B[x] = s[x] ^ s[x + 10] ^ s[x + 20] ^ s[x + 30] ^ s[x + 40];
     }
-    // for (let x = 0; x < 10; x += 2) {
-    //   const idx1 = (x + 8) % 10;
-    //   const idx0 = (x + 2) % 10;
-    //   const B0 = B[idx0];
-    //   const B1 = B[idx0 + 1];
-    //   const Th = rotlH(B0, B1, 1) ^ B[idx1];
-    //   const Tl = rotlL(B0, B1, 1) ^ B[idx1 + 1];
-    //   for (let y = 0; y < 50; y += 10) {
-    //     s[x + y] ^= Th;
-    //     s[x + y + 1] ^= Tl;
-    //   }
-    // }
     { // x=0: idx0=2, idx1=8
-      const Th = rotlH(B[2], B[3], 1) ^ B[8];
-      const Tl = rotlL(B[2], B[3], 1) ^ B[9];
+      const Th = rotlSH(B[2], B[3], 1) ^ B[8];
+      const Tl = rotlSL(B[2], B[3], 1) ^ B[9];
       s[0] ^= Th;
       s[1] ^= Tl;
       s[10] ^= Th;
@@ -120,8 +87,8 @@ export function keccakP(
       s[41] ^= Tl;
     }
     { // x=2: idx0=4, idx1=0
-      const Th = rotlH(B[4], B[5], 1) ^ B[0];
-      const Tl = rotlL(B[4], B[5], 1) ^ B[1];
+      const Th = rotlSH(B[4], B[5], 1) ^ B[0];
+      const Tl = rotlSL(B[4], B[5], 1) ^ B[1];
       s[2] ^= Th;
       s[3] ^= Tl;
       s[12] ^= Th;
@@ -134,8 +101,8 @@ export function keccakP(
       s[43] ^= Tl;
     }
     { // x=4: idx0=6, idx1=2
-      const Th = rotlH(B[6], B[7], 1) ^ B[2];
-      const Tl = rotlL(B[6], B[7], 1) ^ B[3];
+      const Th = rotlSH(B[6], B[7], 1) ^ B[2];
+      const Tl = rotlSL(B[6], B[7], 1) ^ B[3];
       s[4] ^= Th;
       s[5] ^= Tl;
       s[14] ^= Th;
@@ -148,8 +115,8 @@ export function keccakP(
       s[45] ^= Tl;
     }
     { // x=6: idx0=8, idx1=4
-      const Th = rotlH(B[8], B[9], 1) ^ B[4];
-      const Tl = rotlL(B[8], B[9], 1) ^ B[5];
+      const Th = rotlSH(B[8], B[9], 1) ^ B[4];
+      const Tl = rotlSL(B[8], B[9], 1) ^ B[5];
       s[6] ^= Th;
       s[7] ^= Tl;
       s[16] ^= Th;
@@ -162,8 +129,8 @@ export function keccakP(
       s[47] ^= Tl;
     }
     { // x=8: idx0=0, idx1=6
-      const Th = rotlH(B[0], B[1], 1) ^ B[6];
-      const Tl = rotlL(B[0], B[1], 1) ^ B[7];
+      const Th = rotlSH(B[0], B[1], 1) ^ B[6];
+      const Tl = rotlSL(B[0], B[1], 1) ^ B[7];
       s[8] ^= Th;
       s[9] ^= Tl;
       s[18] ^= Th;
@@ -178,16 +145,6 @@ export function keccakP(
     // Rho (ρ) and Pi (π) — fully unrolled
     let curH = s[2];
     let curL = s[3];
-    // for (let t = 0; t < 24; t++) {
-    //   const shift = SHA3_ROTL[t];
-    //   const Th = rotlH(curH, curL, shift);
-    //   const Tl = rotlL(curH, curL, shift);
-    //   const PI = SHA3_PI[t];
-    //   curH = s[PI];
-    //   curL = s[PI + 1];
-    //   s[PI] = Th;
-    //   s[PI + 1] = Tl;
-    // }
     let Th, Tl;
     // t=0: shift=1(S), PI=20
     Th = rotlSH(curH, curL, 1);
