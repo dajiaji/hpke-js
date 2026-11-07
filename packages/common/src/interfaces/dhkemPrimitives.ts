@@ -41,6 +41,12 @@ export interface DhkemPrimitives {
   // DHKEM-specific function.
   derivePublicKey(key: CryptoKey): Promise<CryptoKey>;
 
-  // DHKEM-specific function.
+  /**
+   * Computes the raw Diffie-Hellman shared secret.
+   *
+   * @returns A fresh buffer whose ownership transfers to the caller.
+   * `Dhkem` clears this buffer after use, including on failure. Implementations
+   * must not return cached buffers or storage shared with keys or other calls.
+   */
   dh(sk: CryptoKey, pk: CryptoKey): Promise<ArrayBuffer>;
 }

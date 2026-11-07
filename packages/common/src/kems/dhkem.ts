@@ -118,19 +118,25 @@ export class Dhkem implements KemInterface {
       params.recipientPublicKey,
     );
 
+    let dh: Uint8Array = EMPTY;
+    let dh1: Uint8Array = EMPTY;
+    let dh2: Uint8Array = EMPTY;
     try {
-      let dh: Uint8Array = new Uint8Array(
+      dh1 = new Uint8Array(
         await this._prim.dh(ke.privateKey, params.recipientPublicKey),
       );
+      dh = dh1;
       let pksm = EMPTY;
       if (params.senderKey !== undefined) {
         const sks = isCryptoKeyPair(params.senderKey)
           ? params.senderKey.privateKey
           : params.senderKey;
-        dh = concat(
-          dh,
-          new Uint8Array(await this._prim.dh(sks, params.recipientPublicKey)),
+        dh2 = new Uint8Array(
+          await this._prim.dh(sks, params.recipientPublicKey),
         );
+        dh = concat(dh1, dh2);
+        dh1.fill(0);
+        dh2.fill(0);
         const pks = isCryptoKeyPair(params.senderKey)
           ? params.senderKey.publicKey
           : await this._prim.derivePublicKey(params.senderKey);
@@ -148,6 +154,10 @@ export class Dhkem implements KemInterface {
       };
     } catch (e: unknown) {
       throw new EncapError(e);
+    } finally {
+      dh.fill(0);
+      dh1.fill(0);
+      dh2.fill(0);
     }
   }
 
@@ -162,14 +172,20 @@ export class Dhkem implements KemInterface {
       : await this._prim.derivePublicKey(params.recipientKey);
     const pkrm = await this._prim.serializePublicKey(pkr);
 
+    let dh: Uint8Array = EMPTY;
+    let dh1: Uint8Array = EMPTY;
+    let dh2: Uint8Array = EMPTY;
     try {
-      let dh: Uint8Array = new Uint8Array(await this._prim.dh(skr, pke));
+      dh1 = new Uint8Array(await this._prim.dh(skr, pke));
+      dh = dh1;
       let pksm = EMPTY;
       if (params.senderPublicKey !== undefined) {
-        dh = concat(
-          dh,
-          new Uint8Array(await this._prim.dh(skr, params.senderPublicKey)),
+        dh2 = new Uint8Array(
+          await this._prim.dh(skr, params.senderPublicKey),
         );
+        dh = concat(dh1, dh2);
+        dh1.fill(0);
+        dh2.fill(0);
         pksm = new Uint8Array(
           await this._prim.serializePublicKey(params.senderPublicKey),
         );
@@ -182,6 +198,10 @@ export class Dhkem implements KemInterface {
       return await this._generateSharedSecret(dh, kemContext);
     } catch (e: unknown) {
       throw new DecapError(e);
+    } finally {
+      dh.fill(0);
+      dh1.fill(0);
+      dh2.fill(0);
     }
   }
 
@@ -190,16 +210,20 @@ export class Dhkem implements KemInterface {
     kemContext: Uint8Array,
   ): Promise<ArrayBuffer> {
     const labeledIkm = this._kdf.buildLabeledIkm(LABEL_EAE_PRK, dh);
-    const labeledInfo = this._kdf.buildLabeledInfo(
-      LABEL_SHARED_SECRET,
-      kemContext,
-      this.secretSize,
-    );
-    return await this._kdf.extractAndExpand(
-      EMPTY,
-      labeledIkm,
-      labeledInfo,
-      this.secretSize,
-    );
+    try {
+      const labeledInfo = this._kdf.buildLabeledInfo(
+        LABEL_SHARED_SECRET,
+        kemContext,
+        this.secretSize,
+      );
+      return await this._kdf.extractAndExpand(
+        EMPTY,
+        labeledIkm,
+        labeledInfo,
+        this.secretSize,
+      );
+    } finally {
+      labeledIkm.fill(0);
+    }
   }
 }
