@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { i2Osp, loadSubtleCrypto } from "@hpke/common";
+import { i2Osp } from "@hpke/common";
 
 import {
   AeadId,
@@ -34,8 +34,7 @@ const DUMMY_BYTES_16 = new Uint8Array(
 
 describe("constructor", () => {
   describe("with valid parameters", () => {
-    it("should return a proper instance", async () => {
-      const api = await loadSubtleCrypto();
+    it("should return a proper instance", () => {
       const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
@@ -49,9 +48,6 @@ describe("constructor", () => {
 
       const params = {
         aead: new Aes128Gcm(),
-        nK: 16,
-        nN: 12,
-        nT: 16,
         exporterSecret: DUMMY_BYTES_16.buffer,
         key: key,
         baseNonce: baseNonce,
@@ -60,15 +56,14 @@ describe("constructor", () => {
 
       // assert
       assertEquals(
-        typeof new EncryptionContextImpl(api, kdf, params),
+        typeof new EncryptionContextImpl(kdf, params),
         "object",
       );
     });
   });
 
   describe("with invalid aead id", () => {
-    it("should throw Error", async () => {
-      const api = await loadSubtleCrypto();
+    it("should throw Error", () => {
       const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
       suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
       suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
@@ -82,9 +77,6 @@ describe("constructor", () => {
 
       const params = {
         aead: new ExportOnly(), // invalid
-        nK: 16,
-        nN: 12,
-        nT: 16,
         exporterSecret: DUMMY_BYTES_16.buffer,
         key: key,
         baseNonce: baseNonce,
@@ -94,7 +86,7 @@ describe("constructor", () => {
       // assert
       assertThrows(
         () => {
-          new EncryptionContextImpl(api, kdf, params);
+          new EncryptionContextImpl(kdf, params);
         },
         Error,
         "Export only",
@@ -348,51 +340,6 @@ describe("createRecipientContext", () => {
             enc: sender.enc,
           }),
         DecapError,
-      );
-    });
-  });
-
-  describe("without key info", () => {
-    it("should throw Error", async () => {
-      const api = await loadSubtleCrypto();
-      const suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
-      suiteId.set(i2Osp(KemId.DhkemP256HkdfSha256, 2), 4);
-      suiteId.set(i2Osp(KdfId.HkdfSha256, 2), 6);
-      suiteId.set(i2Osp(AeadId.Aes128Gcm, 2), 8);
-      const kdf = new HkdfSha256();
-      kdf.init(suiteId);
-      const params = {
-        aead: new Aes128Gcm(),
-        nK: 16,
-        nN: 12,
-        nT: 16,
-        exporterSecret: new Uint8Array([
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-          1,
-        ]).buffer as ArrayBuffer,
-      };
-
-      // assert
-      assertThrows(
-        () => {
-          new EncryptionContextImpl(api, kdf, params);
-        },
-        Error,
-        "Required parameters are missing",
       );
     });
   });
