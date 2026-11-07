@@ -1,6 +1,10 @@
-import { Dhkem, HkdfSha256Native, KemId } from "@hpke/common";
-
-import { X25519 } from "./dhkemPrimitives/x25519.ts";
+import {
+  Dhkem,
+  HkdfSha256Native,
+  KemId,
+  X_CURVE_X25519,
+  XCurveNativeDhkemPrimitives,
+} from "@hpke/common";
 
 /**
  * The DHKEM(X25519, HKDF-SHA256) for HPKE KEM implementing {@link KemInterface}.
@@ -39,6 +43,10 @@ export class DhkemX25519HkdfSha256 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha256Native();
-    super(KemId.DhkemX25519HkdfSha256, new X25519(kdf), kdf);
+    super(
+      KemId.DhkemX25519HkdfSha256,
+      new XCurveNativeDhkemPrimitives(X_CURVE_X25519, kdf),
+      kdf,
+    );
   }
 }

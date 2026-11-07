@@ -1,6 +1,10 @@
-import { Dhkem, HkdfSha512Native, KemId } from "@hpke/common";
-
-import { X448 } from "./dhkemPrimitives/x448.ts";
+import {
+  Dhkem,
+  HkdfSha512Native,
+  KemId,
+  X_CURVE_X448,
+  XCurveNativeDhkemPrimitives,
+} from "@hpke/common";
 
 /**
  * The DHKEM(X448, HKDF-SHA512) for HPKE KEM implementing {@link KemInterface}.
@@ -39,6 +43,10 @@ export class DhkemX448HkdfSha512 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha512Native();
-    super(KemId.DhkemX448HkdfSha512, new X448(kdf), kdf);
+    super(
+      KemId.DhkemX448HkdfSha512,
+      new XCurveNativeDhkemPrimitives(X_CURVE_X448, kdf),
+      kdf,
+    );
   }
 }

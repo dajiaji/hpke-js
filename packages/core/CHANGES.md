@@ -1,5 +1,10 @@
 # Changes
 
+## Unreleased
+
+- Use `XCurveNativeDhkemPrimitives` from common for DHKEM(X25519) and
+  DHKEM(X448).
+
 ## Version 1.10.0
 
 Released 2026-11-03
