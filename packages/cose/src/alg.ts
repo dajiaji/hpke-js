@@ -1,4 +1,4 @@
-import { AeadId, type AeadInterface } from "@hpke/core";
+import type { AeadInterface } from "@hpke/core";
 
 import { CoseError } from "./errors.ts";
 
@@ -66,11 +66,11 @@ export type ContentAlg = (typeof ContentAlg)[keyof typeof ContentAlg];
  */
 export function contentAlgFromAead(aead: AeadInterface): ContentAlg {
   switch (aead.id) {
-    case AeadId.Aes128Gcm:
+    case 0x0001: // AeadId.Aes128Gcm
       return ContentAlg.A128GCM;
-    case AeadId.Aes256Gcm:
+    case 0x0002: // AeadId.Aes256Gcm
       return ContentAlg.A256GCM;
-    case AeadId.Chacha20Poly1305:
+    case 0x0003: // AeadId.Chacha20Poly1305
       return ContentAlg.CHACHA20POLY1305;
     default:
       throw new CoseError(

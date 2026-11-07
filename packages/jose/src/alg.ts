@@ -1,4 +1,4 @@
-import { AeadId, type AeadInterface } from "@hpke/core";
+import type { AeadInterface } from "@hpke/core";
 
 import { JoseError } from "./errors.ts";
 
@@ -61,11 +61,11 @@ export function contentEncAlgFromAead(aead: AeadInterface): ContentEncAlg {
   let alg: ContentEncAlg;
   let keySize: number;
   switch (aead.id) {
-    case AeadId.Aes128Gcm:
+    case 0x0001: // AeadId.Aes128Gcm
       alg = ContentEncAlg.A128GCM;
       keySize = 16;
       break;
-    case AeadId.Aes256Gcm:
+    case 0x0002: // AeadId.Aes256Gcm
       alg = ContentEncAlg.A256GCM;
       keySize = 32;
       break;
