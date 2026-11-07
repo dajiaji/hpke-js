@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.13.0
+
+Released 2026-11-08
+
 - Fix the labeled HKDF info encoding so that output lengths of 256 bytes or more
   are encoded as `I2OSP(L, 2)` as required by RFC 9180. Previously, the upper
   byte was dropped, so `export()` with such lengths produced values that did not
