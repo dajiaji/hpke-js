@@ -1,9 +1,13 @@
 # Bundle size benchmark
 
-Measures minified, gzip (level 9), and brotli (quality 11) bundle sizes for
-sender and recipient applications using a single fixed HPKE cipher suite.
+Measures minified, gzip (level 9), and brotli (quality 11) bundle sizes for HPKE
+sender and recipient applications using a single fixed cipher suite.
 `@hpke/core` and extension packages are bundled from the current repository
 sources. Generated bundles are verified by sealing and opening a message.
+
+OHTTP client and gateway applications are also measured, including BHTTP
+encoding and decoding and both directions of an HTTP exchange. OHTTP results are
+reported separately from the panva HPKE comparison.
 
 ## Usage
 
@@ -23,10 +27,23 @@ To select suites or a bundler, or inspect module sizes:
 ```sh
 npm start -- --filter x25519 --bundler rollup
 npm start -- --filter p256 --bundler esbuild --analyze
+npm start -- --filter ohttp --analyze
 ```
 
 Use `npm start -- --help` for all options and `npm run typecheck` to type-check
 the tool.
+
+To compare OHTTP results with a previously measured source state, save its
+`results.json` and pass it to the new run:
+
+```sh
+npm run bench -- --compare baseline/results.json
+```
+
+The console, Markdown and JSON reports include before/after sizes for each role
+and bundler. Use the same benchmark, dependency lockfile and Node version for
+both runs. A before/after source comparison must keep unrelated working-tree
+changes identical; it must not substitute the published package for one side.
 
 ## Cipher suites
 
@@ -44,9 +61,37 @@ Each suite is measured for both sender and recipient roles. Definitions are in
 | ML-KEM-768                 | HKDF-SHA256 | AES-128-GCM      |
 | X-Wing (MLKEM768-X25519)   | HKDF-SHA256 | AES-128-GCM      |
 
+## OHTTP
+
+| KEM package          | KDF / AEAD from `@hpke/core` |
+| -------------------- | ---------------------------- |
+| `@hpke/dhkem-x25519` | HKDF-SHA256 / AES-128-GCM    |
+| `@hpke/dhkem-x448`   | HKDF-SHA512 / AES-256-GCM    |
+
+These configurations follow the OHTTP sample: the KEM uses an extension package,
+whose internal HKDF previously pulled in the JavaScript HMAC/SHA-2 fallback. The
+application KDF uses core's native implementation.
+
+- **client**: imports the gateway key configuration, encrypts the HTTP request,
+  and decrypts the HTTP response.
+- **gateway** (Oblivious Gateway Resource, implemented by `OhttpServer`):
+  imports existing private/public keys, publishes the key configuration,
+  decrypts the HTTP request, and encrypts the HTTP response.
+
+OHTTP role names follow
+[RFC 9458, Section 2.2](https://www.rfc-editor.org/rfc/rfc9458.html#section-2.2).
+The relay and target applications are outside these bundles. Earlier baseline
+JSON files using `sender` / `recipient` remain accepted by `--compare` and are
+normalized to `client` / `gateway`. HPKE suite labels remain `sender` /
+`recipient`.
+
+Verification checks the request method, URL, header and body and the response
+status, header and body. With `--keep`, the bundles remain in `dist/` and can
+also be checked across two source versions with `verifyOhttp()`.
+
 ## Bundlers
 
-| Bundler | Configuration                                                |
-| ------- | ------------------------------------------------------------ |
-| esbuild | Bundle, minify, ESM, target ES2022                           |
-| Rollup  | `@rollup/plugin-node-resolve` + `@rollup/plugin-terser`, ESM |
+| Bundler | Configuration                                                                         |
+| ------- | ------------------------------------------------------------------------------------- |
+| esbuild | Bundle, minify, ESM, target ES2022                                                    |
+| Rollup  | `@rollup/plugin-node-resolve` + `@rollup/plugin-terser`, ESM, dynamic imports inlined |

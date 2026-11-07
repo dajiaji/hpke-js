@@ -99,7 +99,7 @@ export const rollupBundler: Bundler = {
     version("@rollup/plugin-node-resolve")
   } + @rollup/plugin-terser@${version("@rollup/plugin-terser")} (terser@${
     version("terser")
-  }), format=es`,
+  }), format=es, inlineDynamicImports`,
   async bundle(source: string): Promise<BundleOutput> {
     const build = await rollup({
       input: ENTRY_ID,
@@ -116,6 +116,9 @@ export const rollupBundler: Bundler = {
     try {
       const { output } = await build.generate({
         format: "es",
+        // OHTTP dynamically imports BHTTP's decoder. Measure the complete
+        // application in one file, matching esbuild's non-splitting build.
+        inlineDynamicImports: true,
         plugins: [terser({ format: { comments: false } })],
       });
       const chunk = output[0];

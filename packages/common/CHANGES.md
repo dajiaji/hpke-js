@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Accept arbitrary-length HKDF salts using WebCrypto when no extraction callback
+  is supplied, while preserving legacy callback precedence.
 - Reduce X-Wing bundle size by specializing Montgomery curve option validation.
 - Reduce bundle size and temporary copies in the HKDF expand loop.
 - Reject oversized HKDF expansion requests before key import and buffer

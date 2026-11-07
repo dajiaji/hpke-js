@@ -1,7 +1,6 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { EMPTY } from "../consts.ts";
-import { InvalidParamError } from "../errors.ts";
 import { KdfId } from "../identifiers.ts";
 import { NativeAlgorithm } from "../algorithm.ts";
 
@@ -48,6 +47,15 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     | ((salt: Uint8Array, ikm: Uint8Array) => Uint8Array)
     | undefined;
 
+  /**
+   * Uses WebCrypto HMAC for salts of any length when no callback is supplied.
+   * Prefer omitting the callback and its JavaScript HMAC/SHA-2 imports to reduce
+   * bundle size. Empty salts are normalized to hashSize zero bytes.
+   *
+   * @param fallbackExtract Optional legacy callback, taking precedence over
+   * WebCrypto for nonempty salts whose length differs from hashSize.
+   * Empty and hash-sized salts always use WebCrypto.
+   */
   constructor(
     fallbackExtract?: (salt: Uint8Array, ikm: Uint8Array) => Uint8Array,
   ) {
@@ -97,21 +105,19 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
       ? new ArrayBuffer(this.hashSize)
       : toArrayBuffer(salt);
     const ikmBuf = toArrayBuffer(ikm);
-    if (saltBuf.byteLength !== this.hashSize) {
-      if (this._fallbackExtract !== undefined) {
-        return this._fallbackExtract(
-          new Uint8Array(saltBuf),
-          new Uint8Array(ikmBuf),
-        ).buffer as ArrayBuffer;
-      }
-      throw new InvalidParamError(
-        "The salt length must be the same as the hashSize",
-      );
+    if (
+      saltBuf.byteLength !== this.hashSize &&
+      this._fallbackExtract !== undefined
+    ) {
+      return this._fallbackExtract(
+        new Uint8Array(saltBuf),
+        new Uint8Array(ikmBuf),
+      ).buffer as ArrayBuffer;
     }
     const key = await (this._api as SubtleCrypto).importKey(
       "raw",
       saltBuf,
-      this.algHash,
+      { name: this.algHash.name, hash: this.algHash.hash },
       false,
       [
         "sign",
