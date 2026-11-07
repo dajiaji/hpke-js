@@ -41,10 +41,8 @@ import {
 } from "./utils.ts";
 
 /**
- * ChaCha core function. It is implemented twice:
- * 1. Simple loop (chachaCore_small, hchacha_small)
- * 2. Unrolled loop (chachaCore, hchacha) - 4x faster, but larger & harder to read
- * The specific implementation is selected in `createCipher` below.
+ * ChaCha core function. The unrolled implementation is larger than a simple
+ * loop, but substantially faster and is the only core needed by HPKE.
  */
 function chachaCore(
   s: Uint32Array,
@@ -184,11 +182,7 @@ function chachaCore(
  * ChaCha stream cipher. Conforms to RFC 8439 (IETF, TLS). 12-byte nonce, 4-byte counter.
  * With smaller nonce, it's not safe to make it random (CSPRNG), due to collision chance.
  */
-export const chacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore, {
-  counterRight: false,
-  counterLength: 4,
-  allowShortKeys: false,
-});
+export const chacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore);
 
 const ZEROS16 = /* @__PURE__ */ new Uint8Array(16);
 
@@ -218,7 +212,7 @@ function computeTag(
   chachaCore(sigma32_32, k32, n32, authKey32, 0, 20);
   const authKey = authKeyBuf.subarray(0, 32);
 
-  // Build lengths inline (avoids u64Lengths + numberToBigint overhead)
+  // Build lengths inline as two little-endian u64 values
   const lengths = new Uint8Array(16);
   const lview = createView(lengths);
   lview.setBigUint64(0, BigInt(AAD ? AAD.length : 0), true);
