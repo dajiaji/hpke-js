@@ -43,7 +43,8 @@ Released 2026-11-07
   `X_CURVE_X448` curve parameters.
 - Harden the X25519/X448 Montgomery ladder against secret-dependent timing
   (full-width cswap mask, low-order public keys rejected before the ladder),
-  ported from noble-curves 2.3.0.
+  ported from noble-curves 2.3.0. Reported by George Stergiopoulos (Athens
+  University of Economics and Business).
 
 ## Version 1.11.0
 

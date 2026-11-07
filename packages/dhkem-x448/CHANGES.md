@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Use the X448 Montgomery ladder in common hardened against secret-dependent
+  timing (full-width cswap mask, low-order public keys rejected before the
+  ladder). Reported by George Stergiopoulos (Athens University of Economics and
+  Business).
 - Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
   HMAC/SHA-2.
 - Reduce bundle size by using the KEM identifier value directly instead of
