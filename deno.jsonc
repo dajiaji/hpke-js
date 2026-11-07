@@ -78,7 +78,6 @@
     // Exclude non-test files and generated content
     "exclude": [
       "npm/",
-      "packages/hybridkem-x25519-kyber768/",
       "**/*.md",
       "**/*/*.js",
       "**/*/npm/",

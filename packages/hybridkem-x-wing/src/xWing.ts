@@ -252,10 +252,16 @@ export class XWing implements KemInterface {
    * @returns {Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }>} A promise that resolves with the `ss` (shared secret) as `sharedSecret` and the `ct` (ciphertext) as `enc`.
    * @throws {InvalidParamError} Thrown if the length of the `ekm` is not 64 bytes.
    * @throws {EncapError} Thrown if the shared secret cannot be encapsulated.
+   * @throws {NotSupportedError} if `senderKey` is provided.
    */
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    if (params.senderKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     let ekm: ArrayBuffer | undefined = undefined;
     if (params.ekm !== undefined && !isCryptoKeyPair(params.ekm)) {
       ekm = toArrayBuffer(params.ekm as ArrayBufferLike);
@@ -308,8 +314,14 @@ export class XWing implements KemInterface {
    * @returns {Promise<ArrayBuffer>} A promise that resolves with the shared secret.
    * @throws {InvalidParamError} Thrown if the length of the `enc` is not 1120 bytes.
    * @throws {DecapError} Thrown if the shared secret cannot be decapsulated.
+   * @throws {NotSupportedError} if `senderPublicKey` is provided.
    */
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    if (params.senderPublicKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     const enc = toArrayBuffer(params.enc);
     const rSk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey

@@ -138,9 +138,13 @@ try {
 
 ### HPKE Modes
 
-| Base | PSK | Auth | AuthPSK |
-| ---- | --- | ---- | ------- |
-| ✅   | ✅  | ✅   | ✅      |
+| Base | PSK | Auth      | AuthPSK   |
+| ---- | --- | --------- | --------- |
+| ✅   | ✅  | ✅[^auth] | ✅[^auth] |
+
+[^auth]: Auth and AuthPSK require authenticated KEM support. ML-KEM, X-Wing and
+    X25519-Kyber768 support only Base and PSK; requesting Auth or AuthPSK with
+    these KEMs throws `NotSupportedError`.
 
 ### Key Encapsulation Machanisms (KEMs)
 
