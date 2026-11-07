@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Fix EC DHKEM public key derivation on Firefox (Mozilla bug 2000795) by
+  re-importing the PKCS#8 re-export instead of recomputing the point, which
+  could yield the negated public key. Removes the BigInt fallback and the `p`,
+  `b`, `gx` and `gy` fields of `EcCurve`, reducing bundle size.
+- Throw `DeserializeError` when deriving an EC DHKEM public key from a
+  non-extractable private key, instead of possibly using the negated public key.
+
 ## Version 1.12.0
 
 Released 2026-11-07
