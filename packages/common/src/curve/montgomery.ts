@@ -5,6 +5,8 @@
  *
  * The original file is located at:
  * https://github.com/paulmillr/noble-curves/blob/b9d49d2b41d550571a0c5be443ecb62109fa3373/src/abstract/montgomery.ts
+ * with the X25519/X448 timing hardening from
+ * https://github.com/paulmillr/noble-curves/commit/c9a8031720412fad1006b4683dbffdf33d2cedf5
  */
 
 /**
@@ -54,6 +56,58 @@ export type MontgomeryECDH = {
   ) => { secretKey: Uint8Array; publicKey: Uint8Array };
 };
 
+// cswap from RFC7748 "example code", adapted to BigInt.
+//
+// RFC: "dummy = mask(swap) AND (x_2 XOR x_3), where mask(swap) is the all-1 or all-0 word of the
+// same length as x_2 and x_3". On fixed-width machine words both cases cost the same. BigInt has
+// no fixed width, so a {0n, 1n} selector does not: V8 short-circuits `0n * v` - and, identically,
+// `0n & v`, `v + 0n`, `v - 0n` - to a no-op, while `1n * v` is a real multiply. The ladder calls
+// this with swap = k_t XOR k_(t+1), which would make total running time a linear function of how
+// often adjacent bits of the secret scalar differ: remotely measurable, and worth ~4 bits of a
+// long-term key.
+//
+// So select with a full-width mask instead, and interpolate rather than mask off a dummy.
+// Ported from noble-curves:
+// https://github.com/paulmillr/noble-curves/commit/c9a8031720412fad1006b4683dbffdf33d2cedf5
+
+/**
+ * Selector for cswap(): `P` to keep, `P + 1` to swap, chosen by the low bit of `swap`.
+ * Higher bits are ignored, and `swap` is passed in whole rather than as a {0n, 1n} bit on
+ * purpose: `P + (swap & 1n)` would short-circuit the addition whenever the bit is clear.
+ * Subtracting `swap` with its low bit cleared keeps every operand full-width instead.
+ */
+function cmask(P: bigint, swap: bigint): bigint {
+  return P + swap - ((swap >> N_1) << N_1);
+}
+
+/**
+ * Swap two field elements when `mask` is `P + 1`, keep them when it is `P`:
+ *
+ *   d    = 6P + x_3 - x_2
+ *   x_2' = d * mask + x_2   (mod P)      x_3' = (x_2 + x_3) - x_2'
+ *
+ * The extra `6P * mask` vanishes modulo P. The offset keeps the reduction dividend positive and
+ * in one word-count band for both masks. JavaScript BigInt has no constant-time contract; this
+ * removes the selector-dependent short-circuits, not every value-dependent timing difference.
+ *
+ * Both elements MUST already be reduced mod P; unreduced input corrupts the kept-side output.
+ */
+function cswap(
+  P: bigint,
+): (mask: bigint, x_2: bigint, x_3: bigint) => { x_2: bigint; x_3: bigint } {
+  const offset = 6n * P;
+  return (mask: bigint, x_2: bigint, x_3: bigint) => {
+    const sum = x_2 + x_3;
+    const d = offset + x_3 - x_2;
+    const a = (d * mask + x_2) % P;
+    return { x_2: a, x_3: sum - a };
+  };
+}
+
+/** Internal helpers, exported for tests only. Not part of the public API. */
+export const __TEST: { cmask: typeof cmask; cswap: typeof cswap } =
+  /* @__PURE__ */ Object.freeze({ cmask, cswap });
+
 function validateOpts(curve: CurveType) {
   validateObject(curve, {
     adjustScalarBytes: "function",
@@ -70,6 +124,7 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
   const randomBytes_ = rand || randomBytes;
 
   const montgomeryBits = is25519 ? 255 : 448;
+  const swap = cswap(P);
   const fieldLen = is25519 ? 32 : 56;
   const Gu = is25519 ? 9n : 5n;
   // RFC 7748 #5:
@@ -107,11 +162,39 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
       adjustScalarBytes(copyBytes(abytes(scalar, fieldLen, "scalar"))),
     );
   }
+  /**
+   * u coordinates whose order divides the cofactor, on the curve and on its quadratic twist -
+   * the ladder sends every one of them to zero. Same blocklist libsodium and post-CVE-2017-0379
+   * Libgcrypt carry. decodeU() reduces mod P first, so the non-canonical encodings P and P + 1
+   * collapse onto 0 and 1.
+   */
+  const lowOrderU = new Set(
+    is25519
+      ? [
+        N_0,
+        N_1,
+        P - N_1,
+        325606250916557431795983626356110631294008115727848805560023387167927233504n,
+        39382357235489614581723060781553021112529911719440698176882885853963445705823n,
+      ]
+      : [N_0, N_1, P - N_1],
+  );
   function scalarMult(scalar: Uint8Array, u: Uint8Array): Uint8Array {
-    const pu = montgomeryLadder(decodeU(u), decodeScalar(scalar));
     // Some public keys are useless, of low-order. Curve author doesn't think
     // it needs to be validated, but we do it nonetheless.
     // https://cr.yp.to/ecdh.html#validate
+    //
+    // Reject them BEFORE the ladder. Detecting them from the all-zero output
+    // first runs all rounds against the long-term secret, handing an
+    // unauthenticated attacker a free timing oracle. Low-order inputs also
+    // drive the ladder into a degenerate state whose extra zero-operand
+    // multiplications amplify any residual key-dependent timing.
+    const pointU = decodeU(u);
+    if (lowOrderU.has(pointU)) {
+      throw new Error("invalid private or public key received");
+    }
+    const pu = montgomeryLadder(pointU, decodeScalar(scalar));
+    // Unreachable for RFC 7748 clamped scalars; kept as defense in depth.
     if (pu === N_0) throw new Error("invalid private or public key received");
     return encodeU(pu);
   }
@@ -128,7 +211,7 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
 
   /**
    * Montgomery x-only multiplication ladder.
-   * cswap is inlined to avoid per-iteration object allocations.
+   * cswap uses full-width masks so the selector never short-circuits BigInt ops.
    * Loop counter uses number instead of bigint to avoid BigInt arithmetic overhead.
    * @param pointU u coordinate (x) on Montgomery Curve 25519
    * @param scalar by which the point would be multiplied
@@ -143,21 +226,17 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
     let z_2 = N_0;
     let x_3 = u;
     let z_3 = N_1;
-    let swap = N_0;
-    let dummy: bigint;
+    // The RFC tracks `swap` across rounds to hold k_t XOR k_(t+1); the low
+    // bit of `kx >> t` is the same value, without the carried state.
+    // aInRange above pins bit (montgomeryBits - 1) of k set and everything
+    // above it clear, so `kx >> t` is never zero and its width is a function
+    // of t alone - never of a secret bit.
+    const kx = k ^ (k >> N_1);
     for (let t = montgomeryBits - 1; t >= 0; t--) {
-      const k_t = (k >> BigInt(t)) & N_1;
-      swap ^= k_t;
-      // Masked cswap (best-effort constant-time for BigInt).
-      // Only dummy needs modP; x/z reductions are deferred to the
-      // subsequent multiplications in the ladder body.
-      dummy = modP(swap * (x_2 - x_3));
-      x_2 -= dummy;
-      x_3 += dummy;
-      dummy = modP(swap * (z_2 - z_3));
-      z_2 -= dummy;
-      z_3 += dummy;
-      swap = k_t;
+      const mask = cmask(P, kx >> BigInt(t));
+      // swap() requires reduced inputs; every ladder state below is reduced.
+      ({ x_2, x_3 } = swap(mask, x_2, x_3));
+      ({ x_2: z_2, x_3: z_3 } = swap(mask, z_2, z_3));
 
       const A = x_2 + z_2;
       const AA = modP(A * A);
@@ -177,13 +256,10 @@ export function montgomery(curveDef: CurveType): MontgomeryECDH {
       // only ~17 bits beyond P — negligible impact on the outer multiplication.
       z_2 = modP(E * (AA + a24 * E));
     }
-    // Final masked cswap
-    dummy = modP(swap * (x_2 - x_3));
-    x_2 -= dummy;
-    x_3 += dummy;
-    dummy = modP(swap * (z_2 - z_3));
-    z_2 -= dummy;
-    z_3 += dummy;
+    // trailing cswap: the RFC's `swap` holds k_0 here, which is the low bit of k
+    const mask = cmask(P, k);
+    ({ x_2, x_3 } = swap(mask, x_2, x_3));
+    ({ x_2: z_2, x_3: z_3 } = swap(mask, z_2, z_3));
     const z2 = powPminus2(z_2); // `Fp.pow(x, P - N_2)` is much slower equivalent
     return modP(x_2 * z2); // Return x_2 * (z_2^(p - 2))
   }

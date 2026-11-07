@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Export raw X25519 primitives shared by DHKEM and X-Wing.
+- Harden the X25519/X448 Montgomery ladder against secret-dependent timing
+  (full-width cswap mask, low-order public keys rejected before the ladder),
+  ported from noble-curves 2.3.0.
 
 ## Version 1.11.0
 
