@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Bundle size benchmark: @hpke/core + extensions vs. panva/hpke for typical sender/recipient usage",
+  "description": "Bundle size benchmark: HPKE comparison and standalone JOSE/OHTTP applications",
   "engines": {
     "node": ">=24"
   },

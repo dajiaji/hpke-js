@@ -9,6 +9,17 @@ OHTTP client and gateway applications are also measured, including BHTTP
 encoding and decoding and both directions of an HTTP exchange. OHTTP results are
 reported separately from the panva HPKE comparison.
 
+JOSE-HPKE Integrated Encryption (HPKE-3) measures `@hpke/jose` from the current
+repository sources. The sender imports a public JWK and encrypts a Compact JWE;
+the recipient imports a private JWK and decrypts it, using `createJoseHpke3()`
+with `seal()` / `open()`. Each application is bundled independently, and the
+generated bundles are verified by a round-trip for each bundler. Key generation
+is outside the measured application bundles.
+
+Like OHTTP, JOSE has its own minified / gzip / brotli size tables and JSON
+results, without a panva comparison or size ratios. Sample entry sources are
+defined in [`src/jose.ts`](./src/jose.ts).
+
 ## Usage
 
 Requires Node.js >= 24 and npm.
@@ -28,6 +39,7 @@ To select suites or a bundler, or inspect module sizes:
 npm start -- --filter x25519 --bundler rollup
 npm start -- --filter p256 --bundler esbuild --analyze
 npm start -- --filter ohttp --analyze
+npm start -- --filter jose
 ```
 
 Use `npm start -- --help` for all options and `npm run typecheck` to type-check

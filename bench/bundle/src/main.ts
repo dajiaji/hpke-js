@@ -18,6 +18,8 @@ import type { BundlerId } from "./bundlers/index.ts";
 import { LIBS, ROLES } from "./libs.ts";
 import type { LibId, Role } from "./libs.ts";
 import { measure } from "./measure.ts";
+import { benchmarkJose, JOSE_SUITE_ID } from "./jose.ts";
+import type { JoseResult } from "./jose.ts";
 import {
   benchmarkOhttp,
   normalizeOhttpBaseline,
@@ -26,7 +28,13 @@ import {
 } from "./ohttp.ts";
 import type { OhttpBaselineResult, OhttpResult } from "./ohttp.ts";
 import { DIST, REPO_ROOT, TOOL_ROOT } from "./paths.ts";
-import { printModules, printTable, toMarkdown } from "./report.ts";
+import {
+  joseToMarkdown,
+  printJoseTable,
+  printModules,
+  printTable,
+  toMarkdown,
+} from "./report.ts";
 import type { LibResult, Meta, Result } from "./report.ts";
 import { SUITES } from "./suites.ts";
 import { verify } from "./verify.ts";
@@ -95,7 +103,8 @@ async function main(): Promise<void> {
 
   const suites = SUITES.filter((s) => s.id.includes(opts.filter));
   const ohttpSuites = OHTTP_SUITES.filter((s) => s.id.includes(opts.filter));
-  if (suites.length === 0 && ohttpSuites.length === 0) {
+  const runJose = JOSE_SUITE_ID.includes(opts.filter);
+  if (suites.length === 0 && ohttpSuites.length === 0 && !runJose) {
     throw new Error(`No suite matches --filter ${opts.filter}`);
   }
   const bundlers = opts.bundler === undefined
@@ -122,6 +131,7 @@ async function main(): Promise<void> {
 
   const results: Result[] = [];
   let ohttpResults: OhttpResult[] = [];
+  let joseResults: JoseResult[] = [];
   try {
     for (const suite of suites) {
       const packages = Object.fromEntries(
@@ -177,6 +187,9 @@ async function main(): Promise<void> {
         });
       }
     }
+    if (runJose) {
+      joseResults = await benchmarkJose(bundlers, opts.verify, opts.analyze);
+    }
     ohttpResults = await benchmarkOhttp(ohttpSuites, bundlers, DIST, {
       verify: opts.verify,
       analyze: opts.analyze,
@@ -199,6 +212,7 @@ async function main(): Promise<void> {
   };
 
   if (results.length) printTable(results, bundlerIds);
+  if (joseResults.length) printJoseTable(joseResults, bundlerIds);
   const ohttpMarkdown = reportOhttp(
     ohttpResults,
     bundlerIds,
@@ -217,6 +231,7 @@ async function main(): Promise<void> {
         {
           meta,
           results,
+          joseResults,
           ohttpResults,
           ohttpBaseline: baselineMeta,
           ohttpBeforeResults,
@@ -232,7 +247,9 @@ async function main(): Promise<void> {
       : `\nOHTTP baseline: \`${baselineMeta.path}\` @ \`${baselineMeta.revision}\` (verified: ${baselineMeta.verified}).\n`;
     await writeFile(
       resolve(opts.md),
-      toMarkdown(results, meta, bundlerIds) + comparisonNote + ohttpMarkdown,
+      toMarkdown(results, meta, bundlerIds) +
+        joseToMarkdown(joseResults, meta, bundlerIds) + comparisonNote +
+        ohttpMarkdown,
     );
   }
 }
