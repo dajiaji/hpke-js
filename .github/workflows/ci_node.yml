@@ -126,9 +126,7 @@ jobs:
         if: matrix.node-version >= 20 || !contains(fromJson(env.ESM_ONLY_PACKAGES), matrix.package)
         env:
           PACKAGE: ${{ matrix.package }}
-        run: |
-          deno task npm
-          deno task test:node:"$PACKAGE"
+        run: deno task test:node:"$PACKAGE"
       - name: Publish package to npm (dry)
         if: matrix.node-version != 24 && (matrix.node-version >= 20 || !contains(fromJson(env.ESM_ONLY_PACKAGES), matrix.package))
         env:
