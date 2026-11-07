@@ -1,4 +1,4 @@
-import { Dhkem, Ec, KemId } from "@hpke/common";
+import { Dhkem, EC_P_384, EcDhkemPrimitives, KemId } from "@hpke/common";
 import { HkdfSha384 } from "../kdfs/hkdfSha384.ts";
 
 export class DhkemP384HkdfSha384 extends Dhkem {
@@ -10,7 +10,7 @@ export class DhkemP384HkdfSha384 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha384();
-    const prim = new Ec(KemId.DhkemP384HkdfSha384, kdf);
+    const prim = new EcDhkemPrimitives(EC_P_384, kdf);
     super(KemId.DhkemP384HkdfSha384, prim, kdf);
   }
 }
