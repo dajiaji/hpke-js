@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "@std/assert";
+import { assertEquals, assertNotEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import {
@@ -6,9 +6,13 @@ import {
   DeserializeError,
   EncapError,
   hexToBytes,
+  InvalidParamError,
   loadCrypto,
+  SerializeError,
 } from "@hpke/common";
 import { Aes256Gcm, CipherSuite, HkdfSha256, KemId } from "@hpke/core";
+// @ts-ignore: Unreachable code error
+import { shake256 } from "@dajiaji/mlkem";
 import { XWing } from "../mod.ts";
 import { TEST_VECTORS } from "./testVectors.ts";
 
@@ -105,6 +109,153 @@ describe("XWing", () => {
         () => kem.decap({ enc: ct, recipientKey }),
         DecapError,
         "invalid private or public key received",
+      );
+    });
+  });
+
+  describe("input validation", () => {
+    it("rejects derandomized key generation seeds other than 32 bytes", async () => {
+      const kem = new XWing();
+      await assertRejects(
+        () => kem.generateKeyPairDerand(new Uint8Array(31)),
+        InvalidParamError,
+        "Invalid length of sk",
+      );
+      await assertRejects(
+        () => kem.generateKeyPairDerand(new Uint8Array(33)),
+        InvalidParamError,
+        "Invalid length of sk",
+      );
+    });
+
+    it("rejects malformed key encodings and key types", async () => {
+      const kem = new XWing();
+      await assertRejects(
+        () => kem.deserializePublicKey(new Uint8Array(1215)),
+        DeserializeError,
+        "Invalid key length",
+      );
+      await assertRejects(
+        () => kem.deserializePublicKey(new Uint8Array(1217)),
+        DeserializeError,
+        "Invalid key length",
+      );
+      await assertRejects(
+        () => kem.deserializePrivateKey(new Uint8Array(31)),
+        DeserializeError,
+        "Invalid key length",
+      );
+      await assertRejects(
+        () => kem.deserializePrivateKey(new Uint8Array(33)),
+        DeserializeError,
+        "Invalid key length",
+      );
+      const kp = await kem.generateKeyPairDerand(new Uint8Array(32));
+      await assertRejects(
+        () => kem.serializePublicKey(kp.privateKey),
+        SerializeError,
+        "Not public key",
+      );
+      await assertRejects(
+        () => kem.serializePrivateKey(kp.publicKey),
+        SerializeError,
+        "Not private key",
+      );
+    });
+
+    it("rejects invalid encapsulation and decapsulation lengths", async () => {
+      const kem = new XWing();
+      const recipient = await kem.generateKeyPairDerand(new Uint8Array(32));
+      await assertRejects(
+        () =>
+          kem.encap({
+            recipientPublicKey: recipient.publicKey,
+            ekm: new Uint8Array(63),
+          }),
+        InvalidParamError,
+        "ekm must be 64 bytes in length",
+      );
+      await assertRejects(
+        () =>
+          kem.encap({
+            recipientPublicKey: recipient.publicKey,
+            ekm: new Uint8Array(65),
+          }),
+        InvalidParamError,
+        "ekm must be 64 bytes in length",
+      );
+      await assertRejects(
+        () =>
+          kem.decap({
+            enc: new Uint8Array(1119),
+            recipientKey: recipient.privateKey,
+          }),
+        InvalidParamError,
+        "Invalid length of enc",
+      );
+      await assertRejects(
+        () =>
+          kem.decap({
+            enc: new Uint8Array(1121),
+            recipientKey: recipient.privateKey,
+          }),
+        InvalidParamError,
+        "Invalid length of enc",
+      );
+    });
+  });
+
+  describe("draft construction properties", () => {
+    it("derives a key pair as SHAKE256 followed by derandomized key generation", async () => {
+      const kem = new XWing();
+      const ikm = Uint8Array.from({ length: 48 }, (_, i) => i);
+      const actual = await kem.deriveKeyPair(ikm);
+      const sk = shake256.create({ dkLen: 32 }).update(ikm).digest();
+      const expected = await kem.generateKeyPairDerand(sk);
+      assertEquals(
+        new Uint8Array(await kem.serializePrivateKey(actual.privateKey)),
+        new Uint8Array(await kem.serializePrivateKey(expected.privateKey)),
+      );
+      assertEquals(
+        new Uint8Array(await kem.serializePublicKey(actual.publicKey)),
+        new Uint8Array(await kem.serializePublicKey(expected.publicKey)),
+      );
+    });
+
+    it("uses independent ephemeral inputs to produce distinct ciphertexts", async () => {
+      const kem = new XWing();
+      const recipient = await kem.generateKeyPairDerand(new Uint8Array(32));
+      const one = await kem.encap({
+        recipientPublicKey: recipient.publicKey,
+        ekm: new Uint8Array(64),
+      });
+      const twoEkm = new Uint8Array(64);
+      twoEkm[0] = 1;
+      // X25519 clamps the low three bits of the scalar, so change a higher bit.
+      twoEkm[33] = 1;
+      const two = await kem.encap({
+        recipientPublicKey: recipient.publicKey,
+        ekm: twoEkm,
+      });
+      assertEquals(one.enc.byteLength, 1120);
+      assertEquals(one.sharedSecret.byteLength, 32);
+      assertEquals(two.enc.byteLength, 1120);
+      assertEquals(two.sharedSecret.byteLength, 32);
+      const encOne = new Uint8Array(one.enc);
+      const encTwo = new Uint8Array(two.enc);
+      assertNotEquals(encOne.subarray(0, 1088), encTwo.subarray(0, 1088));
+      assertNotEquals(encOne.subarray(1088), encTwo.subarray(1088));
+      assertNotEquals(
+        new Uint8Array(one.sharedSecret),
+        new Uint8Array(two.sharedSecret),
+      );
+      assertEquals(
+        one.sharedSecret,
+        await kem.decap({ enc: one.enc, recipientKey: recipient.privateKey }),
+      );
+      assertEquals(
+        two.sharedSecret,
+        await kem.decap({ enc: two.enc, recipientKey: recipient.privateKey }),
       );
     });
   });
