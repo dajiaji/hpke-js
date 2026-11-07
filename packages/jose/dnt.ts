@@ -1,6 +1,10 @@
 import { build } from "@deno/dnt";
 import { copySync } from "@std/fs";
-import { beforeBuild, markEsmSideEffectFree } from "../../utils/dntCommon.ts";
+import {
+  beforeBuild,
+  markEsmSideEffectFree,
+  removeDevDependencies,
+} from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
 const outDir = "../../npm/packages/jose";
@@ -105,3 +109,4 @@ await build({
 });
 
 markEsmSideEffectFree("jose");
+removeDevDependencies("jose");
