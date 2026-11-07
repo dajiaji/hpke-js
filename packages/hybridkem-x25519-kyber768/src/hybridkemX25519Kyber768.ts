@@ -1,5 +1,6 @@
 import type { DhkemInterface } from "@hpke/common";
-import { Hybridkem, KemId } from "@hpke/common";
+import { Hybridkem } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 import {
   DhkemX25519HkdfSha256 as CoreDhkemX25519HkdfSha256,
   HkdfSha256,
@@ -36,7 +37,7 @@ class DhkemX25519HkdfSha256 extends CoreDhkemX25519HkdfSha256
  * ```
  */
 export class HybridkemX25519Kyber768 extends Hybridkem {
-  override id: KemId = KemId.HybridkemX25519Kyber768;
+  override id: KemId = 0x0030; // KemId.HybridkemX25519Kyber768
   override name: string = "X25519Kyber25519";
   override secretSize: number = 64;
   override encSize: number = 1120;
@@ -46,7 +47,7 @@ export class HybridkemX25519Kyber768 extends Hybridkem {
 
   constructor() {
     super(
-      KemId.HybridkemX25519Kyber768,
+      0x0030 /* KemId.HybridkemX25519Kyber768 */,
       new DhkemX25519HkdfSha256(),
       new KemKyber768(),
       new HkdfSha256(),

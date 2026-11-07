@@ -4,6 +4,8 @@
 
 - Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
   HMAC/SHA-2.
+- Use KEM identifier values directly in the DHKEM classes instead of referencing
+  the `KemId` object.
 
 ## Version 1.8.0
 

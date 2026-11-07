@@ -22,13 +22,13 @@ import {
   InvalidParamError,
   isCryptoKeyPair,
   KEM_USAGES,
-  KemId,
   loadCrypto,
   NotSupportedError,
   SerializeError,
   toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 const HAS_SHARED_ARRAY_BUFFER = typeof SharedArrayBuffer !== "undefined";
 
@@ -342,7 +342,7 @@ export class MlKemBase implements KemInterface {
  * ```
  */
 export class MlKem512 extends MlKemBase {
-  override id: KemId = KemId.MlKem512;
+  override id: KemId = 0x0040; // KemId.MlKem512
   override name: string = "ML-KEM-512";
   override secretSize: number = 32;
   override encSize: number = 768;
@@ -376,7 +376,7 @@ export class MlKem512 extends MlKemBase {
  * ```
  */
 export class MlKem768 extends MlKemBase {
-  override id: KemId = KemId.MlKem768;
+  override id: KemId = 0x0041; // KemId.MlKem768
   override name: string = "ML-KEM-768";
   override secretSize: number = 32;
   override encSize: number = 1088;
@@ -410,7 +410,7 @@ export class MlKem768 extends MlKemBase {
  * ```
  */
 export class MlKem1024 extends MlKemBase {
-  override id: KemId = KemId.MlKem1024;
+  override id: KemId = 0x0042; // KemId.MlKem1024
   override name: string = "ML-KEM-1024";
   override secretSize: number = 32;
   override encSize: number = 1568;

@@ -13,14 +13,14 @@ import {
 } from "../errors.ts";
 import { toArrayBuffer } from "../kdfs/hkdf.ts";
 
-import { KemId } from "../identifiers.ts";
+import type { KemId } from "../identifiers.ts";
 import { LABEL_DKP_PRK, LABEL_SK } from "../interfaces/dhkemPrimitives.ts";
 import { SUITE_ID_HEADER_KEM } from "../interfaces/kemInterface.ts";
 import { concat, i2Osp, isCryptoKeyPair } from "../utils/misc.ts";
 import { XCryptoKey } from "../xCryptoKey.ts";
 
 export class Hybridkem implements KemInterface {
-  public readonly id: KemId = KemId.NotAssigned;
+  public readonly id: KemId = 0x0000; // KemId.NotAssigned
   public readonly name: string = "";
   public readonly secretSize: number = 0;
   public readonly encSize: number = 0;

@@ -1,6 +1,7 @@
 import type { KdfInterface } from "@hpke/common";
 
-import { Dhkem, KemId, XCurveDhkemPrimitives } from "@hpke/common";
+import { Dhkem, XCurveDhkemPrimitives } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 import { x448 } from "./primitives/x448.ts";
 import { HkdfSha512 } from "./hkdfSha512.ts";
@@ -39,7 +40,7 @@ export class X448 extends XCurveDhkemPrimitives {
  */
 export class DhkemX448HkdfSha512 extends Dhkem {
   /** KemId.DhkemX448HkdfSha512 (0x0021) */
-  override id: KemId = KemId.DhkemX448HkdfSha512;
+  override id: KemId = 0x0021; // KemId.DhkemX448HkdfSha512
   /** 64 */
   override secretSize: number = 64;
   /** 56 */
@@ -51,6 +52,7 @@ export class DhkemX448HkdfSha512 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha512();
-    super(KemId.DhkemX448HkdfSha512, new X448(kdf), kdf);
+    // KemId.DhkemX448HkdfSha512
+    super(0x0021, new X448(kdf), kdf);
   }
 }

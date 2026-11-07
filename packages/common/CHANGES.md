@@ -8,8 +8,8 @@
   `b`, `gx` and `gy` fields of `EcCurve`, reducing bundle size.
 - Throw `DeserializeError` when deriving an EC DHKEM public key from a
   non-extractable private key, instead of possibly using the negated public key.
-- Reduce bundle size by using KDF identifier values directly in the HKDF classes
-  instead of referencing the `KdfId` object.
+- Reduce bundle size by using identifier values directly in the HKDF and
+  `Hybridkem` classes instead of referencing the `KdfId` and `KemId` objects.
 
 ## Version 1.12.0
 

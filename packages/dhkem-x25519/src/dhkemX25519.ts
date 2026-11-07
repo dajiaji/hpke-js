@@ -1,11 +1,7 @@
 import type { KdfInterface } from "@hpke/common";
 
-import {
-  Dhkem,
-  KemId,
-  SerializeError,
-  XCurveDhkemPrimitives,
-} from "@hpke/common";
+import { Dhkem, SerializeError, XCurveDhkemPrimitives } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 import { x25519 } from "./primitives/x25519.ts";
 import { HkdfSha256 } from "./hkdfSha256.ts";
@@ -52,7 +48,7 @@ export class X25519 extends XCurveDhkemPrimitives {
  */
 export class DhkemX25519HkdfSha256 extends Dhkem {
   /** KemId.DhkemX25519HkdfSha256 (0x0020) */
-  override id: KemId = KemId.DhkemX25519HkdfSha256;
+  override id: KemId = 0x0020; // KemId.DhkemX25519HkdfSha256
   /** 32 */
   override secretSize: number = 32;
   /** 32 */
@@ -64,6 +60,7 @@ export class DhkemX25519HkdfSha256 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha256();
-    super(KemId.DhkemX25519HkdfSha256, new X25519(kdf), kdf);
+    // KemId.DhkemX25519HkdfSha256
+    super(0x0020, new X25519(kdf), kdf);
   }
 }
