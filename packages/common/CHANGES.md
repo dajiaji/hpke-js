@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reduce SHA3 initialization and bundle size by removing unused Rho/Pi tables
+  and using fixed-shift rotations in Theta.
 - Accept arbitrary-length HKDF salts using WebCrypto when no extraction callback
   is supplied, while preserving legacy callback precedence.
 - Reduce X-Wing bundle size by specializing Montgomery curve option validation.
