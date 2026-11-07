@@ -12,12 +12,11 @@ export class SenderContextImpl extends EncryptionContextImpl
   #mutex?: Mutex;
 
   constructor(
-    api: SubtleCrypto,
     kdf: KdfInterface,
-    params: AeadParams,
+    params: Required<AeadParams>,
     enc: ArrayBuffer,
   ) {
-    super(api, kdf, params);
+    super(kdf, params);
     this.enc = enc;
   }
 

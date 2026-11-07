@@ -1,5 +1,9 @@
-import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-import { AeadId, NotSupportedError } from "@hpke/common";
+import type {
+  AeadEncryptionContext,
+  AeadId,
+  AeadInterface,
+} from "@hpke/common";
+import { NotSupportedError } from "@hpke/common";
 
 /**
  * The ExportOnly mode for HPKE AEAD implementing {@link AeadInterface}.
@@ -26,7 +30,7 @@ import { AeadId, NotSupportedError } from "@hpke/common";
  * ```
  */
 export class ExportOnly implements AeadInterface {
-  public readonly id: AeadId = AeadId.ExportOnly;
+  public readonly id: AeadId = 0xffff; // AeadId.ExportOnly
   public readonly keySize: number = 0;
   public readonly nonceSize: number = 0;
   public readonly tagSize: number = 0;

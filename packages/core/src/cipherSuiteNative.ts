@@ -3,19 +3,18 @@ import type {
   KdfInterface,
   KemInterface,
   KeyScheduleParams,
+  Mode,
   RecipientContextParams,
   SenderContextParams,
 } from "@hpke/common";
 
 import {
-  AeadId,
   EMPTY,
   i2Osp,
   INFO_LENGTH_LIMIT,
   INPUT_LENGTH_LIMIT,
   InvalidParamError,
   MINIMUM_PSK_LENGTH,
-  Mode,
   NativeAlgorithm,
   toUint8Array,
 } from "@hpke/common";
@@ -206,12 +205,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
 
     const dh = await (this._kem as KemInterface).encap(params);
 
-    let mode: Mode;
-    if (params.psk !== undefined) {
-      mode = params.senderKey !== undefined ? Mode.AuthPsk : Mode.Psk;
-    } else {
-      mode = params.senderKey !== undefined ? Mode.Auth : Mode.Base;
-    }
+    // Mode: Base (0x00), Psk (0x01), Auth (0x02) or AuthPsk (0x03).
+    const mode = ((params.psk !== undefined ? 1 : 0) |
+      (params.senderKey !== undefined ? 2 : 0)) as Mode;
     return await this._keyScheduleS(mode, dh.sharedSecret, dh.enc, params);
   }
 
@@ -234,12 +230,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
 
     const sharedSecret = await (this._kem as KemInterface).decap(params);
 
-    let mode: Mode;
-    if (params.psk !== undefined) {
-      mode = params.senderPublicKey !== undefined ? Mode.AuthPsk : Mode.Psk;
-    } else {
-      mode = params.senderPublicKey !== undefined ? Mode.Auth : Mode.Base;
-    }
+    // Mode: Base (0x00), Psk (0x01), Auth (0x02) or AuthPsk (0x03).
+    const mode = ((params.psk !== undefined ? 1 : 0) |
+      (params.senderPublicKey !== undefined ? 2 : 0)) as Mode;
     return await this._keyScheduleR(mode, sharedSecret, params);
   }
 
@@ -349,7 +342,7 @@ export class CipherSuiteNative extends NativeAlgorithm {
       this._kdf.hashSize,
     );
 
-    if (this._aead.id === AeadId.ExportOnly) {
+    if (this._aead.id === 0xffff /* AeadId.ExportOnly */) {
       return { aead: this._aead, exporterSecret: exporterSecret };
     }
 
@@ -394,19 +387,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
   ): Promise<SenderContext> {
     const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
-      return new SenderExporterContextImpl(
-        this._api as SubtleCrypto,
-        this._kdf,
-        res.exporterSecret,
-        enc,
-      );
+      return new SenderExporterContextImpl(this._kdf, res.exporterSecret, enc);
     }
-    return new SenderContextImpl(
-      this._api as SubtleCrypto,
-      this._kdf,
-      res,
-      enc,
-    );
+    return new SenderContextImpl(this._kdf, res as Required<AeadParams>, enc);
   }
 
   private async _keyScheduleR(
@@ -416,13 +399,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
   ): Promise<RecipientContext> {
     const res = await this._keySchedule(mode, sharedSecret, params);
     if (res.key === undefined) {
-      return new RecipientExporterContextImpl(
-        this._api as SubtleCrypto,
-        this._kdf,
-        res.exporterSecret,
-      );
+      return new RecipientExporterContextImpl(this._kdf, res.exporterSecret);
     }
-    return new RecipientContextImpl(this._api as SubtleCrypto, this._kdf, res);
+    return new RecipientContextImpl(this._kdf, res as Required<AeadParams>);
   }
 
   private _validateInputLength(params: KeyScheduleParams) {

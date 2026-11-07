@@ -1,7 +1,7 @@
 import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 
 import { EMPTY } from "../consts.ts";
-import { KdfId } from "../identifiers.ts";
+import type { KdfId } from "../identifiers.ts";
 import { NativeAlgorithm } from "../algorithm.ts";
 
 // b"HPKE-v1"
@@ -35,7 +35,7 @@ export function toArrayBuffer(
 }
 
 export class HkdfNative extends NativeAlgorithm implements KdfInterface {
-  public readonly id: KdfId = KdfId.HkdfSha256;
+  public readonly id: KdfId = 0x0001; // KdfId.HkdfSha256
   public readonly hashSize: number = 0;
   protected _suiteId: Uint8Array = EMPTY;
   protected readonly algHash: HmacKeyGenParams = {
@@ -232,7 +232,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
 
 export class HkdfSha256Native extends HkdfNative {
   /** KdfId.HkdfSha256 (0x0001) */
-  override id: KdfId = KdfId.HkdfSha256;
+  override id: KdfId = 0x0001; // KdfId.HkdfSha256
   /** 32 */
   override hashSize: number = 32;
   /** The parameters for Web Cryptography API */
@@ -245,7 +245,7 @@ export class HkdfSha256Native extends HkdfNative {
 
 export class HkdfSha384Native extends HkdfNative {
   /** KdfId.HkdfSha384 (0x0002) */
-  override id: KdfId = KdfId.HkdfSha384;
+  override id: KdfId = 0x0002; // KdfId.HkdfSha384
   /** 48 */
   override hashSize: number = 48;
   /** The parameters for Web Cryptography API */
@@ -258,7 +258,7 @@ export class HkdfSha384Native extends HkdfNative {
 
 export class HkdfSha512Native extends HkdfNative {
   /** KdfId.HkdfSha512 (0x0003) */
-  override id: KdfId = KdfId.HkdfSha512;
+  override id: KdfId = 0x0003; // KdfId.HkdfSha512
   /** 64 */
   override hashSize: number = 64;
   /** The parameters for Web Cryptography API */

@@ -1,10 +1,9 @@
-import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-import {
-  AEAD_USAGES,
+import type {
+  AeadEncryptionContext,
   AeadId,
-  NativeAlgorithm,
-  toArrayBuffer,
+  AeadInterface,
 } from "@hpke/common";
+import { AEAD_USAGES, NativeAlgorithm, toArrayBuffer } from "@hpke/common";
 
 export class AesGcmContext extends NativeAlgorithm
   implements AeadEncryptionContext {
@@ -101,7 +100,7 @@ export class AesGcmContext extends NativeAlgorithm
  */
 export class Aes128Gcm implements AeadInterface {
   /** AeadId.Aes128Gcm (0x0001) */
-  public readonly id: AeadId = AeadId.Aes128Gcm;
+  public readonly id: AeadId = 0x0001; // AeadId.Aes128Gcm
   /** 16 */
   public readonly keySize: number = 16;
   /** 12 */
@@ -142,7 +141,7 @@ export class Aes128Gcm implements AeadInterface {
  */
 export class Aes256Gcm extends Aes128Gcm {
   /** AeadId.Aes256Gcm (0x0002) */
-  override id: AeadId = AeadId.Aes256Gcm;
+  override id: AeadId = 0x0002; // AeadId.Aes256Gcm
   /** 32 */
   override keySize: number = 32;
   /** 12 */

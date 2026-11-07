@@ -1,4 +1,4 @@
-import type { AeadInterface, KdfInterface } from "@hpke/common";
+import type { KdfInterface } from "@hpke/common";
 import { i2Osp, MessageLimitReachedError, xor } from "@hpke/common";
 
 import type { AeadParams } from "./interfaces/aeadParams.ts";
@@ -7,34 +7,13 @@ import type { KeyInfo } from "./interfaces/keyInfo.ts";
 import { ExporterContextImpl } from "./exporterContext.ts";
 
 export class EncryptionContextImpl extends ExporterContextImpl {
-  // AEAD id.
-  protected _aead: AeadInterface;
-  // The length in bytes of a key for the algorithm.
-  protected _nK: number;
-  // The length in bytes of a nonce for the algorithm.
-  protected _nN: number;
-  // The length in bytes of an authentication tag for the algorithm.
-  protected _nT: number;
   // The end-to-end encryption key information.
   protected _ctx: KeyInfo;
 
-  constructor(api: SubtleCrypto, kdf: KdfInterface, params: AeadParams) {
-    super(api, kdf, params.exporterSecret);
-
-    if (
-      params.key === undefined || params.baseNonce === undefined ||
-      params.seq === undefined
-    ) {
-      throw new Error("Required parameters are missing");
-    }
-    this._aead = params.aead;
-    this._nK = this._aead.keySize;
-    this._nN = this._aead.nonceSize;
-    this._nT = this._aead.tagSize;
-
-    const key = this._aead.createEncryptionContext(params.key);
+  constructor(kdf: KdfInterface, params: Required<AeadParams>) {
+    super(kdf, params.exporterSecret);
     this._ctx = {
-      key: key,
+      key: params.aead.createEncryptionContext(params.key),
       baseNonce: params.baseNonce,
       seq: params.seq,
     };

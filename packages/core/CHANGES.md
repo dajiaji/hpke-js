@@ -6,6 +6,11 @@
   DHKEM(X448).
 - Accept arbitrary-length HKDF salts in `HkdfSha256`, `HkdfSha384` and
   `HkdfSha512`.
+- Reduce bundle size by using KEM/KDF/AEAD identifier and mode values directly
+  instead of referencing the `KemId`, `KdfId`, `AeadId` and `Mode` objects, so
+  that bundlers can drop those objects when they are not imported.
+- Reduce bundle size by removing unused state and an unreachable parameter check
+  from the internal encryption contexts.
 
 ## Version 1.10.0
 
