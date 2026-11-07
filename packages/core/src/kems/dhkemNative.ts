@@ -1,6 +1,9 @@
 import {
   Dhkem,
-  Ec,
+  EC_P_256,
+  EC_P_384,
+  EC_P_521,
+  EcDhkemPrimitives,
   HkdfSha256Native,
   HkdfSha384Native,
   HkdfSha512Native,
@@ -16,7 +19,7 @@ export class DhkemP256HkdfSha256Native extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha256Native();
-    const prim = new Ec(KemId.DhkemP256HkdfSha256, kdf);
+    const prim = new EcDhkemPrimitives(EC_P_256, kdf);
     super(KemId.DhkemP256HkdfSha256, prim, kdf);
   }
 }
@@ -30,7 +33,7 @@ export class DhkemP384HkdfSha384Native extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha384Native();
-    const prim = new Ec(KemId.DhkemP384HkdfSha384, kdf);
+    const prim = new EcDhkemPrimitives(EC_P_384, kdf);
     super(KemId.DhkemP384HkdfSha384, prim, kdf);
   }
 }
@@ -44,7 +47,7 @@ export class DhkemP521HkdfSha512Native extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha512Native();
-    const prim = new Ec(KemId.DhkemP521HkdfSha512, kdf);
+    const prim = new EcDhkemPrimitives(EC_P_521, kdf);
     super(KemId.DhkemP521HkdfSha512, prim, kdf);
   }
 }
