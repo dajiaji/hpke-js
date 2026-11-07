@@ -3,6 +3,7 @@ import type { KdfInterface } from "../interfaces/kdfInterface.ts";
 import { EMPTY } from "../consts.ts";
 import type { KdfId } from "../identifiers.ts";
 import { NativeAlgorithm } from "../algorithm.ts";
+import { concat } from "../utils/misc.ts";
 
 // b"HPKE-v1"
 const HPKE_VERSION = /* @__PURE__ */ new Uint8Array([
@@ -69,14 +70,7 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
 
   public buildLabeledIkm(label: Uint8Array, ikm: Uint8Array): Uint8Array {
     this._checkInit();
-    const ret = new Uint8Array(
-      7 + this._suiteId.byteLength + label.byteLength + ikm.byteLength,
-    );
-    ret.set(HPKE_VERSION, 0);
-    ret.set(this._suiteId, 7);
-    ret.set(label, 7 + this._suiteId.byteLength);
-    ret.set(ikm, 7 + this._suiteId.byteLength + label.byteLength);
-    return ret;
+    return concat(HPKE_VERSION, this._suiteId, label, ikm);
   }
 
   public buildLabeledInfo(
@@ -85,15 +79,13 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     len: number,
   ): Uint8Array {
     this._checkInit();
-    const ret = new Uint8Array(
-      9 + this._suiteId.byteLength + label.byteLength + info.byteLength,
+    return concat(
+      new Uint8Array([0, len]),
+      HPKE_VERSION,
+      this._suiteId,
+      label,
+      info,
     );
-    ret.set(new Uint8Array([0, len]), 0);
-    ret.set(HPKE_VERSION, 2);
-    ret.set(this._suiteId, 9);
-    ret.set(label, 9 + this._suiteId.byteLength);
-    ret.set(info, 9 + this._suiteId.byteLength + label.byteLength);
-    return ret;
   }
 
   public async extract(

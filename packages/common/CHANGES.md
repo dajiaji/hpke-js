@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Allow `concat()` to take any number of arrays, and use it to build HKDF
+  labeled inputs and DHKEM contexts, reducing bundle size.
 - Fix EC DHKEM public key derivation on Firefox (Mozilla bug 2000795) by
   re-importing the PKCS#8 re-export instead of recomputing the point, which
   could yield the negated public key. Removes the BigInt fallback and the `p`,

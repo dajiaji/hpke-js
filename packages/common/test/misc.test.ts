@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { i2Osp, xor } from "../src/utils/misc.ts";
+import { concat, i2Osp, xor } from "../src/utils/misc.ts";
 import { numberToBytesLE } from "../src/utils/noble.ts";
 
 describe("i2Osp", () => {
@@ -90,6 +90,36 @@ describe("i2Osp", () => {
         new Uint8Array([0, 0, 0, 0, 0, 31, 255, 255, 255, 255, 255, 255]),
       );
     });
+  });
+});
+
+describe("concat", () => {
+  it("should concatenate two arrays", () => {
+    assertEquals(
+      concat(new Uint8Array([1, 2]), new Uint8Array([3])),
+      new Uint8Array([1, 2, 3]),
+    );
+  });
+
+  it("should concatenate any number of arrays including empty ones", () => {
+    assertEquals(concat(), new Uint8Array(0));
+    assertEquals(
+      concat(
+        new Uint8Array([1]),
+        new Uint8Array(0),
+        new Uint8Array([2, 3]),
+        new Uint8Array([4]),
+      ),
+      new Uint8Array([1, 2, 3, 4]),
+    );
+  });
+
+  it("should return a new array", () => {
+    const a = new Uint8Array([1, 2]);
+    const ret = concat(a);
+    assertEquals(ret, a);
+    ret[0] = 9;
+    assertEquals(a[0], 1);
   });
 });
 
