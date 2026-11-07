@@ -76,6 +76,10 @@ try {
 }
 ```
 
+Auth and AuthPSK require a KEM that supports AuthEncap/AuthDecap. ML-KEM, X-Wing
+and X25519-Kyber768 support only Base and PSK modes; requesting authentication
+with these KEMs throws `NotSupportedError` (RFC 9180 Section 7.1.5).
+
 ## Index
 
 - [Installation](#installation)

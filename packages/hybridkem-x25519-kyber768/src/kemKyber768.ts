@@ -32,6 +32,7 @@ const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
   typeof (x as CryptoKeyPair).publicKey === "object";
 
 export class KemKyber768 implements KemInterface {
+  public readonly auth: boolean = false;
   public readonly id: KemId = 0x0000; // KemId.NotAssigned
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1088;
@@ -113,9 +114,17 @@ export class KemKyber768 implements KemInterface {
     return await this.deserializePrivateKey(key as ArrayBuffer);
   }
 
+  /**
+   * @throws {NotSupportedError} if `senderKey` is provided.
+   */
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    if (params.senderKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     // params.ekm is only used for testing
     let ikm: Uint8Array | undefined = undefined;
     if (params.ekm !== undefined) {
@@ -142,7 +151,15 @@ export class KemKyber768 implements KemInterface {
     }
   }
 
+  /**
+   * @throws {NotSupportedError} if `senderPublicKey` is provided.
+   */
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    if (params.senderPublicKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     const skR = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey
       : params.recipientKey;

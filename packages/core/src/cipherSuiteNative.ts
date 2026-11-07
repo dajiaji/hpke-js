@@ -34,6 +34,7 @@ import {
 } from "./exporterContext.ts";
 import { RecipientContextImpl } from "./recipientContext.ts";
 import { SenderContextImpl } from "./senderContext.ts";
+import { checkAuthSupport } from "./utils.ts";
 
 // b"base_nonce"
 // deno-fmt-ignore
@@ -195,11 +196,15 @@ export class CipherSuiteNative extends NativeAlgorithm {
    *
    * @param params A set of parameters for the sender encryption context.
    * @returns A sender encryption context.
+   * @throws {@link NotSupportedError} if the KEM does not support authentication.
    * @throws {@link EncapError}, {@link ValidationError}
    */
   public async createSenderContext(
     params: SenderContextParams,
   ): Promise<SenderContext> {
+    if (params.senderKey !== undefined) {
+      checkAuthSupport(this._kem);
+    }
     this._validateInputLength(params);
 
     await this._setup();
@@ -220,11 +225,15 @@ export class CipherSuiteNative extends NativeAlgorithm {
    *
    * @param params A set of parameters for the recipient encryption context.
    * @returns A recipient encryption context.
+   * @throws {@link NotSupportedError} if the KEM does not support authentication.
    * @throws {@link DecapError}, {@link DeserializeError}, {@link ValidationError}
    */
   public async createRecipientContext(
     params: RecipientContextParams,
   ): Promise<RecipientContext> {
+    if (params.senderPublicKey !== undefined) {
+      checkAuthSupport(this._kem);
+    }
     this._validateInputLength(params);
 
     await this._setup();

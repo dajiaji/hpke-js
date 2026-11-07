@@ -1,5 +1,9 @@
-import type { DhkemInterface } from "@hpke/common";
-import { Hybridkem } from "@hpke/common";
+import type {
+  DhkemInterface,
+  RecipientContextParams,
+  SenderContextParams,
+} from "@hpke/common";
+import { Hybridkem, NotSupportedError } from "@hpke/common";
 import type { KemId } from "@hpke/common";
 import {
   DhkemX25519HkdfSha256 as CoreDhkemX25519HkdfSha256,
@@ -52,5 +56,33 @@ export class HybridkemX25519Kyber768 extends Hybridkem {
       new KemKyber768(),
       new HkdfSha256(),
     );
+  }
+
+  /**
+   * @throws {NotSupportedError} if `senderKey` is provided.
+   */
+  public override async encap(
+    params: SenderContextParams,
+  ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    if (params.senderKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
+    return await super.encap(params);
+  }
+
+  /**
+   * @throws {NotSupportedError} if `senderPublicKey` is provided.
+   */
+  public override async decap(
+    params: RecipientContextParams,
+  ): Promise<ArrayBuffer> {
+    if (params.senderPublicKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
+    return await super.decap(params);
   }
 }

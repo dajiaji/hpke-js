@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Reject Auth and AuthPSK modes for KEMs without authentication support instead
+  of silently accepting an unauthenticated sender. Reported by Bhabani Sankar
+  Das (@007bsd).
+
 - Use `XCurveNativeDhkemPrimitives` from common for DHKEM(X25519) and
   DHKEM(X448).
 - Accept arbitrary-length HKDF salts in `HkdfSha256`, `HkdfSha384` and

@@ -167,9 +167,17 @@ export class MlKemBase implements KemInterface {
     }
   }
 
+  /**
+   * @throws {NotSupportedError} if `senderKey` is provided.
+   */
   public async encap(
     params: SenderContextParams,
   ): Promise<{ sharedSecret: ArrayBuffer; enc: ArrayBuffer }> {
+    if (params.senderKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     let ekm: Uint8Array | undefined = undefined;
     if (params.ekm !== undefined) {
       if (isCryptoKeyPair(params.ekm)) {
@@ -204,7 +212,15 @@ export class MlKemBase implements KemInterface {
     }
   }
 
+  /**
+   * @throws {NotSupportedError} if `senderPublicKey` is provided.
+   */
   public async decap(params: RecipientContextParams): Promise<ArrayBuffer> {
+    if (params.senderPublicKey !== undefined) {
+      throw new NotSupportedError(
+        "Auth and AuthPSK modes are not supported by this KEM",
+      );
+    }
     const enc = toArrayBuffer(params.enc);
     const rSk = isCryptoKeyPair(params.recipientKey)
       ? params.recipientKey.privateKey

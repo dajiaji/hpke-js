@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Reject Auth and AuthPSK modes for KEMs without authentication support instead
+  of silently accepting an unauthenticated sender. Reported by Bhabani Sankar
+  Das (@007bsd).
+
 - Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
   HMAC/SHA-2.
 - Use KEM identifier values directly in the DHKEM classes instead of referencing

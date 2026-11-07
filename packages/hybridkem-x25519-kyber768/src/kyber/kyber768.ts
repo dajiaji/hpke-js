@@ -22,7 +22,9 @@ import { KyberBase } from "./kyberBase.ts";
 
  * const ssR = await recipient.decap(ct, skR);
 
- * console.assert(ssS === ssR, "The two shared secrets must match.");
+ * if (ssS.length !== ssR.length || !ssS.every((byte, i) => byte === ssR[i])) {
+ *   throw new Error("The two shared secrets must match.");
+ * }
  * ```
  */
 export class Kyber768 extends KyberBase {
