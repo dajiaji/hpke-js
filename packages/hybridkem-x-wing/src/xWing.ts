@@ -18,7 +18,6 @@ import {
   InvalidParamError,
   isCryptoKeyPair,
   KEM_USAGES,
-  KemId,
   loadCrypto,
   NotSupportedError,
   SerializeError,
@@ -26,6 +25,7 @@ import {
   x25519,
   XCryptoKey,
 } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 const ALG_NAME = "X-Wing";
 
@@ -75,7 +75,7 @@ function combiner(
  * ```
  */
 export class XWing implements KemInterface {
-  public readonly id: KemId = KemId.XWing;
+  public readonly id: KemId = 0x647a; // KemId.XWing
   public readonly name: string = ALG_NAME;
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1120;

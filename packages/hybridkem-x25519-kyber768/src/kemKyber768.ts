@@ -14,12 +14,12 @@ import {
   EncapError,
   INPUT_LENGTH_LIMIT,
   InvalidParamError,
-  KemId,
   NotSupportedError,
   SerializeError,
   toArrayBuffer,
   XCryptoKey,
 } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 import { Kyber768 } from "./kyber/kyber768.ts";
 
@@ -32,7 +32,7 @@ const isCryptoKeyPair = (x: unknown): x is CryptoKeyPair =>
   typeof (x as CryptoKeyPair).publicKey === "object";
 
 export class KemKyber768 implements KemInterface {
-  public readonly id: KemId = KemId.NotAssigned;
+  public readonly id: KemId = 0x0000; // KemId.NotAssigned
   public readonly secretSize: number = 32;
   public readonly encSize: number = 1088;
   public readonly publicKeySize: number = 1184;

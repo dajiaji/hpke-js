@@ -1,4 +1,5 @@
-import { Dhkem, KemId } from "@hpke/common";
+import { Dhkem } from "@hpke/common";
+import type { KemId } from "@hpke/common";
 
 import { HkdfSha256 } from "./hkdfSha256.ts";
 import { Secp256k1 } from "./secp256k1.ts";
@@ -35,7 +36,7 @@ import { Secp256k1 } from "./secp256k1.ts";
  */
 export class DhkemSecp256k1HkdfSha256 extends Dhkem {
   /** KemId.DhkemSecp256k1HkdfSha256 (0x0013) EXPERIMENTAL */
-  override id: KemId = KemId.DhkemSecp256k1HkdfSha256;
+  override id: KemId = 0x0013; // KemId.DhkemSecp256k1HkdfSha256
   /** 32 */
   override secretSize: number = 32;
   /** 33 */
@@ -47,6 +48,7 @@ export class DhkemSecp256k1HkdfSha256 extends Dhkem {
 
   constructor() {
     const kdf = new HkdfSha256();
-    super(KemId.DhkemSecp256k1HkdfSha256, new Secp256k1(kdf), kdf);
+    // KemId.DhkemSecp256k1HkdfSha256
+    super(0x0013, new Secp256k1(kdf), kdf);
   }
 }

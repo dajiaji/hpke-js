@@ -1,5 +1,10 @@
 # Changes
 
+## Unreleased
+
+- Reduce bundle size by using the KEM identifier value directly instead of
+  referencing the `KemId` object.
+
 ## Version 1.7.0
 
 Released 2026-03-08
