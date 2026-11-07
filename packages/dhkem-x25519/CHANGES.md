@@ -1,5 +1,9 @@
 # Changes
 
+## Unreleased
+
+- Use the raw X25519 primitives from common instead of bundling a separate copy.
+
 ## Version 1.8.0
 
 Released 2026-03-08

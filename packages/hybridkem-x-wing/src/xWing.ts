@@ -23,20 +23,11 @@ import {
   NotSupportedError,
   SerializeError,
   toArrayBuffer,
+  x25519,
   XCryptoKey,
 } from "@hpke/common";
 
 const ALG_NAME = "X-Wing";
-
-import { HkdfSha256, X25519 } from "@hpke/dhkem-x25519";
-
-// deno-fmt-ignore
-const X25519_BASE = new Uint8Array([
-  0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-]);
 
 // XWingLabel = concat(
 //   "\./",
@@ -92,12 +83,10 @@ export class XWing implements KemInterface {
   public readonly privateKeySize: number = 32;
   public readonly auth: boolean = false;
   protected _m: MlKem768;
-  protected _x25519: X25519;
   private _api: Crypto | undefined = undefined;
 
   constructor() {
     this._m = new MlKem768();
-    this._x25519 = new X25519(new HkdfSha256());
   }
 
   public async serializePublicKey(key: CryptoKey): Promise<ArrayBuffer> {
@@ -299,8 +288,8 @@ export class XWing implements KemInterface {
     try {
       const pkM = pk.subarray(0, 1184);
       const pkX = pk.subarray(1184, 1216);
-      const ctX = await this._x25519.derive(ekX, X25519_BASE);
-      const ssX = await this._x25519.derive(ekX, pkX);
+      const ctX = x25519.getPublicKey(ekX);
+      const ssX = x25519.getSharedSecret(ekX, pkX);
       const [ctM, ssM] = await this._m.encap(pkM, ekM);
       return {
         sharedSecret: combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer,
@@ -339,7 +328,7 @@ export class XWing implements KemInterface {
       const ctM = ct.subarray(0, 1088);
       const ctX = ct.subarray(1088);
       const ssM = await this._m.decap(ctM, skM);
-      const ssX = await this._x25519.derive(skX, ctX);
+      const ssX = x25519.getSharedSecret(skX, ctX);
       return combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
@@ -381,7 +370,7 @@ export class XWing implements KemInterface {
     const expanded = shake256.create({ dkLen: 96 }).update(sk).digest();
     const [pkM, skM] = await this._m.deriveKeyPair(expanded.subarray(0, 64));
     const skX = expanded.subarray(64, 96);
-    const pkX = await this._x25519.derive(skX, X25519_BASE);
+    const pkX = x25519.getPublicKey(skX);
     return [skM, skX, pkM, pkX];
   }
 
