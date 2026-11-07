@@ -2,7 +2,11 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { hexToBytes } from "../src/utils/misc.ts";
-import { __TEST as montTest } from "../src/curve/montgomery.ts";
+import {
+  __TEST as montTest,
+  type CurveType,
+  montgomery,
+} from "../src/curve/montgomery.ts";
 import { x25519 } from "../src/curve/x25519.ts";
 
 // Ported from noble-curves test/montgomery.test.ts:
@@ -19,6 +23,49 @@ function toBytesLE(n: bigint, len: number): Uint8Array {
   }
   return out;
 }
+
+describe("Montgomery options", () => {
+  it("should reject non-object options with the existing error", () => {
+    for (const value of [undefined, null, false, 0, 1n, "curve", () => {}]) {
+      const error = assertThrows(
+        () => montgomery(value as unknown as CurveType),
+        Error,
+      );
+      assertEquals(error.message, "expected valid options object");
+    }
+  });
+
+  it("should reject missing or invalid callbacks with the existing errors", () => {
+    const curve: CurveType = {
+      P: P25519,
+      type: "x25519",
+      adjustScalarBytes: (bytes) => bytes,
+      powPminus2: (x) => x,
+    };
+    for (const name of ["adjustScalarBytes", "powPminus2"] as const) {
+      for (const value of [undefined, null, false, 0, 1n, "callback", {}, []]) {
+        const error = assertThrows(
+          () => montgomery({ ...curve, [name]: value } as unknown as CurveType),
+          Error,
+        );
+        assertEquals(
+          error.message,
+          `param "${name}" is invalid: expected function, got ${typeof value}`,
+        );
+      }
+      const missing = { ...curve } as Partial<CurveType>;
+      delete missing[name];
+      const error = assertThrows(
+        () => montgomery(missing as CurveType),
+        Error,
+      );
+      assertEquals(
+        error.message,
+        `param "${name}" is invalid: expected function, got undefined`,
+      );
+    }
+  });
+});
 
 describe("Montgomery low-order keys", () => {
   // Every u whose order divides the cofactor, on the curve or on its
