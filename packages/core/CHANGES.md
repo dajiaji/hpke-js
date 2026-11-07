@@ -4,6 +4,8 @@
 
 - Use `XCurveNativeDhkemPrimitives` from common for DHKEM(X25519) and
   DHKEM(X448).
+- Accept arbitrary-length HKDF salts in `HkdfSha256`, `HkdfSha384` and
+  `HkdfSha512`.
 
 ## Version 1.10.0
 

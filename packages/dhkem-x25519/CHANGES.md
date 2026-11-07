@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Use the raw X25519 primitives from common instead of bundling a separate copy.
+- Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
+  HMAC/SHA-2.
 
 ## Version 1.8.0
 

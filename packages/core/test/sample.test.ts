@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno, isDenoV1 } from "@hpke/common";
+import { concat, isDeno, isDenoV1, loadCrypto } from "@hpke/common";
 import {
   Aes128Gcm,
   Aes256Gcm,
@@ -1062,255 +1062,258 @@ describe("README examples", () => {
       // }
     });
   });
-  // describe("Oblivious HTTP with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
-  //   it("should work normally", async () => {
-  //     const te = new TextEncoder();
-  //     const cryptoApi = await loadCrypto();
+  describe("Oblivious HTTP with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
 
-  //     const suite = new CipherSuite({
-  //       kem: new DhkemP256HkdfSha256(),
-  //       kdf: new HkdfSha256(),
-  //       aead: new Aes128Gcm(),
-  //     });
-  //     const rkp = await suite.kem.generateKeyPair();
+      const suite = new CipherSuite({
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256(),
+        aead: new Aes128Gcm(),
+      });
+      const rkp = await suite.kem.generateKeyPair();
 
-  //     // The sender (OHTTP client) side:
-  //     const response = te.encode("This is the response.");
-  //     const sender = await suite.createSenderContext({
-  //       recipientPublicKey: rkp.publicKey,
-  //     });
+      // Establish the HPKE client and gateway contexts:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
 
-  //     const secretS = await sender.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
 
-  //     const responseNonce = new Uint8Array(suite.aead.keySize);
-  //     cryptoApi.getRandomValues(responseNonce);
-  //     const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      // The OHTTP gateway encrypts the response:
+      const secretS = await recipient.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
-  //     const keyS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
+      const responseNonce = new Uint8Array(suite.aead.keySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-  //     const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-  //     const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
-  //     const encResponse = concat(responseNonce, new Uint8Array(ct));
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
+        prkS,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceS = await suite.kdf.expand(
+        prkS,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
 
-  //     // The recipient (OHTTP server) side:
-  //     const recipient = await suite.createRecipientContext({
-  //       recipientKey: rkp.privateKey,
-  //       enc: sender.enc,
-  //     });
+      const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
 
-  //     const secretR = await recipient.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      // The OHTTP client decrypts the response:
+      const secretR = await sender.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const saltR = concat(
-  //       new Uint8Array(sender.enc),
-  //       encResponse.slice(0, suite.aead.keySize),
-  //     );
-  //     const prkR = await suite.kdf.extract(
-  //       saltR,
-  //       new Uint8Array(secretR),
-  //     );
-  //     const keyR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
-  //     const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
-  //     const pt = await aeadKeyR.open(
-  //       nonceR,
-  //       encResponse.slice(suite.aead.keySize),
-  //       te.encode("").buffer as ArrayBuffer,
-  //     );
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aead.keySize),
+      );
+      const prkR = await suite.kdf.extract(
+        saltR,
+        new Uint8Array(secretR),
+      );
+      const keyR = await suite.kdf.expand(
+        prkR,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceR = await suite.kdf.expand(
+        prkR,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
+      const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(suite.aead.keySize),
+        te.encode("").buffer as ArrayBuffer,
+      );
 
-  //     // pt === "This is the response."
-  //     assertEquals(response, new Uint8Array(pt));
-  //   });
-  // });
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
+    });
+  });
 
-  // describe("Oblivious HTTP with DhkemP384HkdfSha384/HkdfSha384/Aes256Gcm", () => {
-  //   it("should work normally", async () => {
-  //     const te = new TextEncoder();
-  //     const cryptoApi = await loadCrypto();
+  describe("Oblivious HTTP with DhkemP384HkdfSha384/HkdfSha384/Aes256Gcm", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
 
-  //     const suite = new CipherSuite({
-  //       kem: new DhkemP384HkdfSha384(),
-  //       kdf: new HkdfSha384(),
-  //       aead: new Aes256Gcm(),
-  //     });
-  //     const rkp = await suite.kem.generateKeyPair();
+      const suite = new CipherSuite({
+        kem: new DhkemP384HkdfSha384(),
+        kdf: new HkdfSha384(),
+        aead: new Aes256Gcm(),
+      });
+      const rkp = await suite.kem.generateKeyPair();
 
-  //     // The sender (OHTTP client) side:
-  //     const response = te.encode("This is the response.");
-  //     const sender = await suite.createSenderContext({
-  //       recipientPublicKey: rkp.publicKey,
-  //     });
+      // Establish the HPKE client and gateway contexts:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
 
-  //     const secretS = await sender.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
 
-  //     const responseNonce = new Uint8Array(suite.aead.keySize);
-  //     cryptoApi.getRandomValues(responseNonce);
-  //     const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      // The OHTTP gateway encrypts the response:
+      const secretS = await recipient.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
-  //     const keyS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
+      const responseNonce = new Uint8Array(suite.aead.keySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-  //     const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-  //     const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
-  //     const encResponse = concat(responseNonce, new Uint8Array(ct));
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
+        prkS,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceS = await suite.kdf.expand(
+        prkS,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
 
-  //     // The recipient (OHTTP server) side:
-  //     const recipient = await suite.createRecipientContext({
-  //       recipientKey: rkp.privateKey,
-  //       enc: sender.enc,
-  //     });
+      const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
 
-  //     const secretR = await recipient.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      // The OHTTP client decrypts the response:
+      const secretR = await sender.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const saltR = concat(
-  //       new Uint8Array(sender.enc),
-  //       encResponse.slice(0, suite.aead.keySize),
-  //     );
-  //     const prkR = await suite.kdf.extract(
-  //       saltR,
-  //       new Uint8Array(secretR),
-  //     );
-  //     const keyR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
-  //     const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
-  //     const pt = await aeadKeyR.open(
-  //       nonceR,
-  //       encResponse.slice(suite.aead.keySize),
-  //       te.encode("").buffer as ArrayBuffer,
-  //     );
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aead.keySize),
+      );
+      const prkR = await suite.kdf.extract(
+        saltR,
+        new Uint8Array(secretR),
+      );
+      const keyR = await suite.kdf.expand(
+        prkR,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceR = await suite.kdf.expand(
+        prkR,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
+      const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(suite.aead.keySize),
+        te.encode("").buffer as ArrayBuffer,
+      );
 
-  //     // pt === "This is the response."
-  //     assertEquals(response, new Uint8Array(pt));
-  //   });
-  // });
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
+    });
+  });
 
-  // describe("Oblivious HTTP with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
-  //   it("should work normally", async () => {
-  //     const te = new TextEncoder();
-  //     const cryptoApi = await loadCrypto();
+  describe("Oblivious HTTP with DhkemP521HkdfSha512/HkdfSha512/Aes256Gcm", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
 
-  //     const suite = new CipherSuite({
-  //       kem: new DhkemP521HkdfSha512(),
-  //       kdf: new HkdfSha512(),
-  //       aead: new Aes256Gcm(),
-  //     });
-  //     const rkp = await suite.kem.generateKeyPair();
+      const suite = new CipherSuite({
+        kem: new DhkemP521HkdfSha512(),
+        kdf: new HkdfSha512(),
+        aead: new Aes256Gcm(),
+      });
+      const rkp = await suite.kem.generateKeyPair();
 
-  //     // The sender (OHTTP client) side:
-  //     const response = te.encode("This is the response.");
-  //     const sender = await suite.createSenderContext({
-  //       recipientPublicKey: rkp.publicKey,
-  //     });
+      // Establish the HPKE client and gateway contexts:
+      const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
 
-  //     const secretS = await sender.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      const recipient = await suite.createRecipientContext({
+        recipientKey: rkp.privateKey,
+        enc: sender.enc,
+      });
 
-  //     const responseNonce = new Uint8Array(suite.aead.keySize);
-  //     cryptoApi.getRandomValues(responseNonce);
-  //     const saltS = concat(new Uint8Array(sender.enc), responseNonce);
+      // The OHTTP gateway encrypts the response:
+      const secretS = await recipient.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
-  //     const keyS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceS = await suite.kdf.expand(
-  //       prkS,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
+      const responseNonce = new Uint8Array(suite.aead.keySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce);
 
-  //     const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
-  //     const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
-  //     const encResponse = concat(responseNonce, new Uint8Array(ct));
+      const prkS = await suite.kdf.extract(saltS, new Uint8Array(secretS));
+      const keyS = await suite.kdf.expand(
+        prkS,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceS = await suite.kdf.expand(
+        prkS,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
 
-  //     // The recipient (OHTTP server) side:
-  //     const recipient = await suite.createRecipientContext({
-  //       recipientKey: rkp.privateKey,
-  //       enc: sender.enc,
-  //     });
+      const aeadKeyS = await suite.aead.createEncryptionContext(keyS);
+      const ct = await aeadKeyS.seal(nonceS, response, te.encode(""));
+      const encResponse = concat(responseNonce, new Uint8Array(ct));
 
-  //     const secretR = await recipient.export(
-  //       te.encode("message/bhttp response").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
+      // The OHTTP client decrypts the response:
+      const secretR = await sender.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-  //     const saltR = concat(
-  //       new Uint8Array(sender.enc),
-  //       encResponse.slice(0, suite.aead.keySize),
-  //     );
-  //     const prkR = await suite.kdf.extract(
-  //       saltR,
-  //       new Uint8Array(secretR),
-  //     );
-  //     const keyR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("key").buffer as ArrayBuffer,
-  //       suite.aead.keySize,
-  //     );
-  //     const nonceR = await suite.kdf.expand(
-  //       prkR,
-  //       te.encode("nonce").buffer as ArrayBuffer,
-  //       suite.aead.nonceSize,
-  //     );
-  //     const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
-  //     const pt = await aeadKeyR.open(
-  //       nonceR,
-  //       encResponse.slice(suite.aead.keySize),
-  //       te.encode("").buffer as ArrayBuffer,
-  //     );
+      const saltR = concat(
+        new Uint8Array(sender.enc),
+        encResponse.slice(0, suite.aead.keySize),
+      );
+      const prkR = await suite.kdf.extract(
+        saltR,
+        new Uint8Array(secretR),
+      );
+      const keyR = await suite.kdf.expand(
+        prkR,
+        te.encode("key").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
+      const nonceR = await suite.kdf.expand(
+        prkR,
+        te.encode("nonce").buffer as ArrayBuffer,
+        suite.aead.nonceSize,
+      );
+      const aeadKeyR = await suite.aead.createEncryptionContext(keyR);
+      const pt = await aeadKeyR.open(
+        nonceR,
+        encResponse.slice(suite.aead.keySize),
+        te.encode("").buffer as ArrayBuffer,
+      );
 
-  //     // pt === "This is the response."
-  //     assertEquals(response, new Uint8Array(pt));
-  //   });
-  // });
+      // pt === "This is the response."
+      assertEquals(response, new Uint8Array(pt));
+    });
+  });
 });

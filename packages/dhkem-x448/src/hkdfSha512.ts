@@ -1,7 +1,3 @@
-import { HkdfSha512Native, hmac, sha512 } from "@hpke/common";
+import { HkdfSha512Native } from "@hpke/common";
 
-export class HkdfSha512 extends HkdfSha512Native {
-  constructor() {
-    super((salt, ikm) => hmac(sha512, salt, ikm));
-  }
-}
+export class HkdfSha512 extends HkdfSha512Native {}
