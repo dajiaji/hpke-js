@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Fix the labeled HKDF info encoding so that output lengths of 256 bytes or more
+  are encoded as `I2OSP(L, 2)` as required by RFC 9180. Previously, the upper
+  byte was dropped, so `export()` with such lengths produced values that did not
+  interoperate with other HPKE implementations.
 - Allow `concat()` to take any number of arrays, and use it to build HKDF
   labeled inputs and DHKEM contexts, reducing bundle size.
 - Fix EC DHKEM public key derivation on Firefox (Mozilla bug 2000795) by
