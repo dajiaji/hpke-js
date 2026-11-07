@@ -61,7 +61,7 @@ async function sealEncrypt() {
 describe("Errors are reported as CoseError", () => {
   it("CBOR decoding errors", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
     await assertRejects(
       () => enc0.open(rkp, new Uint8Array([0x83])),
       CoseError,
@@ -71,8 +71,8 @@ describe("Errors are reported as CoseError", () => {
 
   it("Encrypt0: HPKE decryption failure keeps the cause", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
-    const other = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
+    const other = await enc0.generateKemKeyPair();
     const ct = await enc0.seal(rkp.publicKey, PLAINTEXT);
     const err = await assertRejects(
       () => enc0.open(other, ct),
@@ -84,7 +84,7 @@ describe("Errors are reported as CoseError", () => {
 
   it("Encrypt0: HPKE encryption failure", async () => {
     // An X25519 key cannot be used with the P-256 suite.
-    const x25519 = await createCoseHpke3().suite.kem.generateKeyPair();
+    const x25519 = await createCoseHpke3().generateKemKeyPair();
     await assertRejects(
       () => createCoseHpke0().seal(x25519.publicKey, PLAINTEXT),
       CoseError,
@@ -166,7 +166,7 @@ describe("CEK zeroization", () => {
     const enc = createCoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
     // A P-256 key cannot be used with the X25519 suite of HPKE-3-KE.
-    const p256 = await createCoseHpke0().suite.kem.generateKeyPair();
+    const p256 = await createCoseHpke0().generateKemKeyPair();
 
     await assertRejects(
       () =>
@@ -198,7 +198,7 @@ describe("CBOR decoder bounds checks", () => {
   for (const [name, encoded] of cases) {
     it(`reports a truncated ${name} as unexpected end of input`, async () => {
       const enc0 = createCoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
       await assertRejects(
         () => enc0.open(rkp, hex(encoded)),
         CoseError,
@@ -239,7 +239,7 @@ describe("Recipient kid matching", () => {
 describe("Header labels in both protected and unprotected buckets", () => {
   it("Encrypt0: rejects a duplicated label", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
     const msg = decode(
       await enc0.seal(rkp.publicKey, PLAINTEXT),
     ) as CborValue[];

@@ -60,6 +60,9 @@ export interface CoseEncrypt0 {
   /** The underlying HPKE CipherSuite. */
   readonly suite: CipherSuite;
 
+  /** Generate a KEM key pair. */
+  generateKemKeyPair(): Promise<CryptoKeyPair>;
+
   /**
    * Encrypt a plaintext into a CBOR-encoded COSE_Encrypt0 structure.
    */
@@ -120,6 +123,10 @@ export class CoseEncrypt0Impl implements CoseEncrypt0 {
   /** The underlying HPKE CipherSuite. */
   get suite(): CipherSuite {
     return this._suite;
+  }
+
+  async generateKemKeyPair(): Promise<CryptoKeyPair> {
+    return await this._suite.kem.generateKeyPair();
   }
 
   async seal(

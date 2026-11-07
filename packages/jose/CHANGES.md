@@ -1,5 +1,10 @@
 # Changes
 
+## Unreleased
+
+- Added `generateKemKeyPair()` to `JoseEncrypt0`, matching the Key Encryption
+  API and simplifying recipient key generation.
+
 ## Version 0.0.1
 
 Released 2026-11-03

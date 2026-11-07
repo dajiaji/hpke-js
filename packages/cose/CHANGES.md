@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added `generateKemKeyPair()` to `CoseEncrypt0`, matching the Key Encryption
+  API and simplifying recipient key generation.
+
 ## Version 0.1.0
 
 Released 2026-11-03

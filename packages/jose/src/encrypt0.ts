@@ -39,6 +39,9 @@ export interface JoseEncrypt0 {
   /** The underlying HPKE CipherSuite. */
   readonly suite: CipherSuite;
 
+  /** Generate a KEM key pair. */
+  generateKemKeyPair(): Promise<CryptoKeyPair>;
+
   /**
    * Encrypt a plaintext into a JWE Compact Serialization string.
    *
@@ -90,6 +93,10 @@ export class JoseEncrypt0Impl implements JoseEncrypt0 {
 
   get suite(): CipherSuite {
     return this._suite;
+  }
+
+  async generateKemKeyPair(): Promise<CryptoKeyPair> {
+    return await this._suite.kem.generateKeyPair();
   }
 
   async seal(

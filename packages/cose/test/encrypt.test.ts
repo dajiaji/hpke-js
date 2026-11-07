@@ -332,7 +332,7 @@ describe("CoseEncrypt", () => {
     it("should fail with correct psk_id but wrong psk key", async () => {
       const { createCoseHpke3: createCoseHpke3Ie } = await import("../mod.ts");
       const enc0 = createCoseHpke3Ie();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("wrong key");
       const psk = {
@@ -448,7 +448,7 @@ describe("CoseEncrypt", () => {
     it("should seal and open with kid in protected header", async () => {
       const { createCoseHpke3: createCoseHpke3Ie } = await import("../mod.ts");
       const enc0 = createCoseHpke3Ie();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("kid encrypt0");
       const kid = new TextEncoder().encode("my-key-id");
