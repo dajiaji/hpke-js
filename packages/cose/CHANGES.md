@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Reduce bundle size by comparing AEAD identifiers as numeric values directly.
 - Added `generateKemKeyPair()` to `CoseEncrypt0`, matching the Key Encryption
   API and simplifying recipient key generation.
 
