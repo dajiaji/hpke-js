@@ -1,7 +1,7 @@
 /**
  * Bundle size benchmark for `@hpke/core` + extension packages.
  *
- * For each cipher suite, bundles a minimal "typical" sender and recipient
+ * For each HPKE cipher suite, bundles a minimal "typical" sender and recipient
  * application with real-world bundlers (esbuild, rollup + terser) and reports
  * the minified / gzip / brotli sizes. panva/hpke (npm: hpke, plus
  * @panva/hpke-noble where needed) is measured the same way for comparison.
@@ -18,6 +18,13 @@ import type { BundlerId } from "./bundlers/index.ts";
 import { LIBS, ROLES } from "./libs.ts";
 import type { LibId, Role } from "./libs.ts";
 import { measure } from "./measure.ts";
+import {
+  benchmarkOhttp,
+  normalizeOhttpBaseline,
+  OHTTP_SUITES,
+  reportOhttp,
+} from "./ohttp.ts";
+import type { OhttpBaselineResult, OhttpResult } from "./ohttp.ts";
 import { DIST, REPO_ROOT, TOOL_ROOT } from "./paths.ts";
 import { printModules, printTable, toMarkdown } from "./report.ts";
 import type { LibResult, Meta, Result } from "./report.ts";
@@ -34,6 +41,7 @@ Options:
   --json <path>       Write the results as JSON
   --md <path>         Write the results as Markdown tables
   --keep              Keep the generated bundles under ./dist
+  --compare <json>    Compare OHTTP sizes with a previous results.json
   --no-verify         Skip the runtime seal/open check of the bundles
   -h, --help          Show this help
 `;
@@ -73,6 +81,7 @@ async function main(): Promise<void> {
       json: { type: "string" },
       md: { type: "string" },
       keep: { type: "boolean", default: false },
+      compare: { type: "string" },
       verify: { type: "boolean", default: true },
       help: { type: "boolean", short: "h", default: false },
     },
@@ -85,7 +94,8 @@ async function main(): Promise<void> {
   }
 
   const suites = SUITES.filter((s) => s.id.includes(opts.filter));
-  if (suites.length === 0) {
+  const ohttpSuites = OHTTP_SUITES.filter((s) => s.id.includes(opts.filter));
+  if (suites.length === 0 && ohttpSuites.length === 0) {
     throw new Error(`No suite matches --filter ${opts.filter}`);
   }
   const bundlers = opts.bundler === undefined
@@ -96,12 +106,22 @@ async function main(): Promise<void> {
       return b;
     });
 
+  const baseline = opts.compare === undefined ? undefined : JSON.parse(
+    await readFile(resolve(opts.compare), "utf8"),
+  ) as { meta: Meta; ohttpResults?: OhttpBaselineResult[] };
+  if (baseline !== undefined && !Array.isArray(baseline.ohttpResults)) {
+    throw new Error("--compare requires results.json containing ohttpResults");
+  }
+  const ohttpBeforeResults = baseline?.ohttpResults === undefined
+    ? undefined
+    : normalizeOhttpBaseline(baseline.ohttpResults);
   // Bundles are always written to disk (they are imported for verification);
   // ./dist is removed afterwards unless --keep is given.
   await rm(DIST, { recursive: true, force: true });
   await mkdir(DIST, { recursive: true });
 
   const results: Result[] = [];
+  let ohttpResults: OhttpResult[] = [];
   try {
     for (const suite of suites) {
       const packages = Object.fromEntries(
@@ -157,6 +177,10 @@ async function main(): Promise<void> {
         });
       }
     }
+    ohttpResults = await benchmarkOhttp(ohttpSuites, bundlers, DIST, {
+      verify: opts.verify,
+      analyze: opts.analyze,
+    });
   } finally {
     if (!opts.keep) {
       await rm(DIST, { recursive: true, force: true });
@@ -170,19 +194,46 @@ async function main(): Promise<void> {
     bundlers: Object.fromEntries(bundlers.map((b) => [b.id, b.description])),
     panvaVersion: await packageVersion("hpke"),
     panvaNobleVersion: await packageVersion("@panva/hpke-noble"),
+    bhttpVersion: await packageVersion("bhttp-js"),
     node: process.version,
   };
 
-  printTable(results, bundlerIds);
+  if (results.length) printTable(results, bundlerIds);
+  const ohttpMarkdown = reportOhttp(
+    ohttpResults,
+    bundlerIds,
+    ohttpBeforeResults,
+  );
+  const baselineMeta = baseline === undefined ? undefined : {
+    path: resolve(opts.compare!),
+    revision: baseline.meta.revision,
+    verified: baseline.meta.verified,
+  };
 
   if (opts.json !== undefined) {
     await writeFile(
       resolve(opts.json),
-      JSON.stringify({ meta, results }, null, 2) + "\n",
+      JSON.stringify(
+        {
+          meta,
+          results,
+          ohttpResults,
+          ohttpBaseline: baselineMeta,
+          ohttpBeforeResults,
+        },
+        null,
+        2,
+      ) + "\n",
     );
   }
   if (opts.md !== undefined) {
-    await writeFile(resolve(opts.md), toMarkdown(results, meta, bundlerIds));
+    const comparisonNote = baselineMeta === undefined
+      ? ""
+      : `\nOHTTP baseline: \`${baselineMeta.path}\` @ \`${baselineMeta.revision}\` (verified: ${baselineMeta.verified}).\n`;
+    await writeFile(
+      resolve(opts.md),
+      toMarkdown(results, meta, bundlerIds) + comparisonNote + ohttpMarkdown,
+    );
   }
 }
 

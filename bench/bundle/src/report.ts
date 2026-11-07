@@ -26,6 +26,7 @@ export interface Meta {
   bundlers: Partial<Record<BundlerId, string>>;
   panvaVersion: string;
   panvaNobleVersion: string;
+  bhttpVersion: string;
   node: string;
 }
 
@@ -73,9 +74,10 @@ export function toMarkdown(
     "",
     `- @hpke: \`@hpke/core\` + extensions, repository sources @ \`${meta.revision}\``,
     `- panva/hpke: \`hpke@${meta.panvaVersion}\` (+ \`@panva/hpke-noble@${meta.panvaNobleVersion}\` for ChaCha20Poly1305 / ML-KEM / X-Wing)`,
+    `- OHTTP BHTTP dependency: \`bhttp-js@${meta.bhttpVersion}\``,
     "- `sideEffects: false` is honored for all packages on both sides",
     meta.verified
-      ? "- bundles verified by sealing and opening a message"
+      ? "- HPKE bundles verified by seal/open; OHTTP bundles by HTTP request/response round-trips"
       : "- **bundles NOT verified** (`--no-verify`)",
     "- sizes in bytes (min / gzip -9 / brotli -11); ratio = @hpke gzip / panva gzip",
     "",
@@ -83,7 +85,7 @@ export function toMarkdown(
     "",
     ...bundlers.map((b) => `- **${b}**: ${meta.bundlers[b]}`),
   ];
-  for (const b of bundlers) {
+  for (const b of results.length ? bundlers : []) {
     lines.push(
       "",
       `## ${b}`,

@@ -29,6 +29,7 @@ export const HPKE_SPECIFIER: RegExp = /^@hpke\/([a-z0-9-]+)$/;
 
 /** JSR import used inside the repository, mapped to its npm distribution. */
 export const NPM_ALIASES: Readonly<Record<string, string>> = {
+  "@dajiaji/bhttp": "bhttp-js",
   "@dajiaji/mlkem": "mlkem",
 };
 

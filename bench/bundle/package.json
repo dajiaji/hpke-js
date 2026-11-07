@@ -17,6 +17,7 @@
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "1.0.2",
     "@types/node": "24.19.2",
+    "bhttp-js": "0.3.6",
     "esbuild": "0.28.2",
     "hpke": "1.1.8",
     "mlkem": "2.7.0",
