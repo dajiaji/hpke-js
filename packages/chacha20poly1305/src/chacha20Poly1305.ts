@@ -1,7 +1,11 @@
-import { chacha20poly1305 } from "./chacha/chacha.ts";
+import type {
+  AeadEncryptionContext,
+  AeadId,
+  AeadInterface,
+} from "@hpke/common";
+import { toArrayBuffer } from "@hpke/common";
 
-import type { AeadEncryptionContext, AeadInterface } from "@hpke/common";
-import { AeadId, toArrayBuffer } from "@hpke/common";
+import { chacha20poly1305 } from "./chacha/chacha.ts";
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
   private _key: Uint8Array;
@@ -10,58 +14,32 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
     this._key = new Uint8Array(toArrayBuffer(key));
   }
 
+  // Keep synchronous validation/encryption errors as Promise rejections.
+  // deno-lint-ignore require-await
   public async seal(
     iv: ArrayBufferLike | ArrayBufferView,
     data: ArrayBufferLike | ArrayBufferView,
     aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
-    return await this._seal(
-      toArrayBuffer(iv),
-      toArrayBuffer(data),
-      toArrayBuffer(aad),
-    );
+    return chacha20poly1305(
+      this._key,
+      new Uint8Array(toArrayBuffer(iv)),
+      new Uint8Array(toArrayBuffer(aad)),
+    ).encrypt(new Uint8Array(toArrayBuffer(data))).buffer as ArrayBuffer;
   }
 
+  // Keep synchronous validation/authentication errors as Promise rejections.
+  // deno-lint-ignore require-await
   public async open(
     iv: ArrayBufferLike | ArrayBufferView,
     data: ArrayBufferLike | ArrayBufferView,
     aad: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
-    return await this._open(
-      toArrayBuffer(iv),
-      toArrayBuffer(data),
-      toArrayBuffer(aad),
-    );
-  }
-
-  private _seal(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
-  ): Promise<ArrayBuffer> {
-    return new Promise((resolve) => {
-      const ret = chacha20poly1305(
-        this._key,
-        new Uint8Array(iv),
-        new Uint8Array(aad),
-      ).encrypt(new Uint8Array(data));
-      resolve(ret.buffer as ArrayBuffer);
-    });
-  }
-
-  private _open(
-    iv: ArrayBuffer,
-    data: ArrayBuffer,
-    aad: ArrayBuffer,
-  ): Promise<ArrayBuffer> {
-    return new Promise((resolve) => {
-      const ret = chacha20poly1305(
-        this._key,
-        new Uint8Array(iv),
-        new Uint8Array(aad),
-      ).decrypt(new Uint8Array(data));
-      resolve(ret.buffer as ArrayBuffer);
-    });
+    return chacha20poly1305(
+      this._key,
+      new Uint8Array(toArrayBuffer(iv)),
+      new Uint8Array(toArrayBuffer(aad)),
+    ).decrypt(new Uint8Array(toArrayBuffer(data))).buffer as ArrayBuffer;
   }
 }
 
@@ -96,7 +74,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
  */
 export class Chacha20Poly1305 implements AeadInterface {
   /** AeadId.Chacha20Poly1305 (0x0003) */
-  public readonly id: AeadId = AeadId.Chacha20Poly1305;
+  public readonly id: AeadId = 0x0003; // AeadId.Chacha20Poly1305
   /** 32 */
   public readonly keySize: number = 32;
   /** 12 */

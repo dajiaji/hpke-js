@@ -13,10 +13,6 @@
  * It was standardized in [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) and
  * is now used in TLS 1.3.
  *
- * [XChaCha20](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-xchacha)
- * extended-nonce variant is also provided. Similar to XSalsa, it's safe to use with
- * randomly-generated nonces.
- *
  * Check out [PDF](http://cr.yp.to/chacha/chacha-20080128.pdf) and
  * [wiki](https://en.wikipedia.org/wiki/Salsa20) and
  * [website](https://cr.yp.to/chacha.html).
@@ -27,7 +23,7 @@ import { createCipher, rotl, sigma32_32 } from "./_arx.ts";
 import { Poly1305 } from "./_poly1305.ts";
 import {
   abytes,
-  type ARXCipher,
+  type ChaCha20Poly1305Cipher,
   type CipherWithOutput,
   clean,
   copyBytes,
@@ -236,11 +232,8 @@ function computeTag(
 }
 
 /**
- * AEAD algorithm from RFC 8439.
- * Salsa20 and chacha (RFC 8439) use poly1305 differently.
- * We could have composed them, but it's hard because of authKey:
- * In salsa20, authKey changes position in salsa stream.
- * In chacha, authKey can't be computed inside computeTag, it modifies the counter.
+ * RFC 8439 AEAD construction: encrypt the message starting at counter 1,
+ * and authenticate the padded AAD, ciphertext, and lengths using computeTag.
  */
 export const _poly1305_aead =
   (xorStream: XorStream) =>
@@ -280,7 +273,7 @@ export const _poly1305_aead =
  * Unsafe to use random nonces under the same key, due to collision chance.
  * Prefer XChaCha instead.
  */
-export const chacha20poly1305: ARXCipher = /* @__PURE__ */ wrapCipher(
-  { blockSize: 64, nonceLength: 12, tagLength: 16 },
-  _poly1305_aead(chacha20),
-);
+export const chacha20poly1305: ChaCha20Poly1305Cipher =
+  /* @__PURE__ */ wrapCipher(
+    _poly1305_aead(chacha20),
+  );

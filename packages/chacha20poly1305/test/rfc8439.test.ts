@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { chacha20, chacha20poly1305 } from "../src/chacha/chacha.ts";
@@ -125,6 +125,25 @@ describe("RFC 8439", () => {
     );
   });
 
+  it("matches the Poly1305 vector across incremental update boundaries", () => {
+    const key = hexToBytes(
+      "85d6be7857556d337f4452fe42d506a80103808afb0db2fd4abff6af4149f51b",
+    );
+    const message = new TextEncoder().encode(
+      "Cryptographic Forum Research Group",
+    );
+    const expected = hexToBytes("a8061dc1305136c6c22b8baf0c0127a9");
+    for (const size of [1, 15, 16, 17, 34]) {
+      const mac = new Poly1305(key);
+      for (let pos = 0; pos < message.length; pos += size) {
+        mac.update(message.subarray(pos, pos + size));
+      }
+      assertEquals(mac.digest(), expected);
+      assertThrows(() => mac.digest(), Error, "already been called");
+      assertThrows(() => mac.update(message), Error, "already been called");
+    }
+  });
+
   it("matches the AEAD_CHACHA20_POLY1305 test vector", () => {
     const ciphertext = chacha20poly1305(AEAD_KEY, AEAD_NONCE, AEAD_AAD)
       .encrypt(SUNSCREEN);
@@ -185,6 +204,27 @@ describe("RFC 8439 with misaligned buffers", () => {
       );
       assertEquals(plaintext, SUNSCREEN);
       assertEquals(nonce, AEAD_NONCE);
+    });
+
+    it(`AEAD writes to supplied output buffers at byteOffset ${offset}`, () => {
+      const output = atOffset(new Uint8Array(AEAD_CIPHERTEXT.length), offset);
+      assertStrictEquals(
+        chacha20poly1305(AEAD_KEY, AEAD_NONCE, AEAD_AAD).encrypt(
+          SUNSCREEN,
+          output,
+        ),
+        output,
+      );
+      assertEquals(output, AEAD_CIPHERTEXT);
+      const plaintext = output.subarray(0, SUNSCREEN.length);
+      assertStrictEquals(
+        chacha20poly1305(AEAD_KEY, AEAD_NONCE, AEAD_AAD).decrypt(
+          output,
+          plaintext,
+        ),
+        plaintext,
+      );
+      assertEquals(plaintext, SUNSCREEN);
     });
   }
 });
