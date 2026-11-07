@@ -86,6 +86,30 @@ for (const Kdf of [HkdfSha256Native, HkdfSha384Native, HkdfSha512Native]) {
       }
     });
 
+    it("should encode the labeled info length as a 2-byte big-endian integer", () => {
+      const kdf = new Kdf();
+      kdf.init(new Uint8Array([1, 2, 3]));
+      for (
+        const [len, expected] of [
+          [0, [0, 0]],
+          [255, [0, 255]],
+          [256, [1, 0]],
+          [300, [1, 44]],
+          [255 * kdf.hashSize, [
+            (255 * kdf.hashSize) >> 8,
+            (255 * kdf.hashSize) & 0xff,
+          ]],
+        ] as const
+      ) {
+        assertEquals(
+          kdf.buildLabeledInfo(new Uint8Array([4]), new Uint8Array([5]), len)
+            .subarray(0, 2),
+          new Uint8Array(expected),
+          `output length ${len}`,
+        );
+      }
+    });
+
     it("should preserve RangeError for negative output length", async () => {
       const kdf = new Kdf();
       await assertRejects(

@@ -80,7 +80,8 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   ): Uint8Array {
     this._checkInit();
     return concat(
-      new Uint8Array([0, len]),
+      // I2OSP(len, 2)
+      new Uint8Array([len >> 8, len]),
       HPKE_VERSION,
       this._suiteId,
       label,
