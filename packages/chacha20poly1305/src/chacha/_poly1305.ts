@@ -26,14 +26,7 @@
  * Based on Public Domain [poly1305-donna](https://github.com/floodyberry/poly1305-donna).
  * @module
  */
-import {
-  abytes,
-  aexists,
-  aoutput,
-  clean,
-  copyBytes,
-  type IHash2,
-} from "./utils.ts";
+import { abytes, clean, copyBytes } from "./utils.ts";
 
 function u8to16(a: Uint8Array, i: number) {
   return (a[i++] & 0xff) | ((a[i++] & 0xff) << 8);
@@ -82,10 +75,8 @@ function u8to16(a: Uint8Array, i: number) {
 //   return poly1305_small(concatBytes(...res), authKey);
 // }
 
-/** Poly1305 class. Prefer poly1305() function instead. */
-export class Poly1305 implements IHash2 {
-  readonly blockLen = 16;
-  readonly outputLen = 16;
+/** Internal incremental Poly1305 authenticator for ChaCha20-Poly1305. */
+export class Poly1305 {
   private buffer = new Uint8Array(16);
   private r = new Uint16Array(10);
   private r5 = new Uint16Array(10); // Pre-computed 5*r[i] for Poly1305 reduction
@@ -306,8 +297,9 @@ export class Poly1305 implements IHash2 {
     clean(g);
   }
   update(data: Uint8Array): this {
-    aexists(this);
-    const { buffer, blockLen } = this;
+    this.assertActive();
+    const { buffer } = this;
+    const blockLen = 16;
     const len = data.length;
 
     for (let pos = 0; pos < len;) {
@@ -330,9 +322,11 @@ export class Poly1305 implements IHash2 {
   destroy(): void {
     clean(this.h, this.r, this.r5, this.buffer, this.pad);
   }
-  digestInto(out: Uint8Array): Uint8Array {
-    aexists(this);
-    aoutput(out, this);
+  private assertActive(): void {
+    if (this.finished) throw new Error("Hash#digest() has already been called");
+  }
+  digest(): Uint8Array {
+    this.assertActive();
     this.finished = true;
     const { buffer, h } = this;
     let { pos } = this;
@@ -344,38 +338,11 @@ export class Poly1305 implements IHash2 {
     this.finalize();
     let opos = 0;
     for (let i = 0; i < 8; i++) {
-      out[opos++] = h[i] >>> 0;
-      out[opos++] = h[i] >>> 8;
+      buffer[opos++] = h[i] >>> 0;
+      buffer[opos++] = h[i] >>> 8;
     }
-    return out;
-  }
-  digest(): Uint8Array {
-    const { buffer, outputLen } = this;
-    this.digestInto(buffer);
-    const res = buffer.slice(0, outputLen);
+    const res = buffer.slice();
     this.destroy();
     return res;
   }
 }
-
-export type CHash = ReturnType<typeof wrapConstructorWithKey>;
-export function wrapConstructorWithKey<H extends IHash2>(
-  hashCons: (key: Uint8Array) => H,
-): {
-  (msg: Uint8Array, key: Uint8Array): Uint8Array;
-  outputLen: number;
-  blockLen: number;
-  create(key: Uint8Array): H;
-} {
-  const hashC = (msg: Uint8Array, key: Uint8Array): Uint8Array =>
-    hashCons(key).update(msg).digest();
-  const tmp = hashCons(new Uint8Array(32)); // tmp array, used just once below
-  hashC.outputLen = tmp.outputLen;
-  hashC.blockLen = tmp.blockLen;
-  hashC.create = (key: Uint8Array) => hashCons(key);
-  return hashC;
-}
-
-/** Poly1305 MAC from RFC 8439. */
-export const poly1305: CHash =
-  /** @__PURE__ */ (() => wrapConstructorWithKey((key) => new Poly1305(key)))();

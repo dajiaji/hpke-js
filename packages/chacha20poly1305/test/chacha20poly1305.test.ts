@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import { loadCrypto } from "@hpke/common";
@@ -112,6 +112,62 @@ describe("CipherSuite", () => {
 });
 
 describe("chacha20poly1305", () => {
+  it("rejects repeated encryption and invalid ciphertext/output lengths", () => {
+    const key = new Uint8Array(32);
+    const nonce = new Uint8Array(12);
+    const cipher = chacha20poly1305(key, nonce);
+    cipher.encrypt(new Uint8Array());
+    assertThrows(
+      () => cipher.encrypt(new Uint8Array()),
+      Error,
+      "cannot encrypt() twice",
+    );
+    assertThrows(
+      () => chacha20poly1305(key, nonce).decrypt(new Uint8Array(15)),
+      Error,
+      '"ciphertext" expected length bigger than tagLength=16',
+    );
+    assertThrows(
+      () =>
+        chacha20poly1305(key, nonce).encrypt(
+          new Uint8Array(),
+          new Uint8Array(15),
+        ),
+      Error,
+      '"output" expected Uint8Array of length 16',
+    );
+    assertThrows(
+      () =>
+        chacha20poly1305(key, nonce).decrypt(
+          new Uint8Array(16),
+          new Uint8Array(1),
+        ),
+      Error,
+      '"output" expected Uint8Array of length 0',
+    );
+  });
+
+  it("returns rejected Promises for context validation and authentication failures", async () => {
+    const ctx = new Chacha20Poly1305().createEncryptionContext(
+      new Uint8Array(32),
+    );
+    const empty = new Uint8Array();
+    await assertRejects(
+      () => ctx.seal(new Uint8Array(11), empty, empty),
+      Error,
+      "nonce",
+    );
+    await assertRejects(
+      () => ctx.open(new Uint8Array(11), empty, empty),
+      Error,
+      "nonce",
+    );
+    const nonce = new Uint8Array(12);
+    const ct = new Uint8Array(await ctx.seal(nonce, empty, empty));
+    ct[0] ^= 1;
+    await assertRejects(() => ctx.open(nonce, ct, empty), Error, "invalid tag");
+  });
+
   it("should accept misaligned nonces for encrypt and decrypt", () => {
     const key = Uint8Array.from({ length: 32 }, (_, i) => i);
     const nonceBytes = Uint8Array.from({ length: 12 }, (_, i) => i + 32);

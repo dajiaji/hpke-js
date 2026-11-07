@@ -8,170 +8,74 @@
  */
 
 /**
- * Utilities for hex, bytes, CSPRNG.
+ * Byte utilities, input validation, and types for ChaCha20-Poly1305.
  * @module
  */
-import {
-  abytes,
-  aexists,
-  anumber,
-  aoutput,
-  clean,
-  copyBytes,
-  createView,
-  isLE,
-  type TypedArray,
-  u32,
-} from "@hpke/common";
+import { abytes, clean, copyBytes, createView, isLE, u32 } from "@hpke/common";
 
-export {
-  abytes,
-  aexists,
-  anumber,
-  aoutput,
-  clean,
-  copyBytes,
-  createView,
-  isLE,
-  type TypedArray,
-  u32,
-};
+export { abytes, clean, copyBytes, createView, isLE, u32 };
 
-/** Cast u8 / u16 / u32 to u8. */
-export function u8(arr: TypedArray): Uint8Array {
-  return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength);
-}
-
-// TODO: remove
-export interface IHash2 {
-  blockLen: number; // Bytes per block
-  outputLen: number; // Bytes in output
-  update(buf: string | Uint8Array): this;
-  // Writes digest into buf
-  digestInto(buf: Uint8Array): void;
-  digest(): Uint8Array;
-  /**
-   * Resets internal state. Makes Hash instance unusable.
-   * Reset is impossible for keyed hashes if key is consumed into state. If digest is not consumed
-   * by user, they will need to manually call `destroy()` when zeroing is necessary.
-   */
-  destroy(): void;
-}
-
-// This will allow to re-use with composable things like packed & base encoders
-// Also, we probably can make tags composable
-
-/** Sync cipher: takes byte array and returns byte array. */
-export type Cipher = {
-  encrypt(plaintext: Uint8Array): Uint8Array;
-  decrypt(ciphertext: Uint8Array): Uint8Array;
-};
-
-/** Cipher with `output` argument which can optimize by doing 1 less allocation. */
-export type CipherWithOutput = Cipher & {
+/** ChaCha20-Poly1305 cipher with an optional caller-provided output buffer. */
+export type CipherWithOutput = {
   encrypt(plaintext: Uint8Array, output?: Uint8Array): Uint8Array;
   decrypt(ciphertext: Uint8Array, output?: Uint8Array): Uint8Array;
 };
 
-/**
- * Params are outside of return type, so it is accessible before calling constructor.
- * If function support multiple nonceLength's, we return the best one.
- */
-type CipherParams = {
-  blockSize: number;
-  nonceLength?: number;
-  tagLength?: number;
-  varSizeNonce?: boolean;
-};
-/** ARX cipher, like salsa or chacha. */
-export type ARXCipher =
-  & ((
+export type ChaCha20Poly1305Cipher =
+  & ((key: Uint8Array, nonce: Uint8Array, AAD?: Uint8Array) => CipherWithOutput)
+  & { blockSize: number; nonceLength: number; tagLength: number };
+
+/** Validates ChaCha20-Poly1305 inputs and prevents repeated encryption. */
+export function wrapCipher(
+  constructor: (
     key: Uint8Array,
     nonce: Uint8Array,
     AAD?: Uint8Array,
-  ) => CipherWithOutput)
-  & {
-    blockSize: number;
-    nonceLength: number;
-    tagLength: number;
-  };
-// deno-lint-ignore no-explicit-any
-type CipherCons<T extends any[]> = (
-  key: Uint8Array,
-  ...args: T
-) => Cipher;
-/**
- * Wraps a cipher: validates args, ensures encrypt() can only be called once.
- * @__NO_SIDE_EFFECTS__
- */
-// deno-lint-ignore no-explicit-any
-export const wrapCipher = <C extends CipherCons<any>, P extends CipherParams>(
-  params: P,
-  constructor: C,
-): C & P => {
-  // deno-lint-ignore no-explicit-any
-  function wrappedCipher(key: Uint8Array, ...args: any[]): CipherWithOutput {
-    // Validate key
+  ) => CipherWithOutput,
+): ChaCha20Poly1305Cipher {
+  function wrappedCipher(
+    key: Uint8Array,
+    nonce: Uint8Array,
+    AAD?: Uint8Array,
+  ): CipherWithOutput {
     abytes(key, undefined, "key");
-
-    // Big-Endian hardware is rare. Just in case someone still decides to run ciphers:
     if (!isLE) {
       throw new Error("Non little-endian hardware is not yet supported");
     }
-
-    // Validate nonce if nonceLength is present
-    if (params.nonceLength !== undefined) {
-      const nonce = args[0];
-      abytes(
-        nonce,
-        params.varSizeNonce ? undefined : params.nonceLength,
-        "nonce",
-      );
-    }
-
-    // Validate AAD if tagLength present
-    const tagl = params.tagLength;
-    if (tagl && args[1] !== undefined) abytes(args[1], undefined, "AAD");
-
-    const cipher = constructor(key, ...args);
-    const checkOutput = (fnLength: number, output?: Uint8Array) => {
-      if (output !== undefined) {
-        if (fnLength !== 2) throw new Error("cipher output not supported");
-        abytes(output, undefined, "output");
-      }
-    };
-    // Create wrapped cipher with validation and single-use encryption
+    abytes(nonce, 12, "nonce");
+    if (AAD !== undefined) abytes(AAD, undefined, "AAD");
+    const cipher = constructor(key, nonce, AAD);
     let called = false;
-    const wrCipher = {
-      encrypt(data: Uint8Array, output?: Uint8Array) {
+    return {
+      encrypt(data: Uint8Array, output?: Uint8Array): Uint8Array {
         if (called) {
           throw new Error("cannot encrypt() twice with same key + nonce");
         }
         called = true;
         abytes(data);
-        checkOutput(cipher.encrypt.length, output);
-        return (cipher as CipherWithOutput).encrypt(data, output);
+        if (output !== undefined) abytes(output, undefined, "output");
+        return cipher.encrypt(data, output);
       },
-      decrypt(data: Uint8Array, output?: Uint8Array) {
+      decrypt(data: Uint8Array, output?: Uint8Array): Uint8Array {
         abytes(data);
-        if (tagl && data.length < tagl) {
+        if (data.length < 16) {
           throw new Error(
-            '"ciphertext" expected length bigger than tagLength=' + tagl,
+            '"ciphertext" expected length bigger than tagLength=16',
           );
         }
-        checkOutput(cipher.decrypt.length, output);
-        return (cipher as CipherWithOutput).decrypt(data, output);
+        if (output !== undefined) abytes(output, undefined, "output");
+        return cipher.decrypt(data, output);
       },
     };
-
-    return wrCipher;
   }
+  return Object.assign(wrappedCipher, {
+    blockSize: 64,
+    nonceLength: 12,
+    tagLength: 16,
+  });
+}
 
-  Object.assign(wrappedCipher, params);
-  return wrappedCipher as C & P;
-};
-
-/** Represents salsa / chacha stream. */
+/** ChaCha20 XOR stream with an optional output buffer and initial counter. */
 export type XorStream = (
   key: Uint8Array,
   nonce: Uint8Array,

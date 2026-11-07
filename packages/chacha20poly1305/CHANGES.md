@@ -1,5 +1,14 @@
 # Changes
 
+## Unreleased
+
+- Reduce ChaCha20-Poly1305 bundle size by simplifying the internal Poly1305
+  digest API, specializing cipher validation, and removing redundant Promise
+  wrappers. Preserve incremental authentication, output buffers, and input
+  validation.
+- Reduce bundle size by using the AEAD identifier value directly instead of
+  referencing the `AeadId` object.
+
 ## Version 1.8.0
 
 Released 2026-03-08
