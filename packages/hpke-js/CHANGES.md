@@ -1,5 +1,10 @@
 # Changes
 
+## Unreleased
+
+- Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
+  HMAC/SHA-2.
+
 ## Version 1.8.0
 
 Released 2026-03-08

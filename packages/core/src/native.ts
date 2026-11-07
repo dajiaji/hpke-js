@@ -24,11 +24,7 @@ import {
  * - `DHKEM(X448, HKDF-SHA512)`
  * - `ChaCha20Poly1305`
  *
- * In addtion, the HKDF functions contained in this `CipherSuiteNative`
- * class can only derive keys of the same length as the `hashSize`.
- *
- * If you want to use the unsupported cryptographic algorithms
- * above or derive keys longer than the `hashSize`,
+ * If you want to use the unsupported cryptographic algorithms above,
  * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
  *
  * This class provides following functions:
@@ -160,11 +156,10 @@ export class DhkemP521HkdfSha512 extends DhkemP521HkdfSha512Native {}
  * The HKDF-SHA256 for HPKE KDF implementing {@link KdfInterface}.
  *
  * When using `@hpke/core`, the instance of this class must be specified
- * to the `kem` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha256`.
+ * to the `kdf` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha256`.
  *
- * The KDF class can only derive keys of the same length as the `hashSize`.
- * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
+ * HKDF-Extract accepts salts of any length. HKDF-Expand supports output lengths
+ * up to 255 times `hashSize`.
  *
  * @example
  *
@@ -189,11 +184,10 @@ export class HkdfSha256 extends HkdfSha256Native {}
  * The HKDF-SHA384 for HPKE KDF implementing {@link KdfInterface}.
  *
  * When using `@hpke/core`, the instance of this class must be specified
- * to the `kem` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha384`.
+ * to the `kdf` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha384`.
  *
- * The KDF class can only derive keys of the same length as the `hashSize`.
- * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
+ * HKDF-Extract accepts salts of any length. HKDF-Expand supports output lengths
+ * up to 255 times `hashSize`.
  *
  * @example
  *
@@ -218,11 +212,10 @@ export class HkdfSha384 extends HkdfSha384Native {}
  * The HKDF-SHA512 for HPKE KDF implementing {@link KdfInterface}.
  *
  * When using `@hpke/core`, the instance of this class must be specified
- * to the `kem` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha512`.
+ * to the `kdf` parameter of {@link CipherSuiteParams} instead of `KdfId.HkdfSha512`.
  *
- * The KDF class can only derive keys of the same length as the `hashSize`.
- * If you want to derive keys longer than the `hashSize`,
- * please use {@link https://jsr.io/@hpke/hpke-js/doc/~/CipherSuite | hpke-js#CipherSuite}.
+ * HKDF-Extract accepts salts of any length. HKDF-Expand supports output lengths
+ * up to 255 times `hashSize`.
  *
  * @example
  *
