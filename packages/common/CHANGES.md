@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.12.0
+
+Released 2026-11-07
+
 - Clear temporary DHKEM shared-secret material on success and failure. Custom
   `DhkemPrimitives.dh()` implementations must return fresh, caller-owned
   buffers.
