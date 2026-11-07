@@ -18,7 +18,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-0 (P-256, HKDF-SHA256, AES-128-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke0();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("Hello, JOSE-HPKE!");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -29,7 +29,7 @@ describe("JoseEncrypt0", () => {
 
     it("should produce valid JWE compact format", async () => {
       const enc0 = createJoseHpke0();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("format check");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -51,7 +51,7 @@ describe("JoseEncrypt0", () => {
 
     it("should seal and open with info", async () => {
       const enc0 = createJoseHpke0();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("with info");
       const info = new TextEncoder().encode("app-context");
@@ -63,7 +63,7 @@ describe("JoseEncrypt0", () => {
 
     it("should seal and open with privateKey directly", async () => {
       const enc0 = createJoseHpke0();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("private key");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -76,7 +76,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-1 (P-384, HKDF-SHA384, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke1();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-384 test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -89,7 +89,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-2 (P-521, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke2();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-521 test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -102,7 +102,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-3 (X25519, HKDF-SHA256, AES-128-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X25519 test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -113,7 +113,7 @@ describe("JoseEncrypt0", () => {
 
     it("should seal and open with info", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("full options");
       const info = new TextEncoder().encode("context");
@@ -127,7 +127,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-4 (X25519, HKDF-SHA256, ChaCha20Poly1305)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke4();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("ChaCha test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -140,7 +140,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-5 (X448, HKDF-SHA512, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke5();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -153,7 +153,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-6 (X448, HKDF-SHA512, ChaCha20Poly1305)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke6();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("X448 ChaCha test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -166,7 +166,7 @@ describe("JoseEncrypt0", () => {
   describe("HPKE-7 (P-256, HKDF-SHA256, AES-256-GCM)", () => {
     it("should seal and open a message", async () => {
       const enc0 = createJoseHpke7();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("P-256 AES-256 test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -179,7 +179,7 @@ describe("JoseEncrypt0", () => {
   describe("PSK mode", () => {
     it("should seal and open with PSK", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("PSK test");
       const psk = {
@@ -194,7 +194,7 @@ describe("JoseEncrypt0", () => {
 
     it("should carry psk_id as BASE64URL(id) and use id as the HPKE psk_id", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
       // Not valid UTF-8, so it cannot pass through a text encoding unchanged.
       const psk = {
         id: new Uint8Array([0xff, 0xfe, 0xfd]),
@@ -235,7 +235,7 @@ describe("JoseEncrypt0", () => {
 
     it("should fail to open without PSK when sealed with PSK", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("PSK required");
       const psk = {
@@ -254,7 +254,7 @@ describe("JoseEncrypt0", () => {
 
     it("should fail with mismatched psk_id", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("PSK mismatch");
       const psk = {
@@ -281,7 +281,7 @@ describe("JoseEncrypt0", () => {
   describe("kid", () => {
     it("should seal and open with kid in protected header", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("kid test");
       const jwe = await enc0.seal(rkp.publicKey, plaintext, { kid: "key-1" });
@@ -301,7 +301,7 @@ describe("JoseEncrypt0", () => {
   describe("empty plaintext", () => {
     it("should seal and open empty data", async () => {
       const enc0 = createJoseHpke0();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new Uint8Array(0);
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -314,7 +314,7 @@ describe("JoseEncrypt0", () => {
   describe("large plaintext", () => {
     it("should seal and open 64KB data", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = crypto.getRandomValues(new Uint8Array(65536));
       const jwe = await enc0.seal(rkp.publicKey, plaintext);
@@ -328,8 +328,8 @@ describe("JoseEncrypt0", () => {
     it("should fail when different algorithms are used", async () => {
       const enc0_3 = createJoseHpke3();
       const enc0_0 = createJoseHpke0();
-      const rkp3 = await enc0_3.suite.kem.generateKeyPair();
-      const rkp0 = await enc0_0.suite.kem.generateKeyPair();
+      const rkp3 = await enc0_3.generateKemKeyPair();
+      const rkp0 = await enc0_0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("cross alg");
       const jwe = await enc0_3.seal(rkp3.publicKey, plaintext);

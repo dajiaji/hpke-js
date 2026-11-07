@@ -397,7 +397,7 @@ describe("JoseEncrypt", () => {
   describe("PSK wrong key", () => {
     it("should fail with correct psk_id but wrong psk key", async () => {
       const enc0 = createJoseHpke3();
-      const rkp = await enc0.suite.kem.generateKeyPair();
+      const rkp = await enc0.generateKemKeyPair();
 
       const plaintext = new TextEncoder().encode("wrong key");
       const psk = {

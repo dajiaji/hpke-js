@@ -54,7 +54,7 @@ describe("Malformed CBOR input", () => {
 describe("Malformed COSE_Encrypt0 structures", () => {
   it("should reject non-array input", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Encode a single integer instead of an array
     const badData = encode(42);
@@ -67,7 +67,7 @@ describe("Malformed COSE_Encrypt0 structures", () => {
 
   it("should reject array with wrong length", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Array with only 2 elements
     const badData = encode(["Encrypt0", new Uint8Array(0)] as CborValue[]);
@@ -80,7 +80,7 @@ describe("Malformed COSE_Encrypt0 structures", () => {
 
   it("should reject non-bstr protected header", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Protected header is a number, not bstr
     const badData = encode([42, new Map(), new Uint8Array(10)] as CborValue[]);
@@ -93,7 +93,7 @@ describe("Malformed COSE_Encrypt0 structures", () => {
 
   it("should reject non-bstr ciphertext", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const protectedMap = new Map<CborValue, CborValue>();
     protectedMap.set(1, 41); // alg = HPKE-3
@@ -109,7 +109,7 @@ describe("Malformed COSE_Encrypt0 structures", () => {
 
   it("should reject algorithm mismatch", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Create valid structure but with wrong alg
     const protectedMap = new Map<CborValue, CborValue>();
@@ -184,7 +184,7 @@ describe("Cross-algorithm rejection", () => {
   it("Encrypt0: should fail to open with different algorithm instance", async () => {
     const enc3 = createCoseHpke3();
     const enc7 = createCoseHpke7();
-    const rkp = await enc3.suite.kem.generateKeyPair();
+    const rkp = await enc3.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("cross-alg");
     const ct = await enc3.seal(rkp.publicKey, plaintext);
@@ -220,7 +220,7 @@ describe("Cross-algorithm rejection", () => {
 describe("Tagged COSE structures", () => {
   it("should open tagged COSE_Encrypt0 (tag 16)", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("tagged encrypt0");
     const ct = await enc0.seal(rkp.publicKey, plaintext, { tagged: true });
@@ -251,7 +251,7 @@ describe("Tagged COSE structures", () => {
 
   it("should handle externally tagged input", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Seal without tag, then manually wrap in tag 16
     const plaintext = new TextEncoder().encode("manual tag");
@@ -269,7 +269,7 @@ describe("Tagged COSE structures", () => {
 describe("CBOR tag validation", () => {
   async function sealEncrypt0() {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
     const ct = await enc0.seal(rkp.publicKey, new TextEncoder().encode("x"));
     return { enc0, rkp, msg: decode(ct) as CborValue[] };
   }
@@ -356,7 +356,7 @@ describe("CBOR tag validation", () => {
 describe("Large plaintext", () => {
   it("Encrypt0: should handle 64KB plaintext", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new Uint8Array(64 * 1024).fill(0xab);
     const ct = await enc0.seal(rkp.publicKey, plaintext);
@@ -383,7 +383,7 @@ describe("Large plaintext", () => {
 describe("Encrypt0 combined options", () => {
   it("should seal and open with externalAad + info + psk", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("all options");
     const opts = {
@@ -402,7 +402,7 @@ describe("Encrypt0 combined options", () => {
 
   it("should seal and open with externalAad + info + psk + kid", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("all options + kid");
     const opts = {
@@ -424,7 +424,7 @@ describe("Encrypt0 combined options", () => {
 describe("Detached payload", () => {
   it("Encrypt0: sealDetached + open with detachedPayload", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("detached e0");
     const result = await enc0.sealDetached(rkp.publicKey, plaintext);
@@ -442,7 +442,7 @@ describe("Detached payload", () => {
 
   it("Encrypt0: should error on null ciphertext without detachedPayload", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     const plaintext = new TextEncoder().encode("no payload");
     const result = await enc0.sealDetached(rkp.publicKey, plaintext);
@@ -477,7 +477,7 @@ describe("Detached payload", () => {
 describe("alg-omitted interop", () => {
   it("Encrypt0: should decrypt message whose protected header omits alg", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Manually build a COSE_Encrypt0 without alg in the protected header,
     // using the same HPKE suite so AAD is consistent.
@@ -592,7 +592,7 @@ describe("alg-omitted interop", () => {
 describe("importCoseKey", () => {
   it("Encrypt0: should import COSE_Key and use for seal/open", async () => {
     const enc0 = createCoseHpke3();
-    const rkp = await enc0.suite.kem.generateKeyPair();
+    const rkp = await enc0.generateKemKeyPair();
 
     // Export raw key and build COSE_Key
     const rawPub = new Uint8Array(

@@ -2,7 +2,7 @@ import { Aes128Gcm, createJoseHpke3, createJoseHpke3Ke } from "@hpke/jose";
 
 async function doJoseEncrypt0() {
   const enc0 = createJoseHpke3();
-  const rkp = await enc0.suite.kem.generateKeyPair();
+  const rkp = await enc0.generateKemKeyPair();
 
   // A sender encrypts a message into a compact JWE.
   const jwe = await enc0.seal(

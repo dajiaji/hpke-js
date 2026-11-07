@@ -44,7 +44,7 @@ Implements
 import { createJoseHpke3 } from "@hpke/jose";
 
 const enc0 = createJoseHpke3();
-const rkp = await enc0.suite.kem.generateKeyPair();
+const rkp = await enc0.generateKemKeyPair();
 
 const plaintext = new TextEncoder().encode("Hello, JOSE-HPKE!");
 const jwe = await enc0.seal(rkp.publicKey, plaintext);

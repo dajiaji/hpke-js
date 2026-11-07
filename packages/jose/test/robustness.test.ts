@@ -107,7 +107,7 @@ describe("Key Encryption error handling and CEK zeroization", () => {
     const { aead, keys } = recordingAead();
     const enc = createJoseHpke3Ke(aead);
     const rkp = await enc.generateKemKeyPair();
-    const incompatible = await createJoseHpke0().suite.kem.generateKeyPair();
+    const incompatible = await createJoseHpke0().generateKemKeyPair();
     const err = await assertRejects(
       () =>
         enc.seal([
