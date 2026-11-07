@@ -9,6 +9,7 @@ import type {
 } from "@hpke/common";
 
 import {
+  concat,
   EMPTY,
   i2Osp,
   INFO_LENGTH_LIMIT,
@@ -320,12 +321,11 @@ export class CipherSuiteNative extends NativeAlgorithm {
       info,
     );
 
-    const keyScheduleContext = new Uint8Array(
-      1 + pskIdHash.byteLength + infoHash.byteLength,
+    const keyScheduleContext = concat(
+      new Uint8Array([mode]),
+      new Uint8Array(pskIdHash),
+      new Uint8Array(infoHash),
     );
-    keyScheduleContext.set(new Uint8Array([mode]), 0);
-    keyScheduleContext.set(new Uint8Array(pskIdHash), 1);
-    keyScheduleContext.set(new Uint8Array(infoHash), 1 + pskIdHash.byteLength);
 
     const psk = params.psk === undefined ? EMPTY : toUint8Array(params.psk.key);
     const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
