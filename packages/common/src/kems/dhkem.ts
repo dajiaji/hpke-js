@@ -28,18 +28,6 @@ const LABEL_SHARED_SECRET = /* @__PURE__ */ new Uint8Array([
   114, 101, 116,
 ]);
 
-function concat3(
-  a: Uint8Array,
-  b: Uint8Array,
-  c: Uint8Array,
-): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length + c.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
-  ret.set(c, a.length + b.length);
-  return ret;
-}
-
 export class Dhkem implements KemInterface {
   public readonly id: KemId;
   public readonly secretSize: number = 0;
@@ -142,7 +130,7 @@ export class Dhkem implements KemInterface {
           : await this._prim.derivePublicKey(params.senderKey);
         pksm = new Uint8Array(await this._prim.serializePublicKey(pks));
       }
-      const kemContext = concat3(
+      const kemContext = concat(
         new Uint8Array(enc),
         new Uint8Array(pkrm),
         pksm,
@@ -190,7 +178,7 @@ export class Dhkem implements KemInterface {
           await this._prim.serializePublicKey(params.senderPublicKey),
         );
       }
-      const kemContext = concat3(
+      const kemContext = concat(
         new Uint8Array(enc),
         new Uint8Array(pkrm),
         pksm,

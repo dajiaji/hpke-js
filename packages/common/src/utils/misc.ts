@@ -45,15 +45,19 @@ export function i2Osp(n: number, w: number): Uint8Array {
 }
 
 /**
- * Concatenates two Uint8Arrays.
- * @param a Uint8Array
- * @param b Uint8Array
+ * Concatenates Uint8Arrays.
+ * @param parts Uint8Arrays to be concatenated
  * @returns Concatenated Uint8Array
  */
-export function concat(a: Uint8Array, b: Uint8Array): Uint8Array {
-  const ret = new Uint8Array(a.length + b.length);
-  ret.set(a, 0);
-  ret.set(b, a.length);
+export function concat(...parts: Uint8Array[]): Uint8Array {
+  let len = 0;
+  for (const p of parts) len += p.length;
+  const ret = new Uint8Array(len);
+  let offset = 0;
+  for (const p of parts) {
+    ret.set(p, offset);
+    offset += p.length;
+  }
   return ret;
 }
 
