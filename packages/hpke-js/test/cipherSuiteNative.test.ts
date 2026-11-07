@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { hexToBytes, isDenoV1 } from "@hpke/common";
+import { concat, hexToBytes, isDenoV1, loadCrypto } from "@hpke/common";
 import {
   AeadId,
   Aes128Gcm,
@@ -716,49 +716,45 @@ describe("importKey", () => {
   });
 });
 
-// TODO: Re-enable after @hpke/common 1.12.0 is published and the npm dependency
-// minimum is updated to 1.12.0. Deno uses the local workspace implementation,
-// while Node tests can still resolve the published 1.11.x salt restriction.
-// import { concat, loadCrypto } from "@hpke/common";
-// describe("Oblivious HTTP", () => {
-//   describe("with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
-//     it("should work normally", async () => {
-//       const te = new TextEncoder();
-//       const cryptoApi = await loadCrypto();
+describe("Oblivious HTTP", () => {
+  describe("with DhkemP256HkdfSha256/HkdfSha256/Aes128Gcm", () => {
+    it("should work normally", async () => {
+      const te = new TextEncoder();
+      const cryptoApi = await loadCrypto();
 
-//       const suite = new CipherSuiteNative({
-//         kem: new DhkemP256HkdfSha256(),
-//         kdf: new HkdfSha256Native(),
-//         aead: new Aes128Gcm(),
-//       });
-//       const rkp = await suite.kem.generateKeyPair();
+      const suite = new CipherSuiteNative({
+        kem: new DhkemP256HkdfSha256(),
+        kdf: new HkdfSha256Native(),
+        aead: new Aes128Gcm(),
+      });
+      const rkp = await suite.kem.generateKeyPair();
 
-//       // The sender (OHTTP client) side:
-//       // const response = te.encode("This is the response.");
-//       const sender = await suite.createSenderContext({
-//         recipientPublicKey: rkp.publicKey,
-//       });
+      // The sender (OHTTP client) side:
+      // const response = te.encode("This is the response.");
+      const sender = await suite.createSenderContext({
+        recipientPublicKey: rkp.publicKey,
+      });
 
-//       const secretS = await sender.export(
-//         te.encode("message/bhttp response").buffer as ArrayBuffer,
-//         suite.aead.keySize,
-//       );
+      const secretS = await sender.export(
+        te.encode("message/bhttp response").buffer as ArrayBuffer,
+        suite.aead.keySize,
+      );
 
-//       const responseNonce = new Uint8Array(suite.aead.keySize);
-//       cryptoApi.getRandomValues(responseNonce);
-//       const saltS = concat(new Uint8Array(sender.enc), responseNonce)
-//         .buffer as ArrayBuffer;
+      const responseNonce = new Uint8Array(suite.aead.keySize);
+      cryptoApi.getRandomValues(responseNonce);
+      const saltS = concat(new Uint8Array(sender.enc), responseNonce)
+        .buffer as ArrayBuffer;
 
-//       const kdfS = suite.kdf;
-//       const prk = await kdfS.extract(saltS, secretS);
-//       assertEquals(prk.byteLength, kdfS.hashSize);
-//       const info = te.encode("key");
-//       assertEquals(
-//         new Uint8Array(await kdfS.expand(prk, info, suite.aead.keySize)),
-//         new Uint8Array(
-//           await kdfS.extractAndExpand(saltS, secretS, info, suite.aead.keySize),
-//         ),
-//       );
-//     });
-//   });
-// });
+      const kdfS = suite.kdf;
+      const prk = await kdfS.extract(saltS, secretS);
+      assertEquals(prk.byteLength, kdfS.hashSize);
+      const info = te.encode("key");
+      assertEquals(
+        new Uint8Array(await kdfS.expand(prk, info, suite.aead.keySize)),
+        new Uint8Array(
+          await kdfS.extractAndExpand(saltS, secretS, info, suite.aead.keySize),
+        ),
+      );
+    });
+  });
+});
