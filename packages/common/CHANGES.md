@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Clear temporary DHKEM shared-secret material on success and failure. Custom
+  `DhkemPrimitives.dh()` implementations must return fresh, caller-owned
+  buffers.
 - Reduce SHA3 initialization and bundle size by removing unused Rho/Pi tables
   and using fixed-shift rotations in Theta.
 - Accept arbitrary-length HKDF salts using WebCrypto when no extraction callback
