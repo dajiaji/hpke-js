@@ -23,6 +23,12 @@ export {
   EcDhkemPrimitives,
 } from "./src/kems/dhkemPrimitives/ecDhkemPrimitives.ts";
 export { XCurveDhkemPrimitives } from "./src/kems/dhkemPrimitives/xCurve.ts";
+export {
+  X_CURVE_X25519,
+  X_CURVE_X448,
+  type XCurve,
+  XCurveNativeDhkemPrimitives,
+} from "./src/kems/dhkemPrimitives/xCurveNative.ts";
 export { Hybridkem } from "./src/kems/hybridkem.ts";
 export { XCryptoKey } from "./src/xCryptoKey.ts";
 
