@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertRejects } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
 import {
@@ -9,7 +9,7 @@ import {
   HkdfSha256,
 } from "@hpke/core";
 
-import { OhttpClient, OhttpServer } from "../mod.ts";
+import { OhttpClient, OhttpError, OhttpServer } from "../mod.ts";
 
 const x25519 = new DhkemX25519HkdfSha256();
 const p256 = new DhkemP256HkdfSha256();
@@ -17,7 +17,100 @@ const sha256 = new HkdfSha256();
 const aes128gcm = new Aes128Gcm();
 const aes256gcm = new Aes256Gcm();
 
+async function createClientAndServer() {
+  const server = await OhttpServer.setup({
+    keyId: 0x23,
+    kem: x25519,
+    kdfAeadPairs: [{ kdf: sha256, aead: aes128gcm }],
+  });
+  const client = new OhttpClient({
+    kem: x25519,
+    kdf: sha256,
+    aead: aes128gcm,
+    keyConfig: await server.publicKeyConfig,
+    relayUrl: "https://relay.example/ohttp",
+  });
+  return { client, server };
+}
+
 describe("OHTTP", () => {
+  describe("client fetch", () => {
+    it("sends an encapsulated POST to the relay and returns the decrypted response", async () => {
+      const { client, server } = await createClientAndServer();
+      const originalFetch = globalThis.fetch;
+      let relayRequest: Request | undefined;
+      globalThis.fetch = async (input, init) => {
+        relayRequest = new Request(input, init);
+        const encapsulatedBytes = new Uint8Array(
+          await relayRequest.arrayBuffer(),
+        );
+        const relayBody = new TextDecoder().decode(encapsulatedBytes);
+        assertEquals(relayBody.includes("secret payload"), false);
+        assertEquals(relayBody.includes("target.example"), false);
+        const serverContext = await server.decapsulateRequest(
+          encapsulatedBytes,
+        );
+        assertEquals(serverContext.request.method, "POST");
+        assertEquals(new URL(serverContext.request.url).pathname, "/target");
+        assertEquals(await serverContext.request.text(), "secret payload");
+        const encryptedResponse = await serverContext.encapsulateResponse(
+          new Response("decrypted response", { status: 201 }),
+        );
+        return new Response(encryptedResponse.slice().buffer as ArrayBuffer, {
+          status: 200,
+        });
+      };
+
+      try {
+        const response = await client.fetch(
+          new Request("https://target.example/target", {
+            method: "POST",
+            body: "secret payload",
+          }),
+        );
+        assertEquals(relayRequest?.url, "https://relay.example/ohttp");
+        assertEquals(relayRequest?.method, "POST");
+        assertEquals(
+          relayRequest?.headers.get("Content-Type"),
+          "message/ohttp-req",
+        );
+        assertEquals(response.status, 201);
+        assertEquals(await response.text(), "decrypted response");
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    });
+
+    it("reports non-success relay responses", async () => {
+      const { client } = await createClientAndServer();
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = () =>
+        Promise.resolve(new Response(null, { status: 502 }));
+      try {
+        await assertRejects(
+          () =>
+            client.fetch("https://target.example/", {
+              method: "POST",
+              body: "payload",
+            }),
+          OhttpError,
+          "Relay returned HTTP 502",
+        );
+        await assertRejects(
+          () =>
+            client.fetch(new Request("https://target.example/"), {
+              method: "POST",
+              body: "payload",
+            }),
+          OhttpError,
+          "Relay returned HTTP 502",
+        );
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    });
+  });
+
   describe("Client/Server roundtrip (X25519, HKDF-SHA256, AES-128-GCM)", () => {
     it("should encapsulate and decapsulate a GET request", async () => {
       const server = await OhttpServer.setup({
