@@ -4,7 +4,6 @@ import { copySync, existsSync } from "@std/fs";
 export async function beforeBuild(name: string): Promise<void> {
   // Clean up dist
   await emptyDir(`../../npm/packages/${name}`);
-  await emptyDir(`../../npm/samples/${name}`);
   await emptyDir(`../../npm/test/${name}/runtimes/browsers`);
   await emptyDir(`../../npm/test/${name}/runtimes/cloudflare`);
   if (existsSync("test/runtimes/fastly")) {
@@ -55,11 +54,6 @@ export async function beforeBuild(name: string): Promise<void> {
 export function afterBuild(name: string) {
   markEsmSideEffectFree(name);
   removeDevDependencies(name);
-  copySync(
-    "samples/node",
-    `../../npm/samples/${name}`,
-    { overwrite: true },
-  );
   copySync(
     "test/runtimes/browsers",
     `../../npm/test/${name}/runtimes/browsers`,

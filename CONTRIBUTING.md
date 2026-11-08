@@ -264,6 +264,7 @@ deno task sample:deno:chacha20poly1305      # Run samples for ChaCha20-Poly1305 
 deno task sample:deno:dhkem-x25519          # Run samples for X25519 DHKEM package
 deno task sample:deno:dhkem-x448            # Run samples for X448 DHKEM package
 deno task sample:deno:dhkem-secp256k1       # Run samples for secp256k1 DHKEM package
+deno task sample:deno:hybridkem-x25519-kyber768 # Run samples for X25519Kyber768 hybrid package (deprecated)
 deno task sample:deno:hybridkem-x-wing      # Run samples for X-Wing hybrid package
 deno task sample:deno:hpke-js               # Run samples for main HPKE package
 deno task sample:deno:ml-kem                # Run samples for ML-KEM package
@@ -279,6 +280,7 @@ deno task sample:node:chacha20poly1305      # Run samples for ChaCha20-Poly1305 
 deno task sample:node:dhkem-x25519          # Run samples for X25519 DHKEM package
 deno task sample:node:dhkem-x448            # Run samples for X448 DHKEM package
 deno task sample:node:dhkem-secp256k1       # Run samples for secp256k1 DHKEM package
+deno task sample:node:hybridkem-x25519-kyber768 # Run samples for X25519Kyber768 hybrid package (deprecated)
 deno task sample:node:hybridkem-x-wing      # Run samples for X-Wing hybrid package
 deno task sample:node:hpke-js               # Run samples for main HPKE package
 deno task sample:node:ml-kem                # Run samples for ML-KEM package
@@ -286,7 +288,10 @@ deno task sample:node:cose                  # Run samples for COSE-HPKE package
 deno task sample:node:jose                  # Run samples for JOSE-HPKE package
 ```
 
-Sample code can be found in the `samples/deno` directory of each package.
+Sample code can be found in the `samples/deno` and `samples/node` directories of
+each package. Deno samples use the local workspace sources, while Node.js
+samples install the released packages from the npm registry using their
+committed `package-lock.json` (`npm ci`).
 
 ## Release Process
 
