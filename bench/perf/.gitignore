@@ -1,0 +1,4 @@
+node_modules/
+dist/
+results.json
+results.md
