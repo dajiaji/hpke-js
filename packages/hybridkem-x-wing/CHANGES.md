@@ -2,11 +2,19 @@
 
 ## Unreleased
 
+## Version 0.7.1
+
+Released 2026-11-08
+
 - `encap()` and `decap()` now throw `NotSupportedError` when `senderKey` or
   `senderPublicKey`, respectively, is provided, rather than silently ignoring
   the sender key. Reported by Bhabani Sankar Das (@007bsd).
 
-- Use raw X25519 primitives from common to avoid bundling DHKEM and HKDF-SHA256.
+- Use the raw X25519 primitives from common instead of bundling a separate copy
+  via `@hpke/dhkem-x25519`, so that X25519 uses the Montgomery ladder hardened
+  against secret-dependent timing and DHKEM and HKDF-SHA256 are no longer
+  bundled. Reported by George Stergiopoulos (Athens University of Economics and
+  Business).
 - Reduce bundle size by using the KEM identifier value directly instead of
   referencing the `KemId` object.
 
