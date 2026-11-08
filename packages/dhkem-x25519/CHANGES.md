@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.8.1
+
+Released 2026-11-08
+
 - Use the raw X25519 primitives from common instead of bundling a separate copy,
   so that X25519 uses the Montgomery ladder hardened against secret-dependent
   timing. Reported by George Stergiopoulos (Athens University of Economics and
