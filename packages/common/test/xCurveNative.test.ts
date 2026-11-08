@@ -7,12 +7,52 @@ import {
   HkdfSha256Native,
   HkdfSha512Native,
   type KdfInterface,
+  loadSubtleCrypto,
   SerializeError,
   X_CURVE_X25519,
   X_CURVE_X448,
   type XCurve,
   XCurveNativeDhkemPrimitives,
 } from "../mod.ts";
+
+// DOMException is not a global on Node.js 16.
+function webCryptoError(name: string): Error {
+  const e = new Error(name);
+  e.name = name;
+  return e;
+}
+
+// Simulates WebKit, which rejects a PKCS#8 X25519 private key whose first
+// byte is 0x00 and fails to generate such a key pair (about 1 in 256 times).
+async function emulateWebKit(
+  x: XCurveNativeDhkemPrimitives,
+  algIdLength: number,
+  opts: { failGenerateKey: boolean },
+): Promise<void> {
+  const holder = x as unknown as { _api: SubtleCrypto };
+  const api = await loadSubtleCrypto();
+  holder._api = new Proxy(api, {
+    get(obj, prop) {
+      if (prop === "importKey") {
+        return (format: KeyFormat, keyData: unknown, ...rest: unknown[]) => {
+          if (
+            format === "pkcs8" &&
+            new Uint8Array(keyData as ArrayBuffer)[algIdLength] === 0
+          ) {
+            return Promise.reject(webCryptoError("DataError"));
+          }
+          // deno-lint-ignore no-explicit-any
+          return (obj.importKey as any)(format, keyData, ...rest);
+        };
+      }
+      if (prop === "generateKey" && opts.failGenerateKey) {
+        return () => Promise.reject(webCryptoError("OperationError"));
+      }
+      const v = Reflect.get(obj, prop);
+      return typeof v === "function" ? v.bind(obj) : v;
+    },
+  });
+}
 
 // suite_id = concat("KEM", I2OSP(kem_id, 2))
 function kemKdf(kdf: KdfInterface, kemId: number): () => KdfInterface {
@@ -96,6 +136,54 @@ describe("XCurveNativeDhkemPrimitives", () => {
         assertEquals(
           new Uint8Array(await x.serializePublicKey(pk)),
           new Uint8Array(rawPk),
+        );
+      });
+
+      it("should handle a private key with a leading 0x00 when PKCS#8 import rejects it", async () => {
+        const x = new XCurveNativeDhkemPrimitives(curve, kdf());
+        // Computed without the emulation as the expected values.
+        const raw = new Uint8Array(curve.size).map((_, i) => i);
+        const expectedPk = new Uint8Array(
+          await x.serializePublicKey(
+            await x.derivePublicKey(await x.deserializePrivateKey(raw)),
+          ),
+        );
+        const peer = await x.generateKeyPair();
+        const expectedDh = new Uint8Array(
+          await x.dh(await x.deserializePrivateKey(raw), peer.publicKey),
+        );
+
+        await emulateWebKit(x, curve.pkcs8AlgId.length, {
+          failGenerateKey: false,
+        });
+        const sk = await x.deserializePrivateKey(raw);
+        assertEquals(new Uint8Array(await x.serializePrivateKey(sk)), raw);
+        assertEquals(
+          new Uint8Array(
+            await x.serializePublicKey(await x.derivePublicKey(sk)),
+          ),
+          expectedPk,
+        );
+        assertEquals(
+          new Uint8Array(await x.dh(sk, peer.publicKey)),
+          expectedDh,
+        );
+      });
+
+      it("generateKeyPair should fall back to a random private key when generateKey fails", async () => {
+        const x = new XCurveNativeDhkemPrimitives(curve, kdf());
+        await emulateWebKit(x, curve.pkcs8AlgId.length, {
+          failGenerateKey: true,
+        });
+        const a = await x.generateKeyPair();
+        const b = await x.generateKeyPair();
+        assertEquals(
+          new Uint8Array(await x.serializePrivateKey(a.privateKey)).length,
+          curve.size,
+        );
+        assertEquals(
+          new Uint8Array(await x.dh(a.privateKey, b.publicKey)),
+          new Uint8Array(await x.dh(b.privateKey, a.publicKey)),
         );
       });
 

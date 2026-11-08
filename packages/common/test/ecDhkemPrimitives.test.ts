@@ -117,6 +117,15 @@ describe("EcDhkemPrimitives", () => {
         }
       });
 
+      it("serializePrivateKey should recover the exact private key when JWK export fails", async () => {
+        const ec = new EcDhkemPrimitives(curve, kdf());
+        // A private key whose first byte is 0x00.
+        const raw = new Uint8Array(curve.size).map((_, i) => i);
+        const sk = await ec.deserializePrivateKey(raw);
+        rejectJwkExportOf(ec, sk);
+        assertEquals(new Uint8Array(await ec.serializePrivateKey(sk)), raw);
+      });
+
       it("derivePublicKey should throw DeserializeError when the key cannot be exported", async () => {
         const ec = new EcDhkemPrimitives(curve, kdf());
         const kp = await ec.generateKeyPair();

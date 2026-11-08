@@ -447,6 +447,11 @@ export class XWing implements KemInterface {
     const pkcs8 = new Uint8Array(X25519_PKCS8_PREFIX.length + sk.length);
     pkcs8.set(X25519_PKCS8_PREFIX, 0);
     pkcs8.set(sk, X25519_PKCS8_PREFIX.length);
+    // WebKit rejects a PKCS#8 private key whose first byte is 0x00. Decoding
+    // the scalar clears the low bits of the first byte (RFC 7748), so setting
+    // the lowest bit does not change the public key or the shared secret.
+    // The imported key is never exported as a private key.
+    pkcs8[X25519_PKCS8_PREFIX.length] |= 0x01;
     try {
       const key = await (this._api as Crypto).subtle.importKey(
         "pkcs8",
