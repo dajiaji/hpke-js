@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.8.1
+
+Released 2026-11-08
+
 - Reduce ChaCha20-Poly1305 bundle size by simplifying the internal Poly1305
   digest API, specializing cipher validation, and removing redundant Promise
   wrappers. Preserve incremental authentication, output buffers, and input
