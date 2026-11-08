@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.8.1
+
+Released 2026-11-08
+
 - Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
   HMAC/SHA-2.
 - Reduce bundle size by using the KEM identifier value directly instead of
