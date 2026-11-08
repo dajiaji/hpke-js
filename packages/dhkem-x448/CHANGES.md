@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 1.8.1
+
+Released 2026-11-08
+
 - Use the X448 Montgomery ladder in common hardened against secret-dependent
   timing (full-width cswap mask, low-order public keys rejected before the
   ladder). Reported by George Stergiopoulos (Athens University of Economics and
