@@ -2,10 +2,17 @@
 
 ## Unreleased
 
+## Version 1.8.1
+
+Released 2026-11-08
+
 - Reject Auth and AuthPSK modes for KEMs without authentication support instead
   of silently accepting an unauthenticated sender. Reported by Bhabani Sankar
   Das (@007bsd).
-
+- Update `@hpke/dhkem-x25519` and `@hpke/dhkem-x448` to v1.8.1, which use the
+  X25519/X448 Montgomery ladder hardened against secret-dependent timing.
+  Reported by George Stergiopoulos (Athens University of Economics and
+  Business).
 - Use WebCrypto for arbitrary-length HKDF salts instead of bundling JavaScript
   HMAC/SHA-2.
 - Use KEM identifier values directly in the DHKEM classes instead of referencing
