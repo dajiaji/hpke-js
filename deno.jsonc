@@ -109,6 +109,7 @@
     "test:deno:dhkem-x25519": "cd packages/dhkem-x25519 && deno task test",
     "test:deno:dhkem-x448": "cd packages/dhkem-x448 && deno task test",
     "test:deno:dhkem-secp256k1": "cd packages/dhkem-secp256k1 && deno task test",
+    "test:deno:hybridkem-x25519-kyber768": "cd packages/hybridkem-x25519-kyber768 && deno task test",
     "test:deno:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task test",
     "test:deno:hpke-js": "cd packages/hpke-js && deno task test",
     "test:deno:ml-kem": "cd packages/ml-kem && deno task test",
