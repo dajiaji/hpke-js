@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 0.3.1
+
+Released 2026-11-08
+
 - `encap()` and `decap()` now throw `NotSupportedError` when `senderKey` or
   `senderPublicKey`, respectively, is provided, rather than silently ignoring
   the sender key. Reported by Bhabani Sankar Das (@007bsd).
