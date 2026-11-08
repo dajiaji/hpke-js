@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## Version 0.1.0
+
+Released 2026-11-08
+
 - Reduce bundle size by comparing AEAD identifiers as numeric values directly.
 - Added `generateKemKeyPair()` to `JoseEncrypt0`, matching the Key Encryption
   API and simplifying recipient key generation.
