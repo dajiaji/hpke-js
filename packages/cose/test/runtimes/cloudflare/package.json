@@ -17,6 +17,6 @@
     "wrangler": "^4.156.0"
   },
   "dependencies": {
-    "@hpke/cose": "^0.1.0"
+    "@hpke/cose": "^0.2.0"
   }
 }
