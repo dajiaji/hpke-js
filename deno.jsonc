@@ -28,6 +28,7 @@
     "./packages/ml-kem/samples/deno",
     "./packages/cose/samples/deno",
     "./packages/jose/samples/deno",
+    "./packages/ohttp/samples/deno",
     "./utils"
   ],
   // Exclude bench files from module graph so that npm: specifiers for
@@ -317,7 +318,7 @@
       "description": "Run sample code demonstrations for Deno and Node.js environments",
       "command": "deno task sample:deno && deno task sample:node"
     },
-    "sample:deno": "deno task sample:deno:core && deno task sample:deno:chacha20poly1305 && deno task sample:deno:dhkem-x25519 && deno task sample:deno:dhkem-x448 && deno task sample:deno:dhkem-secp256k1 && deno task sample:deno:hybridkem-x25519-kyber768 && deno task sample:deno:hybridkem-x-wing && deno task sample:deno:hpke-js && deno task sample:deno:ml-kem && deno task sample:deno:cose && deno task sample:deno:jose",
+    "sample:deno": "deno task sample:deno:core && deno task sample:deno:chacha20poly1305 && deno task sample:deno:dhkem-x25519 && deno task sample:deno:dhkem-x448 && deno task sample:deno:dhkem-secp256k1 && deno task sample:deno:hybridkem-x25519-kyber768 && deno task sample:deno:hybridkem-x-wing && deno task sample:deno:hpke-js && deno task sample:deno:ml-kem && deno task sample:deno:cose && deno task sample:deno:jose && deno task sample:deno:ohttp",
     "sample:deno:core": "cd packages/core && deno task sample:deno",
     "sample:deno:chacha20poly1305": "cd packages/chacha20poly1305 && deno task sample:deno",
     "sample:deno:dhkem-x25519": "cd packages/dhkem-x25519 && deno task sample:deno",
@@ -329,6 +330,7 @@
     "sample:deno:ml-kem": "cd packages/ml-kem && deno task sample:deno",
     "sample:deno:cose": "cd packages/cose && deno task sample:deno",
     "sample:deno:jose": "cd packages/jose && deno task sample:deno",
+    "sample:deno:ohttp": "cd packages/ohttp && deno task sample:deno",
     "sample:node": "deno task sample:node:core && deno task sample:node:chacha20poly1305 && deno task sample:node:dhkem-x25519 && deno task sample:node:dhkem-x448 && deno task sample:node:dhkem-secp256k1 && deno task sample:node:hybridkem-x25519-kyber768 && deno task sample:node:hybridkem-x-wing && deno task sample:node:hpke-js && deno task sample:node:ml-kem && deno task sample:node:cose && deno task sample:node:jose",
     "sample:node:core": "cd packages/core && deno task sample:node",
     "sample:node:chacha20poly1305": "cd packages/chacha20poly1305 && deno task sample:node",
