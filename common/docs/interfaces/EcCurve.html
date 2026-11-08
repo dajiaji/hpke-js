@@ -19,7 +19,7 @@ the curves that are not used.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">EcCurve</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#bitmask">bitmask</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#n">n</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bigint</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#namedcurve">namedCurve</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;P-256&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;P-384&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;P-521&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#pkcs8algid">pkcs8AlgId</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#size">size</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L30">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:30</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L30">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:30</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -42,35 +42,35 @@ the curves that are not used.</p>
 <div class="tsd-comment tsd-typography"><p>The bitmask applied to the first byte of a DeriveKeyPair candidate.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L36">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:36</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L36">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:36</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="n"><code class="tsd-tag">Readonly</code><span>n</span><a href="#n" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">n</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bigint</span></div>
 <div class="tsd-comment tsd-typography"><p>The order of the base point.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L40">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:40</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L40">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:40</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="namedcurve"><code class="tsd-tag">Readonly</code><span>named<wbr/>Curve</span><a href="#namedcurve" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">namedCurve</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;P-256&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;P-384&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;P-521&quot;</span></div>
 <div class="tsd-comment tsd-typography"><p>The WebCrypto named curve.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L32">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:32</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L32">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:32</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="pkcs8algid"><code class="tsd-tag">Readonly</code><span>pkcs8<wbr/>Alg<wbr/>Id</span><a href="#pkcs8algid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">pkcs8AlgId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 <div class="tsd-comment tsd-typography"><p>The PKCS#8 header preceding a raw private key of <code>size</code> bytes.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L38">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:38</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L38">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:38</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="size"><code class="tsd-tag">Readonly</code><span>size</span><a href="#size" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">size</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>The byte length of a scalar / field element (Nsk = Ndh).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9a2f1235ae6858e7ec594fc407b7930b2598f73e/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L34">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:34</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/9aa80a09150afbeb2a29f2435703721fffdeb8d7/packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts#L34">packages/common/src/kems/dhkemPrimitives/ecDhkemPrimitives.ts:34</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
