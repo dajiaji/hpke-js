@@ -270,6 +270,7 @@ deno task sample:deno:hpke-js               # Run samples for main HPKE package
 deno task sample:deno:ml-kem                # Run samples for ML-KEM package
 deno task sample:deno:cose                  # Run samples for COSE-HPKE package
 deno task sample:deno:jose                  # Run samples for JOSE-HPKE package
+deno task sample:deno:ohttp                 # Run samples for OHTTP package
 ```
 
 To run Node.js samples for specific packages:
