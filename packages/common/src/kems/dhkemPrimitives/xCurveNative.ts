@@ -15,7 +15,11 @@ import {
   LABEL_DKP_PRK,
   LABEL_SK,
 } from "../../interfaces/dhkemPrimitives.ts";
-import { base64UrlToBytes } from "../../utils/misc.ts";
+import {
+  base64UrlToBytes,
+  bytesToBase64Url,
+  loadCrypto,
+} from "../../utils/misc.ts";
 
 /**
  * Curve-specific parameters for {@link XCurveNativeDhkemPrimitives}.
@@ -170,7 +174,15 @@ export class XCurveNativeDhkemPrimitives extends NativeAlgorithm
         KEM_USAGES,
       ) as CryptoKeyPair;
     } catch (e: unknown) {
-      throw new NotSupportedError(e);
+      // WebKit fails to generate a key pair whose private key would start
+      // with 0x00 (about 1 in 256 attempts), so fall back to importing a
+      // random private key. If the curve itself is not supported, this
+      // fails as well and the original error is reported.
+      try {
+        return await this._generateKeyPairFromRandomBytes();
+      } catch {
+        throw new NotSupportedError(e);
+      }
     }
   }
 
@@ -319,18 +331,75 @@ export class XCurveNativeDhkemPrimitives extends NativeAlgorithm
     );
   }
 
+  private async _generateKeyPairFromRandomBytes(): Promise<CryptoKeyPair> {
+    const sk = new Uint8Array(this._nSk);
+    try {
+      (await loadCrypto()).getRandomValues(sk);
+      const privateKey = await this._deserializePkcs8Key(sk);
+      return {
+        privateKey,
+        publicKey: await this.derivePublicKey(privateKey),
+      };
+    } finally {
+      sk.fill(0);
+    }
+  }
+
   private async _deserializePkcs8Key(k: Uint8Array): Promise<CryptoKey> {
-    const pkcs8Key = new Uint8Array(
-      this._pkcs8AlgId.length + k.length,
-    );
+    const pkcs8Key = this._toPkcs8(k);
+    try {
+      return await (this._api as SubtleCrypto).importKey(
+        "pkcs8",
+        pkcs8Key,
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+    } catch (e: unknown) {
+      if (k[0] !== 0) {
+        throw e;
+      }
+      // WebKit rejects a PKCS#8 private key whose first byte is 0x00.
+      return await this._importLeadingZeroKey(k);
+    } finally {
+      pkcs8Key.fill(0);
+    }
+  }
+
+  // Imports a private key whose first byte is 0x00 as a JWK, which WebKit
+  // accepts. The public key (`x`) required for the JWK is computed from the
+  // same key with the first byte set to 0x01: decoding the scalar clears the
+  // low bits of the first byte (RFC 7748), so both have the same scalar and
+  // therefore the same public key.
+  private async _importLeadingZeroKey(k: Uint8Array): Promise<CryptoKey> {
+    const api = this._api as SubtleCrypto;
+    const alt = this._toPkcs8(k);
+    alt[this._pkcs8AlgId.length] = 0x01;
+    try {
+      const altKey = await api.importKey(
+        "pkcs8",
+        alt,
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+      const { x } = await api.exportKey("jwk", altKey);
+      return await api.importKey(
+        "jwk",
+        { kty: "OKP", crv: this._algName, x, d: bytesToBase64Url(k) },
+        this._alg,
+        true,
+        KEM_USAGES,
+      );
+    } finally {
+      alt.fill(0);
+    }
+  }
+
+  private _toPkcs8(k: Uint8Array) {
+    const pkcs8Key = new Uint8Array(this._pkcs8AlgId.length + k.length);
     pkcs8Key.set(this._pkcs8AlgId, 0);
     pkcs8Key.set(k, this._pkcs8AlgId.length);
-    return await (this._api as SubtleCrypto).importKey(
-      "pkcs8",
-      pkcs8Key,
-      this._alg,
-      true,
-      KEM_USAGES,
-    );
+    return pkcs8Key;
   }
 }
