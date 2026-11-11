@@ -7,7 +7,7 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { OhttpClient, OhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
 
 import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/common";
 
@@ -17,16 +17,15 @@ async function testRoundtrip(
   aead: AeadInterface,
   label: string,
 ) {
-  const server = await OhttpServer.setup({
+  const server = await createOhttpServer({
     keyId: 0x01,
     kem,
-    kdfAeadPairs: [{ kdf, aead }],
+    suites: [{ kdf, aead }],
   });
-  const keyConfig = await server.publicKeyConfig;
-  const client = new OhttpClient({
+  const keyConfig = server.keyConfig;
+  const client = await createOhttpClient({
     kem,
-    kdf,
-    aead,
+    suites: [{ kdf, aead }],
     keyConfig,
     relayUrl: "https://relay.example/ohttp",
   });
@@ -35,7 +34,9 @@ async function testRoundtrip(
     body: "hello world!",
   });
   const clientCtx = await client.encapsulateRequest(targetReq);
-  const serverCtx = await server.decapsulateRequest(clientCtx.encRequest);
+  const serverCtx = await server.decapsulateRequest(
+    clientCtx.encapsulatedRequest,
+  );
   const body = await serverCtx.request.text();
   expect(body).toBe("hello world!");
 

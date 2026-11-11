@@ -5,15 +5,16 @@ export {
   type OhttpKeyConfig,
   serializeKeyConfig,
 } from "./src/keyConfig.ts";
+export type { OhttpSuite } from "./src/suite.ts";
 export {
-  OhttpClient,
+  createOhttpClient,
+  type OhttpClient,
   type OhttpClientContext,
   type OhttpClientParams,
 } from "./src/client.ts";
 export {
-  type KdfAeadPair,
-  OhttpServer,
-  type OhttpServerConfig,
+  createOhttpServer,
+  type OhttpServer,
   type OhttpServerContext,
-  type OhttpServerSetupParams,
+  type OhttpServerParams,
 } from "./src/server.ts";

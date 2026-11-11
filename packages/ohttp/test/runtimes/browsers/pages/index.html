@@ -4,7 +4,7 @@
   </head>
   <body>
     <script type="module">
-    import { OhttpClient, OhttpServer } from "./src/hpke-ohttp.js";
+    import { createOhttpClient, createOhttpServer } from "./src/hpke-ohttp.js";
     import {
       Aes128Gcm,
       Aes256Gcm,
@@ -40,19 +40,17 @@
       trace.skR = toHex(await suite.kem.serializePrivateKey(keyPair.privateKey));
       trace.pkR = toHex(await suite.kem.serializePublicKey(keyPair.publicKey));
 
-      const server = new OhttpServer({
+      const server = await createOhttpServer({
         keyId: 0x01,
         kem,
-        privateKey: keyPair.privateKey,
-        publicKey: keyPair.publicKey,
-        kdfAeadPairs: [{ kdf, aead }],
+        keyPair,
+        suites: [{ kdf, aead }],
       });
-      trace.step = "publicKeyConfig";
-      const keyConfig = await server.publicKeyConfig;
-      const client = new OhttpClient({
+      trace.step = "keyConfig";
+      const keyConfig = server.keyConfig;
+      const client = await createOhttpClient({
         kem,
-        kdf,
-        aead,
+        suites: [{ kdf, aead }],
         keyConfig,
         relayUrl: "https://relay.example/ohttp",
       });
@@ -63,10 +61,10 @@
       trace.step = "encapsulateRequest";
       const clientCtx = await client.encapsulateRequest(targetReq);
       // The encapsulated request contains the ephemeral public key (enc).
-      trace.encRequest = toHex(clientCtx.encRequest);
+      trace.encRequest = toHex(clientCtx.encapsulatedRequest);
       trace.step = "decapsulateRequest";
       const serverCtx = await server.decapsulateRequest(
-        clientCtx.encRequest,
+        clientCtx.encapsulatedRequest,
       );
       const body = await serverCtx.request.text();
       if (body !== "hello world!") {

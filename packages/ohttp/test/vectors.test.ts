@@ -10,6 +10,7 @@ import {
 
 import { decodeRequest, decodeResponse } from "../src/bhttp/decoder.ts";
 import { buildHeader } from "../src/encapsulation.ts";
+import { createOhttpServer } from "../src/server.ts";
 import { deserializeKeyConfig, serializeKeyConfig } from "../src/keyConfig.ts";
 import { bytesToHex, hexToBytes } from "./utils.ts";
 
@@ -245,10 +246,7 @@ describe("RFC 9458 Appendix A test vectors", () => {
     assertEquals(bytesToHex(responsePlaintext), VECTORS.binaryResponse);
   });
 
-  it("should decrypt the encapsulated response via OhttpServer + manual client decapsulation", async () => {
-    // Use our high-level OhttpServer to decapsulate the request
-    const { OhttpServer } = await import("../mod.ts");
-
+  it("should decapsulate the encapsulated request via createOhttpServer", async () => {
     const suite = new CipherSuite({
       kem: new DhkemX25519HkdfSha256(),
       kdf: new HkdfSha256(),
@@ -268,12 +266,11 @@ describe("RFC 9458 Appendix A test vectors", () => {
       true,
     );
 
-    const server = new OhttpServer({
+    const server = await createOhttpServer({
       keyId: 0x01,
       kem: new DhkemX25519HkdfSha256(),
-      privateKey: skR,
-      publicKey: pkR,
-      kdfAeadPairs: [
+      keyPair: { privateKey: skR, publicKey: pkR },
+      suites: [
         { kdf: new HkdfSha256(), aead: new Aes128Gcm() },
       ],
     });
