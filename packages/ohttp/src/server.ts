@@ -1,7 +1,8 @@
-import { BHttpDecoder, BHttpEncoder } from "@dajiaji/bhttp";
 import { CipherSuite } from "@hpke/core";
 import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/common";
 
+import { decodeRequest } from "./bhttp/decoder.ts";
+import { encodeResponse } from "./bhttp/encoder.ts";
 import type { OhttpKeyConfig } from "./keyConfig.ts";
 import { serializeKeyConfig } from "./keyConfig.ts";
 import { decapsulateRequest, encapsulateResponse } from "./encapsulation.ts";
@@ -124,15 +125,13 @@ export class OhttpServer {
       encRequest,
     );
 
-    const decoder = new BHttpDecoder();
-    const request = decoder.decodeRequest(result.binaryRequest);
+    const request = decodeRequest(result.binaryRequest);
     const respCtx = result.context;
 
     return {
       request,
       async encapsulateResponse(response: Response): Promise<Uint8Array> {
-        const encoder = new BHttpEncoder();
-        const binaryResponse = await encoder.encodeResponse(response);
+        const binaryResponse = await encodeResponse(response);
         return encapsulateResponse(respCtx, binaryResponse);
       },
     };

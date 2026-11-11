@@ -39,7 +39,6 @@
   ],
   // Import map for dependencies used across the project
   "imports": {
-    "@dajiaji/bhttp": "jsr:@dajiaji/bhttp@^0.3.6",
     "@dajiaji/mlkem": "jsr:@dajiaji/mlkem@^2.7.0",
     "@deno/dnt": "jsr:@deno/dnt@0.41.3",
     "@playwright/test": "npm:@playwright/test@^1.64.1",

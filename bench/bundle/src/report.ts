@@ -27,7 +27,6 @@ export interface Meta {
   bundlers: Partial<Record<BundlerId, string>>;
   panvaVersion: string;
   panvaNobleVersion: string;
-  bhttpVersion: string;
   node: string;
 }
 
@@ -80,7 +79,6 @@ export function toMarkdown(
     "",
     `- @hpke: \`@hpke/core\` + extensions, repository sources @ \`${meta.revision}\``,
     `- panva/hpke: \`hpke@${meta.panvaVersion}\` (+ \`@panva/hpke-noble@${meta.panvaNobleVersion}\` for ChaCha20Poly1305 / ML-KEM / X-Wing)`,
-    `- OHTTP BHTTP dependency: \`bhttp-js@${meta.bhttpVersion}\``,
     "- `sideEffects: false` is honored for all packages on both sides",
     meta.verified
       ? "- HPKE and JOSE bundles verified by seal/open; OHTTP bundles by HTTP request/response round-trips"
