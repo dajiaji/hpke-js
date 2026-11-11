@@ -207,7 +207,6 @@ async function main(): Promise<void> {
     bundlers: Object.fromEntries(bundlers.map((b) => [b.id, b.description])),
     panvaVersion: await packageVersion("hpke"),
     panvaNobleVersion: await packageVersion("@panva/hpke-noble"),
-    bhttpVersion: await packageVersion("bhttp-js"),
     node: process.version,
   };
 
