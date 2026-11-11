@@ -260,6 +260,60 @@ describe("XWing", () => {
     });
   });
 
+  describe("expanded decapsulation key cache", () => {
+    it("should decapsulate repeatedly with the same key", async () => {
+      const kem = new XWing();
+      const kp = await kem.generateKeyPair();
+      for (const recipientKey of [kp.privateKey, kp, kp.privateKey]) {
+        const { enc, sharedSecret } = await kem.encap({
+          recipientPublicKey: kp.publicKey,
+        });
+        assertEquals(await kem.decap({ enc, recipientKey }), sharedSecret);
+      }
+    });
+
+    it("should match the official test vectors after caching", async () => {
+      const kem = new XWing();
+      for (const v of TEST_VECTORS) {
+        const recipientKey = await kem.deserializePrivateKey(hexToBytes(v.sk));
+        for (let i = 0; i < 2; i++) {
+          assertEquals(
+            new Uint8Array(
+              await kem.decap({ enc: hexToBytes(v.ct), recipientKey }),
+            ),
+            hexToBytes(v.ss),
+          );
+        }
+      }
+    });
+
+    it("should not use a stale expansion after the key material changes", async () => {
+      const kem = new XWing();
+      const api = await loadCrypto();
+      const kp1 = await kem.generateKeyPairDerand(
+        api.getRandomValues(new Uint8Array(32)),
+      );
+      const seed2 = api.getRandomValues(new Uint8Array(32));
+      const kp2 = await kem.generateKeyPairDerand(seed2);
+
+      // Populates the cache for kp1.privateKey.
+      const e1 = await kem.encap({ recipientPublicKey: kp1.publicKey });
+      assertEquals(
+        await kem.decap({ enc: e1.enc, recipientKey: kp1.privateKey }),
+        e1.sharedSecret,
+      );
+
+      // serializePrivateKey() exposes the underlying buffer, so the key
+      // material of the same key object can be changed afterwards.
+      new Uint8Array(await kem.serializePrivateKey(kp1.privateKey)).set(seed2);
+      const e2 = await kem.encap({ recipientPublicKey: kp2.publicKey });
+      assertEquals(
+        await kem.decap({ enc: e2.enc, recipientKey: kp1.privateKey }),
+        e2.sharedSecret,
+      );
+    });
+  });
+
   describe("X25519 computation", () => {
     // Accesses the private state that selects the X25519 implementation.
     type XWingInternals = {

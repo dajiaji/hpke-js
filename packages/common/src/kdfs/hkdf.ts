@@ -35,6 +35,11 @@ export function toArrayBuffer(
   return new Uint8Array(input).slice().buffer;
 }
 
+// The HMAC keys for the empty salt (hashSize zero bytes), which is a constant,
+// imported once per KDF instance. Module-scoped so that it is not reachable
+// from the outside.
+const EMPTY_SALT_KEYS = new WeakMap<HkdfNative, CryptoKey>();
+
 export class HkdfNative extends NativeAlgorithm implements KdfInterface {
   public readonly id: KdfId = 0x0001; // KdfId.HkdfSha256
   public readonly hashSize: number = 0;
@@ -94,7 +99,8 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
     ikm: ArrayBufferLike | ArrayBufferView,
   ): Promise<ArrayBuffer> {
     await this._setup();
-    const saltBuf = salt.byteLength === 0
+    const empty = salt.byteLength === 0;
+    const saltBuf = empty
       ? new ArrayBuffer(this.hashSize)
       : toArrayBuffer(salt);
     const ikmBuf = toArrayBuffer(ikm);
@@ -107,15 +113,19 @@ export class HkdfNative extends NativeAlgorithm implements KdfInterface {
         new Uint8Array(ikmBuf),
       ).buffer as ArrayBuffer;
     }
-    const key = await (this._api as SubtleCrypto).importKey(
-      "raw",
-      saltBuf,
-      { name: this.algHash.name, hash: this.algHash.hash },
-      false,
-      [
-        "sign",
-      ],
-    );
+    const key = (empty && EMPTY_SALT_KEYS.get(this)) ||
+      await (this._api as SubtleCrypto).importKey(
+        "raw",
+        saltBuf,
+        { name: this.algHash.name, hash: this.algHash.hash },
+        false,
+        [
+          "sign",
+        ],
+      );
+    if (empty) {
+      EMPTY_SALT_KEYS.set(this, key);
+    }
     return await (this._api as SubtleCrypto).sign("HMAC", key, ikmBuf);
   }
 

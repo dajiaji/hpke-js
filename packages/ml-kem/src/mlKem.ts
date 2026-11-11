@@ -32,6 +32,26 @@ import type { KemId } from "@hpke/common";
 
 const HAS_SHARED_ARRAY_BUFFER = typeof SharedArrayBuffer !== "undefined";
 
+// The expanded decapsulation keys derived from the private key seeds.
+// Expanding a seed is about as expensive as decapsulation itself, so it is
+// done once per private key object. The seed is kept to detect changes of the
+// key material. Module-scoped so that it is not reachable from the outside.
+const EXPANDED_KEYS = new WeakMap<
+  CryptoKey,
+  { seed: Uint8Array; sk: Uint8Array }
+>();
+
+function equalBytes(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+  let diff = 0;
+  for (let i = 0; i < a.byteLength; i++) {
+    diff |= a[i] ^ b[i];
+  }
+  return diff === 0;
+}
+
 interface MlKemInterface {
   generateKeyPair(): Promise<[Uint8Array, Uint8Array]>;
   deriveKeyPair(seed: Uint8Array): Promise<[Uint8Array, Uint8Array]>;
@@ -234,7 +254,17 @@ export class MlKemBase implements KemInterface {
       throw new InvalidParamError("Invalid length of recipientKey");
     }
     try {
-      const [_, exSk] = await (this._prim as MlKemInterface).deriveKeyPair(sk);
+      let exSk: Uint8Array;
+      const cached = EXPANDED_KEYS.get(rSk);
+      if (cached !== undefined && equalBytes(cached.seed, sk)) {
+        exSk = cached.sk;
+      } else {
+        // Snapshot the seed before awaiting so that the cached seed always
+        // matches the seed the expansion was derived from.
+        const seed = sk.slice();
+        [, exSk] = await (this._prim as MlKemInterface).deriveKeyPair(seed);
+        EXPANDED_KEYS.set(rSk, { seed, sk: exSk });
+      }
       const ss = await (this._prim as MlKemInterface).decap(ct, exSk);
       return ss.buffer.slice(
         ss.byteOffset,
