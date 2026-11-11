@@ -73,6 +73,28 @@ function isLowOrderX25519(u: Uint8Array): boolean {
   return X25519_LOW_ORDER_U.has(n % X25519_P);
 }
 
+// The expanded decapsulation keys ([skM, skX, pkM, pkX]) derived from the
+// private key seeds. Expanding a seed (SHAKE256, ML-KEM key derivation and
+// X25519 public key computation) costs about as much as decapsulation itself,
+// so it is done once per private key object. The seed is kept to detect changes
+// of the key material. Module-scoped so that it is not reachable from the
+// outside.
+const EXPANDED_KEYS = new WeakMap<
+  CryptoKey,
+  { seed: Uint8Array; keys: [Uint8Array, Uint8Array, Uint8Array, Uint8Array] }
+>();
+
+function equalBytes(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+  let diff = 0;
+  for (let i = 0; i < a.byteLength; i++) {
+    diff |= a[i] ^ b[i];
+  }
+  return diff === 0;
+}
+
 function combiner(
   ssM: Uint8Array,
   ssX: Uint8Array,
@@ -375,7 +397,15 @@ export class XWing implements KemInterface {
     }
     await this._setup();
     try {
-      const [skM, skX, _pkM, pkX] = await this._expandDecapsulationKey(sk);
+      let cached = EXPANDED_KEYS.get(rSk);
+      if (cached === undefined || !equalBytes(cached.seed, sk)) {
+        // Snapshot the seed before awaiting so that the cached seed always
+        // matches the seed the expansion was derived from.
+        const seed = sk.slice();
+        cached = { seed, keys: await this._expandDecapsulationKey(seed) };
+        EXPANDED_KEYS.set(rSk, cached);
+      }
+      const [skM, skX, _pkM, pkX] = cached.keys;
       const ct = new Uint8Array(enc);
       const ctM = ct.subarray(0, 1088);
       const ctX = ct.subarray(1088);
