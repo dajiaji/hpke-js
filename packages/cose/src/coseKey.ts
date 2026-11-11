@@ -190,7 +190,9 @@ export function extractCurve(coseKeyBytes: Uint8Array): CoseCrv {
 
 /** Options for building a COSE_Key. */
 export interface CoseKeyBuildOptions {
+  /** Optional key identifier to include in the key. */
   kid?: Uint8Array;
+  /** Optional COSE algorithm identifier to include in the key. */
   alg?: number;
 }
 

@@ -2,15 +2,21 @@ import { OhttpError } from "./errors.ts";
 
 /** A KDF/AEAD pair advertised in a KeyConfig. */
 export interface OhttpCipherSuite {
+  /** KDF identifier. */
   kdf: number;
+  /** AEAD identifier. */
   aead: number;
 }
 
 /** Parsed public key configuration for OHTTP (RFC 9458 Section 3). */
 export interface OhttpKeyConfig {
+  /** Key identifier (0–255). */
   keyId: number;
+  /** HPKE KEM identifier. */
   kem: number;
+  /** Serialized public key for the KEM. */
   publicKey: Uint8Array;
+  /** KDF/AEAD pairs supported by this key. */
   cipherSuites: OhttpCipherSuite[];
 }
 

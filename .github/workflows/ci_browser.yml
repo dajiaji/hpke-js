@@ -97,6 +97,18 @@ jobs:
         run: |
           typedoc --name "@hpke/ml-kem" --out ../hpke-js/test/runtimes/browsers/pages/ml-kem/docs mod.ts
           deno task minify > ../hpke-js/test/runtimes/browsers/pages/ml-kem/src/hpke-ml-kem.js
+      - name: Build docs for @hpke/cose
+        working-directory: ./packages/cose
+        run: |
+          typedoc --name "@hpke/cose $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/cose/docs mod.ts
+      - name: Build docs for @hpke/jose
+        working-directory: ./packages/jose
+        run: |
+          typedoc --name "@hpke/jose $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/jose/docs mod.ts
+      - name: Build docs for @hpke/ohttp
+        working-directory: ./packages/ohttp
+        run: |
+          typedoc --name "@hpke/ohttp $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/ohttp/docs mod.ts
       - name: Build docs for @hpke/hpke-js
         working-directory: ./packages/hpke-js
         run: |
