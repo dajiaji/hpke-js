@@ -12,7 +12,8 @@ A TypeScript implementation of <a href="https://datatracker.ietf.org/doc/draft-i
 
 <div align="center">
 
-Documentation: [jsr.io](https://jsr.io/@hpke/jose/doc)
+Documentation: [jsr.io](https://jsr.io/@hpke/jose/doc) |
+[Pages](https://dajiaji.github.io/hpke-js/jose/docs/)
 
 </div>
 

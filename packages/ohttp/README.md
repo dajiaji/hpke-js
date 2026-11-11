@@ -12,7 +12,8 @@ An <a href="https://www.rfc-editor.org/rfc/rfc9458">Oblivious HTTP (OHTTP)</a> c
 
 <div align="center">
 
-Documentation: [jsr.io](https://jsr.io/@hpke/ohttp/doc)
+Documentation: [jsr.io](https://jsr.io/@hpke/ohttp/doc) |
+[Pages](https://dajiaji.github.io/hpke-js/ohttp/docs/)
 
 </div>
 
