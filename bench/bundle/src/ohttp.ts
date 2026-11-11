@@ -77,10 +77,10 @@ import { ${suite.aead[1]} as Aead } from "${suite.aead[0]}";
 `;
   if (role === "client") {
     return `${imports}
-import { OhttpClient } from "@hpke/ohttp";
+import { createOhttpClient } from "@hpke/ohttp";
 export async function send(keyConfig, request) {
-  const client = new OhttpClient({
-    kem: new Kem(), kdf: new Kdf(), aead: new Aead(), keyConfig,
+  const client = await createOhttpClient({
+    kem: new Kem(), suites: [{ kdf: new Kdf(), aead: new Aead() }], keyConfig,
     relayUrl: "https://relay.example/",
   });
   return client.encapsulateRequest(request);
@@ -88,25 +88,27 @@ export async function send(keyConfig, request) {
 `;
   }
   return `${imports}
-import { OhttpServer } from "@hpke/ohttp";
+import { createOhttpServer } from "@hpke/ohttp";
 export async function createGateway(skR, pkR) {
   const kem = new Kem();
-  return new OhttpServer({
+  return createOhttpServer({
     keyId: 1, kem,
-    privateKey: await kem.deserializePrivateKey(skR),
-    publicKey: await kem.deserializePublicKey(pkR),
-    kdfAeadPairs: [{ kdf: new Kdf(), aead: new Aead() }],
+    keyPair: {
+      privateKey: await kem.deserializePrivateKey(skR),
+      publicKey: await kem.deserializePublicKey(pkR),
+    },
+    suites: [{ kdf: new Kdf(), aead: new Aead() }],
   });
 }
 `;
 }
 
 interface ClientContext {
-  encRequest: Uint8Array;
+  encapsulatedRequest: Uint8Array;
   decapsulateResponse(data: Uint8Array): Promise<Response>;
 }
 interface Gateway {
-  publicKeyConfig: Promise<Uint8Array>;
+  keyConfig: Uint8Array;
   decapsulateRequest(data: Uint8Array): Promise<{
     request: Request;
     encapsulateResponse(response: Response): Promise<Uint8Array>;
@@ -144,14 +146,16 @@ export async function verifyOhttp(
         send: Send;
       };
       const ctx = await send(
-        await gateway.publicKeyConfig,
+        gateway.keyConfig,
         new Request("https://origin.example/resource?q=1", {
           method: "POST",
           headers: { "content-type": "text/plain", "x-bundle": "request" },
           body: "hello OHTTP request",
         }),
       );
-      const received = await gateway.decapsulateRequest(ctx.encRequest);
+      const received = await gateway.decapsulateRequest(
+        ctx.encapsulatedRequest,
+      );
       if (
         received.request.method !== "POST" ||
         received.request.url !== "https://origin.example/resource?q=1" ||

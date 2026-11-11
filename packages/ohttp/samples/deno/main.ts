@@ -1,37 +1,38 @@
 import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import { OhttpClient, OhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
 
 async function doOhttp() {
   const kem = new DhkemX25519HkdfSha256();
-  const kdf = new HkdfSha256();
-  const aead = new Aes128Gcm();
+  const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
 
-  const server = await OhttpServer.setup({
-    keyId: 1,
+  // Gateway: a key pair is generated unless `keyPair` is given.
+  const server = await createOhttpServer({ keyId: 1, kem, suites });
+
+  // Client: `server.keyConfig` is the `application/ohttp-keys` payload
+  // published by the gateway.
+  const client = await createOhttpClient({
     kem,
-    kdfAeadPairs: [{ kdf, aead }],
+    suites,
+    keyConfig: server.keyConfig,
   });
 
-  const client = new OhttpClient({
-    kem,
-    kdf,
-    aead,
-    keyConfig: await server.publicKeyConfig,
-    relayUrl: "https://relay.example/",
-  });
+  // Client: encrypt the request (message/ohttp-req).
+  const { encapsulatedRequest, decapsulateResponse } = await client
+    .encapsulateRequest(new Request("https://origin.example/hello"));
 
-  const requestContext = await client.encapsulateRequest(
-    new Request("https://origin.example/hello"),
+  // Gateway: decrypt the request and encrypt the response
+  // (message/ohttp-res).
+  const { request, encapsulateResponse } = await server.decapsulateRequest(
+    encapsulatedRequest,
   );
-  const serverContext = await server.decapsulateRequest(
-    requestContext.encRequest,
-  );
-  const encryptedResponse = await serverContext.encapsulateResponse(
+  console.log(request.method, request.url);
+  const encapsulatedResponse = await encapsulateResponse(
     new Response("Hello, OHTTP!"),
   );
-  const response = await requestContext.decapsulateResponse(encryptedResponse);
 
+  // Client: decrypt the response.
+  const response = await decapsulateResponse(encapsulatedResponse);
   console.log(await response.text());
 }
 

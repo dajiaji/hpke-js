@@ -27,6 +27,8 @@ RFC 9458.
   - [Deno](#deno)
   - [Web Browsers](#web-browsers)
 - [Usage](#usage)
+  - [Fetch-like API](#fetch-like-api)
+  - [Low-level API](#low-level-api)
 - [Contributing](#contributing)
 
 ## Installation
@@ -64,42 +66,90 @@ This ESM package can be loaded from a CDN such as
 
 ## Usage
 
-The following Node.js example performs an OHTTP request and response roundtrip
-without exposing the target request to the relay:
+Both the client and the server (Oblivious Gateway Resource) are created with an
+asynchronous factory function that takes the HPKE primitives to use:
 
 ```ts
 import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import { OhttpClient, OhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
+
+const kem = new DhkemX25519HkdfSha256();
+const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
+
+// Gateway: a key pair is generated unless `keyPair` is given.
+const server = await createOhttpServer({ keyId: 1, kem, suites });
+
+// Client: `server.keyConfig` is the `application/ohttp-keys` payload
+// published by the gateway.
+const client = await createOhttpClient({
+  kem,
+  suites,
+  keyConfig: server.keyConfig,
+  relayUrl: "https://relay.example/ohttp",
+});
+```
+
+### Fetch-like API
+
+`client.fetch()` mirrors the standard `fetch()`: it encapsulates the request,
+sends it to the relay and decrypts the response. Its counterpart
+`server.handle()` takes the HTTP request forwarded by the relay, passes the
+decrypted request to your handler and returns the encapsulated response:
+
+```ts
+// Client
+const response = await client.fetch("https://target.example/hello");
+console.log(await response.text());
+
+// Gateway (e.g. Deno.serve, Cloudflare Workers, Bun.serve)
+Deno.serve((request) =>
+  server.handle(request, (targetRequest) => fetch(targetRequest))
+);
+```
+
+`server.handle()` answers requests that cannot be processed with a 4xx response
+without calling the handler. Errors thrown by the handler are propagated to the
+caller.
+
+### Low-level API
+
+To exchange the encapsulated messages with the relay by yourself, use
+`client.encapsulateRequest()` and `server.decapsulateRequest()`. The following
+example performs an OHTTP request and response roundtrip without a relay:
+
+```ts
+import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
 
 async function main() {
   const kem = new DhkemX25519HkdfSha256();
-  const kdf = new HkdfSha256();
-  const aead = new Aes128Gcm();
-  const server = await OhttpServer.setup({
-    keyId: 1,
+  const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
+
+  const server = await createOhttpServer({ keyId: 1, kem, suites });
+  const client = await createOhttpClient({
     kem,
-    kdfAeadPairs: [{ kdf, aead }],
-  });
-  const client = new OhttpClient({
-    kem,
-    kdf,
-    aead,
-    keyConfig: await server.publicKeyConfig,
-    relayUrl: "https://relay.example/ohttp",
+    suites,
+    keyConfig: server.keyConfig,
   });
 
-  const requestContext = await client.encapsulateRequest(
-    new Request("https://target.example/hello", { method: "GET" }),
+  // Client: encrypt the request (message/ohttp-req).
+  const { encapsulatedRequest, decapsulateResponse } = await client
+    .encapsulateRequest(new Request("https://target.example/hello"));
+
+  // Gateway: decrypt the request and encrypt the response
+  // (message/ohttp-res).
+  const { request, encapsulateResponse } = await server.decapsulateRequest(
+    encapsulatedRequest,
   );
-  const serverContext = await server.decapsulateRequest(
-    requestContext.encRequest,
-  );
-  const encryptedResponse = await serverContext.encapsulateResponse(
+  console.log(request.method, request.url);
+  const encapsulatedResponse = await encapsulateResponse(
     new Response("Hello, OHTTP!"),
   );
-  const response = await requestContext.decapsulateResponse(encryptedResponse);
 
+  // Client: decrypt the response.
+  const response = await decapsulateResponse(encapsulatedResponse);
   console.log(await response.text());
 }
 
@@ -107,10 +157,6 @@ main().catch((err: unknown) => {
   console.error("OHTTP failed:", err);
 });
 ```
-
-In a deployed client, `OhttpClient.fetch()` sends the encapsulated request to
-the configured relay. The gateway uses `OhttpServer.decapsulateRequest()` to
-forward the decrypted request to its target and then encapsulates the response.
 
 ## Contributing
 

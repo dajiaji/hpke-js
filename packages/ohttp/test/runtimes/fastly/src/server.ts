@@ -5,7 +5,7 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { OhttpClient, OhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
 
 const x25519 = new DhkemX25519HkdfSha256();
 const p256 = new DhkemP256HkdfSha256();
@@ -26,16 +26,15 @@ export async function testServer(request: Request): Promise<Response> {
   try {
     switch (testCase) {
       case "x25519-aes128gcm": {
-        const server = await OhttpServer.setup({
+        const server = await createOhttpServer({
           keyId: 0x01,
           kem: x25519,
-          kdfAeadPairs: [{ kdf: sha256, aead: aes128gcm }],
+          suites: [{ kdf: sha256, aead: aes128gcm }],
         });
-        const keyConfig = await server.publicKeyConfig;
-        const client = new OhttpClient({
+        const keyConfig = server.keyConfig;
+        const client = await createOhttpClient({
           kem: x25519,
-          kdf: sha256,
-          aead: aes128gcm,
+          suites: [{ kdf: sha256, aead: aes128gcm }],
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
@@ -45,7 +44,7 @@ export async function testServer(request: Request): Promise<Response> {
         });
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encRequest,
+          clientCtx.encapsulatedRequest,
         );
         const body = await serverCtx.request.text();
         if (body !== "hello world!") {
@@ -61,23 +60,22 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "x25519-aes256gcm": {
-        const server = await OhttpServer.setup({
+        const server = await createOhttpServer({
           keyId: 0x02,
           kem: x25519,
-          kdfAeadPairs: [{ kdf: sha256, aead: aes256gcm }],
+          suites: [{ kdf: sha256, aead: aes256gcm }],
         });
-        const keyConfig = await server.publicKeyConfig;
-        const client = new OhttpClient({
+        const keyConfig = server.keyConfig;
+        const client = await createOhttpClient({
           kem: x25519,
-          kdf: sha256,
-          aead: aes256gcm,
+          suites: [{ kdf: sha256, aead: aes256gcm }],
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
         const targetReq = new Request("https://target.example/api");
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encRequest,
+          clientCtx.encapsulatedRequest,
         );
         const encRes = await serverCtx.encapsulateResponse(
           new Response("aes-256-gcm ok"),
@@ -89,23 +87,22 @@ export async function testServer(request: Request): Promise<Response> {
         break;
       }
       case "p256-aes128gcm": {
-        const server = await OhttpServer.setup({
+        const server = await createOhttpServer({
           keyId: 0x03,
           kem: p256,
-          kdfAeadPairs: [{ kdf: sha256, aead: aes128gcm }],
+          suites: [{ kdf: sha256, aead: aes128gcm }],
         });
-        const keyConfig = await server.publicKeyConfig;
-        const client = new OhttpClient({
+        const keyConfig = server.keyConfig;
+        const client = await createOhttpClient({
           kem: p256,
-          kdf: sha256,
-          aead: aes128gcm,
+          suites: [{ kdf: sha256, aead: aes128gcm }],
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
         const targetReq = new Request("https://target.example/api");
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encRequest,
+          clientCtx.encapsulatedRequest,
         );
         const encRes = await serverCtx.encapsulateResponse(
           new Response("p256 ok"),
