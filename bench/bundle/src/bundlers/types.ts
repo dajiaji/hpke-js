@@ -8,6 +8,8 @@ export interface BundleOutput {
    * Only available when the bundler can attribute minified bytes to modules.
    */
   modules?: Record<string, number>;
+  /** Source modules that contribute code after tree-shaking. */
+  includedModules?: string[];
 }
 
 export interface Bundler {

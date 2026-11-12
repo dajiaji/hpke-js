@@ -7,9 +7,24 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpGateway } from "@hpke/ohttp";
+import { createStandardEncoding } from "@hpke/ohttp/standard";
 
 import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/common";
+
+async function setupGateway(
+  params: Omit<
+    import("@hpke/ohttp").OhttpGatewayParams,
+    "privateKey" | "publicKey" | "encoding"
+  >,
+) {
+  const keys = await params.kem.generateKeyPair();
+  return createOhttpGateway({
+    ...params,
+    ...keys,
+    encoding: createStandardEncoding(),
+  });
+}
 
 async function testRoundtrip(
   kem: KemInterface,
@@ -17,34 +32,31 @@ async function testRoundtrip(
   aead: AeadInterface,
   label: string,
 ) {
-  const server = await createOhttpServer({
+  const server = await setupGateway({
     keyId: 0x01,
     kem,
-    suites: [{ kdf, aead }],
+    kdfAeadPairs: [{ kdf, aead }],
   });
-  const keyConfig = server.keyConfig;
-  const client = await createOhttpClient({
+  const keyConfig = await server.publicKeyConfig;
+  const client = createOhttpClient({
+    encoding: createStandardEncoding(),
     kem,
-    suites: [{ kdf, aead }],
+    kdf,
+    aead,
     keyConfig,
     relayUrl: "https://relay.example/ohttp",
   });
-  const targetReq = new Request("https://target.example/api", {
-    method: "POST",
-    body: "hello world!",
-  });
+  const targetReq = [new TextEncoder().encode("hello world!")];
   const clientCtx = await client.encapsulateRequest(targetReq);
-  const serverCtx = await server.decapsulateRequest(
-    clientCtx.encapsulatedRequest,
-  );
-  const body = await serverCtx.request.text();
+  const serverCtx = await server.decapsulateRequest(clientCtx.body);
+  const body = await new Response(serverCtx.body).text();
   expect(body).toBe("hello world!");
 
   const encRes = await serverCtx.encapsulateResponse(
-    new Response(label + " ok"),
+    [new TextEncoder().encode(label + " ok")],
   );
-  const res = await clientCtx.decapsulateResponse(encRes);
-  expect(await res.text()).toBe(label + " ok");
+  const res = await clientCtx.decapsulateResponse(encRes.body);
+  expect(await new Response(res).text()).toBe(label + " ok");
 }
 
 test("bun - OHTTP with X25519/HKDF-SHA256/AES-128-GCM", async () => {

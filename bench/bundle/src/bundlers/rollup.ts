@@ -54,7 +54,7 @@ function hpkeSources(entrySource: string): Plugin {
       const m = HPKE_SPECIFIER.exec(source);
       if (m !== null) {
         return {
-          id: hpkeEntryPath(m[1]),
+          id: hpkeEntryPath(m[1] + (m[2] ? "/" + m[2] : "")),
           moduleSideEffects: hpkeSideEffects(m[1]),
         };
       }
@@ -116,13 +116,18 @@ export const rollupBundler: Bundler = {
     try {
       const { output } = await build.generate({
         format: "es",
-        // OHTTP dynamically imports BHTTP's decoder. Measure the complete
+        // Measure the complete
         // application in one file, matching esbuild's non-splitting build.
         inlineDynamicImports: true,
         plugins: [terser({ format: { comments: false } })],
       });
       const chunk = output[0];
-      return { code: new TextEncoder().encode(chunk.code) };
+      return {
+        code: new TextEncoder().encode(chunk.code),
+        includedModules: Object.entries(chunk.modules)
+          .filter(([, info]) => info.renderedLength > 0)
+          .map(([id]) => id),
+      };
     } finally {
       await build.close();
     }

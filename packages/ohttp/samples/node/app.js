@@ -1,43 +1,44 @@
 import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpGateway } from "@hpke/ohttp";
+import { createChunkedEncoding } from "@hpke/ohttp/chunked";
+import { createOhttpHandler, ohttpFetch } from "@hpke/ohttp/http";
 
-async function doOhttp() {
-  const kem = new DhkemX25519HkdfSha256();
-  const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
+const kem = new DhkemX25519HkdfSha256();
+const keys = await kem.generateKeyPair();
+const kdf = new HkdfSha256();
+const aead = new Aes128Gcm();
+const encoding = createChunkedEncoding();
+const gateway = createOhttpGateway({
+  keyId: 1,
+  kem,
+  ...keys,
+  kdfAeadPairs: [{ kdf, aead }],
+  encoding,
+});
+const client = createOhttpClient({
+  kem,
+  kdf,
+  aead,
+  encoding,
+  keyConfig: await gateway.publicKeyConfig,
+  relayUrl: "https://relay.example/ohttp",
+});
+const handle = createOhttpHandler({
+  gateway,
+  forward(request) {
+    console.log(request.method, request.url);
+    return Promise.resolve(new Response("Hello, OHTTP!"));
+  },
+});
 
-  // Gateway: a key pair is generated unless `keyPair` is given.
-  const server = await createOhttpServer({ keyId: 1, kem, suites });
-
-  // Client: `server.keyConfig` is the `application/ohttp-keys` payload
-  // published by the gateway.
-  const client = await createOhttpClient({
-    kem,
-    suites,
-    keyConfig: server.keyConfig,
-  });
-
-  // Client: encrypt the request (message/ohttp-req).
-  const { encapsulatedRequest, decapsulateResponse } = await client
-    .encapsulateRequest(new Request("https://origin.example/hello"));
-
-  // Gateway: decrypt the request and encrypt the response
-  // (message/ohttp-res).
-  const { request, encapsulateResponse } = await server.decapsulateRequest(
-    encapsulatedRequest,
-  );
-  console.log(request.method, request.url);
-  const encapsulatedResponse = await encapsulateResponse(
-    new Response("Hello, OHTTP!"),
-  );
-
-  // Client: decrypt the response.
-  const response = await decapsulateResponse(encapsulatedResponse);
-  console.log(await response.text());
-}
-
+// In-memory relay for this self-contained example. In production, use the
+// real fetch implementation and configure a deployed relay URL.
+const realFetch = globalThis.fetch;
+globalThis.fetch = (input, init) => handle(new Request(input, init));
 try {
-  await doOhttp();
-} catch (err) {
-  console.error("OHTTP sample failed:", err);
+  const response = await ohttpFetch(client, "https://origin.example/hello");
+  console.log(await response.text());
+} finally {
+  globalThis.fetch = realFetch;
 }

@@ -10,7 +10,8 @@
   "scripts": {
     "bench": "node --disable-warning=ExperimentalWarning src/main.ts --md results.md --json results.json",
     "start": "node --disable-warning=ExperimentalWarning src/main.ts",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "test:ohttp:tree-shaking": "node src/ohttp-treeshake.ts"
   },
   "devDependencies": {
     "@panva/hpke-noble": "1.1.8",

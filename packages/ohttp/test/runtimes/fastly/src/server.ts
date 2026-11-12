@@ -5,7 +5,15 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
+import { createOhttpClient, createOhttpGateway } from "@hpke/ohttp";
+import { createStandardEncoding } from "@hpke/ohttp/standard";
+
+async function setupGateway(
+  params: Omit<import("@hpke/ohttp").OhttpGatewayParams, "privateKey" | "publicKey" | "encoding">,
+) {
+  const keys = await params.kem.generateKeyPair();
+  return createOhttpGateway({...params, ...keys, encoding: createStandardEncoding()});
+}
 
 const x25519 = new DhkemX25519HkdfSha256();
 const p256 = new DhkemP256HkdfSha256();
@@ -26,89 +34,92 @@ export async function testServer(request: Request): Promise<Response> {
   try {
     switch (testCase) {
       case "x25519-aes128gcm": {
-        const server = await createOhttpServer({
+        const server = await setupGateway({
           keyId: 0x01,
           kem: x25519,
-          suites: [{ kdf: sha256, aead: aes128gcm }],
+          kdfAeadPairs: [{ kdf: sha256, aead: aes128gcm }],
         });
-        const keyConfig = server.keyConfig;
-        const client = await createOhttpClient({
+        const keyConfig = await server.publicKeyConfig;
+        const client = createOhttpClient({
+      encoding: createStandardEncoding(),
           kem: x25519,
-          suites: [{ kdf: sha256, aead: aes128gcm }],
+          kdf: sha256,
+          aead: aes128gcm,
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
-        const targetReq = new Request("https://target.example/api", {
-          method: "POST",
-          body: "hello world!",
-        });
+        const targetReq = [new TextEncoder().encode("hello world!")];
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encapsulatedRequest,
+          clientCtx.body,
         );
-        const body = await serverCtx.request.text();
+        const body = await new Response(serverCtx.body).text();
         if (body !== "hello world!") {
           return new Response("ng: body mismatch");
         }
         const encRes = await serverCtx.encapsulateResponse(
-          new Response("ok from server"),
+          [new TextEncoder().encode("ok from server")],
         );
-        const res = await clientCtx.decapsulateResponse(encRes);
-        if ((await res.text()) !== "ok from server") {
+        const res = await clientCtx.decapsulateResponse(encRes.body);
+        if ((await new Response(res).text()) !== "ok from server") {
           return new Response("ng: response mismatch");
         }
         break;
       }
       case "x25519-aes256gcm": {
-        const server = await createOhttpServer({
+        const server = await setupGateway({
           keyId: 0x02,
           kem: x25519,
-          suites: [{ kdf: sha256, aead: aes256gcm }],
+          kdfAeadPairs: [{ kdf: sha256, aead: aes256gcm }],
         });
-        const keyConfig = server.keyConfig;
-        const client = await createOhttpClient({
+        const keyConfig = await server.publicKeyConfig;
+        const client = createOhttpClient({
+      encoding: createStandardEncoding(),
           kem: x25519,
-          suites: [{ kdf: sha256, aead: aes256gcm }],
+          kdf: sha256,
+          aead: aes256gcm,
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
-        const targetReq = new Request("https://target.example/api");
+        const targetReq = [new TextEncoder().encode("hello world!")];
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encapsulatedRequest,
+          clientCtx.body,
         );
         const encRes = await serverCtx.encapsulateResponse(
-          new Response("aes-256-gcm ok"),
+          [new TextEncoder().encode("aes-256-gcm ok")],
         );
-        const res = await clientCtx.decapsulateResponse(encRes);
-        if ((await res.text()) !== "aes-256-gcm ok") {
+        const res = await clientCtx.decapsulateResponse(encRes.body);
+        if ((await new Response(res).text()) !== "aes-256-gcm ok") {
           return new Response("ng: response mismatch");
         }
         break;
       }
       case "p256-aes128gcm": {
-        const server = await createOhttpServer({
+        const server = await setupGateway({
           keyId: 0x03,
           kem: p256,
-          suites: [{ kdf: sha256, aead: aes128gcm }],
+          kdfAeadPairs: [{ kdf: sha256, aead: aes128gcm }],
         });
-        const keyConfig = server.keyConfig;
-        const client = await createOhttpClient({
+        const keyConfig = await server.publicKeyConfig;
+        const client = createOhttpClient({
+      encoding: createStandardEncoding(),
           kem: p256,
-          suites: [{ kdf: sha256, aead: aes128gcm }],
+          kdf: sha256,
+          aead: aes128gcm,
           keyConfig,
           relayUrl: "https://relay.example/ohttp",
         });
-        const targetReq = new Request("https://target.example/api");
+        const targetReq = [new TextEncoder().encode("hello world!")];
         const clientCtx = await client.encapsulateRequest(targetReq);
         const serverCtx = await server.decapsulateRequest(
-          clientCtx.encapsulatedRequest,
+          clientCtx.body,
         );
         const encRes = await serverCtx.encapsulateResponse(
-          new Response("p256 ok"),
+          [new TextEncoder().encode("p256 ok")],
         );
-        const res = await clientCtx.decapsulateResponse(encRes);
-        if ((await res.text()) !== "p256 ok") {
+        const res = await clientCtx.decapsulateResponse(encRes.body);
+        if ((await new Response(res).text()) !== "p256 ok") {
           return new Response("ng: response mismatch");
         }
         break;

@@ -86,7 +86,7 @@ application KDF uses core's native implementation.
 
 - **client**: imports the gateway key configuration, encrypts the HTTP request,
   and decrypts the HTTP response.
-- **gateway** (Oblivious Gateway Resource, created by `createOhttpServer()`):
+- **gateway** (Oblivious Gateway Resource, created by `createOhttpGateway`):
   imports existing private/public keys, publishes the key configuration,
   decrypts the HTTP request, and encrypts the HTTP response.
 
