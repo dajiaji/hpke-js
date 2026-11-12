@@ -11,11 +11,11 @@
 <li><a href="" aria-current="page">OhttpClientParams</a></li></ul>
 <h1>Interface OhttpClientParams</h1></div>
 <section class="tsd-panel tsd-comment">
-<div class="tsd-comment tsd-typography"><p>Parameters for <a href="../functions/createOhttpClient.html" class="tsd-kind-function">createOhttpClient</a>.</p>
+<div class="tsd-comment tsd-typography"><p>Explicit primitives and wire encoding for an OHTTP client.</p>
 </div></section>
-<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">OhttpClientParams</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#kem">kem</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KemInterface</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#keyconfig">keyConfig</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <a href="OhttpKeyConfig.html" class="tsd-signature-type tsd-kind-interface">OhttpKeyConfig</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#relayurl">relayUrl</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">URL</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#suites">suites</a><span class="tsd-signature-symbol">:</span> <a href="OhttpSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpSuite</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">OhttpClientParams</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#aead">aead</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AeadInterface</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#encoding">encoding</a><span class="tsd-signature-symbol">:</span> <a href="OhttpEncoding.html" class="tsd-signature-type tsd-kind-interface">OhttpEncoding</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kdf">kdf</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KdfInterface</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kem">kem</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KemInterface</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#keyconfig">keyConfig</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <a href="OhttpKeyConfig.html" class="tsd-signature-type tsd-kind-interface">OhttpKeyConfig</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#relayurl">relayUrl</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">URL</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#streamingupload">streamingUpload</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a610a52dababd208ee4cf67b2a82044cf17290ee/packages/ohttp/src/client.ts#L13">packages/ohttp/src/client.ts:13</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L14">packages/ohttp/src/client.ts:14</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -23,46 +23,67 @@
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading tsd-anchor-link" id="properties">Properties<a href="#properties" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-index-list"><a href="#kem" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kem</span></a>
+<div class="tsd-index-list"><a href="#aead" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>aead</span></a>
+<a href="#encoding" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>encoding</span></a>
+<a href="#kdf" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kdf</span></a>
+<a href="#kem" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kem</span></a>
 <a href="#keyconfig" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>key<wbr/>Config</span></a>
 <a href="#relayurl" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>relay<wbr/>Url?</span></a>
-<a href="#suites" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>suites</span></a>
+<a href="#streamingupload" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>streaming<wbr/>Upload?</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
 <section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="kem"><span>kem</span><a href="#kem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">kem</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KemInterface</span></div>
-<div class="tsd-comment tsd-typography"><p>KEM primitive instance to use.</p>
+<h3 class="tsd-anchor-link" id="aead"><span>aead</span><a href="#aead" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">aead</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AeadInterface</span></div>
+<div class="tsd-comment tsd-typography"><p>AEAD primitive supplied by the application.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a610a52dababd208ee4cf67b2a82044cf17290ee/packages/ohttp/src/client.ts#L15">packages/ohttp/src/client.ts:15</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L20">packages/ohttp/src/client.ts:20</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="encoding"><span>encoding</span><a href="#encoding" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">encoding</span><span class="tsd-signature-symbol">:</span> <a href="OhttpEncoding.html" class="tsd-signature-type tsd-kind-interface">OhttpEncoding</a></div>
+<div class="tsd-comment tsd-typography"><p>Wire encoding supported by the gateway.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L24">packages/ohttp/src/client.ts:24</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="kdf"><span>kdf</span><a href="#kdf" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">kdf</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KdfInterface</span></div>
+<div class="tsd-comment tsd-typography"><p>KDF primitive supplied by the application.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L18">packages/ohttp/src/client.ts:18</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="kem"><span>kem</span><a href="#kem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">kem</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">KemInterface</span></div>
+<div class="tsd-comment tsd-typography"><p>KEM primitive supplied by the application.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L16">packages/ohttp/src/client.ts:16</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="keyconfig"><span>key<wbr/>Config</span><a href="#keyconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">keyConfig</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">ArrayBufferLike</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <a href="OhttpKeyConfig.html" class="tsd-signature-type tsd-kind-interface">OhttpKeyConfig</a></div>
-<div class="tsd-comment tsd-typography"><p>Gateway's key configuration: raw <code>application/ohttp-keys</code> bytes or a
-parsed configuration. When the raw bytes contain multiple
-configurations, the first one the client supports is used.</p>
+<div class="tsd-comment tsd-typography"><p>Gateway key configurations as application/ohttp-keys bytes, or one parsed configuration.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a610a52dababd208ee4cf67b2a82044cf17290ee/packages/ohttp/src/client.ts#L26">packages/ohttp/src/client.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L22">packages/ohttp/src/client.ts:22</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="relayurl"><code class="tsd-tag">Optional</code><span>relay<wbr/>Url</span><a href="#relayurl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">relayUrl</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">URL</span></div>
-<div class="tsd-comment tsd-typography"><p>URL of the Oblivious Relay Resource. Required only for
-<a href="OhttpClient.html#fetch" class="tsd-kind-method">OhttpClient.fetch</a>.</p>
+<div class="tsd-comment tsd-typography"><p>Required by ohttpFetch; optional for low-level use.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a610a52dababd208ee4cf67b2a82044cf17290ee/packages/ohttp/src/client.ts#L31">packages/ohttp/src/client.ts:31</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L26">packages/ohttp/src/client.ts:26</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
-<h3 class="tsd-anchor-link" id="suites"><span>suites</span><a href="#suites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">suites</span><span class="tsd-signature-symbol">:</span> <a href="OhttpSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpSuite</a><span class="tsd-signature-symbol">[]</span></div>
-<div class="tsd-comment tsd-typography"><p>KDF/AEAD pairs the client supports. The first pair advertised by the
-gateway's key configuration that is included here is used.</p>
+<h3 class="tsd-anchor-link" id="streamingupload"><code class="tsd-tag">Optional</code><span>streaming<wbr/>Upload</span><a href="#streamingupload" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">streamingUpload</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
+<div class="tsd-comment tsd-typography"><p>Opt into streaming relay uploads. Defaults to false for HTTP/1.1/browser compatibility.
+Decrypted responses still stream when the encoding supports it.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/a610a52dababd208ee4cf67b2a82044cf17290ee/packages/ohttp/src/client.ts#L20">packages/ohttp/src/client.ts:20</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/da14abc9dcb57c27a6135b7b549b11e0240ac088/packages/ohttp/src/client.ts#L30">packages/ohttp/src/client.ts:30</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -79,7 +100,7 @@ gateway's key configuration that is included here is used.</p>
 <h3>On This Page</h3></summary>
 <div class="tsd-accordion-details">
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#kem"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kem</span></a><a href="#keyconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>key<wbr/>Config</span></a><a href="#relayurl"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>relay<wbr/>Url</span></a><a href="#suites"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>suites</span></a></div></details></div></details></div>
+<div><a href="#aead"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>aead</span></a><a href="#encoding"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>encoding</span></a><a href="#kdf"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kdf</span></a><a href="#kem"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>kem</span></a><a href="#keyconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>key<wbr/>Config</span></a><a href="#relayurl"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>relay<wbr/>Url</span></a><a href="#streamingupload"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>streaming<wbr/>Upload</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html">@hpke/ohttp </a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
