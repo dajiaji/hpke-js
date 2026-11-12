@@ -9,158 +9,82 @@
 
 /**
  * Poly1305 ([PDF](https://cr.yp.to/mac/poly1305-20050329.pdf),
- * [wiki](https://en.wikipedia.org/wiki/Poly1305))
- * is a fast and parallel secret-key message-authentication code suitable for
- * a wide variety of applications. It was standardized in
- * [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) and is now used in TLS 1.3.
+ * [wiki](https://en.wikipedia.org/wiki/Poly1305)) specialized for the
+ * AEAD_CHACHA20_POLY1305 construction of
+ * [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439).
  *
- * Polynomial MACs are not perfect for every situation:
- * they lack Random Key Robustness: the MAC can be forged, and can't be used in PAKE schemes.
- * See [invisible salamanders attack](https://keymaterial.net/2020/09/07/invisible-salamanders-in-aes-gcm-siv/).
- * To combat invisible salamanders, `hash(key)` can be included in ciphertext,
- * however, this would violate ciphertext indistinguishability:
- * an attacker would know which key was used - so `HKDF(key, i)`
- * could be used instead.
+ * The AEAD only ever authenticates 16-byte blocks (the AAD and the ciphertext
+ * are zero-padded and followed by a block of lengths), so the generic
+ * incremental interface, its partial-block buffering and the short final block
+ * handling of the original implementation are not needed here.
  *
- * Check out [original website](https://cr.yp.to/mac.html).
  * Based on Public Domain [poly1305-donna](https://github.com/floodyberry/poly1305-donna).
  * @module
  */
-import { abytes, clean, copyBytes } from "./utils.ts";
 
-function u8to16(a: Uint8Array, i: number) {
-  return (a[i++] & 0xff) | ((a[i++] & 0xff) << 8);
-}
+const u16 = (a: Uint8Array, i: number): number => a[i] | (a[i + 1] << 8);
 
-// function bytesToNumberLE(bytes: Uint8Array): bigint {
-//   return hexToNumber(bytesToHex(Uint8Array.from(bytes).reverse()));
-// }
+/**
+ * Absorbs the 16-byte blocks m[pos..end) into the Poly1305 state.
+ * st = h[0..10) || r[10..20), 13-bit limbs.
+ */
+function polyBlocks(
+  st: Uint16Array,
+  m: Uint8Array,
+  pos: number,
+  end: number,
+): void {
+  const r0 = st[10],
+    r1 = st[11],
+    r2 = st[12],
+    r3 = st[13],
+    r4 = st[14],
+    r5 = st[15],
+    r6 = st[16],
+    r7 = st[17],
+    r8 = st[18],
+    r9 = st[19];
+  const s1 = 5 * r1,
+    s2 = 5 * r2,
+    s3 = 5 * r3,
+    s4 = 5 * r4,
+    s5 = 5 * r5,
+    s6 = 5 * r6,
+    s7 = 5 * r7,
+    s8 = 5 * r8,
+    s9 = 5 * r9;
+  let h0 = st[0],
+    h1 = st[1],
+    h2 = st[2],
+    h3 = st[3],
+    h4 = st[4],
+    h5 = st[5],
+    h6 = st[6],
+    h7 = st[7],
+    h8 = st[8],
+    h9 = st[9];
+  for (; pos < end; pos += 16) {
+    const t0 = u16(m, pos),
+      t1 = u16(m, pos + 2),
+      t2 = u16(m, pos + 4),
+      t3 = u16(m, pos + 6),
+      t4 = u16(m, pos + 8),
+      t5 = u16(m, pos + 10),
+      t6 = u16(m, pos + 12),
+      t7 = u16(m, pos + 14);
+    h0 += t0 & 0x1fff;
+    h1 += ((t0 >>> 13) | (t1 << 3)) & 0x1fff;
+    h2 += ((t1 >>> 10) | (t2 << 6)) & 0x1fff;
+    h3 += ((t2 >>> 7) | (t3 << 9)) & 0x1fff;
+    h4 += ((t3 >>> 4) | (t4 << 12)) & 0x1fff;
+    h5 += (t4 >>> 1) & 0x1fff;
+    h6 += ((t4 >>> 14) | (t5 << 2)) & 0x1fff;
+    h7 += ((t5 >>> 11) | (t6 << 5)) & 0x1fff;
+    h8 += ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
+    h9 += (t7 >>> 5) | 0x800;
 
-// /** Small version of `poly1305` without loop unrolling. Unused, provided for auditability. */
-// function poly1305_small(msg: Uint8Array, key: Uint8Array): Uint8Array {
-//   abytes(msg);
-//   abytes(key, 32, "key");
-//   const POW_2_130_5 = 2n ** 130n - 5n; // 2^130-5
-//   const POW_2_128_1 = 2n ** 128n - 1n; // 2^128-1
-//   const CLAMP_R = 0x0ffffffc0ffffffc0ffffffc0fffffffn;
-//   const r = bytesToNumberLE(key.subarray(0, 16)) & CLAMP_R;
-//   const s = bytesToNumberLE(key.subarray(16));
-//   // Process by 16 byte chunks
-//   let acc = 0n;
-//   for (let i = 0; i < msg.length; i += 16) {
-//     const m = msg.subarray(i, i + 16);
-//     const n = bytesToNumberLE(m) | (1n << (8n * mLen)); // mLen: bigint
-//     acc = ((acc + n) * r) % POW_2_130_5;
-//   }
-//   const res = (acc + s) & POW_2_128_1;
-//   return numberToBytesBE(res, 16).reverse(); // LE
-// }
-
-// Can be used to replace `computeTag` in chacha.ts. Unused, provided for auditability.
-// function poly1305_computeTag_small(
-//   authKey: Uint8Array,
-//   lengths: Uint8Array,
-//   ciphertext: Uint8Array,
-//   AAD?: Uint8Array,
-// ): Uint8Array {
-//   const res = [];
-//   const updatePadded2 = (msg: Uint8Array) => {
-//     res.push(msg);
-//     const leftover = msg.length % 16;
-//     if (leftover) res.push(new Uint8Array(16).slice(leftover));
-//   };
-//   if (AAD) updatePadded2(AAD);
-//   updatePadded2(ciphertext);
-//   res.push(lengths);
-//   return poly1305_small(concatBytes(...res), authKey);
-// }
-
-/** Internal incremental Poly1305 authenticator for ChaCha20-Poly1305. */
-export class Poly1305 {
-  private buffer = new Uint8Array(16);
-  private r = new Uint16Array(10);
-  private r5 = new Uint16Array(10); // Pre-computed 5*r[i] for Poly1305 reduction
-  private h = new Uint16Array(10);
-  private pad = new Uint16Array(8);
-  private pos = 0;
-  protected finished = false;
-
-  // Can be speed-up using BigUint64Array, at the cost of complexity
-  constructor(key: Uint8Array) {
-    key = copyBytes(abytes(key, 32, "key"));
-    const t0 = u8to16(key, 0);
-    const t1 = u8to16(key, 2);
-    const t2 = u8to16(key, 4);
-    const t3 = u8to16(key, 6);
-    const t4 = u8to16(key, 8);
-    const t5 = u8to16(key, 10);
-    const t6 = u8to16(key, 12);
-    const t7 = u8to16(key, 14);
-
-    // https://github.com/floodyberry/poly1305-donna/blob/e6ad6e091d30d7f4ec2d4f978be1fcfcbce72781/poly1305-donna-16.h#L47
-    this.r[0] = t0 & 0x1fff;
-    this.r[1] = ((t0 >>> 13) | (t1 << 3)) & 0x1fff;
-    this.r[2] = ((t1 >>> 10) | (t2 << 6)) & 0x1f03;
-    this.r[3] = ((t2 >>> 7) | (t3 << 9)) & 0x1fff;
-    this.r[4] = ((t3 >>> 4) | (t4 << 12)) & 0x00ff;
-    this.r[5] = (t4 >>> 1) & 0x1ffe;
-    this.r[6] = ((t4 >>> 14) | (t5 << 2)) & 0x1fff;
-    this.r[7] = ((t5 >>> 11) | (t6 << 5)) & 0x1f81;
-    this.r[8] = ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
-    this.r[9] = (t7 >>> 5) & 0x007f;
-    // Pre-compute 5*r[i] used in modular reduction (mod 2^130-5)
-    for (let i = 0; i < 10; i++) this.r5[i] = 5 * this.r[i];
-    for (let i = 0; i < 8; i++) this.pad[i] = u8to16(key, 16 + 2 * i);
-  }
-
-  private process(data: Uint8Array, offset: number, isLast = false) {
-    const hibit = isLast ? 0 : 1 << 11;
-    const { h, r, r5: s } = this;
-    const r0 = r[0],
-      r1 = r[1],
-      r2 = r[2],
-      r3 = r[3],
-      r4 = r[4],
-      rr5 = r[5],
-      r6 = r[6],
-      r7 = r[7],
-      r8 = r[8],
-      r9 = r[9];
-    // Pre-computed 5*r[i] for modular reduction (mod 2^130-5)
-    const s1 = s[1],
-      s2 = s[2],
-      s3 = s[3],
-      s4 = s[4],
-      s5 = s[5],
-      s6 = s[6],
-      s7 = s[7],
-      s8 = s[8],
-      s9 = s[9];
-
-    const t0 = u8to16(data, offset + 0);
-    const t1 = u8to16(data, offset + 2);
-    const t2 = u8to16(data, offset + 4);
-    const t3 = u8to16(data, offset + 6);
-    const t4 = u8to16(data, offset + 8);
-    const t5 = u8to16(data, offset + 10);
-    const t6 = u8to16(data, offset + 12);
-    const t7 = u8to16(data, offset + 14);
-
-    const h0 = h[0] + (t0 & 0x1fff);
-    const h1 = h[1] + (((t0 >>> 13) | (t1 << 3)) & 0x1fff);
-    const h2 = h[2] + (((t1 >>> 10) | (t2 << 6)) & 0x1fff);
-    const h3 = h[3] + (((t2 >>> 7) | (t3 << 9)) & 0x1fff);
-    const h4 = h[4] + (((t3 >>> 4) | (t4 << 12)) & 0x1fff);
-    const h5 = h[5] + ((t4 >>> 1) & 0x1fff);
-    const h6 = h[6] + (((t4 >>> 14) | (t5 << 2)) & 0x1fff);
-    const h7 = h[7] + (((t5 >>> 11) | (t6 << 5)) & 0x1fff);
-    const h8 = h[8] + (((t6 >>> 8) | (t7 << 8)) & 0x1fff);
-    const h9 = h[9] + ((t7 >>> 5) | hibit);
-
-    let c = 0;
-
-    let d0 = c + h0 * r0 + h1 * s9 + h2 * s8 + h3 * s7 + h4 * s6;
-    c = d0 >>> 13;
+    let d0 = h0 * r0 + h1 * s9 + h2 * s8 + h3 * s7 + h4 * s6;
+    let c = d0 >>> 13;
     d0 &= 0x1fff;
     d0 += h5 * s5 + h6 * s4 + h7 * s3 + h8 * s2 + h9 * s1;
     c += d0 >>> 13;
@@ -194,35 +118,35 @@ export class Poly1305 {
     c += d4 >>> 13;
     d4 &= 0x1fff;
 
-    let d5 = c + h0 * rr5 + h1 * r4 + h2 * r3 + h3 * r2 + h4 * r1;
+    let d5 = c + h0 * r5 + h1 * r4 + h2 * r3 + h3 * r2 + h4 * r1;
     c = d5 >>> 13;
     d5 &= 0x1fff;
     d5 += h5 * r0 + h6 * s9 + h7 * s8 + h8 * s7 + h9 * s6;
     c += d5 >>> 13;
     d5 &= 0x1fff;
 
-    let d6 = c + h0 * r6 + h1 * rr5 + h2 * r4 + h3 * r3 + h4 * r2;
+    let d6 = c + h0 * r6 + h1 * r5 + h2 * r4 + h3 * r3 + h4 * r2;
     c = d6 >>> 13;
     d6 &= 0x1fff;
     d6 += h5 * r1 + h6 * r0 + h7 * s9 + h8 * s8 + h9 * s7;
     c += d6 >>> 13;
     d6 &= 0x1fff;
 
-    let d7 = c + h0 * r7 + h1 * r6 + h2 * rr5 + h3 * r4 + h4 * r3;
+    let d7 = c + h0 * r7 + h1 * r6 + h2 * r5 + h3 * r4 + h4 * r3;
     c = d7 >>> 13;
     d7 &= 0x1fff;
     d7 += h5 * r2 + h6 * r1 + h7 * r0 + h8 * s9 + h9 * s8;
     c += d7 >>> 13;
     d7 &= 0x1fff;
 
-    let d8 = c + h0 * r8 + h1 * r7 + h2 * r6 + h3 * rr5 + h4 * r4;
+    let d8 = c + h0 * r8 + h1 * r7 + h2 * r6 + h3 * r5 + h4 * r4;
     c = d8 >>> 13;
     d8 &= 0x1fff;
     d8 += h5 * r3 + h6 * r2 + h7 * r1 + h8 * r0 + h9 * s9;
     c += d8 >>> 13;
     d8 &= 0x1fff;
 
-    let d9 = c + h0 * r9 + h1 * r8 + h2 * r7 + h3 * r6 + h4 * rr5;
+    let d9 = c + h0 * r9 + h1 * r8 + h2 * r7 + h3 * r6 + h4 * r5;
     c = d9 >>> 13;
     d9 &= 0x1fff;
     d9 += h5 * r4 + h6 * r3 + h7 * r2 + h8 * r1 + h9 * r0;
@@ -231,118 +155,127 @@ export class Poly1305 {
 
     c = ((c << 2) + c) | 0;
     c = (c + d0) | 0;
-    d0 = c & 0x1fff;
-    c = c >>> 13;
-    d1 += c;
-
-    h[0] = d0;
-    h[1] = d1;
-    h[2] = d2;
-    h[3] = d3;
-    h[4] = d4;
-    h[5] = d5;
-    h[6] = d6;
-    h[7] = d7;
-    h[8] = d8;
-    h[9] = d9;
+    h0 = c & 0x1fff;
+    h1 = d1 + (c >>> 13);
+    h2 = d2;
+    h3 = d3;
+    h4 = d4;
+    h5 = d5;
+    h6 = d6;
+    h7 = d7;
+    h8 = d8;
+    h9 = d9;
   }
+  st[0] = h0;
+  st[1] = h1;
+  st[2] = h2;
+  st[3] = h3;
+  st[4] = h4;
+  st[5] = h5;
+  st[6] = h6;
+  st[7] = h7;
+  st[8] = h8;
+  st[9] = h9;
+}
 
-  private finalize() {
-    const { h, pad } = this;
-    const g = new Uint16Array(10);
-    let c = h[1] >>> 13;
-    h[1] &= 0x1fff;
-    for (let i = 2; i < 10; i++) {
-      h[i] += c;
-      c = h[i] >>> 13;
-      h[i] &= 0x1fff;
+/**
+ * Poly1305 tag over pad16(aad) || pad16(ct[0..ctLen)) || len(aad) || len(ct).
+ * `pk` holds the 32-byte one-time key in its first 32 bytes.
+ */
+export function poly1305Tag(
+  pk: Uint8Array,
+  aad: Uint8Array,
+  ct: Uint8Array,
+  ctLen: number,
+): Uint8Array {
+  const t0 = u16(pk, 0),
+    t1 = u16(pk, 2),
+    t2 = u16(pk, 4),
+    t3 = u16(pk, 6),
+    t4 = u16(pk, 8),
+    t5 = u16(pk, 10),
+    t6 = u16(pk, 12),
+    t7 = u16(pk, 14);
+  const h = new Uint16Array(20);
+  h[10] = t0 & 0x1fff;
+  h[11] = ((t0 >>> 13) | (t1 << 3)) & 0x1fff;
+  h[12] = ((t1 >>> 10) | (t2 << 6)) & 0x1f03;
+  h[13] = ((t2 >>> 7) | (t3 << 9)) & 0x1fff;
+  h[14] = ((t3 >>> 4) | (t4 << 12)) & 0x00ff;
+  h[15] = (t4 >>> 1) & 0x1ffe;
+  h[16] = ((t4 >>> 14) | (t5 << 2)) & 0x1fff;
+  h[17] = ((t5 >>> 11) | (t6 << 5)) & 0x1f81;
+  h[18] = ((t6 >>> 8) | (t7 << 8)) & 0x1fff;
+  h[19] = (t7 >>> 5) & 0x007f;
+  // Scratch block: zero-padded tails, the lengths block, and finally the tag.
+  const t = new Uint8Array(16);
+  const aLen = aad.length;
+  for (let i = 0; i < 2; i++) {
+    const m = i ? ct : aad;
+    const len = i ? ctLen : aLen;
+    const full = len - (len % 16);
+    polyBlocks(h, m, 0, full);
+    if (full < len) {
+      t.fill(0);
+      t.set(m.subarray(full, len));
+      polyBlocks(h, t, 0, 16);
     }
-    h[0] += c * 5;
-    c = h[0] >>> 13;
-    h[0] &= 0x1fff;
-    h[1] += c;
-    c = h[1] >>> 13;
-    h[1] &= 0x1fff;
-    h[2] += c;
+  }
+  const v = new DataView(t.buffer);
+  v.setUint32(0, aLen, true);
+  v.setUint32(4, aLen / 0x100000000, true);
+  v.setUint32(8, ctLen, true);
+  v.setUint32(12, ctLen / 0x100000000, true);
+  polyBlocks(h, t, 0, 16);
 
-    g[0] = h[0] + 5;
-    c = g[0] >>> 13;
-    g[0] &= 0x1fff;
-    for (let i = 1; i < 10; i++) {
-      g[i] = h[i] + c;
-      c = g[i] >>> 13;
-      g[i] &= 0x1fff;
-    }
-    g[9] -= 1 << 13;
+  // Final reduction and addition of the pad (s). Identical to the
+  // poly1305-donna-16 based code currently in _poly1305.ts.
+  const g = new Uint16Array(10);
+  let c = h[1] >>> 13;
+  h[1] &= 0x1fff;
+  for (let i = 2; i < 10; i++) {
+    h[i] += c;
+    c = h[i] >>> 13;
+    h[i] &= 0x1fff;
+  }
+  h[0] += c * 5;
+  c = h[0] >>> 13;
+  h[0] &= 0x1fff;
+  h[1] += c;
+  c = h[1] >>> 13;
+  h[1] &= 0x1fff;
+  h[2] += c;
 
-    let mask = (c ^ 1) - 1;
-    for (let i = 0; i < 10; i++) g[i] &= mask;
-    mask = ~mask;
-    for (let i = 0; i < 10; i++) h[i] = (h[i] & mask) | g[i];
-    h[0] = (h[0] | (h[1] << 13)) & 0xffff;
-    h[1] = ((h[1] >>> 3) | (h[2] << 10)) & 0xffff;
-    h[2] = ((h[2] >>> 6) | (h[3] << 7)) & 0xffff;
-    h[3] = ((h[3] >>> 9) | (h[4] << 4)) & 0xffff;
-    h[4] = ((h[4] >>> 12) | (h[5] << 1) | (h[6] << 14)) & 0xffff;
-    h[5] = ((h[6] >>> 2) | (h[7] << 11)) & 0xffff;
-    h[6] = ((h[7] >>> 5) | (h[8] << 8)) & 0xffff;
-    h[7] = ((h[8] >>> 8) | (h[9] << 5)) & 0xffff;
+  g[0] = h[0] + 5;
+  c = g[0] >>> 13;
+  g[0] &= 0x1fff;
+  for (let i = 1; i < 10; i++) {
+    g[i] = h[i] + c;
+    c = g[i] >>> 13;
+    g[i] &= 0x1fff;
+  }
+  g[9] -= 1 << 13;
 
-    let f = h[0] + pad[0];
-    h[0] = f & 0xffff;
-    for (let i = 1; i < 8; i++) {
-      f = (((h[i] + pad[i]) | 0) + (f >>> 16)) | 0;
-      h[i] = f & 0xffff;
-    }
-    clean(g);
-  }
-  update(data: Uint8Array): this {
-    this.assertActive();
-    const { buffer } = this;
-    const blockLen = 16;
-    const len = data.length;
+  let mask = (c ^ 1) - 1;
+  for (let i = 0; i < 10; i++) g[i] &= mask;
+  mask = ~mask;
+  for (let i = 0; i < 10; i++) h[i] = (h[i] & mask) | g[i];
+  h[0] = (h[0] | (h[1] << 13)) & 0xffff;
+  h[1] = ((h[1] >>> 3) | (h[2] << 10)) & 0xffff;
+  h[2] = ((h[2] >>> 6) | (h[3] << 7)) & 0xffff;
+  h[3] = ((h[3] >>> 9) | (h[4] << 4)) & 0xffff;
+  h[4] = ((h[4] >>> 12) | (h[5] << 1) | (h[6] << 14)) & 0xffff;
+  h[5] = ((h[6] >>> 2) | (h[7] << 11)) & 0xffff;
+  h[6] = ((h[7] >>> 5) | (h[8] << 8)) & 0xffff;
+  h[7] = ((h[8] >>> 8) | (h[9] << 5)) & 0xffff;
 
-    for (let pos = 0; pos < len;) {
-      const take = Math.min(blockLen - this.pos, len - pos);
-      // Fast path: we have at least one block in input
-      if (take === blockLen) {
-        for (; blockLen <= len - pos; pos += blockLen) this.process(data, pos);
-        continue;
-      }
-      buffer.set(data.subarray(pos, pos + take), this.pos);
-      this.pos += take;
-      pos += take;
-      if (this.pos === blockLen) {
-        this.process(buffer, 0, false);
-        this.pos = 0;
-      }
-    }
-    return this;
+  let f = 0;
+  for (let i = 0; i < 8; i++) {
+    f = h[i] + u16(pk, 16 + 2 * i) + (f >>> 16);
+    t[2 * i] = f;
+    t[2 * i + 1] = f >>> 8;
   }
-  destroy(): void {
-    clean(this.h, this.r, this.r5, this.buffer, this.pad);
-  }
-  private assertActive(): void {
-    if (this.finished) throw new Error("Hash#digest() has already been called");
-  }
-  digest(): Uint8Array {
-    this.assertActive();
-    this.finished = true;
-    const { buffer, h } = this;
-    let { pos } = this;
-    if (pos) {
-      buffer[pos++] = 1;
-      for (; pos < 16; pos++) buffer[pos] = 0;
-      this.process(buffer, 0, true);
-    }
-    this.finalize();
-    let opos = 0;
-    for (let i = 0; i < 8; i++) {
-      buffer[opos++] = h[i] >>> 0;
-      buffer[opos++] = h[i] >>> 8;
-    }
-    const res = buffer.slice();
-    this.destroy();
-    return res;
-  }
+  h.fill(0);
+  g.fill(0);
+  return t;
 }

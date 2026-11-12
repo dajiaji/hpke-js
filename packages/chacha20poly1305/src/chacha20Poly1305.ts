@@ -3,43 +3,37 @@ import type {
   AeadId,
   AeadInterface,
 } from "@hpke/common";
-import { toArrayBuffer } from "@hpke/common";
 
-import { chacha20poly1305 } from "./chacha/chacha.ts";
+import { keyWords, open, seal } from "./chacha/chacha.ts";
+
+type Bytes = ArrayBufferLike | ArrayBufferView;
+
+// A plain Uint8Array view without copying. The inputs are only read, and only
+// synchronously, so they cannot change underneath seal()/open().
+const u8 = (x: Bytes): Uint8Array =>
+  ArrayBuffer.isView(x)
+    ? new Uint8Array(x.buffer, x.byteOffset, x.byteLength)
+    : new Uint8Array(x);
 
 export class Chacha20Poly1305Context implements AeadEncryptionContext {
-  private _key: Uint8Array;
+  // The key as little-endian words; empty if the given key is not 32 bytes,
+  // which seal()/open() report as a rejected Promise.
+  private _key: Uint32Array;
 
-  public constructor(key: ArrayBufferLike | ArrayBufferView) {
-    this._key = new Uint8Array(toArrayBuffer(key));
+  public constructor(key: Bytes) {
+    this._key = keyWords(u8(key));
   }
 
   // Keep synchronous validation/encryption errors as Promise rejections.
   // deno-lint-ignore require-await
-  public async seal(
-    iv: ArrayBufferLike | ArrayBufferView,
-    data: ArrayBufferLike | ArrayBufferView,
-    aad: ArrayBufferLike | ArrayBufferView,
-  ): Promise<ArrayBuffer> {
-    return chacha20poly1305(
-      this._key,
-      new Uint8Array(toArrayBuffer(iv)),
-      new Uint8Array(toArrayBuffer(aad)),
-    ).encrypt(new Uint8Array(toArrayBuffer(data))).buffer as ArrayBuffer;
+  public async seal(iv: Bytes, data: Bytes, aad: Bytes): Promise<ArrayBuffer> {
+    return seal(this._key, u8(iv), u8(aad), u8(data)).buffer as ArrayBuffer;
   }
 
   // Keep synchronous validation/authentication errors as Promise rejections.
   // deno-lint-ignore require-await
-  public async open(
-    iv: ArrayBufferLike | ArrayBufferView,
-    data: ArrayBufferLike | ArrayBufferView,
-    aad: ArrayBufferLike | ArrayBufferView,
-  ): Promise<ArrayBuffer> {
-    return chacha20poly1305(
-      this._key,
-      new Uint8Array(toArrayBuffer(iv)),
-      new Uint8Array(toArrayBuffer(aad)),
-    ).decrypt(new Uint8Array(toArrayBuffer(data))).buffer as ArrayBuffer;
+  public async open(iv: Bytes, data: Bytes, aad: Bytes): Promise<ArrayBuffer> {
+    return open(this._key, u8(iv), u8(aad), u8(data)).buffer as ArrayBuffer;
   }
 }
 
@@ -69,7 +63,7 @@ export class Chacha20Poly1305Context implements AeadEncryptionContext {
  * });
  * ```
  *
- * This class is implemented using
+ * The implementation is derived from
  * {@link https://github.com/paulmillr/noble-ciphers | @noble/ciphers}.
  */
 export class Chacha20Poly1305 implements AeadInterface {

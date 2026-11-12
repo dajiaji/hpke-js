@@ -5,7 +5,7 @@
  */
 
 import { chacha20poly1305 as noble } from "npm:@noble/ciphers@^1.3.0/chacha";
-import { chacha20poly1305 as ours } from "../src/chacha/chacha.ts";
+import { keyWords, open, seal } from "../src/chacha/chacha.ts";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -15,6 +15,15 @@ function hexToBytes(hex: string): Uint8Array {
   const res = hex.match(/[\da-f]{2}/gi);
   if (!res) throw new Error("Invalid hex");
   return new Uint8Array(res.map((h) => parseInt(h, 16)));
+}
+
+// The key schedule is done once per HPKE context, as in Chacha20Poly1305Context.
+function ours(key: Uint8Array, iv: Uint8Array, aad: Uint8Array) {
+  const k = keyWords(key);
+  return {
+    encrypt: (msg: Uint8Array) => seal(k, iv, aad, msg),
+    decrypt: (ct: Uint8Array) => open(k, iv, aad, ct),
+  };
 }
 
 // Fixed test data (deterministic benchmarks)

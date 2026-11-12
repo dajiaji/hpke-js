@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- Specialize the internal ChaCha20-Poly1305 implementation for the HPKE AEAD
+  interface. `seal()`/`open()` are about 1.3-2x faster on V8 (most for short
+  messages) and the minified bundle is about 37% smaller. The public API is
+  unchanged.
+  - Convert the key to words once per context instead of copying it three times
+    per call, and stop copying the nonce, AAD and input data.
+  - XOR the keystream directly into the output and process consecutive Poly1305
+    blocks without reloading the state.
+  - Remove code that is unreachable from the public API: caller-provided output
+    buffers, the repeated `encrypt()` guard, the standalone `chacha20` stream
+    function and the incremental Poly1305 interface.
+  - Error messages for invalid key, nonce and ciphertext lengths have changed
+    (`invalid key length`, `invalid nonce length`, `ciphertext too short`).
+
 ## Version 1.8.1
 
 Released 2026-11-08

@@ -8,67 +8,53 @@
  */
 
 /**
- * ChaCha stream cipher, released
- * in 2008. Developed after Salsa20, ChaCha aims to increase diffusion per round.
- * It was standardized in [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439) and
- * is now used in TLS 1.3.
+ * ChaCha20-Poly1305 AEAD from [RFC 8439](https://www.rfc-editor.org/rfc/rfc8439),
+ * specialized for the HPKE AEAD interface: one-shot seal/open with a 32-byte
+ * key, a 12-byte nonce and a freshly allocated output.
  *
- * Check out [PDF](http://cr.yp.to/chacha/chacha-20080128.pdf) and
+ * ChaCha stream cipher was released in 2008. Check out
+ * [PDF](http://cr.yp.to/chacha/chacha-20080128.pdf) and
  * [wiki](https://en.wikipedia.org/wiki/Salsa20) and
  * [website](https://cr.yp.to/chacha.html).
  *
  * @module
  */
-import { createCipher, rotl, sigma32_32 } from "./_arx.ts";
-import { Poly1305 } from "./_poly1305.ts";
-import {
-  abytes,
-  type ChaCha20Poly1305Cipher,
-  type CipherWithOutput,
-  clean,
-  copyBytes,
-  createView,
-  equalBytes,
-  getOutput,
-  isAligned32,
-  u32,
-  wrapCipher,
-  type XorStream,
-} from "./utils.ts";
+import { isLE } from "@hpke/common";
+
+import { poly1305Tag } from "./_poly1305.ts";
+
+const rotl = (a: number, b: number): number => (a << b) | (a >>> (32 - b));
+
+/** Reads a little-endian u32 at any alignment. */
+const le32 = (a: Uint8Array, i: number): number =>
+  a[i] | (a[i + 1] << 8) | (a[i + 2] << 16) | (a[i + 3] << 24);
 
 /**
- * ChaCha core function. The unrolled implementation is larger than a simple
- * loop, but substantially faster and is the only core needed by HPKE.
+ * XORs the ChaCha20 keystream block for (key, nonce words, counter) into
+ * o[p..p+16). The unrolled implementation is larger than a simple loop, but
+ * substantially faster.
  */
-function chachaCore(
-  s: Uint32Array,
+export function xorBlock(
   k: Uint32Array,
-  n: Uint32Array,
-  out: Uint32Array,
+  n0: number,
+  n1: number,
+  n2: number,
   cnt: number,
-  rounds = 20,
+  o: Uint32Array,
+  p: number,
 ): void {
-  const y00 = s[0],
-    y01 = s[1],
-    y02 = s[2],
-    y03 = s[3], // "expa"   "nd 3"  "2-by"  "te k"
-    y04 = k[0],
+  const y04 = k[0],
     y05 = k[1],
     y06 = k[2],
-    y07 = k[3], // Key      Key     Key     Key
+    y07 = k[3],
     y08 = k[4],
     y09 = k[5],
     y10 = k[6],
-    y11 = k[7], // Key      Key     Key     Key
-    y12 = cnt,
-    y13 = n[0],
-    y14 = n[1],
-    y15 = n[2]; // Counter  Counter	Nonce   Nonce
-  // Save state to temporary variables
-  let x00 = y00,
-    x01 = y01,
-    x02 = y02,
-    x03 = y03,
+    y11 = k[7];
+  let x00 = 0x61707865,
+    x01 = 0x3320646e,
+    x02 = 0x79622d32,
+    x03 = 0x6b206574,
     x04 = y04,
     x05 = y05,
     x06 = y06,
@@ -77,11 +63,11 @@ function chachaCore(
     x09 = y09,
     x10 = y10,
     x11 = y11,
-    x12 = y12,
-    x13 = y13,
-    x14 = y14,
-    x15 = y15;
-  for (let r = 0; r < rounds; r += 2) {
+    x12 = cnt,
+    x13 = n0,
+    x14 = n1,
+    x15 = n2;
+  for (let r = 0; r < 10; r++) {
     x00 = (x00 + x04) | 0;
     x12 = rotl(x12 ^ x00, 16);
     x08 = (x08 + x12) | 0;
@@ -154,126 +140,113 @@ function chachaCore(
     x09 = (x09 + x14) | 0;
     x04 = rotl(x04 ^ x09, 7);
   }
-  // Write output
-  let oi = 0;
-  out[oi++] = (y00 + x00) | 0;
-  out[oi++] = (y01 + x01) | 0;
-  out[oi++] = (y02 + x02) | 0;
-  out[oi++] = (y03 + x03) | 0;
-  out[oi++] = (y04 + x04) | 0;
-  out[oi++] = (y05 + x05) | 0;
-  out[oi++] = (y06 + x06) | 0;
-  out[oi++] = (y07 + x07) | 0;
-  out[oi++] = (y08 + x08) | 0;
-  out[oi++] = (y09 + x09) | 0;
-  out[oi++] = (y10 + x10) | 0;
-  out[oi++] = (y11 + x11) | 0;
-  out[oi++] = (y12 + x12) | 0;
-  out[oi++] = (y13 + x13) | 0;
-  out[oi++] = (y14 + x14) | 0;
-  out[oi++] = (y15 + x15) | 0;
+  o[p++] ^= x00 + 0x61707865;
+  o[p++] ^= x01 + 0x3320646e;
+  o[p++] ^= x02 + 0x79622d32;
+  o[p++] ^= x03 + 0x6b206574;
+  o[p++] ^= x04 + y04;
+  o[p++] ^= x05 + y05;
+  o[p++] ^= x06 + y06;
+  o[p++] ^= x07 + y07;
+  o[p++] ^= x08 + y08;
+  o[p++] ^= x09 + y09;
+  o[p++] ^= x10 + y10;
+  o[p++] ^= x11 + y11;
+  o[p++] ^= x12 + cnt;
+  o[p++] ^= x13 + n0;
+  o[p++] ^= x14 + n1;
+  o[p] ^= x15 + n2;
 }
 
-/**
- * ChaCha stream cipher. Conforms to RFC 8439 (IETF, TLS). 12-byte nonce, 4-byte counter.
- * With smaller nonce, it's not safe to make it random (CSPRNG), due to collision chance.
- */
-export const chacha20: XorStream = /* @__PURE__ */ createCipher(chachaCore);
-
-const ZEROS16 = /* @__PURE__ */ new Uint8Array(16);
+/** RFC 8439 limit: 2^32 - 1 blocks of 64 bytes (counter starts at 1). */
+const MAX_LEN = 2 ** 38 - 64;
 
 /**
- * Compute Poly1305 auth tag for ChaCha20-Poly1305 AEAD.
- * Uses chachaCore directly to generate the auth key, bypassing the full
- * createCipher pipeline (validation, key copy, nonce processing) since
- * all inputs are already validated by wrapCipher.
+ * Shared AEAD body. `out` already holds the input of the stream cipher in
+ * out[0..len). For decryption, `ct` is the ciphertext to authenticate first.
  */
-function computeTag(
-  _fn: XorStream,
-  key: Uint8Array,
+function run(
+  k: Uint32Array,
   nonce: Uint8Array,
-  ciphertext: Uint8Array,
-  AAD?: Uint8Array,
+  aad: Uint8Array,
+  out: Uint8Array,
+  len: number,
+  ct?: Uint8Array,
 ): Uint8Array {
-  abytes(key, 32, "arx key");
-  // Generate auth key directly via chachaCore (counter=0).
-  // This avoids a full createCipher call (redundant validation, key copy, etc.)
-  const authKeyBuf = new Uint8Array(64);
-  const authKey32 = u32(authKeyBuf);
-  const k = copyBytes(key);
-  const k32 = u32(k);
-  let nonceCopy: Uint8Array | undefined;
-  if (!isAligned32(nonce)) nonceCopy = copyBytes(nonce);
-  const n32 = u32(nonceCopy ?? nonce);
-  chachaCore(sigma32_32, k32, n32, authKey32, 0, 20);
-  const authKey = authKeyBuf.subarray(0, 32);
-
-  // Build lengths inline as two little-endian u64 values
-  const lengths = new Uint8Array(16);
-  const lview = createView(lengths);
-  lview.setBigUint64(0, BigInt(AAD ? AAD.length : 0), true);
-  lview.setBigUint64(8, BigInt(ciphertext.length), true);
-
-  // Compute Poly1305 tag — Poly1305 constructor validates authKey internally
-  const h = new Poly1305(authKey);
-  if (AAD) {
-    h.update(AAD);
-    const leftover = AAD.length % 16;
-    if (leftover) h.update(ZEROS16.subarray(leftover));
+  if (!isLE) throw new Error("Non little-endian hardware is not supported");
+  if (k.length !== 8) throw new Error("invalid key length");
+  if (nonce.length !== 12) throw new Error("invalid nonce length");
+  if (len > MAX_LEN) throw new Error("data too long");
+  const n0 = le32(nonce, 0), n1 = le32(nonce, 4), n2 = le32(nonce, 8);
+  const b = new Uint32Array(16);
+  const b8 = new Uint8Array(b.buffer);
+  try {
+    if (ct) {
+      xorBlock(k, n0, n1, n2, 0, b, 0);
+      const tag = poly1305Tag(b8, aad, ct, len);
+      let diff = 0;
+      for (let i = 0; i < 16; i++) diff |= tag[i] ^ ct[len + i];
+      if (diff) throw new Error("invalid tag");
+      b.fill(0);
+    }
+    const full = len - (len % 64);
+    const o = new Uint32Array(out.buffer, 0, full / 4);
+    let cnt = 1, pos = 0;
+    for (; pos < full; pos += 64) xorBlock(k, n0, n1, n2, cnt++, o, pos / 4);
+    if (pos < len) {
+      b8.set(out.subarray(pos, len));
+      xorBlock(k, n0, n1, n2, cnt, b, 0);
+      out.set(b8.subarray(0, len - pos), pos);
+      b.fill(0);
+    }
+    if (!ct) {
+      xorBlock(k, n0, n1, n2, 0, b, 0);
+      out.set(poly1305Tag(b8, aad, out, len), len);
+    }
+  } finally {
+    b.fill(0);
   }
-  h.update(ciphertext);
-  const leftover = ciphertext.length % 16;
-  if (leftover) h.update(ZEROS16.subarray(leftover));
-  h.update(lengths);
-  const res = h.digest();
-  clean(authKey32, k, lengths);
-  if (nonceCopy) clean(nonceCopy);
-  return res;
+  return out;
 }
 
 /**
- * RFC 8439 AEAD construction: encrypt the message starting at counter 1,
- * and authenticate the padded AAD, ciphertext, and lengths using computeTag.
+ * Converts a 32-byte key into the 8 little-endian words used by
+ * {@link seal} and {@link open}. A key of any other length yields an empty
+ * array, which seal()/open() reject.
  */
-export const _poly1305_aead =
-  (xorStream: XorStream) =>
-  (key: Uint8Array, nonce: Uint8Array, AAD?: Uint8Array): CipherWithOutput => {
-    const tagLength = 16;
-    return {
-      encrypt(plaintext: Uint8Array, output?: Uint8Array) {
-        const plength = plaintext.length;
-        output = getOutput(plength + tagLength, output, false);
-        output.set(plaintext);
-        const oPlain = output.subarray(0, -tagLength);
-        // Actual encryption
-        xorStream(key, nonce, oPlain, oPlain, 1);
-        const tag = computeTag(xorStream, key, nonce, oPlain, AAD);
-        output.set(tag, plength); // append tag
-        clean(tag);
-        return output;
-      },
-      decrypt(ciphertext: Uint8Array, output?: Uint8Array) {
-        output = getOutput(ciphertext.length - tagLength, output, false);
-        const data = ciphertext.subarray(0, -tagLength);
-        const passedTag = ciphertext.subarray(-tagLength);
-        const tag = computeTag(xorStream, key, nonce, data, AAD);
-        if (!equalBytes(passedTag, tag)) throw new Error("invalid tag");
-        output.set(ciphertext.subarray(0, -tagLength));
-        // Actual decryption
-        xorStream(key, nonce, output, output, 1); // start stream with i=1
-        clean(tag);
-        return output;
-      },
-    };
-  };
+export function keyWords(key: Uint8Array): Uint32Array {
+  return Uint32Array.from(
+    { length: key.length === 32 ? 8 : 0 },
+    (_, i) => le32(key, 4 * i),
+  );
+}
 
 /**
- * ChaCha20-Poly1305 from RFC 8439.
- *
- * Unsafe to use random nonces under the same key, due to collision chance.
- * Prefer XChaCha instead.
+ * AEAD_CHACHA20_POLY1305 encryption. Returns ciphertext || tag in a new
+ * buffer. The inputs are only read and may be unaligned views.
  */
-export const chacha20poly1305: ChaCha20Poly1305Cipher =
-  /* @__PURE__ */ wrapCipher(
-    _poly1305_aead(chacha20),
-  );
+export function seal(
+  k: Uint32Array,
+  nonce: Uint8Array,
+  aad: Uint8Array,
+  pt: Uint8Array,
+): Uint8Array {
+  const out = new Uint8Array(pt.length + 16);
+  out.set(pt);
+  return run(k, nonce, aad, out, pt.length);
+}
+
+/**
+ * AEAD_CHACHA20_POLY1305 decryption of ciphertext || tag. Returns the plaintext
+ * in a new buffer, or throws if the tag does not match.
+ */
+export function open(
+  k: Uint32Array,
+  nonce: Uint8Array,
+  aad: Uint8Array,
+  ct: Uint8Array,
+): Uint8Array {
+  const len = ct.length - 16;
+  if (len < 0) throw new Error("ciphertext too short");
+  return run(k, nonce, aad, ct.slice(0, len), len, ct);
+}
