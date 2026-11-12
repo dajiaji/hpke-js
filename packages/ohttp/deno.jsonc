@@ -2,10 +2,7 @@
   "name": "@hpke/ohttp",
   "version": "0.2.0",
   "exports": {
-    ".": "./mod.ts",
-    "./standard": "./standard.ts",
-    "./chunked": "./chunked.ts",
-    "./http": "./http.ts"
+    ".": "./mod.ts"
   },
   "publish": {
     "exclude": [

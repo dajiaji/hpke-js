@@ -1,31 +1,28 @@
-# @hpke/ohttp
+<h1 align="center">@hpke/ohttp</h1>
 
-Oblivious HTTP client and gateway with explicit cryptographic primitives and
-pluggable wire encodings.
+<div align="center">
+<a href="https://www.npmjs.com/package/@hpke/ohttp"><img src="https://img.shields.io/npm/v/@hpke/ohttp" alt="npm"/></a>
+<a href="https://jsr.io/@hpke/ohttp"><img src="https://jsr.io/badges/@hpke/ohttp" alt="JSR"/></a>
+</div>
 
-## Supported Environments
+<div align="center">
+An <a href="https://www.rfc-editor.org/rfc/rfc9458">Oblivious HTTP (OHTTP)</a>
+client and gateway built on <a href="https://github.com/dajiaji/hpke-js/tree/main/packages/core">@hpke/core</a>.
+</div>
+<p></p>
 
-This package is distributed as ESM only. On Node.js, version 20 or later is
-required. Streaming fetch uploads are opt-in and additionally require support
-from the runtime, relay, and HTTP connection. The HTTP adapter uses
-`duplex: "half"` for streaming uploads; it does not guarantee interactive,
-full-duplex exchanges.
+<div align="center">
 
-## Client
+Documentation: [jsr.io](https://jsr.io/@hpke/ohttp/doc) |
+[Pages](https://dajiaji.github.io/hpke-js/ohttp/docs/)
 
-Create a client once, then pass it to `ohttpFetch`. Arguments after the client
-have the same shape as `fetch(input, init)` and describe the target request.
+</div>
 
-This package is distributed as ESM only and requires Node.js 20 or later. It
-implements the OHTTP client, gateway and key configuration formats defined by
-[RFC 9458](https://www.rfc-editor.org/rfc/rfc9458).
+This ESM package requires Node.js 20 or later. Cryptographic primitives and the
+wire encoding are supplied explicitly, so unused encodings can be removed by
+tree-shaking.
 
-The adapter encodes binary HTTP incrementally, posts the encrypted request to
-the relay, validates the response media type, and returns a `Response` with a
-decrypted body. It sets the outer Content-Type and Accept headers and, for
-chunked encoding, `Incremental: ?1`. Target headers remain inside the encrypted
-request. `init.signal` cancels encoding, relay communication, and response
-reads. Outer redirects are rejected.
+## Index
 
 - [Installation](#installation)
   - [Node.js](#nodejs)
@@ -36,190 +33,156 @@ reads. Outer redirects are rejected.
   - [Gateway](#gateway)
   - [Streaming](#streaming)
 - [Contributing](#contributing)
+- [References](#references)
+- [License](#license)
 
-Inject the encoding supported by the gateway. There is no automatic fallback or
-internal registry.
+## Installation
 
-```ts
-import { createStandardEncoding } from "@hpke/ohttp/standard";
+### Node.js
 
-const encoding = createStandardEncoding(); // RFC 9458; buffers whole messages
+```sh
+npm install @hpke/ohttp @hpke/core @hpke/dhkem-x25519
 ```
 
-```ts
-import { createChunkedEncoding } from "@hpke/ohttp/chunked";
+### Deno
 
-const encoding = createChunkedEncoding(); // draft-ietf-ohai-chunked-ohttp-08
+```sh
+deno add jsr:@hpke/ohttp jsr:@hpke/core jsr:@hpke/dhkem-x25519
 ```
 
-The base entry point imports neither encoding nor the HTTP adapter. Each
-encoding uses only the supplied cryptographic primitives. Applications importing
-only the standard encoding exclude chunked framing and authentication logic.
-Applications using only low-level binary HTTP streams exclude the HTTP
-conversion layer.
+### Web Browsers
 
-| Entry point            | Exports                                                                        |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| `@hpke/ohttp`          | `createOhttpClient`, `createOhttpGateway`, key configuration helpers and types |
-| `@hpke/ohttp/standard` | `createStandardEncoding`                                                       |
-| `@hpke/ohttp/chunked`  | `createChunkedEncoding`                                                        |
-| `@hpke/ohttp/http`     | `ohttpFetch`, `createOhttpHandler`                                             |
+Load the ESM package from a CDN such as [esm.sh](https://esm.sh/@hpke/ohttp).
 
-## Streaming requests and responses
+## Usage
 
-Request streams are accepted in both upload modes. By default, the adapter
-buffers the encrypted request before sending it, including for chunked encoding.
-This supports bodyless GETs and relays reached over HTTP/1.1 without relying on
-streaming fetch uploads. Response decryption remains incremental.
-
-To stream relay uploads as well, opt in when creating the client. This requires
-streaming-upload support from the runtime and relay; there is no automatic retry
-or change of wire encoding:
+The standard encoding buffers complete messages. For incremental request and
+response processing, use `createChunkedEncoding()` from the main entry point.
 
 ```ts
-const streamingClient = createOhttpClient({
-  kem: new DhkemX25519HkdfSha256(),
-  kdf: new HkdfSha256(),
-  aead: new Aes128Gcm(),
-  keyConfig,
-  encoding: createChunkedEncoding(),
-  relayUrl: "https://relay.example/ohttp",
-  streamingUpload: true,
-});
-
-const encoder = new TextEncoder();
-const upload = new ReadableStream<Uint8Array>({
-  start(controller) {
-    controller.enqueue(encoder.encode("first fragment\n"));
-    controller.enqueue(encoder.encode("second fragment\n"));
-    controller.close();
-  },
-});
-
-const abort = new AbortController();
-const response = await ohttpFetch(
-  streamingClient,
-  "https://target.example/upload",
-  {
-    method: "POST",
-    body: upload,
-    signal: abort.signal,
-    // Required by Node.js for streaming Request bodies.
-    duplex: "half",
-  } as RequestInit,
-);
-
-// Process body fragments as they arrive, with backpressure and cancellation.
-await response.body!.pipeTo(
-  new WritableStream<Uint8Array>({
-    write(bytes) {
-      // Replace with an incremental parser, file sink, or other destination.
-      console.log(bytes);
-    },
-  }),
-);
-```
-
-Chunked encoding splits plaintext into chunks of at most 16384 bytes and appends
-an authenticated empty final chunk. Receivers limit each plaintext chunk,
-including the final chunk, to 16384 bytes by default. Configure a larger bound
-with `createChunkedEncoding({ maxChunkSize: 65536 })` only when needed. Declared
-lengths over the bound are rejected before reading their payload; final chunks
-are bounded while reading. Web Stream fragments, binary HTTP content chunks, and
-OHTTP chunks need not align.
-
-Response AEAD authentication failures are reported as OhttpError, with the
-original failure retained in cause. For chunked responses this may surface while
-reading the body, after the response headers have been returned.
-
-Reading the body to successful completion authenticates finality. Earlier
-plaintext can be processed incrementally, but actions requiring a complete
-message must wait for successful completion. Truncation or authentication
-failure errors the response body and rejects `text()`, `arrayBuffer()`, or
-`pipeTo()`. Cancelling a body stops upstream processing without establishing
-finality. With standard encoding, messages are buffered before decryption
-results become available.
-
-## Gateway
-
-Create the client and gateway with the HPKE primitives you want to use. The
-gateway's serialized `keyConfig` is published to clients.
-
-```ts
-import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
-import { createOhttpGateway } from "@hpke/ohttp";
-import { createChunkedEncoding } from "@hpke/ohttp/chunked";
-import { createOhttpHandler } from "@hpke/ohttp/http";
+import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
+import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import {
+  createOhttpClient,
+  createOhttpGateway,
+  createStandardEncoding,
+} from "@hpke/ohttp";
 
 const kem = new DhkemX25519HkdfSha256();
-const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
-const gateway = await createOhttpServer({ keyId: 1, kem, suites });
-const client = await createOhttpClient({
+const keyPair = await kem.generateKeyPair();
+const encoding = createStandardEncoding();
+const gateway = createOhttpGateway({
+  keyId: 1,
   kem,
-  suites,
-  keyConfig: gateway.keyConfig,
+  privateKey: keyPair.privateKey,
+  publicKey: keyPair.publicKey,
+  kdfAeadPairs: [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }],
+  encoding,
+});
+const client = createOhttpClient({
+  kem,
+  kdf: new HkdfSha256(),
+  aead: new Aes128Gcm(),
+  keyConfig: await gateway.publicKeyConfig,
+  encoding,
   relayUrl: "https://relay.example/ohttp",
 });
 ```
 
 ### Client
 
-`client.fetch()` has the same input shape as `fetch()` and sends the encrypted
-request to the configured relay.
+`ohttpFetch` mirrors `fetch`: its second argument and `RequestInit` options are
+the same as the standard Fetch API.
 
 ```ts
-const response = await client.fetch("https://target.example/hello", {
-  headers: { "accept": "application/json" },
+import { ohttpFetch } from "@hpke/ohttp";
+
+const response = await ohttpFetch(client, "https://target.example/hello", {
+  headers: { accept: "application/json" },
 });
 console.log(await response.text());
 ```
 
 ### Gateway
 
-Pass the relay request to `gateway.handle()`. The handler sees the decrypted
-target request and returns the response that should be sent back through OHTTP.
+Use `createOhttpHandler` with the relay's Fetch request. The callback receives
+the decrypted target request.
 
 ```ts
-Deno.serve((request) =>
-  gateway.handle(request, (targetRequest) => fetch(targetRequest))
-);
-await decryptedResponse.pipeTo(responseParser);
-```
+import { createOhttpHandler } from "@hpke/ohttp";
 
-Invalid encapsulated requests receive a 4xx response without invoking the
-handler. Errors from the upstream handler are propagated.
+const handle = createOhttpHandler({
+  gateway,
+  forward: (request) => fetch(request),
+});
+
+Deno.serve(handle);
+```
 
 ### Streaming
 
-The decrypted request and response expose the standard Fetch streaming bodies,
-so a gateway can forward a body without buffering it in application code:
+Chunked encoding supports streaming uploads and incremental response reads when
+the runtime and relay support streaming Fetch bodies.
 
 ```ts
-const gatewayResponse = await gateway.handle(
-  relayRequest,
-  (targetRequest) =>
-    fetch(targetRequest.url, {
-      method: targetRequest.method,
-      headers: targetRequest.headers,
-      body: targetRequest.body,
-      // Required by Node.js when forwarding a streaming request body.
-      duplex: "half",
-    } as RequestInit),
+import { createChunkedEncoding } from "@hpke/ohttp";
+
+const streamingClient = createOhttpClient({
+  kem,
+  kdf: new HkdfSha256(),
+  aead: new Aes128Gcm(),
+  keyConfig: await gateway.publicKeyConfig,
+  encoding: createChunkedEncoding(),
+  relayUrl: "https://relay.example/ohttp",
+  streamingUpload: true,
+});
+
+const response = await ohttpFetch(
+  streamingClient,
+  "https://target.example/upload",
+  {
+    method: "POST",
+    body: new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode("streamed body"));
+        controller.close();
+      },
+    }),
+    duplex: "half",
+  } as RequestInit,
 );
-console.log(gatewayResponse.status);
+
+await response.body?.pipeTo(
+  new WritableStream({
+    write(bytes) {
+      console.log(bytes);
+    },
+  }),
+);
 ```
 
-For direct relay integrations, use `client.encapsulateRequest()` and
-`gateway.decapsulateRequest()` to exchange `message/ohttp-req` and
-`message/ohttp-res` payloads yourself.
+Relay uploads are buffered by default; set `streamingUpload: true` only when the
+runtime, relay and connection support streaming uploads. Chunked receivers limit
+plaintext chunks to 16384 bytes by default; use
+`createChunkedEncoding({ maxChunkSize })` to raise that bound when required.
+Successful completion of the response body authenticates the final chunk.
+Truncation or an AEAD failure can reject body reads (as `OhttpError`), while
+cancelling the body stops processing without establishing finality. Outer
+redirects are rejected by `ohttpFetch`.
+
+For low-level relay integrations, use `client.encapsulateRequest()` and
+`gateway.decapsulateRequest()` directly.
 
 ## Contributing
 
-We welcome all kind of contributions, filing issues, suggesting new features or
-sending PRs.
+We welcome contributions, issue reports and feature suggestions.
 
 ## References
 
 - [RFC 9458: Oblivious HTTP](https://www.rfc-editor.org/rfc/rfc9458.html)
 - [RFC 9292: Binary Representation of HTTP Messages](https://www.rfc-editor.org/rfc/rfc9292.html)
 - [Chunked Oblivious HTTP Messages, draft-ietf-ohai-chunked-ohttp-08](https://www.ietf.org/archive/id/draft-ietf-ohai-chunked-ohttp-08.html)
+
+## License
+
+MIT

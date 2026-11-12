@@ -24,9 +24,8 @@ const PACKAGES_DIR = join(REPO_ROOT, "packages");
 export const HPKE_JS_FORBIDDEN =
   "@hpke/hpke-js must not be used; use @hpke/core + extensions";
 
-/** Package entry points and OHTTP encoding/HTTP subpaths. */
-export const HPKE_SPECIFIER: RegExp =
-  /^@hpke\/([a-z0-9-]+)(?:\/(standard|chunked|http))?$/;
+/** Package entry points. */
+export const HPKE_SPECIFIER: RegExp = /^@hpke\/([a-z0-9-]+)$/;
 
 /** JSR import used inside the repository, mapped to its npm distribution. */
 export const NPM_ALIASES: Readonly<Record<string, string>> = {
@@ -36,10 +35,9 @@ export const NPM_ALIASES: Readonly<Record<string, string>> = {
 /** Modules that may be referenced for legacy runtimes; never bundled. */
 export const EXTERNALS: readonly string[] = ["crypto", "node:crypto"];
 
-/** Resolve a package or supported subpath to its repository source entry. */
+/** Resolve a package to its repository source entry. */
 export function hpkeEntryPath(name: string): string {
-  const [pkg, entry] = name.split("/");
-  return join(PACKAGES_DIR, pkg, entry ? entry + ".ts" : "mod.ts");
+  return join(PACKAGES_DIR, name, "mod.ts");
 }
 
 /** Returns the package name if `path` is inside `packages/<name>/`. */

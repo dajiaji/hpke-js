@@ -9,8 +9,7 @@ for (const bundler of [esbuildBundler, rollupBundler]) {
       ? "createStandardEncoding"
       : "createChunkedEncoding";
     const { modules, code, includedModules } = await bundler.bundle(`
-      import { createOhttpClient } from "@hpke/ohttp";
-      import { ${factory} } from "@hpke/ohttp/${encoding}";
+      import { createOhttpClient, ${factory} } from "@hpke/ohttp";
       import {
         DhkemX25519HkdfSha256, HkdfSha256, Aes128Gcm,
       } from "@hpke/core";

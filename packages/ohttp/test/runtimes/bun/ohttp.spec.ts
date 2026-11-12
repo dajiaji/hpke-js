@@ -7,8 +7,11 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { createOhttpClient, createOhttpGateway } from "@hpke/ohttp";
-import { createStandardEncoding } from "@hpke/ohttp/standard";
+import {
+  createOhttpClient,
+  createOhttpGateway,
+  createStandardEncoding,
+} from "@hpke/ohttp";
 
 import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/common";
 

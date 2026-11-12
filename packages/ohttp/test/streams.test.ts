@@ -9,9 +9,12 @@ import {
   encodeResponse as encodeKnownResponse,
 } from "../src/bhttp/encoder.ts";
 import { createOhttpClient, createOhttpGateway, OhttpError } from "../mod.ts";
-import { createChunkedEncoding } from "../chunked.ts";
-import { createStandardEncoding } from "../standard.ts";
-import { createOhttpHandler, ohttpFetch } from "../http.ts";
+import {
+  createChunkedEncoding,
+  createOhttpHandler,
+  createStandardEncoding,
+  ohttpFetch,
+} from "../mod.ts";
 import {
   decodeRequest,
   decodeResponse,
@@ -210,7 +213,7 @@ Deno.test("binary HTTP EOF validates padding, content and null-body status", asy
 });
 
 Deno.test("AbortSignal cancels a blocked upload during standard encoding", async () => {
-  const { createStandardEncoding } = await import("../standard.ts");
+  const { createStandardEncoding } = await import("../mod.ts");
   const { client: chunked, gateway } = await pair();
   const kem = new DhkemX25519HkdfSha256();
   const client = createOhttpClient({

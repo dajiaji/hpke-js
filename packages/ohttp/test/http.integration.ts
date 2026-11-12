@@ -2,9 +2,12 @@
 import { assertEquals } from "@std/assert";
 import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import { createOhttpClient, createOhttpGateway } from "../mod.ts";
-import { createStandardEncoding } from "../standard.ts";
-import { createChunkedEncoding } from "../chunked.ts";
-import { createOhttpHandler, ohttpFetch } from "../http.ts";
+import {
+  createChunkedEncoding,
+  createOhttpHandler,
+  createStandardEncoding,
+  ohttpFetch,
+} from "../mod.ts";
 
 for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
   for (const compressed of [false, true]) {

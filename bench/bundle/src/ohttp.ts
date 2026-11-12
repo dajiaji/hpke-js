@@ -79,8 +79,7 @@ import { ${suite.aead[1]} as Aead } from "${suite.aead[0]}";
 `;
   if (role === "client") {
     return `${imports}
-import { createOhttpClient } from "@hpke/ohttp";
-import { createStandardEncoding } from "@hpke/ohttp/standard";
+import { createOhttpClient, createStandardEncoding } from "@hpke/ohttp";
 import { encodeRequest, decodeRequest, encodeResponse, decodeResponse } from ${codec};
 export async function send(keyConfig, request) {
   const client = createOhttpClient({
@@ -100,8 +99,7 @@ export async function send(keyConfig, request) {
 `;
   }
   return `${imports}
-import { createOhttpGateway } from "@hpke/ohttp";
-import { createStandardEncoding } from "@hpke/ohttp/standard";
+import { createOhttpGateway, createStandardEncoding } from "@hpke/ohttp";
 import { encodeRequest, decodeRequest, encodeResponse, decodeResponse } from ${codec};
 export async function createGateway(skR, pkR) {
   const kem = new Kem();
