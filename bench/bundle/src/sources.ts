@@ -24,8 +24,9 @@ const PACKAGES_DIR = join(REPO_ROOT, "packages");
 export const HPKE_JS_FORBIDDEN =
   "@hpke/hpke-js must not be used; use @hpke/core + extensions";
 
-/** `@hpke/<name>` (bare specifier) */
-export const HPKE_SPECIFIER: RegExp = /^@hpke\/([a-z0-9-]+)$/;
+/** Package entry points and OHTTP encoding/HTTP subpaths. */
+export const HPKE_SPECIFIER: RegExp =
+  /^@hpke\/([a-z0-9-]+)(?:\/(standard|chunked|http))?$/;
 
 /** JSR import used inside the repository, mapped to its npm distribution. */
 export const NPM_ALIASES: Readonly<Record<string, string>> = {
@@ -35,9 +36,10 @@ export const NPM_ALIASES: Readonly<Record<string, string>> = {
 /** Modules that may be referenced for legacy runtimes; never bundled. */
 export const EXTERNALS: readonly string[] = ["crypto", "node:crypto"];
 
-/** Resolves `@hpke/<name>` to `packages/<name>/mod.ts`. */
+/** Resolve a package or supported subpath to its repository source entry. */
 export function hpkeEntryPath(name: string): string {
-  return join(PACKAGES_DIR, name, "mod.ts");
+  const [pkg, entry] = name.split("/");
+  return join(PACKAGES_DIR, pkg, entry ? entry + ".ts" : "mod.ts");
 }
 
 /** Returns the package name if `path` is inside `packages/<name>/`. */
@@ -54,6 +56,7 @@ const sideEffectsCache = new Map<string, boolean>();
  * read from its `dnt.ts`. Defaults to `true` (the npm default) if absent.
  */
 export function hpkeSideEffects(name: string): boolean {
+  name = name.split("/")[0];
   let value = sideEffectsCache.get(name);
   if (value === undefined) {
     let src = "";

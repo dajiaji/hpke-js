@@ -102,7 +102,7 @@
 
     // === TESTING TASKS ===
     // Deno environment testing
-    "test:deno": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read",
+    "test:deno": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read && deno task test:deno:ohttp:integration",
     "test:deno:common": "cd packages/common && deno task test",
     "test:deno:core": "cd packages/core && deno task test",
     "test:deno:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test",
@@ -116,6 +116,7 @@
     "test:deno:cose": "cd packages/cose && deno task test",
     "test:deno:jose": "cd packages/jose && deno task test",
     "test:deno:ohttp": "cd packages/ohttp && deno task test",
+    "test:deno:ohttp:integration": "cd packages/ohttp && deno task test:integration",
 
     // Node.js environment testing (via DNT build)
     "test:node": "deno task test:node:cjs-compat && deno task test:node:esm-only",
@@ -162,7 +163,7 @@
     "test:browsers:prepare:ml-kem": "cd packages/ml-kem && deno task minify > ../../npm/test/ml-kem/runtimes/browsers/pages/src/hpke-ml-kem.js",
     "test:browsers:prepare:cose": "cd packages/cose && esbuild ../../npm/packages/cose/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/cose/runtimes/browsers/pages/src/hpke-cose.js",
     "test:browsers:prepare:jose": "cd packages/jose && esbuild ../../npm/packages/jose/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/jose/runtimes/browsers/pages/src/hpke-jose.js",
-    "test:browsers:prepare:ohttp": "cd packages/ohttp && esbuild ../../npm/packages/ohttp/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-ohttp.js",
+    "test:browsers:prepare:ohttp": "cd packages/ohttp && esbuild ../../npm/packages/ohttp/esm/mod.js --bundle --format=esm --minify --outfile=../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-ohttp.js && esbuild ../../npm/packages/ohttp/esm/standard.js --bundle --format=esm --minify --outfile=../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-ohttp-standard.js && esbuild ../../npm/packages/ohttp/esm/chunked.js --bundle --format=esm --minify --outfile=../../npm/test/ohttp/runtimes/browsers/pages/src/hpke-ohttp-chunked.js",
     "test:browsers:core": "cd npm && npm run test -w test/core/runtimes/browsers",
     "test:browsers:chacha20poly1305": "cd npm && npm run test -w test/chacha20poly1305/runtimes/browsers",
     "test:browsers:dhkem-x25519": "cd npm && npm run test -w test/dhkem-x25519/runtimes/browsers",

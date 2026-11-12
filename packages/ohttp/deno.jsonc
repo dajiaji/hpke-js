@@ -1,7 +1,12 @@
 {
   "name": "@hpke/ohttp",
-  "version": "0.1.0",
-  "exports": "./mod.ts",
+  "version": "0.2.0",
+  "exports": {
+    ".": "./mod.ts",
+    "./standard": "./standard.ts",
+    "./chunked": "./chunked.ts",
+    "./http": "./http.ts"
+  },
   "publish": {
     "exclude": [
       "CHANGES.md",
@@ -17,6 +22,7 @@
       "**/*.json",
       "dnt.ts",
       "mod.ts",
+      "*.ts",
       "samples/",
       "src/",
       "test/"
@@ -34,6 +40,7 @@
       "**/*.json",
       "dnt.ts",
       "mod.ts",
+      "*.ts",
       "samples/",
       "src/",
       "test/"
@@ -46,14 +53,14 @@
     ]
   },
   "tasks": {
-    "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read --allow-net",
+    "test": "deno fmt && deno lint && deno task check && deno test --fail-fast --doc --coverage=coverage --parallel --allow-read --allow-net && deno task test:integration",
     "test:cloudflare": "cd test/runtimes/cloudflare && npm install && npm link @hpke/ohttp && npm run test",
     "test:fastly": "cd test/runtimes/fastly && npm install && npm link @hpke/ohttp && npm run test",
     "test:bun": "cd test/runtimes/bun && bun install && bun test",
-    "check": "deno check *.ts src/**/*.ts samples/*/*.ts test/*.ts",
+    "check": "deno check *.ts src/**/*.ts test/*.ts",
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "npm-build": "deno run --import-map=../../npm/import_map.json -A dnt.ts --skip-test",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
-    "sample:deno": "cd samples/deno && deno run main.ts"
+    "test:integration": "deno test --allow-net test/http.integration.ts"
   }
 }

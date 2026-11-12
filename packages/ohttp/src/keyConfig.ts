@@ -120,6 +120,7 @@ function parseSingleKeyConfig(
  * The result is a length-prefixed KeyConfig entry.
  */
 export function serializeKeyConfig(config: OhttpKeyConfig): Uint8Array {
+  validateKeyId(config.keyId);
   const npk = config.publicKey.byteLength;
   const csLen = config.cipherSuites.length * 4;
   // keyId(1) + kem(2) + publicKey(npk) + csLen(2) + cipherSuites(csLen)
@@ -169,5 +170,12 @@ function kemPublicKeyLength(kemId: number): number {
       return 56;
     default:
       throw new OhttpError(`Unsupported KEM ID: 0x${kemId.toString(16)}`);
+  }
+}
+
+/** Validate the one-octet key identifier without coercion or truncation. */
+export function validateKeyId(keyId: number): void {
+  if (!Number.isInteger(keyId) || keyId < 0 || keyId > 255) {
+    throw new OhttpError("keyId must be an integer between 0 and 255");
   }
 }
