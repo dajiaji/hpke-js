@@ -248,6 +248,32 @@ describe("RFC 8439", () => {
     assertEquals(open(key, AEAD_NONCE, AEAD_AAD, ciphertext), SUNSCREEN);
   });
 
+  it("authenticates the bytes it decrypts when the input changes during open()", () => {
+    const key = keyWords(AEAD_KEY);
+    const valid = seal(key, AEAD_NONCE, AEAD_AAD, SUNSCREEN);
+
+    // Simulates another thread writing to a shared ciphertext buffer: the
+    // caller passes a tampered ciphertext, which is restored to the valid one
+    // right after open() has taken its copy. Authenticating the caller's
+    // buffer instead of the copy would accept the tampered bytes.
+    const ct = valid.slice();
+    ct[0] ^= 1;
+    Object.defineProperty(ct, "slice", {
+      value: (start?: number, end?: number) => {
+        const copy = Uint8Array.prototype.slice.call(ct, start, end);
+        ct.set(valid);
+        return copy;
+      },
+    });
+
+    assertThrows(
+      () => open(key, AEAD_NONCE, AEAD_AAD, ct),
+      Error,
+      "invalid tag",
+    );
+    assertEquals(ct, valid);
+  });
+
   it("rejects invalid keys, nonces and short ciphertexts", () => {
     const key = keyWords(AEAD_KEY);
     for (const len of [0, 16, 31, 33]) {

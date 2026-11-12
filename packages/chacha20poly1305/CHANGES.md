@@ -10,6 +10,10 @@
     per call, and stop copying the nonce, AAD and input data.
   - XOR the keystream directly into the output and process consecutive Poly1305
     blocks without reloading the state.
+  - Authenticate and decrypt the same private copy of the ciphertext in
+    `open()`, so that a ciphertext in shared memory (`SharedArrayBuffer`) that
+    is modified by another thread during the call cannot be decrypted without
+    being authenticated.
   - Remove code that is unreachable from the public API: caller-provided output
     buffers, the repeated `encrypt()` guard, the standalone `chacha20` stream
     function and the incremental Poly1305 interface.

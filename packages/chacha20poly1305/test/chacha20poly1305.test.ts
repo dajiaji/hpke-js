@@ -213,6 +213,32 @@ describe("chacha20poly1305", () => {
     assertEquals(pt.byteLength, msg.length);
   });
 
+  it("accepts SharedArrayBuffer inputs and returns unshared buffers", async () => {
+    const shared = (bytes: Uint8Array): SharedArrayBuffer => {
+      const buf = new SharedArrayBuffer(bytes.length);
+      new Uint8Array(buf).set(bytes);
+      return buf;
+    };
+    const key = Uint8Array.from({ length: 32 }, (_, i) => i);
+    const nonce = Uint8Array.from({ length: 12 }, (_, i) => i + 32);
+    const aad = Uint8Array.from({ length: 20 }, (_, i) => i + 64);
+    const msg = Uint8Array.from({ length: 100 }, (_, i) => i + 96);
+    const expected = chacha20poly1305(key, nonce, aad).encrypt(msg);
+
+    const ctx = new Chacha20Poly1305().createEncryptionContext(shared(key));
+    const ct = await ctx.seal(shared(nonce), shared(msg), shared(aad));
+    assertEquals(ct instanceof ArrayBuffer, true);
+    assertEquals(new Uint8Array(ct), expected);
+
+    const pt = await ctx.open(
+      shared(nonce),
+      new Uint8Array(shared(expected)),
+      shared(aad),
+    );
+    assertEquals(pt instanceof ArrayBuffer, true);
+    assertEquals(new Uint8Array(pt), msg);
+  });
+
   it("does not retain the caller's key buffer", async () => {
     const key = Uint8Array.from({ length: 32 }, (_, i) => i);
     const nonce = new Uint8Array(12);
