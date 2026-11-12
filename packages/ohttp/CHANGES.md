@@ -7,14 +7,14 @@
   `createOhttpGateway`, supplying its key pair explicitly.
 - Change low-level encapsulation methods to exchange binary HTTP streams;
   contexts expose their payload through `body`.
-- Add `standard` and `chunked` entry points exposing `createStandardEncoding`
-  and `createChunkedEncoding`. Both use the same binary HTTP stream API, and
+- Export `createStandardEncoding` and `createChunkedEncoding` from the main
+  `@hpke/ohttp` entry point. Both use the same binary HTTP stream API, and
   unused encodings and HTTP adapters can be excluded from bundles.
 - Support draft-ietf-ohai-chunked-ohttp-08 with incremental encryption and
   decryption, authenticated final chunks, and configurable receive limits via
   `maxChunkSize` (16384 plaintext bytes per chunk by default).
-- Add an optional `http` entry point exposing `ohttpFetch(client, input, init)`
-  and `createOhttpHandler` for Web Fetch requests and responses, with
+- Export `ohttpFetch(client, input, init)` and `createOhttpHandler` from the
+  main `@hpke/ohttp` entry point for Web Fetch requests and responses, with
   incremental binary HTTP conversion and cancellation of pending reads.
 - Buffer relay uploads by default and allow streaming uploads with
   `streamingUpload: true`, independently of incremental response processing.

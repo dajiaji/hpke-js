@@ -252,7 +252,7 @@ describe("RFC 9458 Appendix A test vectors", () => {
   it("should decrypt the encapsulated response via createOhttpGateway", async () => {
     // Decode the RFC request through the public factory.
     const { createOhttpGateway } = await import("../mod.ts");
-    const { createStandardEncoding } = await import("../standard.ts");
+    const { createStandardEncoding } = await import("../mod.ts");
     const { decodeRequest } = await import("../src/bhttp.ts");
 
     const suite = new CipherSuite({

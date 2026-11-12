@@ -54,7 +54,7 @@ function hpkeSources(entrySource: string): Plugin {
       const m = HPKE_SPECIFIER.exec(source);
       if (m !== null) {
         return {
-          id: hpkeEntryPath(m[1] + (m[2] ? "/" + m[2] : "")),
+          id: hpkeEntryPath(m[1]),
           moduleSideEffects: hpkeSideEffects(m[1]),
         };
       }

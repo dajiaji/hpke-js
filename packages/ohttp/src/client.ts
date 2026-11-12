@@ -30,7 +30,7 @@ export interface OhttpClientParams {
   streamingUpload?: boolean;
 }
 
-/** Binary HTTP client. HTTP conversion and transport live in @hpke/ohttp/http. */
+/** Binary HTTP client. HTTP conversion and transport are provided by `ohttpFetch`. */
 export interface OhttpClient {
   readonly relayUrl: string | undefined;
   readonly encoding: OhttpEncoding;
@@ -38,7 +38,7 @@ export interface OhttpClient {
   encapsulateRequest(source: OhttpSource): Promise<OhttpClientContext>;
 }
 
-/** Create a client without importing any concrete wire encoding or HTTP adapter. */
+/** Create a client from the explicitly selected wire encoding and primitives. */
 export function createOhttpClient(params: OhttpClientParams): OhttpClient {
   const suite = new CipherSuite({ ...params, kdf: bindKdf(params.kdf) });
   const configs = params.keyConfig instanceof Uint8Array

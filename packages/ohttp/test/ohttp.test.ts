@@ -7,9 +7,12 @@ import {
   HkdfSha256,
 } from "@hpke/core";
 import { createOhttpClient, createOhttpGateway, OhttpError } from "../mod.ts";
-import { createStandardEncoding } from "../standard.ts";
-import { createChunkedEncoding } from "../chunked.ts";
-import { createOhttpHandler, ohttpFetch } from "../http.ts";
+import {
+  createChunkedEncoding,
+  createOhttpHandler,
+  createStandardEncoding,
+  ohttpFetch,
+} from "../mod.ts";
 import { collect, fragments, stream } from "../src/streams.ts";
 
 for (const createEncoding of [createStandardEncoding, createChunkedEncoding]) {

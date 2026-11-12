@@ -22,3 +22,13 @@ export type {
   OhttpGatewayContext,
 } from "./src/encoding.ts";
 export type { OhttpSource } from "./src/streams.ts";
+export {
+  createOhttpHandler,
+  ohttpFetch,
+  type OhttpHandlerParams,
+} from "./src/http.ts";
+export { createStandardEncoding } from "./src/standard.ts";
+export {
+  createChunkedEncoding,
+  type OhttpChunkedEncodingOptions,
+} from "./src/chunked.ts";

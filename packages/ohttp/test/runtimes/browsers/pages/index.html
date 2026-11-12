@@ -4,9 +4,12 @@
   </head>
   <body>
     <script type="module">
-    import { createOhttpClient, createOhttpGateway } from "./src/hpke-ohttp.js";
-    import { createStandardEncoding } from "./src/hpke-ohttp-standard.js";
-    import { createChunkedEncoding } from "./src/hpke-ohttp-chunked.js";
+    import {
+      createChunkedEncoding,
+      createOhttpClient,
+      createOhttpGateway,
+      createStandardEncoding,
+    } from "./src/hpke-ohttp.js";
     import {
       Aes128Gcm,
       Aes256Gcm,

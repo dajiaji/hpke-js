@@ -5,7 +5,7 @@ import {
   DhkemX25519HkdfSha256,
   HkdfSha256,
 } from "@hpke/core";
-import { createChunkedEncoding } from "../chunked.ts";
+import { createChunkedEncoding } from "../mod.ts";
 import { collect } from "../src/streams.ts";
 const encoding = createChunkedEncoding();
 

@@ -1,8 +1,12 @@
 import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
 import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import { createOhttpClient, createOhttpGateway } from "@hpke/ohttp";
-import { createChunkedEncoding } from "@hpke/ohttp/chunked";
-import { createOhttpHandler, ohttpFetch } from "@hpke/ohttp/http";
+import {
+  createChunkedEncoding,
+  createOhttpClient,
+  createOhttpGateway,
+  createOhttpHandler,
+  ohttpFetch,
+} from "@hpke/ohttp";
 
 const kem = new DhkemX25519HkdfSha256();
 const keys = await kem.generateKeyPair();
