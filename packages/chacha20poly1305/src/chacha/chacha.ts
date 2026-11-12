@@ -163,7 +163,13 @@ const MAX_LEN = 2 ** 38 - 64;
 
 /**
  * Shared AEAD body. `out` already holds the input of the stream cipher in
- * out[0..len). For decryption, `ct` is the ciphertext to authenticate first.
+ * out[0..len). For decryption, `tag` is the received tag, and out[0..len) is
+ * authenticated before it is decrypted in place.
+ *
+ * Every input byte is read exactly once (into `out` or into the Poly1305
+ * state), so the bytes that are authenticated are the bytes that are
+ * decrypted even if an input is backed by shared memory that another thread
+ * modifies during the call.
  */
 function run(
   k: Uint32Array,
@@ -171,7 +177,7 @@ function run(
   aad: Uint8Array,
   out: Uint8Array,
   len: number,
-  ct?: Uint8Array,
+  tag?: Uint8Array,
 ): Uint8Array {
   if (!isLE) throw new Error("Non little-endian hardware is not supported");
   if (k.length !== 8) throw new Error("invalid key length");
@@ -181,11 +187,11 @@ function run(
   const b = new Uint32Array(16);
   const b8 = new Uint8Array(b.buffer);
   try {
-    if (ct) {
+    if (tag) {
       xorBlock(k, n0, n1, n2, 0, b, 0);
-      const tag = poly1305Tag(b8, aad, ct, len);
+      const expected = poly1305Tag(b8, aad, out, len);
       let diff = 0;
-      for (let i = 0; i < 16; i++) diff |= tag[i] ^ ct[len + i];
+      for (let i = 0; i < 16; i++) diff |= expected[i] ^ tag[i];
       if (diff) throw new Error("invalid tag");
       b.fill(0);
     }
@@ -199,7 +205,7 @@ function run(
       out.set(b8.subarray(0, len - pos), pos);
       b.fill(0);
     }
-    if (!ct) {
+    if (!tag) {
       xorBlock(k, n0, n1, n2, 0, b, 0);
       out.set(poly1305Tag(b8, aad, out, len), len);
     }
@@ -248,5 +254,7 @@ export function open(
 ): Uint8Array {
   const len = ct.length - 16;
   if (len < 0) throw new Error("ciphertext too short");
-  return run(k, nonce, aad, ct.slice(0, len), len, ct);
+  // Authenticate and decrypt the same private copy of the ciphertext, never
+  // the caller's buffer, which may be shared memory.
+  return run(k, nonce, aad, ct.slice(0, len), len, ct.subarray(len));
 }
