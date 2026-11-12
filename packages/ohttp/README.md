@@ -16,29 +16,9 @@ full-duplex exchanges.
 Create a client once, then pass it to `ohttpFetch`. Arguments after the client
 have the same shape as `fetch(input, init)` and describe the target request.
 
-```ts
-import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
-import { createOhttpClient } from "@hpke/ohttp";
-import { createChunkedEncoding } from "@hpke/ohttp/chunked";
-import { ohttpFetch } from "@hpke/ohttp/http";
-
-// Obtain application/ohttp-keys bytes from the gateway's configured key source.
-const client = createOhttpClient({
-  kem: new DhkemX25519HkdfSha256(),
-  kdf: new HkdfSha256(),
-  aead: new Aes128Gcm(),
-  keyConfig,
-  encoding: createChunkedEncoding(),
-  relayUrl: "https://relay.example/ohttp",
-});
-
-const response = await ohttpFetch(client, "https://target.example/api", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ message: "hello" }),
-});
-console.log(await response.text());
-```
+This package is distributed as ESM only and requires Node.js 20 or later. It
+implements the OHTTP client, gateway and key configuration formats defined by
+[RFC 9458](https://www.rfc-editor.org/rfc/rfc9458).
 
 The adapter encodes binary HTTP incrementally, posts the encrypted request to
 the relay, validates the response media type, and returns a `Response` with a
@@ -47,7 +27,15 @@ chunked encoding, `Incremental: ?1`. Target headers remain inside the encrypted
 request. `init.signal` cancels encoding, relay communication, and response
 reads. Outer redirects are rejected.
 
-## Choosing an encoding and keeping bundles small
+- [Installation](#installation)
+  - [Node.js](#nodejs)
+  - [Deno](#deno)
+  - [Web Browsers](#web-browsers)
+- [Usage](#usage)
+  - [Client](#client)
+  - [Gateway](#gateway)
+  - [Streaming](#streaming)
+- [Contributing](#contributing)
 
 Inject the encoding supported by the gateway. There is no automatic fallback or
 internal registry.
@@ -154,8 +142,8 @@ results become available.
 
 ## Gateway
 
-`createOhttpGateway` takes an existing key pair. Key generation and rotation
-stay under the application's control.
+Create the client and gateway with the HPKE primitives you want to use. The
+gateway's serialized `keyConfig` is published to clients.
 
 ```ts
 import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
@@ -164,116 +152,71 @@ import { createChunkedEncoding } from "@hpke/ohttp/chunked";
 import { createOhttpHandler } from "@hpke/ohttp/http";
 
 const kem = new DhkemX25519HkdfSha256();
-const keys = await kem.generateKeyPair(); // Generate once, outside the handler.
-const gateway = createOhttpGateway({
-  keyId: 1,
+const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
+const gateway = await createOhttpServer({ keyId: 1, kem, suites });
+const client = await createOhttpClient({
   kem,
-  ...keys,
-  kdfAeadPairs: [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }],
-  encoding: createChunkedEncoding(),
+  suites,
+  keyConfig: gateway.keyConfig,
+  relayUrl: "https://relay.example/ohttp",
 });
-
-// Serve these bytes from the application's key configuration endpoint.
-const keyConfig = await gateway.publicKeyConfig;
-
-const handle = createOhttpHandler({
-  gateway,
-  async forward(request) {
-    // Apply the application's target authorization before forwarding.
-    if (new URL(request.url).origin !== "https://target.example") {
-      return new Response("Forbidden", { status: 403 });
-    }
-    const upstream = await fetch(request);
-    // fetch decodes content codings but may retain the encoded representation's
-    // headers. Forward headers that describe the decoded body.
-    const headers = new Headers(upstream.headers);
-    headers.delete("content-encoding");
-    headers.delete("content-length");
-    return new Response(upstream.body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers,
-    });
-  },
-});
-
-// Pass a relay's POST Request to handle() in your server's request handler.
-const response = await handle(incomingRequest);
 ```
 
-The handler accepts only POSTs with the configured request media type. Malformed
-encryption headers, authentication failures, and invalid binary HTTP requests
-detected before responding produce 400. Errors discovered later in a streaming
-body error that body; an already sent HTTP status cannot be changed. Upstream
-and application failures propagate to the hosting server.
+### Client
 
-When forwarding a native fetch response, use the normalization above: fetch may
-decompress the body while retaining Content-Encoding and the compressed
-Content-Length. Remove both before returning that decoded body. The handler
-cannot infer whether an arbitrary Response body has already been decompressed;
-custom forwarders must keep representation headers consistent with their bytes.
-
-Hop-by-hop headers, including fields nominated by Connection, are removed when
-encoding HTTP messages. They remain invalid in received binary HTTP. The handler
-cancels the upstream body if response encoding fails. The application's
-`forward` callback receives a standard `Request` and returns a `Response`. Body
-streams are processed incrementally. A forwarder that performs actions requiring
-a complete request must consume its body successfully first.
-
-For chunked requests, forwarding can begin before the final chunk is
-authenticated. A later truncation can therefore result in 400 after the upstream
-has already received part of the request. Returning 400 does not undo upstream
-side effects. For operations that require a complete message, validate and
-buffer the request body before forwarding, or use standard encoding.
-
-The HTTP adapter emits indeterminate-length binary HTTP and accepts known-length
-and indeterminate-length messages. It limits field sections to 64 KiB, consumes
-informational responses and trailers without exposing them through Fetch, and
-validates trailing padding before reporting body completion.
-
-## Low-level binary HTTP streams
-
-Use the same `encapsulateRequest` / `decapsulateRequest` methods with either
-encoding. No dedicated chunked methods or public classes are needed.
+`client.fetch()` has the same input shape as `fetch()` and sends the encrypted
+request to the configured relay.
 
 ```ts
-// binaryRequest and binaryResponse contain already encoded binary HTTP bytes.
-// Sources may be ReadableStreams, async iterables, or iterables of Uint8Array.
-const clientContext = await client.encapsulateRequest(binaryRequest);
-const gatewayContext = await gateway.decapsulateRequest(clientContext.body);
+const response = await client.fetch("https://target.example/hello", {
+  headers: { "accept": "application/json" },
+});
+console.log(await response.text());
+```
 
-// requestParser is a WritableStream connected to an incremental binary HTTP parser.
-await gatewayContext.body.pipeTo(requestParser);
+### Gateway
 
-const encryptedResponse = await gatewayContext.encapsulateResponse(
-  binaryResponse,
-);
-const decryptedResponse = await clientContext.decapsulateResponse(
-  encryptedResponse.body,
+Pass the relay request to `gateway.handle()`. The handler sees the decrypted
+target request and returns the response that should be sent back through OHTTP.
+
+```ts
+Deno.serve((request) =>
+  gateway.handle(request, (targetRequest) => fetch(targetRequest))
 );
 await decryptedResponse.pipeTo(responseParser);
 ```
 
-For manual transport, `clientContext.contentType` and
-`encryptedResponse.contentType` provide the required media types. All returned
-body streams are single-use, and each exchange supports one response. `relayUrl`
-is optional when using only low-level APIs. Web Stream cancellation interrupts
-pending reads and releases the owned reader. Arbitrary async iterables must
-provide their own way to abort an underlying operation; generator return() alone
-cannot interrupt a pending next().
+Invalid encapsulated requests receive a 4xx response without invoking the
+handler. Errors from the upstream handler are propagated.
 
-## Testing
+### Streaming
 
-The package's normal test task and the repository's test:deno task both run the
-HTTP/1.1 network regression tests. They can also be run on their own from the
-repository root:
+The decrypted request and response expose the standard Fetch streaming bodies,
+so a gateway can forward a body without buffering it in application code:
 
-```sh
-deno test --allow-net packages/ohttp/test/http.integration.ts
+```ts
+const gatewayResponse = await gateway.handle(
+  relayRequest,
+  (targetRequest) =>
+    fetch(targetRequest.url, {
+      method: targetRequest.method,
+      headers: targetRequest.headers,
+      body: targetRequest.body,
+      // Required by Node.js when forwarding a streaming request body.
+      duplex: "half",
+    } as RequestInit),
+);
+console.log(gatewayResponse.status);
 ```
 
-These exercise both encodings through a local HTTP/1.1 relay and a real upstream
-fetch whose responses use Transfer-Encoding: chunked or gzip content coding.
+For direct relay integrations, use `client.encapsulateRequest()` and
+`gateway.decapsulateRequest()` to exchange `message/ohttp-req` and
+`message/ohttp-res` payloads yourself.
+
+## Contributing
+
+We welcome all kind of contributions, filing issues, suggesting new features or
+sending PRs.
 
 ## References
 
