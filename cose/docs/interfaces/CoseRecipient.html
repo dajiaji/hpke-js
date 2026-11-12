@@ -15,7 +15,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">CoseRecipient</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#aad">aad</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#extrainfo">extraInfo</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kid">kid</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#psk">psk</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#recipientpublickey">recipientPublicKey</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L33">packages/cose/src/encrypt.ts:33</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L33">packages/cose/src/encrypt.ts:33</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -41,35 +41,35 @@ special cases where additional authenticated data is needed at the
 key-wrapping layer. Defaults to empty.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L46">packages/cose/src/encrypt.ts:46</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L46">packages/cose/src/encrypt.ts:46</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="extrainfo"><code class="tsd-tag">Optional</code><span>extra<wbr/>Info</span><a href="#extrainfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">extraInfo</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 <div class="tsd-comment tsd-typography"><p>Extra info embedded in Recipient_structure.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L39">packages/cose/src/encrypt.ts:39</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L39">packages/cose/src/encrypt.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="kid"><code class="tsd-tag">Optional</code><span>kid</span><a href="#kid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">kid</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 <div class="tsd-comment tsd-typography"><p>Key identifier for the recipient (bstr per RFC 9052).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L37">packages/cose/src/encrypt.ts:37</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L37">packages/cose/src/encrypt.ts:37</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="psk"><code class="tsd-tag">Optional</code><span>psk</span><a href="#psk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">psk</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">key</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span> <span class="tsd-signature-symbol">}</span></div>
 <div class="tsd-comment tsd-typography"><p>Pre-shared key for PSK mode.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L48">packages/cose/src/encrypt.ts:48</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L48">packages/cose/src/encrypt.ts:48</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="recipientpublickey"><span>recipient<wbr/>Public<wbr/>Key</span><a href="#recipientpublickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">recipientPublicKey</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">CryptoKey</span></div>
 <div class="tsd-comment tsd-typography"><p>The recipient's public key.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/57fa7a532444238dbd24315d51067582e88090f6/packages/cose/src/encrypt.ts#L35">packages/cose/src/encrypt.ts:35</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/898cf7aa3cf6b90ea2baa5809b57762a86d32947/packages/cose/src/encrypt.ts#L35">packages/cose/src/encrypt.ts:35</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
