@@ -19,7 +19,7 @@ Documentation: [jsr.io](https://jsr.io/@hpke/ohttp/doc) |
 
 This package is distributed as ESM only and requires Node.js 20 or later. It
 implements the OHTTP client, gateway and key configuration formats defined by
-RFC 9458.
+[RFC 9458](https://www.rfc-editor.org/rfc/rfc9458).
 
 ## Index
 
@@ -28,8 +28,9 @@ RFC 9458.
   - [Deno](#deno)
   - [Web Browsers](#web-browsers)
 - [Usage](#usage)
-  - [Fetch-like API](#fetch-like-api)
-  - [Low-level API](#low-level-api)
+  - [Client](#client)
+  - [Gateway](#gateway)
+  - [Streaming](#streaming)
 - [Contributing](#contributing)
 
 ## Installation
@@ -67,8 +68,8 @@ This ESM package can be loaded from a CDN such as
 
 ## Usage
 
-Both the client and the server (Oblivious Gateway Resource) are created with an
-asynchronous factory function that takes the HPKE primitives to use:
+Create the client and gateway with the HPKE primitives you want to use. The
+gateway's serialized `keyConfig` is published to clients.
 
 ```ts
 import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
@@ -77,87 +78,64 @@ import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
 
 const kem = new DhkemX25519HkdfSha256();
 const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
-
-// Gateway: a key pair is generated unless `keyPair` is given.
-const server = await createOhttpServer({ keyId: 1, kem, suites });
-
-// Client: `server.keyConfig` is the `application/ohttp-keys` payload
-// published by the gateway.
+const gateway = await createOhttpServer({ keyId: 1, kem, suites });
 const client = await createOhttpClient({
   kem,
   suites,
-  keyConfig: server.keyConfig,
+  keyConfig: gateway.keyConfig,
   relayUrl: "https://relay.example/ohttp",
 });
 ```
 
-### Fetch-like API
+### Client
 
-`client.fetch()` mirrors the standard `fetch()`: it encapsulates the request,
-sends it to the relay and decrypts the response. Its counterpart
-`server.handle()` takes the HTTP request forwarded by the relay, passes the
-decrypted request to your handler and returns the encapsulated response:
+`client.fetch()` has the same input shape as `fetch()` and sends the encrypted
+request to the configured relay.
 
 ```ts
-// Client
-const response = await client.fetch("https://target.example/hello");
+const response = await client.fetch("https://target.example/hello", {
+  headers: { "accept": "application/json" },
+});
 console.log(await response.text());
+```
 
-// Gateway (e.g. Deno.serve, Cloudflare Workers, Bun.serve)
+### Gateway
+
+Pass the relay request to `gateway.handle()`. The handler sees the decrypted
+target request and returns the response that should be sent back through OHTTP.
+
+```ts
 Deno.serve((request) =>
-  server.handle(request, (targetRequest) => fetch(targetRequest))
+  gateway.handle(request, (targetRequest) => fetch(targetRequest))
 );
 ```
 
-`server.handle()` answers requests that cannot be processed with a 4xx response
-without calling the handler. Errors thrown by the handler are propagated to the
-caller.
+Invalid encapsulated requests receive a 4xx response without invoking the
+handler. Errors from the upstream handler are propagated.
 
-### Low-level API
+### Streaming
 
-To exchange the encapsulated messages with the relay by yourself, use
-`client.encapsulateRequest()` and `server.decapsulateRequest()`. The following
-example performs an OHTTP request and response roundtrip without a relay:
+The decrypted request and response expose the standard Fetch streaming bodies,
+so a gateway can forward a body without buffering it in application code:
 
 ```ts
-import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import { createOhttpClient, createOhttpServer } from "@hpke/ohttp";
-
-async function main() {
-  const kem = new DhkemX25519HkdfSha256();
-  const suites = [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }];
-
-  const server = await createOhttpServer({ keyId: 1, kem, suites });
-  const client = await createOhttpClient({
-    kem,
-    suites,
-    keyConfig: server.keyConfig,
-  });
-
-  // Client: encrypt the request (message/ohttp-req).
-  const { encapsulatedRequest, decapsulateResponse } = await client
-    .encapsulateRequest(new Request("https://target.example/hello"));
-
-  // Gateway: decrypt the request and encrypt the response
-  // (message/ohttp-res).
-  const { request, encapsulateResponse } = await server.decapsulateRequest(
-    encapsulatedRequest,
-  );
-  console.log(request.method, request.url);
-  const encapsulatedResponse = await encapsulateResponse(
-    new Response("Hello, OHTTP!"),
-  );
-
-  // Client: decrypt the response.
-  const response = await decapsulateResponse(encapsulatedResponse);
-  console.log(await response.text());
-}
-
-main().catch((err: unknown) => {
-  console.error("OHTTP failed:", err);
-});
+const gatewayResponse = await gateway.handle(
+  relayRequest,
+  (targetRequest) =>
+    fetch(targetRequest.url, {
+      method: targetRequest.method,
+      headers: targetRequest.headers,
+      body: targetRequest.body,
+      // Required by Node.js when forwarding a streaming request body.
+      duplex: "half",
+    } as RequestInit),
+);
+console.log(gatewayResponse.status);
 ```
+
+For direct relay integrations, use `client.encapsulateRequest()` and
+`gateway.decapsulateRequest()` to exchange `message/ohttp-req` and
+`message/ohttp-res` payloads yourself.
 
 ## Contributing
 
