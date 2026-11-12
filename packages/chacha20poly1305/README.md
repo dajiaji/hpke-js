@@ -6,7 +6,7 @@
 </div>
 
 <div align="center">
-A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for AEAD with ChaCha20-Poly1305, which is implemented by using <a href="https://github.com/paulmillr/noble-ciphers">@noble/ciphers</a></div>
+A TypeScript <a href="https://datatracker.ietf.org/doc/html/rfc9180">Hybrid Public Key Encryption (HPKE)</a> module extension for AEAD with ChaCha20-Poly1305, whose implementation is derived from <a href="https://github.com/paulmillr/noble-ciphers">@noble/ciphers</a></div>
 <p></p>
 
 <div align="center">

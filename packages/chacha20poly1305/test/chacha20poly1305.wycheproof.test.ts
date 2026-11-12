@@ -1,7 +1,15 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { chacha20poly1305 } from "../src/chacha/chacha.ts";
+import { keyWords, open, seal } from "../src/chacha/chacha.ts";
+
+// One-shot AEAD helper over the internal seal()/open() functions.
+function chacha20poly1305(key: Uint8Array, iv: Uint8Array, aad: Uint8Array) {
+  return {
+    encrypt: (msg: Uint8Array) => seal(keyWords(key), iv, aad, msg),
+    decrypt: (ct: Uint8Array) => open(keyWords(key), iv, aad, ct),
+  };
+}
 
 function hexToBytes(hex: string): Uint8Array {
   const res = hex.match(/[\da-f]{2}/gi);
