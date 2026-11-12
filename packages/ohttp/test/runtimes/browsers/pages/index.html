@@ -4,131 +4,122 @@
   </head>
   <body>
     <script type="module">
-    import { createOhttpClient, createOhttpServer } from "./src/hpke-ohttp.js";
+    import { createOhttpClient, createOhttpGateway } from "./src/hpke-ohttp.js";
+    import { createStandardEncoding } from "./src/hpke-ohttp-standard.js";
+    import { createChunkedEncoding } from "./src/hpke-ohttp-chunked.js";
     import {
       Aes128Gcm,
       Aes256Gcm,
-      CipherSuite,
       DhkemP256HkdfSha256,
       DhkemX25519HkdfSha256,
       HkdfSha256,
     } from "./src/hpke-core.js";
 
-    function toHex(buf) {
-      if (buf === undefined) {
-        return undefined;
-      }
-      return Array.from(new Uint8Array(buf))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-    }
-
-    function describeError(e) {
-      if (e instanceof Error) {
-        return `${e.name}: ${e.message}`;
-      }
-      return String(e);
-    }
-
-    // Records the intermediate values of a round trip so that a failure can be
-    // reproduced with fixed inputs.
-    async function testRoundtrip(kem, kdf, aead, trace) {
-      trace.step = "generateKeyPair";
-      const suite = new CipherSuite({ kem, kdf, aead });
-      const keyPair = await suite.kem.generateKeyPair();
-      trace.step = "serializeKeyPair";
-      trace.skR = toHex(await suite.kem.serializePrivateKey(keyPair.privateKey));
-      trace.pkR = toHex(await suite.kem.serializePublicKey(keyPair.publicKey));
-
-      const server = await createOhttpServer({
-        keyId: 0x01,
-        kem,
-        keyPair,
-        suites: [{ kdf, aead }],
+    async function setupGateway(params) {
+      const keys = await params.kem.generateKeyPair();
+      return createOhttpGateway({
+        ...params,
+        ...keys,
+        encoding: params.encoding,
       });
-      trace.step = "keyConfig";
-      const keyConfig = server.keyConfig;
-      const client = await createOhttpClient({
+    }
+
+    async function testRoundtrip(kem, kdf, aead) {
+      for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
+        await runRoundtrip(kem, kdf, aead, encoding);
+      }
+    }
+    async function runRoundtrip(kem, kdf, aead, encoding) {
+      const server = await setupGateway({
+        keyId: 0x01,
+        encoding,
         kem,
-        suites: [{ kdf, aead }],
+        kdfAeadPairs: [{ kdf, aead }],
+      });
+      const keyConfig = await server.publicKeyConfig;
+      const client = createOhttpClient({
+        encoding,
+        kem,
+        kdf,
+        aead,
         keyConfig,
         relayUrl: "https://relay.example/ohttp",
       });
-      const targetReq = new Request("https://target.example/api", {
-        method: "POST",
-        body: "hello world!",
-      });
-      trace.step = "encapsulateRequest";
+      const targetReq = [new TextEncoder().encode("hello world!")];
       const clientCtx = await client.encapsulateRequest(targetReq);
-      // The encapsulated request contains the ephemeral public key (enc).
-      trace.encRequest = toHex(clientCtx.encapsulatedRequest);
-      trace.step = "decapsulateRequest";
       const serverCtx = await server.decapsulateRequest(
-        clientCtx.encapsulatedRequest,
+        clientCtx.body,
       );
-      const body = await serverCtx.request.text();
+      const body = await new Response(serverCtx.body).text();
       if (body !== "hello world!") {
         throw new Error("body mismatch: " + body);
       }
-      trace.step = "encapsulateResponse";
       const encRes = await serverCtx.encapsulateResponse(
-        new Response("ok from server"),
+        [new TextEncoder().encode("ok from server")],
       );
-      trace.step = "decapsulateResponse";
-      const res = await clientCtx.decapsulateResponse(encRes);
-      const resBody = await res.text();
+      const res = await clientCtx.decapsulateResponse(encRes.body);
+      const resBody = await new Response(res).text();
       if (resBody !== "ok from server") {
         throw new Error("response mismatch: " + resBody);
       }
     }
-
-    const CASES = [
-      {
-        name: "X25519/AES-128-GCM",
-        kem: () => new DhkemX25519HkdfSha256(),
-        aead: () => new Aes128Gcm(),
-      },
-      {
-        name: "X25519/AES-256-GCM",
-        kem: () => new DhkemX25519HkdfSha256(),
-        aead: () => new Aes256Gcm(),
-      },
-      {
-        name: "P-256/AES-128-GCM",
-        kem: () => new DhkemP256HkdfSha256(),
-        aead: () => new Aes128Gcm(),
-      },
-    ];
 
     globalThis.run = async () => {
       let pass = 0;
       let fail = 0;
       const errors = [];
 
-      for (const c of CASES) {
-        const trace = { name: c.name };
-        try {
-          await testRoundtrip(c.kem(), new HkdfSha256(), c.aead(), trace);
-          pass++;
-        } catch (e) {
-          trace.error = describeError(e);
-          console.error(JSON.stringify(trace));
-          errors.push(trace);
-          fail++;
-        }
+      // Test 1: X25519 / HKDF-SHA256 / AES-128-GCM
+      try {
+        await testRoundtrip(
+          new DhkemX25519HkdfSha256(),
+          new HkdfSha256(),
+          new Aes128Gcm(),
+        );
+        pass++;
+      } catch (e) {
+        errors.push(String(e));
+        console.error("X25519/AES-128-GCM:", e);
+        fail++;
       }
 
-      document.getElementById("errors").textContent = errors.length > 0
-        ? JSON.stringify(errors, null, 2)
-        : "";
+      // Test 2: X25519 / HKDF-SHA256 / AES-256-GCM
+      try {
+        await testRoundtrip(
+          new DhkemX25519HkdfSha256(),
+          new HkdfSha256(),
+          new Aes256Gcm(),
+        );
+        pass++;
+      } catch (e) {
+        errors.push(String(e));
+        console.error("X25519/AES-256-GCM:", e);
+        fail++;
+      }
+
+      // Test 3: P-256 / HKDF-SHA256 / AES-128-GCM
+      try {
+        await testRoundtrip(
+          new DhkemP256HkdfSha256(),
+          new HkdfSha256(),
+          new Aes128Gcm(),
+        );
+        pass++;
+      } catch (e) {
+        errors.push(String(e));
+        console.error("P-256/AES-128-GCM:", e);
+        fail++;
+      }
+
+      document.getElementById("errors").textContent = errors.join("\n");
       document.getElementById("pass").innerHTML = pass;
       document.getElementById("fail").innerHTML = fail;
     };
 
     globalThis.reset = () => {
+      document.getElementById("errors").textContent = "";
       document.getElementById("pass").innerHTML = "-";
       document.getElementById("fail").innerHTML = "-";
-      document.getElementById("errors").textContent = "";
     };
     </script>
 
@@ -144,6 +135,7 @@
 
     <br />
 
+    <pre id="errors"></pre>
     <div id="test">
       <table>
         <tr>
@@ -159,9 +151,6 @@
           <td id="fail">-</td>
         </tr>
       </table>
-      <pre id="errors"></pre>
     </div>
-
-    <p><a href="./stress.html">stress test</a></p>
   </body>
 </html>

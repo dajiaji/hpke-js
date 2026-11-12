@@ -12,7 +12,7 @@ const outDir = "../../npm/packages/ohttp";
 await beforeBuild("ohttp");
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", "./standard.ts", "./chunked.ts", "./http.ts"],
   outDir,
   typeCheck: "both",
   test: !Deno.args.includes("--skip-test"),
@@ -70,6 +70,18 @@ await build({
       ".": {
         "import": "./esm/mod.js",
         "types": "./esm/mod.d.ts",
+      },
+      "./standard": {
+        types: "./esm/standard.d.ts",
+        import: "./esm/standard.js",
+      },
+      "./chunked": {
+        types: "./esm/chunked.d.ts",
+        import: "./esm/chunked.js",
+      },
+      "./http": {
+        types: "./esm/http.d.ts",
+        import: "./esm/http.js",
       },
       "./package.json": "./package.json",
     },

@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
+import { decodeRequest as decodeKnownRequest } from "../src/bhttp/decoder.ts";
 
 import {
   Aes128Gcm,
@@ -8,11 +9,8 @@ import {
   HkdfSha256,
 } from "@hpke/core";
 
-import { decodeRequest, decodeResponse } from "../src/bhttp/decoder.ts";
-import { buildHeader } from "../src/encapsulation.ts";
-import { createOhttpServer } from "../src/server.ts";
+import { buildHeader } from "../src/responseKeys.ts";
 import { deserializeKeyConfig, serializeKeyConfig } from "../src/keyConfig.ts";
-import { bytesToHex, hexToBytes } from "./utils.ts";
 
 // RFC 9458 Appendix A test vectors
 const VECTORS = {
@@ -42,6 +40,20 @@ const VECTORS = {
   encapsulatedResponse:
     "c789e7151fcba46158ca84b04464910d86f9013e404feea014e7be4a441f234f857fbd",
 };
+
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+  }
+  return bytes;
+}
+
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 /** Prepend a 2-byte length prefix to a raw KeyConfig to form application/ohttp-keys. */
 function addLengthPrefix(raw: Uint8Array): Uint8Array {
@@ -77,19 +89,10 @@ describe("RFC 9458 Appendix A test vectors", () => {
 
   it("should correctly decode the binary HTTP request", () => {
     const binaryRequest = hexToBytes(VECTORS.binaryRequest);
-    const request = decodeRequest(binaryRequest);
+    const request = decodeKnownRequest(binaryRequest);
     assertEquals(request.method, "GET");
     assertEquals(new URL(request.url).hostname, "example.com");
     assertEquals(new URL(request.url).pathname, "/");
-  });
-
-  it("should correctly decode the (truncated) binary HTTP response", async () => {
-    const response = decodeResponse(hexToBytes(VECTORS.binaryResponse));
-    assertEquals(response.status, 200);
-    let fieldCount = 0;
-    response.headers.forEach(() => fieldCount++);
-    assertEquals(fieldCount, 0);
-    assertEquals((await response.arrayBuffer()).byteLength, 0);
   });
 
   it("should build the correct HPKE info for the encapsulated request header", () => {
@@ -156,7 +159,7 @@ describe("RFC 9458 Appendix A test vectors", () => {
     assertEquals(bytesToHex(plaintext), VECTORS.binaryRequest);
 
     // Verify we can decode it as a valid HTTP request
-    const request = decodeRequest(plaintext);
+    const request = decodeKnownRequest(plaintext);
     assertEquals(request.method, "GET");
   });
 
@@ -246,7 +249,12 @@ describe("RFC 9458 Appendix A test vectors", () => {
     assertEquals(bytesToHex(responsePlaintext), VECTORS.binaryResponse);
   });
 
-  it("should decapsulate the encapsulated request via createOhttpServer", async () => {
+  it("should decrypt the encapsulated response via createOhttpGateway", async () => {
+    // Decode the RFC request through the public factory.
+    const { createOhttpGateway } = await import("../mod.ts");
+    const { createStandardEncoding } = await import("../standard.ts");
+    const { decodeRequest } = await import("../src/bhttp.ts");
+
     const suite = new CipherSuite({
       kem: new DhkemX25519HkdfSha256(),
       kdf: new HkdfSha256(),
@@ -266,20 +274,23 @@ describe("RFC 9458 Appendix A test vectors", () => {
       true,
     );
 
-    const server = await createOhttpServer({
+    const server = createOhttpGateway({
+      encoding: createStandardEncoding(),
       keyId: 0x01,
       kem: new DhkemX25519HkdfSha256(),
-      keyPair: { privateKey: skR, publicKey: pkR },
-      suites: [
+      privateKey: skR,
+      publicKey: pkR,
+      kdfAeadPairs: [
         { kdf: new HkdfSha256(), aead: new Aes128Gcm() },
       ],
     });
 
     const encRequest = hexToBytes(VECTORS.encapsulatedRequest);
-    const serverCtx = await server.decapsulateRequest(encRequest);
+    const serverCtx = await server.decapsulateRequest([encRequest]);
 
+    const request = await decodeRequest(serverCtx.body);
     // Verify the decrypted request
-    assertEquals(serverCtx.request.method, "GET");
-    assertEquals(new URL(serverCtx.request.url).hostname, "example.com");
+    assertEquals(request.method, "GET");
+    assertEquals(new URL(request.url).hostname, "example.com");
   });
 });

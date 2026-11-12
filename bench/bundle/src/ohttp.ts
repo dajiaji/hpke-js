@@ -9,6 +9,7 @@ import { measure } from "./measure.ts";
 import type { LibResult } from "./report.ts";
 import { printModules } from "./report.ts";
 import type { SuiteSpec } from "./suites.ts";
+import { REPO_ROOT } from "./paths.ts";
 
 export interface OhttpSuite extends SuiteSpec {
   readonly id: string;
@@ -70,6 +71,7 @@ export function normalizeOhttpBaseline(
 
 /** Minimal application entry points; neither role imports the opposite role. */
 function entry(suite: OhttpSuite, role: OhttpRole): string {
+  const codec = JSON.stringify(join(REPO_ROOT, "packages/ohttp/src/bhttp.ts"));
   const imports = `
 import { ${suite.kem[1]} as Kem } from "${suite.kem[0]}";
 import { ${suite.kdf[1]} as Kdf } from "${suite.kdf[0]}";
@@ -78,37 +80,61 @@ import { ${suite.aead[1]} as Aead } from "${suite.aead[0]}";
   if (role === "client") {
     return `${imports}
 import { createOhttpClient } from "@hpke/ohttp";
+import { createStandardEncoding } from "@hpke/ohttp/standard";
+import { encodeRequest, decodeRequest, encodeResponse, decodeResponse } from ${codec};
 export async function send(keyConfig, request) {
-  const client = await createOhttpClient({
-    kem: new Kem(), suites: [{ kdf: new Kdf(), aead: new Aead() }], keyConfig,
+  const client = createOhttpClient({
+    encoding: createStandardEncoding(),
+    kem: new Kem(), kdf: new Kdf(), aead: new Aead(), keyConfig,
     relayUrl: "https://relay.example/",
   });
-  return client.encapsulateRequest(request);
+  const ctx = await client.encapsulateRequest(encodeRequest(request));
+  return {
+    encRequest: new Uint8Array(await new Response(ctx.body).arrayBuffer()),
+    async decapsulateResponse(bytes) {
+      const body = await ctx.decapsulateResponse([bytes]);
+      return decodeResponse(body);
+    },
+  };
 }
 `;
   }
   return `${imports}
-import { createOhttpServer } from "@hpke/ohttp";
+import { createOhttpGateway } from "@hpke/ohttp";
+import { createStandardEncoding } from "@hpke/ohttp/standard";
+import { encodeRequest, decodeRequest, encodeResponse, decodeResponse } from ${codec};
 export async function createGateway(skR, pkR) {
   const kem = new Kem();
-  return createOhttpServer({
+  const gateway = createOhttpGateway({
+    encoding: createStandardEncoding(),
     keyId: 1, kem,
-    keyPair: {
-      privateKey: await kem.deserializePrivateKey(skR),
-      publicKey: await kem.deserializePublicKey(pkR),
-    },
-    suites: [{ kdf: new Kdf(), aead: new Aead() }],
+    privateKey: await kem.deserializePrivateKey(skR),
+    publicKey: await kem.deserializePublicKey(pkR),
+    kdfAeadPairs: [{ kdf: new Kdf(), aead: new Aead() }],
   });
+  return {
+    publicKeyConfig: gateway.publicKeyConfig,
+    async decapsulateRequest(bytes) {
+      const ctx = await gateway.decapsulateRequest([bytes]);
+      return {
+        request: await decodeRequest(ctx.body),
+        async encapsulateResponse(response) {
+          const result = await ctx.encapsulateResponse(encodeResponse(response));
+          return new Uint8Array(await new Response(result.body).arrayBuffer());
+        },
+      };
+    },
+  };
 }
 `;
 }
 
 interface ClientContext {
-  encapsulatedRequest: Uint8Array;
+  encRequest: Uint8Array;
   decapsulateResponse(data: Uint8Array): Promise<Response>;
 }
 interface Gateway {
-  keyConfig: Uint8Array;
+  publicKeyConfig: Promise<Uint8Array>;
   decapsulateRequest(data: Uint8Array): Promise<{
     request: Request;
     encapsulateResponse(response: Response): Promise<Uint8Array>;
@@ -146,16 +172,14 @@ export async function verifyOhttp(
         send: Send;
       };
       const ctx = await send(
-        gateway.keyConfig,
+        await gateway.publicKeyConfig,
         new Request("https://origin.example/resource?q=1", {
           method: "POST",
           headers: { "content-type": "text/plain", "x-bundle": "request" },
           body: "hello OHTTP request",
         }),
       );
-      const received = await gateway.decapsulateRequest(
-        ctx.encapsulatedRequest,
-      );
+      const received = await gateway.decapsulateRequest(ctx.encRequest);
       if (
         received.request.method !== "POST" ||
         received.request.url !== "https://origin.example/resource?q=1" ||
