@@ -177,7 +177,7 @@
     "test:browsers:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/browsers",
 
     // Cloudflare Workers environment testing
-    "test:cloudflare": "deno task test:cloudflare:core && deno task test:cloudflare:chacha20poly1305 && deno task test:cloudflare:dhkem-x25519 && deno task test:cloudflare:dhkem-x448 && deno task test:cloudflare:dhkem-secp256k1 && deno task test:cloudflare:hybridkem-x-wing && deno task test:cloudflare:hpke-js && deno task test:cloudflare:ml-kem",
+    "test:cloudflare": "deno task test:cloudflare:core && deno task test:cloudflare:chacha20poly1305 && deno task test:cloudflare:dhkem-x25519 && deno task test:cloudflare:dhkem-x448 && deno task test:cloudflare:dhkem-secp256k1 && deno task test:cloudflare:hybridkem-x-wing && deno task test:cloudflare:hpke-js && deno task test:cloudflare:ml-kem && deno task test:cloudflare:cose && deno task test:cloudflare:jose",
     "test:cloudflare:core": "cd npm && npm run test -w test/core/runtimes/cloudflare",
     "test:cloudflare:chacha20poly1305": "cd npm && npm run test -w test/chacha20poly1305/runtimes/cloudflare",
     "test:cloudflare:dhkem-x25519": "cd npm && npm run test -w test/dhkem-x25519/runtimes/cloudflare",
@@ -186,6 +186,8 @@
     "test:cloudflare:hybridkem-x-wing": "cd npm && npm run test -w test/hybridkem-x-wing/runtimes/cloudflare",
     "test:cloudflare:hpke-js": "cd npm && npm run test -w test/hpke-js/runtimes/cloudflare",
     "test:cloudflare:ml-kem": "cd npm && npm run test -w test/ml-kem/runtimes/cloudflare",
+    "test:cloudflare:cose": "cd npm && npm run test -w test/cose/runtimes/cloudflare",
+    "test:cloudflare:jose": "cd npm && npm run test -w test/jose/runtimes/cloudflare",
     "test:cloudflare:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/cloudflare",
 
     // Fastly Compute environment testing
@@ -204,7 +206,7 @@
     "test:fastly:ohttp": "cd npm && npm run test -w test/ohttp/runtimes/fastly",
 
     // Bun environment testing
-    "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem",
+    "test:bun": "deno task test:bun:core && deno task test:bun:chacha20poly1305 && deno task test:bun:dhkem-x25519 && deno task test:bun:dhkem-x448 && deno task test:bun:dhkem-secp256k1 && deno task test:bun:hybridkem-x-wing && deno task test:bun:hpke-js && deno task test:bun:ml-kem && deno task test:bun:cose && deno task test:bun:jose",
     "test:bun:core": "cd packages/core && deno task test:bun",
     "test:bun:chacha20poly1305": "cd packages/chacha20poly1305 && deno task test:bun",
     "test:bun:dhkem-x25519": "cd packages/dhkem-x25519 && deno task test:bun",
@@ -213,6 +215,8 @@
     "test:bun:hybridkem-x-wing": "cd packages/hybridkem-x-wing && deno task test:bun",
     "test:bun:hpke-js": "cd packages/hpke-js && deno task test:bun",
     "test:bun:ml-kem": "cd packages/ml-kem && deno task test:bun",
+    "test:bun:cose": "cd packages/cose && deno task test:bun",
+    "test:bun:jose": "cd packages/jose && deno task test:bun",
     "test:bun:ohttp": "cd packages/ohttp && deno task test:bun",
 
     // === CODE QUALITY TASKS ===
@@ -301,7 +305,7 @@
     // === DEVELOPMENT ENVIRONMENT SETUP ===
     "bun-link": {
       "description": "Create Bun symlinks for all packages for local development",
-      "command": "deno task bun-link:common && deno task bun-link:core && deno task bun-link:chacha20poly1305 && deno task bun-link:dhkem-x25519 && deno task bun-link:dhkem-x448 && deno task bun-link:dhkem-secp256k1 && deno task bun-link:hybridkem-x-wing && deno task bun-link:hpke-js && deno task bun-link:ml-kem"
+      "command": "deno task bun-link:common && deno task bun-link:core && deno task bun-link:chacha20poly1305 && deno task bun-link:dhkem-x25519 && deno task bun-link:dhkem-x448 && deno task bun-link:dhkem-secp256k1 && deno task bun-link:hybridkem-x-wing && deno task bun-link:hpke-js && deno task bun-link:ml-kem && deno task bun-link:cose && deno task bun-link:jose"
     },
     "bun-link:common": "cd npm/packages/common && bun link",
     "bun-link:core": "cd npm/packages/core && bun link",
@@ -312,6 +316,8 @@
     "bun-link:hybridkem-x-wing": "cd npm/packages/hybridkem-x-wing && bun link",
     "bun-link:hpke-js": "cd npm/packages/hpke-js && bun link",
     "bun-link:ml-kem": "cd npm/packages/ml-kem && bun link",
+    "bun-link:cose": "cd npm/packages/cose && bun link",
+    "bun-link:jose": "cd npm/packages/jose && bun link",
 
     // === SAMPLE EXECUTION TASKS ===
     "sample": {
