@@ -4,3 +4,20 @@ updates:
     directory: "/npm/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "npm"
+    directories:
+      - "/packages/*/samples/node"
+      - "/packages/hpke-js/samples/ts-*"
+    schedule:
+      interval: "daily"
+    groups:
+      hpke:
+        patterns:
+          - "@hpke/*"
+          - "hpke-js"
+      others:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@hpke/*"
+          - "hpke-js"

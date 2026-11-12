@@ -161,7 +161,7 @@ export class EcDhkemPrimitives extends NativeAlgorithm
   public async serializePrivateKey(key: CryptoKey): Promise<ArrayBuffer> {
     await this._setup();
     try {
-      const jwk = await (this._api as SubtleCrypto).exportKey("jwk", key);
+      const jwk = await this._exportJwk(key);
       if (!("d" in jwk)) {
         throw new Error("Not private key");
       }
@@ -257,29 +257,17 @@ export class EcDhkemPrimitives extends NativeAlgorithm
 
   public async derivePublicKey(key: CryptoKey): Promise<CryptoKey> {
     await this._setup();
-    const api = this._api as SubtleCrypto;
     try {
-      let jwk: JsonWebKey;
-      try {
-        jwk = await api.exportKey("jwk", key);
-      } catch {
-        // Firefox cannot export a JWK from an ECDH private key imported from
-        // a PKCS#8 without the public key (Mozilla bug 2000795), but its
-        // PKCS#8 re-export includes the public key and can be re-imported.
-        jwk = await api.exportKey(
-          "jwk",
-          await api.importKey(
-            "pkcs8",
-            await api.exportKey("pkcs8", key),
-            this._alg,
-            true,
-            KEM_USAGES,
-          ),
-        );
-      }
+      const jwk = await this._exportJwk(key);
       delete jwk["d"];
       delete jwk["key_ops"];
-      return await api.importKey("jwk", jwk, this._alg, true, []);
+      return await (this._api as SubtleCrypto).importKey(
+        "jwk",
+        jwk,
+        this._alg,
+        true,
+        [],
+      );
     } catch (e: unknown) {
       throw new DeserializeError(e);
     }
@@ -353,6 +341,30 @@ export class EcDhkemPrimitives extends NativeAlgorithm
       true,
       KEM_USAGES,
     );
+  }
+
+  private async _exportJwk(key: CryptoKey): Promise<JsonWebKey> {
+    const api = this._api as SubtleCrypto;
+    try {
+      return await api.exportKey("jwk", key);
+    } catch (e: unknown) {
+      if (key.type !== "private") {
+        throw e;
+      }
+      // Firefox cannot export a JWK from an ECDH private key imported from
+      // a PKCS#8 without the public key (Mozilla bug 2000795), but its
+      // PKCS#8 re-export includes the public key and can be re-imported.
+      return await api.exportKey(
+        "jwk",
+        await api.importKey(
+          "pkcs8",
+          await api.exportKey("pkcs8", key),
+          this._alg,
+          true,
+          KEM_USAGES,
+        ),
+      );
+    }
   }
 
   private async _deserializePkcs8Key(k: Uint8Array): Promise<CryptoKey> {

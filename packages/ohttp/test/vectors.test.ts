@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
-import { BHttpDecoder } from "@dajiaji/bhttp";
 
 import {
   Aes128Gcm,
@@ -9,8 +8,11 @@ import {
   HkdfSha256,
 } from "@hpke/core";
 
+import { decodeRequest, decodeResponse } from "../src/bhttp/decoder.ts";
 import { buildHeader } from "../src/encapsulation.ts";
+import { createOhttpServer } from "../src/server.ts";
 import { deserializeKeyConfig, serializeKeyConfig } from "../src/keyConfig.ts";
+import { bytesToHex, hexToBytes } from "./utils.ts";
 
 // RFC 9458 Appendix A test vectors
 const VECTORS = {
@@ -40,20 +42,6 @@ const VECTORS = {
   encapsulatedResponse:
     "c789e7151fcba46158ca84b04464910d86f9013e404feea014e7be4a441f234f857fbd",
 };
-
-function hexToBytes(hex: string): Uint8Array {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
-  }
-  return bytes;
-}
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
 
 /** Prepend a 2-byte length prefix to a raw KeyConfig to form application/ohttp-keys. */
 function addLengthPrefix(raw: Uint8Array): Uint8Array {
@@ -89,11 +77,19 @@ describe("RFC 9458 Appendix A test vectors", () => {
 
   it("should correctly decode the binary HTTP request", () => {
     const binaryRequest = hexToBytes(VECTORS.binaryRequest);
-    const decoder = new BHttpDecoder();
-    const request = decoder.decodeRequest(binaryRequest);
+    const request = decodeRequest(binaryRequest);
     assertEquals(request.method, "GET");
     assertEquals(new URL(request.url).hostname, "example.com");
     assertEquals(new URL(request.url).pathname, "/");
+  });
+
+  it("should correctly decode the (truncated) binary HTTP response", async () => {
+    const response = decodeResponse(hexToBytes(VECTORS.binaryResponse));
+    assertEquals(response.status, 200);
+    let fieldCount = 0;
+    response.headers.forEach(() => fieldCount++);
+    assertEquals(fieldCount, 0);
+    assertEquals((await response.arrayBuffer()).byteLength, 0);
   });
 
   it("should build the correct HPKE info for the encapsulated request header", () => {
@@ -160,8 +156,7 @@ describe("RFC 9458 Appendix A test vectors", () => {
     assertEquals(bytesToHex(plaintext), VECTORS.binaryRequest);
 
     // Verify we can decode it as a valid HTTP request
-    const decoder = new BHttpDecoder();
-    const request = decoder.decodeRequest(plaintext);
+    const request = decodeRequest(plaintext);
     assertEquals(request.method, "GET");
   });
 
@@ -251,10 +246,7 @@ describe("RFC 9458 Appendix A test vectors", () => {
     assertEquals(bytesToHex(responsePlaintext), VECTORS.binaryResponse);
   });
 
-  it("should decrypt the encapsulated response via OhttpServer + manual client decapsulation", async () => {
-    // Use our high-level OhttpServer to decapsulate the request
-    const { OhttpServer } = await import("../mod.ts");
-
+  it("should decapsulate the encapsulated request via createOhttpServer", async () => {
     const suite = new CipherSuite({
       kem: new DhkemX25519HkdfSha256(),
       kdf: new HkdfSha256(),
@@ -274,12 +266,11 @@ describe("RFC 9458 Appendix A test vectors", () => {
       true,
     );
 
-    const server = new OhttpServer({
+    const server = await createOhttpServer({
       keyId: 0x01,
       kem: new DhkemX25519HkdfSha256(),
-      privateKey: skR,
-      publicKey: pkR,
-      kdfAeadPairs: [
+      keyPair: { privateKey: skR, publicKey: pkR },
+      suites: [
         { kdf: new HkdfSha256(), aead: new Aes128Gcm() },
       ],
     });

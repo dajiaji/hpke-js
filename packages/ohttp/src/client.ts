@@ -1,166 +1,217 @@
-import { BHttpEncoder } from "@dajiaji/bhttp";
 import { CipherSuite } from "@hpke/core";
-import type { AeadInterface, KdfInterface, KemInterface } from "@hpke/common";
+import type { KemInterface } from "@hpke/common";
 
-import type { OhttpCipherSuite, OhttpKeyConfig } from "./keyConfig.ts";
-import { deserializeKeyConfig } from "./keyConfig.ts";
-import {
-  decapsulateResponse,
-  encapsulateRequest,
-  type RequestContext,
-} from "./encapsulation.ts";
+import { decodeResponse } from "./bhttp/decoder.ts";
+import { encodeRequest } from "./bhttp/encoder.ts";
+import { decapsulateResponse, encapsulateRequest } from "./encapsulation.ts";
 import { OhttpError } from "./errors.ts";
+import type { OhttpKeyConfig } from "./keyConfig.ts";
+import { deserializeKeyConfig } from "./keyConfig.ts";
+import { bindKdf, type OhttpSuite } from "./suite.ts";
 
-/** Parameters for constructing an OhttpClient. */
+/** Parameters for {@link createOhttpClient}. */
 export interface OhttpClientParams {
   /** KEM primitive instance to use. */
   kem: KemInterface;
-  /** KDF primitive instance to use. */
-  kdf: KdfInterface;
-  /** AEAD primitive instance to use. */
-  aead: AeadInterface;
-  /** Gateway's key configuration (raw `application/ohttp-keys` bytes or parsed). */
+  /**
+   * KDF/AEAD pairs the client supports. The first pair advertised by the
+   * gateway's key configuration that is included here is used.
+   */
+  suites: OhttpSuite[];
+  /**
+   * Gateway's key configuration: raw `application/ohttp-keys` bytes or a
+   * parsed configuration. When the raw bytes contain multiple
+   * configurations, the first one the client supports is used.
+   */
   keyConfig: Uint8Array | OhttpKeyConfig;
-  /** URL of the Oblivious Relay Resource. */
-  relayUrl: string | URL;
+  /**
+   * URL of the Oblivious Relay Resource. Required only for
+   * {@link OhttpClient.fetch}.
+   */
+  relayUrl?: string | URL;
 }
 
-/** Context returned by encapsulateRequest for manual relay communication. */
+/** Context returned by {@link OhttpClient.encapsulateRequest}. */
 export interface OhttpClientContext {
-  /** Encrypted request payload (`message/ohttp-req`). */
-  readonly encRequest: Uint8Array;
-  /** Decrypt the relay's encapsulated response. */
-  decapsulateResponse(encResponse: Uint8Array): Promise<Response>;
+  /** Encapsulated request (`message/ohttp-req`). */
+  readonly encapsulatedRequest: Uint8Array;
+  /** Decrypts the corresponding encapsulated response (`message/ohttp-res`). */
+  decapsulateResponse(encapsulatedResponse: Uint8Array): Promise<Response>;
 }
 
 /**
- * OHTTP Client (RFC 9458).
+ * OHTTP client (RFC 9458).
  *
- * Provides a fetch-like API that transparently encrypts requests and
- * decrypts responses via an Oblivious Relay.
+ * Created with {@link createOhttpClient}.
  */
-export class OhttpClient {
+export interface OhttpClient {
+  /**
+   * Sends an HTTP request through the Oblivious Relay Resource.
+   *
+   * The signature mirrors the standard `fetch()` API. Requires `relayUrl`.
+   */
+  fetch(input: Request | string | URL, init?: RequestInit): Promise<Response>;
+  /**
+   * Encapsulates a request without sending it, for manual communication
+   * with the relay.
+   */
+  encapsulateRequest(request: Request): Promise<OhttpClientContext>;
+}
+
+class OhttpClientImpl implements OhttpClient {
   private _suite: CipherSuite;
-  private _keyConfig: OhttpKeyConfig;
-  private _relayUrl: URL;
+  private _keyId: number;
+  private _publicKey: CryptoKey;
+  private _relayUrl: string | undefined;
 
-  constructor(params: OhttpClientParams) {
-    this._suite = new CipherSuite({
-      kem: params.kem,
-      kdf: params.kdf,
-      aead: params.aead,
-    });
-
-    if (params.keyConfig instanceof Uint8Array) {
-      const configs = deserializeKeyConfig(params.keyConfig);
-      if (configs.length === 0) {
-        throw new OhttpError("Empty key configuration");
-      }
-      this._keyConfig = configs[0];
-    } else {
-      this._keyConfig = params.keyConfig;
-    }
-
-    this._validateSuiteAgainstKeyConfig();
-    this._relayUrl = new URL(params.relayUrl.toString());
+  constructor(
+    suite: CipherSuite,
+    keyId: number,
+    publicKey: CryptoKey,
+    relayUrl: string | undefined,
+  ) {
+    this._suite = suite;
+    this._keyId = keyId;
+    this._publicKey = publicKey;
+    this._relayUrl = relayUrl;
   }
 
-  /**
-   * Send an HTTP request through the OHTTP relay.
-   *
-   * Signature mirrors the standard `fetch()` API.
-   */
   async fetch(
     input: Request | string | URL,
     init?: RequestInit,
   ): Promise<Response> {
+    if (this._relayUrl === undefined) {
+      throw new OhttpError("relayUrl is required to use fetch()");
+    }
     const request = input instanceof Request
       ? (init ? new Request(input, init) : input)
       : new Request(input, init);
 
     const ctx = await this.encapsulateRequest(request);
 
-    const relayResponse = await fetch(this._relayUrl.toString(), {
+    const relayResponse = await fetch(this._relayUrl, {
       method: "POST",
       headers: { "Content-Type": "message/ohttp-req" },
-      body: ctx.encRequest.slice().buffer as ArrayBuffer,
+      body: ctx.encapsulatedRequest.slice().buffer as ArrayBuffer,
     });
-
     if (!relayResponse.ok) {
-      throw new OhttpError(
-        `Relay returned HTTP ${relayResponse.status}`,
-      );
+      throw new OhttpError(`Relay returned HTTP ${relayResponse.status}`);
     }
 
-    const encResponse = new Uint8Array(await relayResponse.arrayBuffer());
-    return ctx.decapsulateResponse(encResponse);
+    return ctx.decapsulateResponse(
+      new Uint8Array(await relayResponse.arrayBuffer()),
+    );
   }
 
-  /**
-   * Low-level API: encapsulate a request for manual relay communication.
-   */
   async encapsulateRequest(request: Request): Promise<OhttpClientContext> {
-    const config = this._keyConfig;
-
-    const publicKey = await this._suite.kem.importKey(
-      "raw",
-      config.publicKey.buffer as ArrayBuffer,
-      true,
-    );
-
-    const encoder = new BHttpEncoder();
-    const binaryRequest = await encoder.encodeRequest(request);
-
     const result = await encapsulateRequest(
       this._suite,
-      config.keyId,
-      config.kem,
+      this._keyId,
+      this._suite.kem.id,
       this._suite.kdf.id,
       this._suite.aead.id,
-      publicKey,
-      binaryRequest,
+      this._publicKey,
+      await encodeRequest(request),
     );
-
     const reqCtx = result.context;
-
     return {
-      encRequest: result.encRequest,
-      decapsulateResponse(
-        encResponse: Uint8Array,
+      encapsulatedRequest: result.encRequest,
+      async decapsulateResponse(
+        encapsulatedResponse: Uint8Array,
       ): Promise<Response> {
-        return decapResponse(reqCtx, encResponse);
+        return decodeResponse(
+          await decapsulateResponse(reqCtx, encapsulatedResponse),
+        );
       },
     };
   }
-
-  private _validateSuiteAgainstKeyConfig(): void {
-    const config = this._keyConfig;
-    if (this._suite.kem.id !== config.kem) {
-      throw new OhttpError(
-        `KEM mismatch: suite has 0x${this._suite.kem.id.toString(16)}, ` +
-          `key config has 0x${config.kem.toString(16)}`,
-      );
-    }
-    const kdfId = this._suite.kdf.id;
-    const aeadId = this._suite.aead.id;
-    const found = config.cipherSuites.some(
-      (cs: OhttpCipherSuite) => cs.kdf === kdfId && cs.aead === aeadId,
-    );
-    if (!found) {
-      throw new OhttpError(
-        `KDF/AEAD pair (0x${kdfId.toString(16)}, 0x${aeadId.toString(16)}) ` +
-          `not found in key configuration`,
-      );
-    }
-  }
 }
 
-async function decapResponse(
-  reqCtx: RequestContext,
-  encResponse: Uint8Array,
-): Promise<Response> {
-  const { BHttpDecoder } = await import("@dajiaji/bhttp");
-  const binaryResponse = await decapsulateResponse(reqCtx, encResponse);
-  const decoder = new BHttpDecoder();
-  return decoder.decodeResponse(binaryResponse.buffer as ArrayBuffer);
+/**
+ * Selects the key configuration and KDF/AEAD pair to use. Key
+ * configurations and their cipher suites are examined in the gateway's
+ * order of preference (RFC 9458 Section 3.1).
+ */
+function selectKeyConfig(
+  params: OhttpClientParams,
+): { config: OhttpKeyConfig; suite: OhttpSuite } {
+  const configs = params.keyConfig instanceof Uint8Array
+    ? deserializeKeyConfig(params.keyConfig)
+    : [params.keyConfig];
+  if (configs.length === 0) {
+    throw new OhttpError("Empty key configuration");
+  }
+  const kemId = params.kem.id;
+  let kemMatched = false;
+  for (const config of configs) {
+    if (config.kem !== kemId) {
+      continue;
+    }
+    kemMatched = true;
+    for (const cs of config.cipherSuites) {
+      const suite = params.suites.find(
+        (s) => s.kdf.id === cs.kdf && s.aead.id === cs.aead,
+      );
+      if (suite) {
+        return { config, suite };
+      }
+    }
+  }
+  if (!kemMatched) {
+    throw new OhttpError(
+      `KEM 0x${kemId.toString(16)} not found in key configuration`,
+    );
+  }
+  throw new OhttpError(
+    "No mutually supported KDF/AEAD pair in key configuration",
+  );
+}
+
+/**
+ * Creates an OHTTP client (RFC 9458).
+ *
+ * The gateway's key configuration is validated against the given
+ * primitives and its public key is imported once, up front.
+ *
+ * @throws {OhttpError} if the key configuration is invalid or not supported
+ *   by the given primitives.
+ */
+export async function createOhttpClient(
+  params: OhttpClientParams,
+): Promise<OhttpClient> {
+  if (params.suites.length === 0) {
+    throw new OhttpError("At least one KDF/AEAD pair is required");
+  }
+  const { config, suite: pair } = selectKeyConfig(params);
+  const suite = new CipherSuite({
+    kem: params.kem,
+    // Keep the KDF state of this suite independent of the given instance.
+    kdf: bindKdf(pair.kdf),
+    aead: pair.aead,
+  });
+
+  let publicKey: CryptoKey;
+  try {
+    publicKey = await suite.kem.importKey(
+      "raw",
+      config.publicKey.slice().buffer as ArrayBuffer,
+      true,
+    );
+  } catch (e: unknown) {
+    throw new OhttpError(
+      `Invalid public key in key configuration: ${
+        e instanceof Error ? e.message : String(e)
+      }`,
+    );
+  }
+
+  let relayUrl: string | undefined;
+  if (params.relayUrl !== undefined) {
+    try {
+      relayUrl = new URL(params.relayUrl).toString();
+    } catch {
+      throw new OhttpError(`Invalid relayUrl: ${params.relayUrl}`);
+    }
+  }
+  return new OhttpClientImpl(suite, config.keyId, publicKey, relayUrl);
 }

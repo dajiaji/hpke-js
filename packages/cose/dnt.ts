@@ -38,8 +38,6 @@ await build({
     } catch {
       // Test directories not created (--skip-test); skip.
     }
-    // Copy sample files.
-    copySync("samples/node", "../../npm/samples/cose", { overwrite: true });
     // Copy runtime test files.
     copySync(
       "test/runtimes/browsers",

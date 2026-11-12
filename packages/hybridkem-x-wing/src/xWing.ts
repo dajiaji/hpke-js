@@ -36,6 +36,65 @@ const ALG_NAME = "X-Wing";
 // deno-fmt-ignore
 const XWING_LABEL = new Uint8Array([92, 46, 47, 47, 94, 92]);
 
+// The DER-encoded PKCS #8 PrivateKeyInfo prefix for a raw 32-byte X25519
+// private key (RFC 8410).
+// deno-fmt-ignore
+const X25519_PKCS8_PREFIX = new Uint8Array([
+  0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06,
+  0x03, 0x2b, 0x65, 0x6e, 0x04, 0x22, 0x04, 0x20,
+]);
+
+// X25519 field prime: 2^255 - 19
+const X25519_P =
+  0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffedn;
+
+// The u-coordinates whose order divides the cofactor (on the curve and on its
+// quadratic twist). Same blocklist as the Montgomery ladder of @hpke/common
+// (and libsodium). Non-canonical encodings are reduced modulo p first, so
+// p and p + 1 collapse onto 0 and 1.
+const X25519_LOW_ORDER_U = new Set<bigint>([
+  0n,
+  1n,
+  X25519_P - 1n,
+  325606250916557431795983626356110631294008115727848805560023387167927233504n,
+  39382357235489614581723060781553021112529911719440698176882885853963445705823n,
+]);
+
+/**
+ * Checks whether the X25519 public key (u-coordinate) is of low order.
+ * The u-coordinate is decoded as in RFC 7748: the most significant bit is
+ * masked, and non-canonical values are reduced modulo p.
+ */
+function isLowOrderX25519(u: Uint8Array): boolean {
+  let n = 0n;
+  for (let i = 31; i >= 0; i--) {
+    n = (n << 8n) | BigInt(i === 31 ? u[i] & 0x7f : u[i]);
+  }
+  return X25519_LOW_ORDER_U.has(n % X25519_P);
+}
+
+// The expanded decapsulation keys ([skM, skX, pkM, pkX]) derived from the
+// private key seeds. Expanding a seed (SHAKE256, ML-KEM key derivation and
+// X25519 public key computation) costs about as much as decapsulation itself,
+// so it is done once per private key object. The seed is kept to detect changes
+// of the key material. Module-scoped so that it is not reachable from the
+// outside.
+const EXPANDED_KEYS = new WeakMap<
+  CryptoKey,
+  { seed: Uint8Array; keys: [Uint8Array, Uint8Array, Uint8Array, Uint8Array] }
+>();
+
+function equalBytes(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.byteLength !== b.byteLength) {
+    return false;
+  }
+  let diff = 0;
+  for (let i = 0; i < a.byteLength; i++) {
+    diff |= a[i] ^ b[i];
+  }
+  return diff === 0;
+}
+
 function combiner(
   ssM: Uint8Array,
   ssX: Uint8Array,
@@ -84,6 +143,9 @@ export class XWing implements KemInterface {
   public readonly auth: boolean = false;
   protected _m: MlKem768;
   private _api: Crypto | undefined = undefined;
+  // Whether the Web Cryptography API supports X25519.
+  // `undefined` means it has not been probed yet.
+  private _nativeX25519: boolean | undefined = undefined;
 
   constructor() {
     this._m = new MlKem768();
@@ -294,8 +356,8 @@ export class XWing implements KemInterface {
     try {
       const pkM = pk.subarray(0, 1184);
       const pkX = pk.subarray(1184, 1216);
-      const ctX = x25519.getPublicKey(ekX);
-      const ssX = x25519.getSharedSecret(ekX, pkX);
+      const ctX = await this._x25519PublicKey(ekX);
+      const ssX = await this._x25519SharedSecret(ekX, pkX);
       const [ctM, ssM] = await this._m.encap(pkM, ekM);
       return {
         sharedSecret: combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer,
@@ -335,12 +397,20 @@ export class XWing implements KemInterface {
     }
     await this._setup();
     try {
-      const [skM, skX, _pkM, pkX] = await this._expandDecapsulationKey(sk);
+      let cached = EXPANDED_KEYS.get(rSk);
+      if (cached === undefined || !equalBytes(cached.seed, sk)) {
+        // Snapshot the seed before awaiting so that the cached seed always
+        // matches the seed the expansion was derived from.
+        const seed = sk.slice();
+        cached = { seed, keys: await this._expandDecapsulationKey(seed) };
+        EXPANDED_KEYS.set(rSk, cached);
+      }
+      const [skM, skX, _pkM, pkX] = cached.keys;
       const ct = new Uint8Array(enc);
       const ctM = ct.subarray(0, 1088);
       const ctX = ct.subarray(1088);
       const ssM = await this._m.decap(ctM, skM);
-      const ssX = x25519.getSharedSecret(skX, ctX);
+      const ssX = await this._x25519SharedSecret(skX, ctX);
       return combiner(ssM, ssX, ctX, pkX).buffer as ArrayBuffer;
     } catch (e: unknown) {
       throw new DecapError(e);
@@ -382,8 +452,123 @@ export class XWing implements KemInterface {
     const expanded = shake256.create({ dkLen: 96 }).update(sk).digest();
     const [pkM, skM] = await this._m.deriveKeyPair(expanded.subarray(0, 64));
     const skX = expanded.subarray(64, 96);
-    const pkX = x25519.getPublicKey(skX);
+    const pkX = await this._x25519PublicKey(skX);
     return [skM, skX, pkM, pkX];
+  }
+
+  /**
+   * Imports the raw X25519 private key into the Web Cryptography API.
+   *
+   * On the first call, this also probes whether the Web Cryptography API
+   * supports X25519. If it does not, `undefined` is returned and the
+   * JavaScript implementation is used from then on.
+   * @param sk The raw 32-byte X25519 private key.
+   * @param extractable Whether the imported key can be exported.
+   * @returns {Promise<CryptoKey | undefined>} A promise that resolves with the imported key, or `undefined` if X25519 is not supported.
+   */
+  private async _importX25519PrivateKey(
+    sk: Uint8Array,
+    extractable: boolean,
+  ): Promise<CryptoKey | undefined> {
+    if (this._nativeX25519 === false) {
+      return undefined;
+    }
+    await this._setup();
+    const pkcs8 = new Uint8Array(X25519_PKCS8_PREFIX.length + sk.length);
+    pkcs8.set(X25519_PKCS8_PREFIX, 0);
+    pkcs8.set(sk, X25519_PKCS8_PREFIX.length);
+    // WebKit rejects a PKCS#8 private key whose first byte is 0x00. Decoding
+    // the scalar clears the low bits of the first byte (RFC 7748), so setting
+    // the lowest bit does not change the public key or the shared secret.
+    // The imported key is never exported as a private key.
+    pkcs8[X25519_PKCS8_PREFIX.length] |= 0x01;
+    try {
+      const key = await (this._api as Crypto).subtle.importKey(
+        "pkcs8",
+        pkcs8,
+        { name: "X25519" },
+        extractable,
+        ["deriveBits"],
+      );
+      this._nativeX25519 = true;
+      return key;
+    } catch (e: unknown) {
+      if (this._nativeX25519 === true) {
+        throw e;
+      }
+      // X25519 is not supported by the Web Cryptography API.
+      this._nativeX25519 = false;
+      return undefined;
+    } finally {
+      pkcs8.fill(0);
+    }
+  }
+
+  /**
+   * Computes the X25519 public key for the private key.
+   *
+   * The fixed-base scalar multiplication is delegated to the Web Cryptography
+   * API when it supports X25519, which is much faster than the JavaScript
+   * Montgomery ladder. Otherwise, it falls back to the JavaScript
+   * implementation.
+   * @param sk The raw 32-byte X25519 private key.
+   * @returns {Promise<Uint8Array>} A promise that resolves with the raw 32-byte public key.
+   */
+  private async _x25519PublicKey(sk: Uint8Array): Promise<Uint8Array> {
+    const key = await this._importX25519PrivateKey(sk, true);
+    if (key === undefined) {
+      return x25519.getPublicKey(sk);
+    }
+    const jwk = await (this._api as Crypto).subtle.exportKey("jwk", key);
+    const pk = base64UrlToBytes(jwk.x as string);
+    if (pk.byteLength !== 32) {
+      throw new Error("Invalid length of X25519 public key");
+    }
+    return pk;
+  }
+
+  /**
+   * Computes the X25519 shared secret.
+   *
+   * Low-order public keys are rejected before any computation with the
+   * private key, in the same way as the JavaScript implementation. The
+   * scalar multiplication is delegated to the Web Cryptography API when it
+   * supports X25519. Otherwise, it falls back to the JavaScript
+   * implementation.
+   * @param sk The raw 32-byte X25519 private key.
+   * @param pk The raw 32-byte X25519 public key (u-coordinate).
+   * @returns {Promise<Uint8Array>} A promise that resolves with the raw 32-byte shared secret.
+   */
+  private async _x25519SharedSecret(
+    sk: Uint8Array,
+    pk: Uint8Array,
+  ): Promise<Uint8Array> {
+    if (pk.byteLength !== 32) {
+      throw new Error("Invalid length of X25519 public key");
+    }
+    if (isLowOrderX25519(pk)) {
+      throw new Error("invalid private or public key received");
+    }
+    const key = await this._importX25519PrivateKey(sk, false);
+    if (key === undefined) {
+      return x25519.getSharedSecret(sk, pk);
+    }
+    const subtle = (this._api as Crypto).subtle;
+    const pub = await subtle.importKey(
+      "raw",
+      toArrayBuffer(pk),
+      { name: "X25519" },
+      true,
+      [],
+    );
+    const ss = new Uint8Array(
+      await subtle.deriveBits({ name: "X25519", public: pub }, key, 256),
+    );
+    // Unreachable after the low-order check; kept as defense in depth.
+    if (ss.every((b) => b === 0)) {
+      throw new Error("invalid private or public key received");
+    }
+    return ss;
   }
 
   private _serializePublicKey(k: XCryptoKey): Promise<ArrayBuffer> {

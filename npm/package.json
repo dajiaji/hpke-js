@@ -21,8 +21,7 @@
     "packages/ohttp",
     "test/**/*/runtimes/browsers",
     "test/**/*/runtimes/cloudflare",
-    "test/**/*/runtimes/fastly",
-    "samples/**/*"
+    "test/**/*/runtimes/fastly"
   ],
   "devDependencies": {
     "typedoc": "0.28.20"

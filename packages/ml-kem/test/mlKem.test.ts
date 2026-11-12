@@ -179,6 +179,48 @@ describe("MlKem", () => {
     });
   });
 
+  describe("expanded decapsulation key cache", () => {
+    for (const Kem of [MlKem512, MlKem768, MlKem1024]) {
+      it(`should decapsulate repeatedly with the same key (${Kem.name})`, async () => {
+        const kem = new Kem();
+        const kp = await kem.generateKeyPair();
+        for (const recipientKey of [kp.privateKey, kp, kp.privateKey]) {
+          const { enc, sharedSecret } = await kem.encap({
+            recipientPublicKey: kp.publicKey,
+          });
+          assertEquals(await kem.decap({ enc, recipientKey }), sharedSecret);
+        }
+      });
+
+      it(`should not use a stale expansion after the key material changes (${Kem.name})`, async () => {
+        const kem = new Kem();
+        const api = await loadCrypto();
+        const seed1 = api.getRandomValues(new Uint8Array(kem.privateKeySize));
+        const seed2 = api.getRandomValues(new Uint8Array(kem.privateKeySize));
+        const kp1 = await kem.deriveKeyPair(seed1);
+        const kp2 = await kem.deriveKeyPair(seed2);
+
+        // Populates the cache for kp1.privateKey.
+        const e1 = await kem.encap({ recipientPublicKey: kp1.publicKey });
+        assertEquals(
+          await kem.decap({ enc: e1.enc, recipientKey: kp1.privateKey }),
+          e1.sharedSecret,
+        );
+
+        // serializePrivateKey() exposes the underlying buffer, so the key
+        // material of the same key object can be changed afterwards.
+        new Uint8Array(await kem.serializePrivateKey(kp1.privateKey)).set(
+          seed2,
+        );
+        const e2 = await kem.encap({ recipientPublicKey: kp2.publicKey });
+        assertEquals(
+          await kem.decap({ enc: e2.enc, recipientKey: kp1.privateKey }),
+          e2.sharedSecret,
+        );
+      });
+    }
+  });
+
   describe("importKey", () => {
     it("with valid raw - as ArrayBuffer", async () => {
       const kem = new MlKem768();

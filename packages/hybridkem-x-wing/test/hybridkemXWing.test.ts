@@ -260,6 +260,271 @@ describe("XWing", () => {
     });
   });
 
+  describe("expanded decapsulation key cache", () => {
+    it("should decapsulate repeatedly with the same key", async () => {
+      const kem = new XWing();
+      const kp = await kem.generateKeyPair();
+      for (const recipientKey of [kp.privateKey, kp, kp.privateKey]) {
+        const { enc, sharedSecret } = await kem.encap({
+          recipientPublicKey: kp.publicKey,
+        });
+        assertEquals(await kem.decap({ enc, recipientKey }), sharedSecret);
+      }
+    });
+
+    it("should match the official test vectors after caching", async () => {
+      const kem = new XWing();
+      for (const v of TEST_VECTORS) {
+        const recipientKey = await kem.deserializePrivateKey(hexToBytes(v.sk));
+        for (let i = 0; i < 2; i++) {
+          assertEquals(
+            new Uint8Array(
+              await kem.decap({ enc: hexToBytes(v.ct), recipientKey }),
+            ),
+            hexToBytes(v.ss),
+          );
+        }
+      }
+    });
+
+    it("should not use a stale expansion after the key material changes", async () => {
+      const kem = new XWing();
+      const api = await loadCrypto();
+      const kp1 = await kem.generateKeyPairDerand(
+        api.getRandomValues(new Uint8Array(32)),
+      );
+      const seed2 = api.getRandomValues(new Uint8Array(32));
+      const kp2 = await kem.generateKeyPairDerand(seed2);
+
+      // Populates the cache for kp1.privateKey.
+      const e1 = await kem.encap({ recipientPublicKey: kp1.publicKey });
+      assertEquals(
+        await kem.decap({ enc: e1.enc, recipientKey: kp1.privateKey }),
+        e1.sharedSecret,
+      );
+
+      // serializePrivateKey() exposes the underlying buffer, so the key
+      // material of the same key object can be changed afterwards.
+      new Uint8Array(await kem.serializePrivateKey(kp1.privateKey)).set(seed2);
+      const e2 = await kem.encap({ recipientPublicKey: kp2.publicKey });
+      assertEquals(
+        await kem.decap({ enc: e2.enc, recipientKey: kp1.privateKey }),
+        e2.sharedSecret,
+      );
+    });
+  });
+
+  describe("X25519 computation", () => {
+    // Accesses the private state that selects the X25519 implementation.
+    type XWingInternals = {
+      _api: Crypto | undefined;
+      _nativeX25519: boolean | undefined;
+    };
+
+    // Whether the Web Cryptography API of the runtime supports X25519 (e.g.
+    // Node.js < 18.4 does not). Probed in each test because the UMD test
+    // build of dnt does not allow top-level await.
+    async function supportsNativeX25519(): Promise<boolean> {
+      const api = await loadCrypto();
+      const pkcs8 = new Uint8Array(48);
+      pkcs8.set(hexToBytes("302e020100300506032b656e04220420"), 0);
+      pkcs8[16] = 1;
+      try {
+        await api.subtle.importKey(
+          "pkcs8",
+          pkcs8,
+          { name: "X25519" },
+          false,
+          ["deriveBits"],
+        );
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    async function publicKeyOf(kem: XWing, sk: Uint8Array) {
+      const kp = await kem.generateKeyPairDerand(sk);
+      return new Uint8Array(await kem.serializePublicKey(kp.publicKey));
+    }
+
+    it("uses the Web Cryptography API only when X25519 is supported", async () => {
+      const kem = new XWing();
+      await kem.generateKeyPairDerand(new Uint8Array(32));
+      assertEquals(
+        (kem as unknown as XWingInternals)._nativeX25519,
+        await supportsNativeX25519(),
+      );
+    });
+
+    it("matches the JavaScript implementation", async () => {
+      const native = new XWing();
+      const js = new XWing();
+      (js as unknown as XWingInternals)._nativeX25519 = false;
+      const api = await loadCrypto();
+      const sks = [
+        new Uint8Array(32),
+        new Uint8Array(32).fill(0xff),
+        ...Array.from(
+          { length: 16 },
+          () => api.getRandomValues(new Uint8Array(32)),
+        ),
+      ];
+      for (const sk of sks) {
+        assertEquals(await publicKeyOf(native, sk), await publicKeyOf(js, sk));
+      }
+      assertEquals(
+        (native as unknown as XWingInternals)._nativeX25519,
+        await supportsNativeX25519(),
+      );
+      assertEquals((js as unknown as XWingInternals)._nativeX25519, false);
+    });
+
+    // Encodes `n` as a 32-byte little-endian u-coordinate.
+    function encodeU(n: bigint): Uint8Array {
+      const u = new Uint8Array(32);
+      for (let i = 0; i < 32; i++) {
+        u[i] = Number(n & 0xffn);
+        n >>= 8n;
+      }
+      return u;
+    }
+    const P = (1n << 255n) - 19n;
+    const LOW_ORDER_U = [
+      0n,
+      1n,
+      P - 1n,
+      325606250916557431795983626356110631294008115727848805560023387167927233504n,
+      39382357235489614581723060781553021112529911719440698176882885853963445705823n,
+    ];
+
+    // Returns the X25519 part of the shared secret via encap with a fixed ekm.
+    async function encapWith(kem: XWing, pkX: Uint8Array, ekX: Uint8Array) {
+      const pk = hexToBytes(TEST_VECTORS[0].pk);
+      pk.set(pkX, 1184);
+      const ekm = new Uint8Array(64);
+      ekm.set(ekX, 32);
+      return await kem.encap({
+        recipientPublicKey: await kem.deserializePublicKey(pk),
+        ekm,
+      });
+    }
+
+    it("computes the same shared secret as the JavaScript implementation", async () => {
+      const native = new XWing();
+      const js = new XWing();
+      (js as unknown as XWingInternals)._nativeX25519 = false;
+      const api = await loadCrypto();
+      const us = [
+        // Base point, non-canonical values and the masked most significant bit.
+        encodeU(9n),
+        encodeU(P + 9n),
+        encodeU((1n << 255n) - 1n),
+        encodeU(9n | (1n << 255n)),
+        ...Array.from(
+          { length: 8 },
+          () => api.getRandomValues(new Uint8Array(32)),
+        ),
+      ];
+      for (const u of us) {
+        const ekX = api.getRandomValues(new Uint8Array(32));
+        const a = await encapWith(native, u, ekX);
+        const b = await encapWith(js, u, ekX);
+        assertEquals(new Uint8Array(a.enc), new Uint8Array(b.enc));
+        assertEquals(
+          new Uint8Array(a.sharedSecret),
+          new Uint8Array(b.sharedSecret),
+        );
+      }
+      assertEquals(
+        (native as unknown as XWingInternals)._nativeX25519,
+        await supportsNativeX25519(),
+      );
+
+      // decap: the recipient side of the same exchange.
+      const sk = api.getRandomValues(new Uint8Array(32));
+      const recipient = await native.generateKeyPairDerand(sk);
+      const { enc, sharedSecret } = await native.encap({
+        recipientPublicKey: recipient.publicKey,
+      });
+      for (const kem of [native, js]) {
+        assertEquals(
+          sharedSecret,
+          await kem.decap({
+            enc,
+            recipientKey: await kem.deserializePrivateKey(sk),
+          }),
+        );
+      }
+    });
+
+    it("rejects every low-order X25519 public key in both implementations", async () => {
+      const native = new XWing();
+      const js = new XWing();
+      (js as unknown as XWingInternals)._nativeX25519 = false;
+      const sk = hexToBytes(TEST_VECTORS[0].sk);
+      const ct = hexToBytes(TEST_VECTORS[0].ct);
+      const highBit = 1n << 255n;
+      const us = [
+        ...LOW_ORDER_U,
+        // Non-canonical encodings of 0 and 1.
+        P,
+        P + 1n,
+        ...LOW_ORDER_U.map((u) => u | highBit),
+      ];
+      for (const kem of [native, js]) {
+        for (const u of us) {
+          await assertRejects(
+            () => encapWith(kem, encodeU(u), new Uint8Array(32).fill(7)),
+            EncapError,
+            "invalid private or public key received",
+          );
+          const enc = ct.slice();
+          enc.set(encodeU(u), 1088);
+          await assertRejects(
+            async () =>
+              await kem.decap({
+                enc,
+                recipientKey: await kem.deserializePrivateKey(sk),
+              }),
+            DecapError,
+            "invalid private or public key received",
+          );
+        }
+      }
+    });
+
+    it("falls back to the JavaScript implementation if X25519 is not supported", async () => {
+      const api = await loadCrypto();
+      const kem = new XWing();
+      const internals = kem as unknown as XWingInternals;
+      internals._api = {
+        getRandomValues: api.getRandomValues.bind(api),
+        subtle: {
+          importKey: () =>
+            Promise.reject(
+              new DOMException("X25519 is not supported", "NotSupportedError"),
+            ),
+        },
+      } as unknown as Crypto;
+      const sk = api.getRandomValues(new Uint8Array(32));
+      const pk = await publicKeyOf(kem, sk);
+      assertEquals(internals._nativeX25519, false);
+      assertEquals(pk, await publicKeyOf(new XWing(), sk));
+
+      const { enc, sharedSecret } = await kem.encap({
+        recipientPublicKey: await kem.deserializePublicKey(pk),
+      });
+      assertEquals(
+        sharedSecret,
+        await kem.decap({
+          enc,
+          recipientKey: await kem.deserializePrivateKey(sk),
+        }),
+      );
+    });
+  });
+
   describe("importKey", () => {
     it("with valid raw - as ArrayBuffer", async () => {
       const kem = new XWing();

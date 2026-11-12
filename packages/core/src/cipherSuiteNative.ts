@@ -36,6 +36,11 @@ import { RecipientContextImpl } from "./recipientContext.ts";
 import { SenderContextImpl } from "./senderContext.ts";
 import { checkAuthSupport } from "./utils.ts";
 
+// psk_id_hash for the empty psk_id (i.e., the Base and Auth modes), which is a
+// constant for each suite. Module-scoped so that it is not reachable from the
+// outside.
+const EMPTY_PSK_ID_HASHES = new WeakMap<CipherSuiteNative, ArrayBuffer>();
+
 // b"base_nonce"
 // deno-fmt-ignore
 const LABEL_BASE_NONCE = new Uint8Array([
@@ -317,18 +322,16 @@ export class CipherSuiteNative extends NativeAlgorithm {
     const pskId = params.psk === undefined
       ? EMPTY
       : toUint8Array(params.psk.id);
-    const pskIdHash = await this._kdf.labeledExtract(
-      EMPTY,
-      LABEL_PSK_ID_HASH,
-      pskId,
-    );
-
     const info = params.info === undefined ? EMPTY : toUint8Array(params.info);
-    const infoHash = await this._kdf.labeledExtract(
-      EMPTY,
-      LABEL_INFO_HASH,
-      info,
-    );
+    const noPskId = pskId.byteLength === 0;
+    const [pskIdHash, infoHash] = await Promise.all([
+      (noPskId && EMPTY_PSK_ID_HASHES.get(this)) ||
+      this._kdf.labeledExtract(EMPTY, LABEL_PSK_ID_HASH, pskId),
+      this._kdf.labeledExtract(EMPTY, LABEL_INFO_HASH, info),
+    ]);
+    if (noPskId) {
+      EMPTY_PSK_ID_HASHES.set(this, pskIdHash);
+    }
 
     const keyScheduleContext = concat(
       new Uint8Array([mode]),
@@ -339,51 +342,31 @@ export class CipherSuiteNative extends NativeAlgorithm {
     const psk = params.psk === undefined ? EMPTY : toUint8Array(params.psk.key);
     const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
 
-    const exporterSecretInfo = this._kdf.buildLabeledInfo(
-      LABEL_EXP,
-      keyScheduleContext,
-      this._kdf.hashSize,
-    );
-    const exporterSecret = await this._kdf.extractAndExpand(
-      sharedSecret,
-      ikm,
-      exporterSecretInfo,
-      this._kdf.hashSize,
-    );
-
-    if (this._aead.id === 0xffff /* AeadId.ExportOnly */) {
-      return { aead: this._aead, exporterSecret: exporterSecret };
-    }
-
-    const keyInfo = this._kdf.buildLabeledInfo(
-      LABEL_KEY,
-      keyScheduleContext,
-      this._aead.keySize,
-    );
-    const key = await this._kdf.extractAndExpand(
-      sharedSecret,
-      ikm,
-      keyInfo,
-      this._aead.keySize,
+    // exporter_secret, key and base_nonce are derived concurrently.
+    const exportOnly = this._aead.id === 0xffff; /* AeadId.ExportOnly */
+    const [exporterSecret, key, baseNonce] = await Promise.all(
+      (
+        [
+          [LABEL_EXP, this._kdf.hashSize],
+          [LABEL_KEY, this._aead.keySize],
+          [LABEL_BASE_NONCE, this._aead.nonceSize],
+        ] as const
+      ).slice(0, exportOnly ? 1 : 3).map(([label, len]) =>
+        this._kdf.extractAndExpand(
+          sharedSecret,
+          ikm,
+          this._kdf.buildLabeledInfo(label, keyScheduleContext, len),
+          len,
+        )
+      ),
     );
 
-    const baseNonceInfo = this._kdf.buildLabeledInfo(
-      LABEL_BASE_NONCE,
-      keyScheduleContext,
-      this._aead.nonceSize,
-    );
-    const baseNonce = await this._kdf.extractAndExpand(
-      sharedSecret,
-      ikm,
-      baseNonceInfo,
-      this._aead.nonceSize,
-    );
-
+    // For ExportOnly, key and baseNonce are undefined.
     return {
       aead: this._aead,
       exporterSecret: exporterSecret,
       key: key,
-      baseNonce: new Uint8Array(baseNonce),
+      baseNonce: baseNonce && new Uint8Array(baseNonce),
       seq: 0,
     };
   }
