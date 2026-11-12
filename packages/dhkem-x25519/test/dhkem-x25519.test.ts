@@ -8,11 +8,27 @@ import {
   CipherSuite,
   ExportOnly,
   HkdfSha256,
+  InvalidParamError,
   KdfId,
   KemId,
 } from "@hpke/core";
 
 import { DhkemX25519HkdfSha256 } from "../mod.ts";
+
+function bytesToBase64Url(bytes: Uint8Array): string {
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function hexToBytes(hex: string): Uint8Array {
+  return Uint8Array.from(hex.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)));
+}
+
+function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
+  return a.length === b.length && a.every((byte, i) => byte === b[i]);
+}
 
 describe("DhkemX25519HkdfSha256", () => {
   describe("with valid parameters", () => {
@@ -74,6 +90,52 @@ describe("deriveKeyPair", () => {
       assertEquals(kp.privateKey.usages.length, 1);
       assertEquals(kp.privateKey.usages[0], "deriveBits");
     });
+
+    it("should match RFC 9180 A.1.1 for a fixed IKM", async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      const ikm = hexToBytes(
+        "7268600d403fce431561aef583ee1613527cff655c1343f29812e66706df3234",
+      );
+      const first = await kem.deriveKeyPair(ikm);
+      const second = await kem.deriveKeyPair(ikm);
+
+      assertEquals(
+        new Uint8Array(await kem.serializePrivateKey(first.privateKey)),
+        new Uint8Array(await kem.serializePrivateKey(second.privateKey)),
+      );
+      assertEquals(
+        new Uint8Array(await kem.serializePublicKey(first.publicKey)),
+        new Uint8Array(await kem.serializePublicKey(second.publicKey)),
+      );
+      assertEquals(
+        new Uint8Array(await kem.serializePrivateKey(first.privateKey)),
+        hexToBytes(
+          "52c4a758a802cd8b936eceea314432798d5baf2d7e9235dc084ab1b9cfa2f736",
+        ),
+      );
+      assertEquals(
+        new Uint8Array(await kem.serializePublicKey(first.publicKey)),
+        hexToBytes(
+          "37fda3567bdbd628e88668c3c8d7e97d1d1253b6d4ea6d44c150f741f1bf4431",
+        ),
+      );
+    });
+
+    it("should accept an IKM at the HPKE input limit", async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      const keyPair = await kem.deriveKeyPair(new Uint8Array(8192));
+      assertEquals(keyPair.privateKey.type, "private");
+    });
+  });
+
+  describe("with invalid parameters", () => {
+    it("should reject an IKM larger than the HPKE input limit", async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      await assertRejects(
+        () => kem.deriveKeyPair(new Uint8Array(8193)),
+        InvalidParamError,
+      );
+    });
   });
 });
 
@@ -130,6 +192,32 @@ describe("importKey", () => {
       assertEquals(privKey.usages.length, 0);
       // assertEquals(privKey.usages[0], "deriveBits");
     });
+
+    it("should import matching public and private JWKs", async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      const kp = await kem.generateKeyPair();
+      const sk = new Uint8Array(await kem.serializePrivateKey(kp.privateKey));
+      const pk = new Uint8Array(await kem.serializePublicKey(kp.publicKey));
+      const importedSk = await kem.importKey("jwk", {
+        kty: "OKP",
+        crv: "X25519",
+        d: bytesToBase64Url(sk),
+      }, false);
+      const importedPk = await kem.importKey("jwk", {
+        kty: "OKP",
+        crv: "X25519",
+        x: bytesToBase64Url(pk),
+      }, true);
+
+      assertEquals(
+        new Uint8Array(await kem.serializePrivateKey(importedSk)),
+        sk,
+      );
+      assertEquals(
+        new Uint8Array(await kem.serializePublicKey(importedPk)),
+        pk,
+      );
+    });
   });
 
   describe("with invalid parameters", () => {
@@ -160,6 +248,58 @@ describe("importKey", () => {
         Error,
       );
     });
+
+    it("should reject JWKs for another curve or key type", async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      await assertRejects(
+        () =>
+          kem.importKey(
+            "jwk",
+            { kty: "EC", crv: "X25519", x: "A".repeat(43) },
+            true,
+          ),
+        Error,
+      );
+      await assertRejects(
+        () => kem.importKey("jwk", { kty: "OKP", crv: "X448", x: "AA" }, true),
+        Error,
+      );
+    });
+  });
+});
+
+describe("encap/decap", () => {
+  it("should derive the same secret for authenticated encapsulation", async () => {
+    const kem = new DhkemX25519HkdfSha256();
+    const recipient = await kem.generateKeyPair();
+    const sender = await kem.generateKeyPair();
+    const encapsulated = await kem.encap({
+      recipientPublicKey: recipient.publicKey,
+      senderKey: sender,
+    });
+    const recovered = await kem.decap({
+      recipientKey: recipient,
+      enc: encapsulated.enc,
+      senderPublicKey: sender.publicKey,
+    });
+
+    assertEquals(
+      new Uint8Array(recovered),
+      new Uint8Array(encapsulated.sharedSecret),
+    );
+
+    const mismatched = await kem.decap({
+      recipientKey: recipient,
+      enc: encapsulated.enc,
+      senderPublicKey: (await kem.generateKeyPair()).publicKey,
+    });
+    assertEquals(
+      bytesEqual(
+        new Uint8Array(mismatched),
+        new Uint8Array(encapsulated.sharedSecret),
+      ),
+      false,
+    );
   });
 });
 
