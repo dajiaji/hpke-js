@@ -198,7 +198,11 @@ async function main(): Promise<void> {
           const order = LIBS.map((_, i) => i);
           if (round % 2 === 1) order.reverse();
           for (const i of order) {
-            samples[i].push(...await sample(tasks[i], time / rounds));
+            // Append one by one: spreading a round's samples into push()
+            // overflows the call stack for fast operations and long rounds.
+            for (const ms of await sample(tasks[i], time / rounds)) {
+              samples[i].push(ms);
+            }
           }
         }
         const result: Result = {
