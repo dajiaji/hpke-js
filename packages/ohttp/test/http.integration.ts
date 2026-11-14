@@ -4,6 +4,7 @@ import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import { createOhttpClient, createOhttpGateway } from "../mod.ts";
 import {
   createChunkedEncoding,
+  createOhttpFetchForwarder,
   createOhttpHandler,
   createStandardEncoding,
   ohttpFetch,
@@ -64,25 +65,24 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
           let transferEncoding: string | null = null;
           const handle = createOhttpHandler({
             gateway,
-            async forward(request) {
-              const response = await fetch(request);
-              transferEncoding = response.headers.get("transfer-encoding");
-              if (compressed) {
-                assertEquals(response.headers.get("content-encoding"), "gzip");
-                assertEquals(
-                  response.headers.get("content-length"),
-                  String(zipped.length),
-                );
-              }
-              const headers = new Headers(response.headers);
-              headers.delete("content-encoding");
-              headers.delete("content-length");
-              return new Response(response.body, {
-                status: response.status,
-                statusText: response.statusText,
-                headers,
-              });
-            },
+            forward: createOhttpFetchForwarder({
+              allowedOrigins: [`http://127.0.0.1:${upstream.addr.port}`],
+              async fetch(request, init) {
+                const response = await fetch(request, init);
+                transferEncoding = response.headers.get("transfer-encoding");
+                if (compressed) {
+                  assertEquals(
+                    response.headers.get("content-encoding"),
+                    "gzip",
+                  );
+                  assertEquals(
+                    response.headers.get("content-length"),
+                    String(zipped.length),
+                  );
+                }
+                return response;
+              },
+            }),
           });
           relay = Deno.serve(
             { hostname: "127.0.0.1", port: 0, onListen() {} },

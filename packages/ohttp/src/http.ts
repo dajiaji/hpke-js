@@ -85,7 +85,8 @@ export interface OhttpHandlerParams {
   gateway: OhttpGateway;
   /** Return headers that describe the body bytes. Native fetch may decompress
    * a response while retaining Content-Encoding/Content-Length; normalize those
-   * headers before returning its decoded body (see the README example).
+   * headers before returning its decoded body, or use
+   * {@link createOhttpFetchForwarder}.
    */
   forward(request: Request): Promise<Response>;
 }
@@ -159,6 +160,77 @@ export function createOhttpHandler(
     const headers = new Headers({ "Content-Type": encrypted.contentType });
     if (gateway.encoding.incremental) headers.set("Incremental", "?1");
     return new Response(encrypted.body, { headers });
+  };
+}
+
+/**
+ * Create a Web Fetch handler that serves the gateway's key configuration as
+ * `application/ohttp-keys`. It is independent of {@link createOhttpHandler}:
+ * mount it wherever the deployment publishes key configurations.
+ */
+export function createOhttpKeyConfigHandler(
+  gateway: OhttpGateway,
+): (request: Request) => Promise<Response> {
+  return async (request) => {
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      return new Response(null, {
+        status: 405,
+        headers: { Allow: "GET, HEAD" },
+      });
+    }
+    const keyConfig = new Uint8Array(await gateway.publicKeyConfig);
+    return new Response(request.method === "HEAD" ? null : keyConfig.buffer, {
+      headers: {
+        "Content-Type": "application/ohttp-keys",
+        "Content-Length": String(keyConfig.length),
+      },
+    });
+  };
+}
+
+/** Parameters of a `forward` callback that fetches allowed targets. */
+export interface OhttpFetchForwarderParams {
+  /** Origins (for example `https://target.example`) the gateway may reach. */
+  allowedOrigins: Iterable<string | URL>;
+  /** The fetch implementation used to reach targets. Defaults to `fetch`. */
+  fetch?: (request: Request, init?: RequestInit) => Promise<Response>;
+}
+
+/**
+ * Create a `forward` callback for {@link createOhttpHandler} that fetches the
+ * target request. Requests to origins outside `allowedOrigins` are answered
+ * with 403 without being sent. Redirects are returned to the client instead
+ * of being followed, so they cannot leave the allowed origins. Content-Encoding
+ * and Content-Length are removed from responses with a body, because fetch
+ * returns the decoded body while retaining those headers.
+ */
+export function createOhttpFetchForwarder(
+  params: OhttpFetchForwarderParams,
+): (request: Request) => Promise<Response> {
+  const origins = new Set<string>();
+  for (const value of params.allowedOrigins) {
+    const origin = new URL(value).origin;
+    if (origin === "null") {
+      throw new OhttpError(`Invalid allowed origin: ${value}`);
+    }
+    origins.add(origin);
+  }
+  const fetchTarget = params.fetch ?? ((request, init) => fetch(request, init));
+  return async (request) => {
+    if (!origins.has(new URL(request.url).origin)) {
+      if (request.body) await request.body.cancel().catch(() => {});
+      return new Response(null, { status: 403 });
+    }
+    const response = await fetchTarget(request, { redirect: "manual" });
+    if (!response.body) return response;
+    const headers = new Headers(response.headers);
+    headers.delete("content-encoding");
+    headers.delete("content-length");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   };
 }
 
