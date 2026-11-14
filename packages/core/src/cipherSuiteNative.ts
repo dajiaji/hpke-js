@@ -2,25 +2,12 @@ import type {
   AeadInterface,
   KdfInterface,
   KemInterface,
-  KeyScheduleParams,
-  Mode,
   RecipientContextParams,
   SenderContextParams,
 } from "@hpke/common";
 
-import {
-  concat,
-  EMPTY,
-  i2Osp,
-  INFO_LENGTH_LIMIT,
-  INPUT_LENGTH_LIMIT,
-  InvalidParamError,
-  MINIMUM_PSK_LENGTH,
-  NativeAlgorithm,
-  toUint8Array,
-} from "@hpke/common";
+import { EMPTY, NativeAlgorithm } from "@hpke/common";
 
-import type { AeadParams } from "./interfaces/aeadParams.ts";
 import type { CipherSuiteParams } from "./interfaces/cipherSuiteParams.ts";
 import type {
   RecipientContext,
@@ -28,45 +15,9 @@ import type {
 } from "./interfaces/encryptionContext.ts";
 import type { CipherSuiteSealResponse } from "./interfaces/responses.ts";
 
-import {
-  RecipientExporterContextImpl,
-  SenderExporterContextImpl,
-} from "./exporterContext.ts";
-import { RecipientContextImpl } from "./recipientContext.ts";
-import { SenderContextImpl } from "./senderContext.ts";
-import { checkAuthSupport } from "./utils.ts";
-
-// psk_id_hash for the empty psk_id (i.e., the Base and Auth modes), which is a
-// constant for each suite. Module-scoped so that it is not reachable from the
-// outside.
-const EMPTY_PSK_ID_HASHES = new WeakMap<CipherSuiteNative, ArrayBuffer>();
-
-// b"base_nonce"
-// deno-fmt-ignore
-const LABEL_BASE_NONCE = new Uint8Array([
-  98, 97, 115, 101, 95, 110, 111, 110, 99, 101,
-]);
-// b"exp"
-const LABEL_EXP = new Uint8Array([101, 120, 112]);
-// b"info_hash"
-// deno-fmt-ignore
-const LABEL_INFO_HASH = new Uint8Array([
-  105, 110, 102, 111, 95, 104, 97, 115, 104,
-]);
-// b"key"
-const LABEL_KEY = new Uint8Array([107, 101, 121]);
-// b"psk_id_hash"
-// deno-fmt-ignore
-const LABEL_PSK_ID_HASH = new Uint8Array([
-  112, 115, 107, 95, 105, 100, 95, 104, 97, 115, 104,
-]);
-// b"secret"
-const LABEL_SECRET = new Uint8Array([115, 101, 99, 114, 101, 116]);
-// b"HPKE"
-// deno-fmt-ignore
-const SUITE_ID_HEADER_HPKE = new Uint8Array([
-  72, 80, 75, 69, 0, 0, 0, 0, 0, 0,
-]);
+import { initSuite } from "./keySchedule.ts";
+import { setupRecipient } from "./recipientContext.ts";
+import { setupSender } from "./senderContext.ts";
 
 /**
  * The Hybrid Public Key Encryption (HPKE) ciphersuite,
@@ -136,7 +87,6 @@ export class CipherSuiteNative extends NativeAlgorithm {
   protected _kem: KemInterface;
   private _kdf: KdfInterface;
   private _aead: AeadInterface;
-  private _suiteId: Uint8Array;
 
   /**
    * @param params A set of parameters for building a cipher suite.
@@ -147,30 +97,10 @@ export class CipherSuiteNative extends NativeAlgorithm {
    */
   constructor(params: CipherSuiteParams) {
     super();
-
-    // KEM
-    if (typeof params.kem === "number") {
-      throw new InvalidParamError("KemId cannot be used");
-    }
-    this._kem = params.kem;
-
-    // KDF
-    if (typeof params.kdf === "number") {
-      throw new InvalidParamError("KdfId cannot be used");
-    }
-    this._kdf = params.kdf;
-
-    // AEAD
-    if (typeof params.aead === "number") {
-      throw new InvalidParamError("AeadId cannot be used");
-    }
-    this._aead = params.aead;
-
-    this._suiteId = new Uint8Array(SUITE_ID_HEADER_HPKE);
-    this._suiteId.set(i2Osp(this._kem.id, 2), 4);
-    this._suiteId.set(i2Osp(this._kdf.id, 2), 6);
-    this._suiteId.set(i2Osp(this._aead.id, 2), 8);
-    this._kdf.init(this._suiteId);
+    const suite = initSuite(params);
+    this._kem = suite.kem;
+    this._kdf = suite.kdf;
+    this._aead = suite.aead;
   }
 
   /**
@@ -207,19 +137,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
   public async createSenderContext(
     params: SenderContextParams,
   ): Promise<SenderContext> {
-    if (params.senderKey !== undefined) {
-      checkAuthSupport(this._kem);
-    }
-    this._validateInputLength(params);
-
     await this._setup();
-
-    const dh = await (this._kem as KemInterface).encap(params);
-
-    // Mode: Base (0x00), Psk (0x01), Auth (0x02) or AuthPsk (0x03).
-    const mode = ((params.psk !== undefined ? 1 : 0) |
-      (params.senderKey !== undefined ? 2 : 0)) as Mode;
-    return await this._keyScheduleS(mode, dh.sharedSecret, dh.enc, params);
+    // The sender-specific logic lives in senderContext.ts.
+    return await setupSender(this, params);
   }
 
   /**
@@ -236,19 +156,9 @@ export class CipherSuiteNative extends NativeAlgorithm {
   public async createRecipientContext(
     params: RecipientContextParams,
   ): Promise<RecipientContext> {
-    if (params.senderPublicKey !== undefined) {
-      checkAuthSupport(this._kem);
-    }
-    this._validateInputLength(params);
-
     await this._setup();
-
-    const sharedSecret = await (this._kem as KemInterface).decap(params);
-
-    // Mode: Base (0x00), Psk (0x01), Auth (0x02) or AuthPsk (0x03).
-    const mode = ((params.psk !== undefined ? 1 : 0) |
-      (params.senderPublicKey !== undefined ? 2 : 0)) as Mode;
-    return await this._keyScheduleR(mode, sharedSecret, params);
+    // The recipient-specific logic lives in recipientContext.ts.
+    return await setupRecipient(this, params);
   }
 
   /**
@@ -292,130 +202,5 @@ export class CipherSuiteNative extends NativeAlgorithm {
   ): Promise<ArrayBuffer> {
     const ctx = await this.createRecipientContext(params);
     return await ctx.open(ct, aad);
-  }
-
-  // private verifyPskInputs(mode: Mode, params: KeyScheduleParams) {
-  //   const gotPsk = (params.psk !== undefined);
-  //   const gotPskId = (params.psk !== undefined && params.psk.id.byteLength > 0);
-  //   if (gotPsk !== gotPskId) {
-  //     throw new Error('Inconsistent PSK inputs');
-  //   }
-  //   if (gotPsk && (mode === Mode.Base || mode === Mode.Auth)) {
-  //     throw new Error('PSK input provided when not needed');
-  //   }
-  //   if (!gotPsk && (mode === Mode.Psk || mode === Mode.AuthPsk)) {
-  //     throw new Error('Missing required PSK input');
-  //   }
-  //   return;
-  // }
-
-  private async _keySchedule(
-    mode: Mode,
-    sharedSecret: ArrayBuffer,
-    params: KeyScheduleParams,
-  ): Promise<AeadParams> {
-    // Currently, there is no point in executing this function
-    // because this hpke library does not allow users to explicitly specify the mode.
-    //
-    // this.verifyPskInputs(mode, params);
-
-    const pskId = params.psk === undefined
-      ? EMPTY
-      : toUint8Array(params.psk.id);
-    const info = params.info === undefined ? EMPTY : toUint8Array(params.info);
-    const noPskId = pskId.byteLength === 0;
-    const [pskIdHash, infoHash] = await Promise.all([
-      (noPskId && EMPTY_PSK_ID_HASHES.get(this)) ||
-      this._kdf.labeledExtract(EMPTY, LABEL_PSK_ID_HASH, pskId),
-      this._kdf.labeledExtract(EMPTY, LABEL_INFO_HASH, info),
-    ]);
-    if (noPskId) {
-      EMPTY_PSK_ID_HASHES.set(this, pskIdHash);
-    }
-
-    const keyScheduleContext = concat(
-      new Uint8Array([mode]),
-      new Uint8Array(pskIdHash),
-      new Uint8Array(infoHash),
-    );
-
-    const psk = params.psk === undefined ? EMPTY : toUint8Array(params.psk.key);
-    const ikm = this._kdf.buildLabeledIkm(LABEL_SECRET, psk);
-
-    // exporter_secret, key and base_nonce are derived concurrently.
-    const exportOnly = this._aead.id === 0xffff; /* AeadId.ExportOnly */
-    const [exporterSecret, key, baseNonce] = await Promise.all(
-      (
-        [
-          [LABEL_EXP, this._kdf.hashSize],
-          [LABEL_KEY, this._aead.keySize],
-          [LABEL_BASE_NONCE, this._aead.nonceSize],
-        ] as const
-      ).slice(0, exportOnly ? 1 : 3).map(([label, len]) =>
-        this._kdf.extractAndExpand(
-          sharedSecret,
-          ikm,
-          this._kdf.buildLabeledInfo(label, keyScheduleContext, len),
-          len,
-        )
-      ),
-    );
-
-    // For ExportOnly, key and baseNonce are undefined.
-    return {
-      aead: this._aead,
-      exporterSecret: exporterSecret,
-      key: key,
-      baseNonce: baseNonce && new Uint8Array(baseNonce),
-      seq: 0,
-    };
-  }
-
-  private async _keyScheduleS(
-    mode: Mode,
-    sharedSecret: ArrayBuffer,
-    enc: ArrayBuffer,
-    params: KeyScheduleParams,
-  ): Promise<SenderContext> {
-    const res = await this._keySchedule(mode, sharedSecret, params);
-    if (res.key === undefined) {
-      return new SenderExporterContextImpl(this._kdf, res.exporterSecret, enc);
-    }
-    return new SenderContextImpl(this._kdf, res as Required<AeadParams>, enc);
-  }
-
-  private async _keyScheduleR(
-    mode: Mode,
-    sharedSecret: ArrayBuffer,
-    params: KeyScheduleParams,
-  ): Promise<RecipientContext> {
-    const res = await this._keySchedule(mode, sharedSecret, params);
-    if (res.key === undefined) {
-      return new RecipientExporterContextImpl(this._kdf, res.exporterSecret);
-    }
-    return new RecipientContextImpl(this._kdf, res as Required<AeadParams>);
-  }
-
-  private _validateInputLength(params: KeyScheduleParams) {
-    if (
-      params.info !== undefined &&
-      params.info.byteLength > INFO_LENGTH_LIMIT
-    ) {
-      throw new InvalidParamError("Too long info");
-    }
-    if (params.psk !== undefined) {
-      if (params.psk.key.byteLength < MINIMUM_PSK_LENGTH) {
-        throw new InvalidParamError(
-          `PSK must have at least ${MINIMUM_PSK_LENGTH} bytes`,
-        );
-      }
-      if (params.psk.key.byteLength > INPUT_LENGTH_LIMIT) {
-        throw new InvalidParamError("Too long psk.key");
-      }
-      if (params.psk.id.byteLength > INPUT_LENGTH_LIMIT) {
-        throw new InvalidParamError("Too long psk.id");
-      }
-    }
-    return;
   }
 }
