@@ -1,38 +1,65 @@
-import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
+import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import {
   createChunkedEncoding,
   createOhttpClient,
   createOhttpGateway,
   createOhttpHandler,
+  type KdfAeadPair,
+  type OhttpClient,
+  type OhttpEncoding,
   ohttpFetch,
+  type OhttpGateway,
 } from "@hpke/ohttp";
 
+/** JSON payload returned by the target in this example. */
+interface Greeting {
+  message: string;
+  method: string;
+  path: string;
+}
+
+type FetchHandler = (request: Request) => Promise<Response>;
+
+/** Fetch a JSON resource through OHTTP and return it as `T`. */
+async function fetchJson<T>(
+  client: OhttpClient,
+  url: string | URL,
+  init?: RequestInit,
+): Promise<T> {
+  const response = await ohttpFetch(client, url, init);
+  if (!response.ok) {
+    throw new Error(`Target returned HTTP ${response.status}`);
+  }
+  return await response.json() as T;
+}
+
 const kem = new DhkemX25519HkdfSha256();
-const keys = await kem.generateKeyPair();
-const kdf = new HkdfSha256();
-const aead = new Aes128Gcm();
-const encoding = createChunkedEncoding();
-const gateway = createOhttpGateway({
+const suite: KdfAeadPair = { kdf: new HkdfSha256(), aead: new Aes128Gcm() };
+const encoding: OhttpEncoding = createChunkedEncoding();
+
+const gateway: OhttpGateway = createOhttpGateway({
   keyId: 1,
   kem,
-  ...keys,
-  kdfAeadPairs: [{ kdf, aead }],
+  ...(await kem.generateKeyPair()),
+  kdfAeadPairs: [suite],
   encoding,
 });
-const client = createOhttpClient({
+const client: OhttpClient = createOhttpClient({
   kem,
-  kdf,
-  aead,
+  ...suite,
   encoding,
   keyConfig: await gateway.publicKeyConfig,
   relayUrl: "https://relay.example/ohttp",
 });
-const handle = createOhttpHandler({
+const handle: FetchHandler = createOhttpHandler({
   gateway,
-  forward(request) {
-    console.log(request.method, request.url);
-    return Promise.resolve(new Response("Hello, OHTTP!"));
+  forward(request: Request): Promise<Response> {
+    const greeting: Greeting = {
+      message: "Hello, OHTTP!",
+      method: request.method,
+      path: new URL(request.url).pathname,
+    };
+    return Promise.resolve(Response.json(greeting));
   },
 });
 
@@ -41,8 +68,11 @@ const handle = createOhttpHandler({
 const realFetch = globalThis.fetch;
 globalThis.fetch = (input, init) => handle(new Request(input, init));
 try {
-  const response = await ohttpFetch(client, "https://origin.example/hello");
-  console.log(await response.text());
+  const greeting = await fetchJson<Greeting>(
+    client,
+    "https://origin.example/hello",
+  );
+  console.log(`${greeting.method} ${greeting.path}: ${greeting.message}`);
 } finally {
   globalThis.fetch = realFetch;
 }

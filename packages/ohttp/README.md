@@ -41,13 +41,13 @@ tree-shaking.
 ### Node.js
 
 ```sh
-npm install @hpke/ohttp @hpke/core @hpke/dhkem-x25519
+npm install @hpke/ohttp @hpke/core
 ```
 
 ### Deno
 
 ```sh
-deno add jsr:@hpke/ohttp jsr:@hpke/core jsr:@hpke/dhkem-x25519
+deno add jsr:@hpke/ohttp jsr:@hpke/core
 ```
 
 ### Web Browsers
@@ -59,43 +59,39 @@ Load the ESM package from a CDN such as [esm.sh](https://esm.sh/@hpke/ohttp).
 The standard encoding buffers complete messages. For incremental request and
 response processing, use `createChunkedEncoding()` from the main entry point.
 
-```ts
-import { Aes128Gcm, HkdfSha256 } from "@hpke/core";
-import { DhkemX25519HkdfSha256 } from "@hpke/dhkem-x25519";
-import {
-  createOhttpClient,
-  createOhttpGateway,
-  createStandardEncoding,
-} from "@hpke/ohttp";
-
-const kem = new DhkemX25519HkdfSha256();
-const keyPair = await kem.generateKeyPair();
-const encoding = createStandardEncoding();
-const gateway = createOhttpGateway({
-  keyId: 1,
-  kem,
-  privateKey: keyPair.privateKey,
-  publicKey: keyPair.publicKey,
-  kdfAeadPairs: [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }],
-  encoding,
-});
-const client = createOhttpClient({
-  kem,
-  kdf: new HkdfSha256(),
-  aead: new Aes128Gcm(),
-  keyConfig: await gateway.publicKeyConfig,
-  encoding,
-  relayUrl: "https://relay.example/ohttp",
-});
-```
-
 ### Client
 
 `ohttpFetch` mirrors `fetch`: its second argument and `RequestInit` options are
-the same as the standard Fetch API.
+the same as the standard Fetch API. The gateway publishes its
+`application/ohttp-keys` payload separately; the client fetches that payload
+before creating an OHTTP client. In production, obtain this configuration
+through the relay or another trusted distribution path so the gateway does not
+learn the client's IP address during key retrieval.
 
 ```ts
-import { ohttpFetch } from "@hpke/ohttp";
+import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
+import {
+  createOhttpClient,
+  createStandardEncoding,
+  ohttpFetch,
+} from "@hpke/ohttp";
+
+const keyConfigResponse = await fetch("https://gateway.example/ohttp-keys");
+if (!keyConfigResponse.ok) {
+  throw new Error(
+    `Failed to fetch gateway key configuration: ${keyConfigResponse.status}`,
+  );
+}
+const keyConfig = new Uint8Array(await keyConfigResponse.arrayBuffer());
+
+const client = createOhttpClient({
+  kem: new DhkemX25519HkdfSha256(),
+  kdf: new HkdfSha256(),
+  aead: new Aes128Gcm(),
+  keyConfig,
+  encoding: createStandardEncoding(),
+  relayUrl: "https://relay.example/ohttp",
+});
 
 const response = await ohttpFetch(client, "https://target.example/hello", {
   headers: { accept: "application/json" },
@@ -106,39 +102,141 @@ console.log(await response.text());
 ### Gateway
 
 Use `createOhttpHandler` with the relay's Fetch request. The callback receives
-the decrypted target request.
+the decrypted target request. Expose `gateway.publicKeyConfig` from the same
+service (or another trusted endpoint) as the client's `application/ohttp-keys`
+payload.
+
+On Node.js 24 or later, you can run the following TypeScript example using
+Node.js's built-in type stripping and Fetch API.
 
 ```ts
-import { createOhttpHandler } from "@hpke/ohttp";
+import { createServer } from "node:http";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
+import {
+  createOhttpGateway,
+  createOhttpHandler,
+  createStandardEncoding,
+} from "@hpke/ohttp";
+
+const { privateKey, publicKey } = await new DhkemX25519HkdfSha256()
+  .generateKeyPair();
+
+const gateway = createOhttpGateway({
+  keyId: 1,
+  kem: new DhkemX25519HkdfSha256(),
+  privateKey,
+  publicKey,
+  kdfAeadPairs: [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }],
+  encoding: createStandardEncoding(),
+});
 
 const handle = createOhttpHandler({
   gateway,
-  forward: (request) => fetch(request),
+  forward: async (request) => {
+    const response = await fetch(request);
+    const headers = new Headers(response.headers);
+    headers.delete("content-encoding");
+    headers.delete("content-length");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  },
 });
 
-Deno.serve(handle);
+const server = createServer(async (incoming, outgoing) => {
+  try {
+    const headers = new Headers();
+    for (const [name, value] of Object.entries(incoming.headers)) {
+      if (value !== undefined) {
+        headers.set(name, Array.isArray(value) ? value.join(", ") : value);
+      }
+    }
+
+    const request = new Request(
+      `http://${incoming.headers.host ?? "localhost"}${incoming.url ?? "/"}`,
+      {
+        method: incoming.method,
+        headers,
+        body: incoming.method === "GET" || incoming.method === "HEAD"
+          ? undefined
+          : Readable.toWeb(incoming) as ReadableStream<Uint8Array>,
+        duplex: "half",
+      } as RequestInit,
+    );
+    const url = new URL(request.url);
+    let response: Response;
+    if (url.pathname === "/ohttp-keys") {
+      if (request.method !== "GET") {
+        response = new Response(null, {
+          status: 405,
+          headers: { Allow: "GET" },
+        });
+      } else {
+        const keyConfig = await gateway.publicKeyConfig;
+        response = new Response(keyConfig as unknown as BodyInit, {
+          headers: { "content-type": "application/ohttp-keys" },
+        });
+      }
+    } else {
+      response = await handle(request);
+    }
+
+    outgoing.writeHead(response.status, Object.fromEntries(response.headers));
+    if (response.body) {
+      await pipeline(Readable.fromWeb(response.body), outgoing);
+    } else {
+      outgoing.end();
+    }
+  } catch (error) {
+    console.error(error);
+    if (!outgoing.headersSent) outgoing.writeHead(500);
+    outgoing.end();
+  }
+});
+
+server.listen(3000, () => {
+  console.log("OHTTP gateway listening on http://localhost:3000");
+});
 ```
 
 ### Streaming
 
 Chunked encoding supports streaming uploads and incremental response reads when
-the runtime and relay support streaming Fetch bodies.
+the runtime and relay support streaming Fetch bodies. The gateway must use
+`createChunkedEncoding()` as well when handling these requests.
 
 ```ts
-import { createChunkedEncoding } from "@hpke/ohttp";
+import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
+import {
+  createChunkedEncoding,
+  createOhttpClient,
+  ohttpFetch,
+} from "@hpke/ohttp";
 
-const streamingClient = createOhttpClient({
-  kem,
+const keyConfigResponse = await fetch("https://gateway.example/ohttp-keys");
+if (!keyConfigResponse.ok) {
+  throw new Error(
+    `Failed to fetch gateway key configuration: ${keyConfigResponse.status}`,
+  );
+}
+const keyConfig = new Uint8Array(await keyConfigResponse.arrayBuffer());
+
+const client = createOhttpClient({
+  kem: new DhkemX25519HkdfSha256(),
   kdf: new HkdfSha256(),
   aead: new Aes128Gcm(),
-  keyConfig: await gateway.publicKeyConfig,
+  keyConfig,
   encoding: createChunkedEncoding(),
   relayUrl: "https://relay.example/ohttp",
   streamingUpload: true,
 });
 
 const response = await ohttpFetch(
-  streamingClient,
+  client,
   "https://target.example/upload",
   {
     method: "POST",
