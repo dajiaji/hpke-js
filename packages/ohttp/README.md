@@ -7,7 +7,7 @@
 
 <div align="center">
 An <a href="https://www.rfc-editor.org/rfc/rfc9458">Oblivious HTTP (OHTTP)</a>
-client and gateway built on <a href="https://github.com/dajiaji/hpke-js/tree/main/packages/core">@hpke/core</a>.
+client, relay and gateway built on <a href="https://github.com/dajiaji/hpke-js/tree/main/packages/core">@hpke/core</a>.
 </div>
 <p></p>
 
@@ -31,6 +31,7 @@ tree-shaking.
 - [Usage](#usage)
   - [Client](#client)
   - [Gateway](#gateway)
+  - [Relay](#relay)
   - [Streaming](#streaming)
 - [Contributing](#contributing)
 - [References](#references)
@@ -175,6 +176,40 @@ createServer(toNodeListener(handle, { onError: console.error })).listen(
   () => console.log("OHTTP gateway listening on http://localhost:3000"),
 );
 ```
+
+### Relay
+
+`createOhttpRelayHandler` implements the relay that sits between clients and a
+gateway. It accepts encapsulated requests, forwards them to the configured
+gateway and returns the gateway's response, without being able to decrypt
+either. Only the Content-Type and Incremental fields are forwarded in each
+direction, so client fields such as cookies, credentials or forwarding
+information do not reach the gateway.
+
+OHTTP's privacy relies on the relay and the gateway being operated by parties
+that do not collude; run the relay as a separate service from the gateway.
+
+```ts
+import { createOhttpRelayHandler } from "@hpke/ohttp";
+
+const relay = createOhttpRelayHandler({
+  gatewayUrl: "https://gateway.example/gateway",
+});
+
+export function handle(request: Request): Promise<Response> {
+  const { pathname } = new URL(request.url);
+  if (pathname === "/ohttp") return relay(request);
+  return Promise.resolve(new Response(null, { status: 404 }));
+}
+```
+
+Like the gateway handlers, `handle` is a plain Fetch handler: serve it with
+`Deno.serve(handle)` or, on Node.js, with `toNodeListener(handle)`. Clients
+reach it through `relayUrl` (`https://relay.example/ohttp` in the client
+example). Requests are buffered before being forwarded; set
+`streamingUpload: true` to stream them when the runtime and the gateway
+connection support streaming Fetch bodies. A failure to reach the gateway is
+thrown, so the server answers it as an internal error.
 
 ### Streaming
 

@@ -26,9 +26,11 @@ export {
   createOhttpFetchForwarder,
   createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
+  createOhttpRelayHandler,
   ohttpFetch,
   type OhttpFetchForwarderParams,
   type OhttpGatewayHandlerParams,
+  type OhttpRelayHandlerParams,
 } from "./src/http.ts";
 export { createStandardEncoding } from "./src/standard.ts";
 export {

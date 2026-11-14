@@ -98,6 +98,7 @@ export function createOhttpGatewayHandler(
   const { gateway, forward } = params;
   return async (outer) => {
     if (outer.method !== "POST") {
+      void outer.body?.cancel().catch(() => {});
       return new Response(null, { status: 405, headers: { Allow: "POST" } });
     }
     if (
@@ -173,6 +174,7 @@ export function createOhttpKeyConfigHandler(
 ): (request: Request) => Promise<Response> {
   return async (request) => {
     if (request.method !== "GET" && request.method !== "HEAD") {
+      void request.body?.cancel().catch(() => {});
       return new Response(null, {
         status: 405,
         headers: { Allow: "GET, HEAD" },
@@ -232,6 +234,84 @@ export function createOhttpFetchForwarder(
       headers,
     });
   };
+}
+
+/** Parameters of a relay handler. */
+export interface OhttpRelayHandlerParams {
+  /** The gateway resource that encapsulated requests are forwarded to. */
+  gatewayUrl: string | URL;
+  /**
+   * Stream request bodies to the gateway instead of buffering them. Requires a
+   * runtime and a gateway connection that support streaming fetch bodies.
+   */
+  streamingUpload?: boolean;
+  /** The fetch implementation used to reach the gateway. Defaults to `fetch`. */
+  fetch?: (request: Request, init?: RequestInit) => Promise<Response>;
+}
+
+const RELAY_REQUEST_TYPES = new Set([
+  "message/ohttp-req",
+  "message/ohttp-chunked-req",
+]);
+const RELAY_HEADERS = ["Content-Type", "Incremental"];
+
+/**
+ * Create a Web Fetch handler for an Oblivious Relay Resource. It forwards
+ * encapsulated requests to the configured gateway and returns its response,
+ * without decrypting either.
+ *
+ * Only the Content-Type and Incremental fields are forwarded in each direction,
+ * so that client fields such as cookies, credentials or forwarding information
+ * do not reach the gateway. Redirects from the gateway are not followed, and a
+ * failure to reach the gateway is thrown to the caller.
+ */
+export function createOhttpRelayHandler(
+  params: OhttpRelayHandlerParams,
+): (request: Request) => Promise<Response> {
+  const gatewayUrl = new URL(params.gatewayUrl).href;
+  const streaming = params.streamingUpload ?? false;
+  const fetchGateway = params.fetch ??
+    ((request, init) => fetch(request, init));
+  return async (request) => {
+    if (request.method !== "POST") {
+      void request.body?.cancel().catch(() => {});
+      return new Response(null, { status: 405, headers: { Allow: "POST" } });
+    }
+    if (
+      !RELAY_REQUEST_TYPES.has(
+        mediaType(request.headers.get("Content-Type")),
+      ) || !request.body
+    ) {
+      void request.body?.cancel().catch(() => {});
+      return new Response(null, { status: 415 });
+    }
+    const response = await fetchGateway(
+      new Request(
+        gatewayUrl,
+        {
+          method: "POST",
+          headers: relayHeaders(request.headers),
+          body: streaming ? request.body : await request.arrayBuffer(),
+          signal: request.signal,
+          redirect: "error",
+          ...(streaming ? { duplex: "half" } : {}),
+        } as RequestInit,
+      ),
+    );
+    return new Response(response.body, {
+      status: response.status,
+      headers: relayHeaders(response.headers),
+    });
+  };
+}
+
+function relayHeaders(source: Headers): Headers {
+  const headers = new Headers();
+  for (const name of RELAY_HEADERS) {
+    const value = source.get(name);
+    if (value !== null) headers.set(name, value);
+  }
+  return headers;
 }
 
 // Bind both buffered encoding and lazy decoding to the target request's signal.

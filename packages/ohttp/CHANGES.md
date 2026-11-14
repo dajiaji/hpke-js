@@ -23,6 +23,9 @@
   Content-Encoding and Content-Length headers of decoded response bodies.
 - Add the `@hpke/ohttp/node` entry point with `toNodeListener`, which adapts a
   Web Fetch handler to a `node:http` request listener.
+- Export `createOhttpRelayHandler`, a Web Fetch handler for a relay that
+  forwards encapsulated requests to a configured gateway, passing on only the
+  Content-Type and Incremental fields.
 - Buffer relay uploads by default and allow streaming uploads with
   `streamingUpload: true`, independently of incremental response processing.
 - Report response authentication failures as `OhttpError`, retaining the
