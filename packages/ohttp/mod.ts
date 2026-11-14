@@ -24,11 +24,11 @@ export type {
 export type { OhttpSource } from "./src/streams.ts";
 export {
   createOhttpFetchForwarder,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
   ohttpFetch,
   type OhttpFetchForwarderParams,
-  type OhttpHandlerParams,
+  type OhttpGatewayHandlerParams,
 } from "./src/http.ts";
 export { createStandardEncoding } from "./src/standard.ts";
 export {

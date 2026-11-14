@@ -5,7 +5,7 @@ import { createOhttpClient, createOhttpGateway } from "../mod.ts";
 import {
   createChunkedEncoding,
   createOhttpFetchForwarder,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createStandardEncoding,
   ohttpFetch,
 } from "../mod.ts";
@@ -63,7 +63,7 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
             kdfAeadPairs: [{ kdf, aead }],
           });
           let transferEncoding: string | null = null;
-          const handle = createOhttpHandler({
+          const handle = createOhttpGatewayHandler({
             gateway,
             forward: createOhttpFetchForwarder({
               allowedOrigins: [`http://127.0.0.1:${upstream.addr.port}`],

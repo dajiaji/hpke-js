@@ -11,7 +11,7 @@ import {
 import { createOhttpClient, createOhttpGateway, OhttpError } from "../mod.ts";
 import {
   createChunkedEncoding,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createStandardEncoding,
   ohttpFetch,
 } from "../mod.ts";
@@ -65,7 +65,7 @@ Deno.test("HTTP response is available and readable before its source completes",
   let completed = false;
   const originalFetch = globalThis.fetch;
   globalThis.fetch = (input, init) =>
-    createOhttpHandler({
+    createOhttpGatewayHandler({
       gateway,
       forward: () =>
         Promise.resolve(
@@ -247,7 +247,7 @@ Deno.test("HTTP body cancellation propagates to the encrypted transport", async 
   let cancelled = false;
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (input, init) => {
-    const response = await createOhttpHandler({
+    const response = await createOhttpGatewayHandler({
       gateway,
       forward: () =>
         Promise.resolve(
@@ -302,7 +302,7 @@ Deno.test("HTTP cancellation interrupts a pending upstream body read", async () 
     let pulls = 0;
     const originalFetch = globalThis.fetch;
     globalThis.fetch = (input, init) =>
-      createOhttpHandler({
+      createOhttpGatewayHandler({
         gateway,
         forward: () =>
           Promise.resolve(
@@ -413,7 +413,7 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
     async () => {
       const { client, gateway } = await pair(encoding);
       let forwarded = 0;
-      const handler = createOhttpHandler({
+      const handler = createOhttpGatewayHandler({
         gateway,
         forward() {
           forwarded++;
@@ -487,7 +487,7 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
       let cancelled = false;
       let tooLarge = false;
       globalThis.fetch = (input, init) =>
-        createOhttpHandler({
+        createOhttpGatewayHandler({
           gateway,
           forward: () =>
             Promise.resolve(
@@ -545,7 +545,7 @@ Deno.test("bodyless chunked fetch uses buffered upload without duplex", async ()
   globalThis.fetch = (input, init) => {
     assertEquals(init?.body instanceof ArrayBuffer, true);
     assertEquals((init as RequestInit & { duplex?: string }).duplex, undefined);
-    return createOhttpHandler({
+    return createOhttpGatewayHandler({
       gateway,
       forward: () => Promise.resolve(new Response("ok")),
     })(new Request(input, init));
@@ -572,7 +572,7 @@ Deno.test("relay streaming upload is explicit and is unnecessary for bodyless GE
         (init as RequestInit & { duplex?: string }).duplex,
         streaming ? "half" : undefined,
       );
-      return createOhttpHandler({
+      return createOhttpGatewayHandler({
         gateway,
         async forward(request) {
           if (post) assertEquals(await request.text(), "upload");
@@ -610,7 +610,7 @@ Deno.test("late binary HTTP request errors consumed by forward produce 400", asy
     new Uint8Array([3, 65]),
   ]);
   const exchange = await client.encapsulateRequest([malformed]);
-  const response = await createOhttpHandler({
+  const response = await createOhttpGatewayHandler({
     gateway,
     async forward(request) {
       await request.text();
@@ -688,7 +688,7 @@ Deno.test("unexpected TypeErrors in decapsulation or decoded input are not hidde
       },
     });
     const exchange = await client.encapsulateRequest([binaryRequest()]);
-    const handler = createOhttpHandler({
+    const handler = createOhttpGatewayHandler({
       gateway,
       forward() {
         throw new Error("must not forward malformed input");
@@ -714,7 +714,7 @@ Deno.test("unexpected TypeErrors in decapsulation or decoded input are not hidde
 Deno.test("invalid authority/path cannot change the binary HTTP target", async () => {
   const { client, gateway } = await pair();
   let forwarded = 0;
-  const handle = createOhttpHandler({
+  const handle = createOhttpGatewayHandler({
     gateway,
     forward() {
       forwarded++;
@@ -754,7 +754,7 @@ Deno.test("response authentication errors are OhttpError with their original cau
     const { client, gateway } = await pair(encoding);
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async (input, init) => {
-      const response = await createOhttpHandler({
+      const response = await createOhttpGatewayHandler({
         gateway,
         forward: () => Promise.resolve(new Response("response")),
       })(new Request(input, init));

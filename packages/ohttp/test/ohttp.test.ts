@@ -9,7 +9,7 @@ import {
 import { createOhttpClient, createOhttpGateway, OhttpError } from "../mod.ts";
 import {
   createChunkedEncoding,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createStandardEncoding,
   ohttpFetch,
 } from "../mod.ts";
@@ -81,7 +81,7 @@ for (const createEncoding of [createStandardEncoding, createChunkedEncoding]) {
       relayUrl: "https://relay.example/ohttp",
     });
     let receivedSignal: AbortSignal | undefined;
-    const handler = createOhttpHandler({
+    const handler = createOhttpGatewayHandler({
       gateway,
       async forward(request) {
         assertEquals(request.method, "POST");
