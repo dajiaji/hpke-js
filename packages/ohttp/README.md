@@ -101,51 +101,74 @@ console.log(await response.text());
 
 ### Gateway
 
-Use `createOhttpHandler` with the relay's Fetch request. The callback receives
-the decrypted target request. Expose `gateway.publicKeyConfig` from the same
-service (or another trusted endpoint) as the client's `application/ohttp-keys`
-payload.
+Use `createOhttpHandler` with the relay's Fetch request. The `forward` callback
+receives the decrypted target request and decides how to answer it.
+`createOhttpFetchForwarder` is a ready-made callback that fetches the target: it
+answers 403 for origins outside `allowedOrigins`, returns redirects to the
+client instead of following them, and removes the Content-Encoding and
+Content-Length headers that no longer describe a decoded body.
 
-On Node.js 24 or later, you can run the following TypeScript example using
-Node.js's built-in type stripping and Fetch API.
+The gateway does not decide how its key configuration is published.
+`createOhttpKeyConfigHandler` is an independent handler that serves
+`gateway.publicKeyConfig` as `application/ohttp-keys`; mount it on the same
+service, on another trusted endpoint, or distribute the payload by other means.
+
+Both handlers are plain `(request: Request) => Promise<Response>` functions, so
+routing, authentication and other logic are composed around them:
 
 ```ts
-import { createServer } from "node:http";
-import { Readable } from "node:stream";
-import { pipeline } from "node:stream/promises";
 import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import {
+  createOhttpFetchForwarder,
   createOhttpGateway,
   createOhttpHandler,
+  createOhttpKeyConfigHandler,
   createStandardEncoding,
 } from "@hpke/ohttp";
 
-const { privateKey, publicKey } = await new DhkemX25519HkdfSha256()
-  .generateKeyPair();
+const kem = new DhkemX25519HkdfSha256();
+const { privateKey, publicKey } = await kem.generateKeyPair();
 
 const gateway = createOhttpGateway({
   keyId: 1,
-  kem: new DhkemX25519HkdfSha256(),
+  kem,
   privateKey,
   publicKey,
   kdfAeadPairs: [{ kdf: new HkdfSha256(), aead: new Aes128Gcm() }],
   encoding: createStandardEncoding(),
 });
 
-const handle = createOhttpHandler({
+const ohttp = createOhttpHandler({
   gateway,
-  forward: async (request) => {
-    const response = await fetch(request);
-    const headers = new Headers(response.headers);
-    headers.delete("content-encoding");
-    headers.delete("content-length");
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-  },
+  forward: createOhttpFetchForwarder({
+    allowedOrigins: ["https://target.example"],
+  }),
 });
+const keys = createOhttpKeyConfigHandler(gateway);
+
+export function handle(request: Request): Promise<Response> {
+  const { pathname } = new URL(request.url);
+  if (pathname === "/ohttp-keys") return keys(request);
+  if (pathname === "/gateway") return ohttp(request);
+  return Promise.resolve(new Response(null, { status: 404 }));
+}
+```
+
+Runtimes with a Fetch-based server API can serve `handle` directly, for example
+`Deno.serve(handle)`, `Bun.serve({ fetch: handle })` or
+`export default { fetch: handle }` on Cloudflare Workers.
+
+Node.js's `node:http` server does not use Fetch requests and responses, so
+`handle` needs an adapter there. On Node.js 24 or later, you can run the
+following TypeScript example using Node.js's built-in type stripping.
+
+```ts
+import { createServer } from "node:http";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+
+// `handle` is the Fetch handler defined above.
+import { handle } from "./handle.ts";
 
 const server = createServer(async (incoming, outgoing) => {
   try {
@@ -155,35 +178,19 @@ const server = createServer(async (incoming, outgoing) => {
         headers.set(name, Array.isArray(value) ? value.join(", ") : value);
       }
     }
-
-    const request = new Request(
-      `http://${incoming.headers.host ?? "localhost"}${incoming.url ?? "/"}`,
-      {
-        method: incoming.method,
-        headers,
-        body: incoming.method === "GET" || incoming.method === "HEAD"
-          ? undefined
-          : Readable.toWeb(incoming) as ReadableStream<Uint8Array>,
-        duplex: "half",
-      } as RequestInit,
+    const response = await handle(
+      new Request(
+        `http://${incoming.headers.host ?? "localhost"}${incoming.url ?? "/"}`,
+        {
+          method: incoming.method,
+          headers,
+          body: incoming.method === "GET" || incoming.method === "HEAD"
+            ? undefined
+            : Readable.toWeb(incoming) as ReadableStream<Uint8Array>,
+          duplex: "half",
+        } as RequestInit,
+      ),
     );
-    const url = new URL(request.url);
-    let response: Response;
-    if (url.pathname === "/ohttp-keys") {
-      if (request.method !== "GET") {
-        response = new Response(null, {
-          status: 405,
-          headers: { Allow: "GET" },
-        });
-      } else {
-        const keyConfig = await gateway.publicKeyConfig;
-        response = new Response(keyConfig as unknown as BodyInit, {
-          headers: { "content-type": "application/ohttp-keys" },
-        });
-      }
-    } else {
-      response = await handle(request);
-    }
 
     outgoing.writeHead(response.status, Object.fromEntries(response.headers));
     if (response.body) {
