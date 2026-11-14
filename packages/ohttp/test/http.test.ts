@@ -1,15 +1,23 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals, assertRejects, assertThrows } from "@std/assert";
 import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import {
+  createChunkedEncoding,
   createOhttpClient,
   createOhttpFetchForwarder,
   createOhttpGateway,
   createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
+  createOhttpRelayHandler,
   createStandardEncoding,
   ohttpFetch,
   type OhttpGateway,
 } from "../mod.ts";
+
+function fieldNames(headers: Headers): string[] {
+  const names: string[] = [];
+  headers.forEach((_, name) => names.push(name));
+  return names.sort();
+}
 
 async function createGateway(): Promise<OhttpGateway> {
   const kem = new DhkemX25519HkdfSha256();
@@ -184,3 +192,256 @@ Deno.test("fetch forwarder works behind the OHTTP handler", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+Deno.test("relay handler forwards only the OHTTP fields to the gateway", async () => {
+  const calls: Request[] = [];
+  const bodies: Uint8Array[] = [];
+  const relay = createOhttpRelayHandler({
+    gatewayUrl: "https://gateway.example/gateway",
+    async fetch(request) {
+      calls.push(request);
+      bodies.push(new Uint8Array(await request.arrayBuffer()));
+      return new Response(new Uint8Array([4, 5, 6]), {
+        status: 200,
+        headers: {
+          "content-type": "message/ohttp-res",
+          "incremental": "?1",
+          "set-cookie": "gateway=1",
+          "x-gateway": "internal",
+        },
+      });
+    },
+  });
+  const response = await relay(
+    new Request("https://relay.example/ohttp?client=1", {
+      method: "POST",
+      headers: {
+        "content-type": "Message/OHTTP-Req; charset=binary",
+        "incremental": "?1",
+        "authorization": "Bearer secret",
+        "cookie": "session=1",
+        "forwarded": "for=192.0.2.1",
+        "x-forwarded-for": "192.0.2.1",
+        "user-agent": "client",
+      },
+      body: new Uint8Array([1, 2, 3]),
+    }),
+  );
+  assertEquals(calls.length, 1);
+  assertEquals(calls[0].url, "https://gateway.example/gateway");
+  assertEquals(calls[0].method, "POST");
+  assertEquals(calls[0].redirect, "error");
+  assertEquals(
+    fieldNames(calls[0].headers),
+    ["content-type", "incremental"],
+  );
+  assertEquals(
+    calls[0].headers.get("content-type"),
+    "Message/OHTTP-Req; charset=binary",
+  );
+  assertEquals(bodies[0], new Uint8Array([1, 2, 3]));
+
+  assertEquals(response.status, 200);
+  assertEquals(
+    fieldNames(response.headers),
+    ["content-type", "incremental"],
+  );
+  assertEquals(response.headers.get("content-type"), "message/ohttp-res");
+  assertEquals(
+    new Uint8Array(await response.arrayBuffer()),
+    new Uint8Array([4, 5, 6]),
+  );
+});
+
+Deno.test("relay handler returns the gateway's error status", async () => {
+  const relay = createOhttpRelayHandler({
+    gatewayUrl: new URL("https://gateway.example/gateway"),
+    fetch: () => Promise.resolve(new Response(null, { status: 400 })),
+  });
+  const response = await relay(
+    new Request("https://relay.example/ohttp", {
+      method: "POST",
+      headers: { "content-type": "message/ohttp-chunked-req" },
+      body: new Uint8Array([1]),
+    }),
+  );
+  assertEquals(response.status, 400);
+  assertEquals(fieldNames(response.headers), []);
+});
+
+Deno.test("relay handler rejects requests that are not OHTTP requests", async () => {
+  let called = false;
+  const relay = createOhttpRelayHandler({
+    gatewayUrl: "https://gateway.example/gateway",
+    fetch() {
+      called = true;
+      return Promise.resolve(new Response(null));
+    },
+  });
+  const get = await relay(new Request("https://relay.example/ohttp"));
+  assertEquals(get.status, 405);
+  assertEquals(get.headers.get("allow"), "POST");
+  for (
+    const init of [
+      { headers: { "content-type": "application/json" }, body: "{}" },
+      { headers: { "content-type": "message/ohttp-res" }, body: "x" },
+      { body: new Uint8Array([1]) },
+      { headers: { "content-type": "message/ohttp-req" } },
+    ]
+  ) {
+    const response = await relay(
+      new Request("https://relay.example/ohttp", { method: "POST", ...init }),
+    );
+    assertEquals(response.status, 415);
+  }
+  assertEquals(called, false);
+});
+
+Deno.test("handlers cancel the body of a request with a disallowed method", async () => {
+  const gateway = await createGateway();
+  const handlers: [string, (request: Request) => Promise<Response>][] = [
+    [
+      "PUT",
+      createOhttpGatewayHandler({
+        gateway,
+        forward: () => Promise.resolve(new Response(null)),
+      }),
+    ],
+    ["POST", createOhttpKeyConfigHandler(gateway)],
+    [
+      "PUT",
+      createOhttpRelayHandler({
+        gatewayUrl: "https://gateway.example/gateway",
+        fetch: () => Promise.resolve(new Response(null)),
+      }),
+    ],
+  ];
+  for (const [method, handle] of handlers) {
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      cancel() {
+        cancelled = true;
+      },
+    });
+    const response = await handle(
+      new Request("https://example.com/", {
+        method,
+        headers: { "content-type": "message/ohttp-req" },
+        body,
+        duplex: "half",
+      } as RequestInit),
+    );
+    assertEquals(response.status, 405);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    assertEquals(cancelled, true);
+  }
+});
+
+Deno.test("relay handler buffers uploads unless streaming is enabled", async () => {
+  for (const streamingUpload of [false, true]) {
+    let pulled = 0;
+    let pulledBeforeFetch = -1;
+    const relay = createOhttpRelayHandler({
+      gatewayUrl: "https://gateway.example/gateway",
+      streamingUpload,
+      async fetch(request) {
+        pulledBeforeFetch = pulled;
+        return new Response(await request.arrayBuffer());
+      },
+    });
+    const response = await relay(
+      new Request(
+        "https://relay.example/ohttp",
+        {
+          method: "POST",
+          headers: { "content-type": "message/ohttp-chunked-req" },
+          body: new ReadableStream<Uint8Array>({
+            pull(controller) {
+              if (++pulled > 3) controller.close();
+              else controller.enqueue(new Uint8Array([pulled]));
+            },
+          }, { highWaterMark: 0 }),
+          duplex: "half",
+        } as RequestInit,
+      ),
+    );
+    assertEquals(
+      new Uint8Array(await response.arrayBuffer()),
+      new Uint8Array([1, 2, 3]),
+    );
+    assertEquals(pulledBeforeFetch === 4, !streamingUpload);
+  }
+});
+
+Deno.test("relay handler validates the gateway URL and propagates failures", async () => {
+  assertThrows(
+    () => createOhttpRelayHandler({ gatewayUrl: "not a url" }),
+    TypeError,
+  );
+  const failure = new TypeError("unreachable");
+  const relay = createOhttpRelayHandler({
+    gatewayUrl: "https://gateway.example/gateway",
+    fetch: () => Promise.reject(failure),
+  });
+  const error = await assertRejects(() =>
+    relay(
+      new Request("https://relay.example/ohttp", {
+        method: "POST",
+        headers: { "content-type": "message/ohttp-req" },
+        body: new Uint8Array([1]),
+      }),
+    )
+  );
+  assertEquals(error, failure);
+});
+
+for (const createEncoding of [createStandardEncoding, createChunkedEncoding]) {
+  const encoding = createEncoding();
+  Deno.test(
+    `relay handler connects a client to a gateway: ${encoding.requestContentType}`,
+    async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      const kdf = new HkdfSha256();
+      const aead = new Aes128Gcm();
+      const gateway = createOhttpGateway({
+        keyId: 1,
+        kem,
+        ...(await kem.generateKeyPair()),
+        kdfAeadPairs: [{ kdf, aead }],
+        encoding,
+      });
+      const gatewayHandler = createOhttpGatewayHandler({
+        gateway,
+        forward: async (request) =>
+          new Response(`${request.method} ${await request.text()}`, {
+            status: 201,
+          }),
+      });
+      const relay = createOhttpRelayHandler({
+        gatewayUrl: "https://gateway.example/gateway",
+        streamingUpload: encoding.incremental,
+        fetch: (request) => gatewayHandler(request),
+      });
+      const client = createOhttpClient({
+        kem,
+        kdf,
+        aead,
+        encoding,
+        keyConfig: await gateway.publicKeyConfig,
+        relayUrl: "https://relay.example/ohttp",
+      });
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = (input, init) => relay(new Request(input, init));
+      try {
+        const response = await ohttpFetch(client, "https://target.example/", {
+          method: "POST",
+          body: "hello",
+        });
+        assertEquals(response.status, 201);
+        assertEquals(await response.text(), "POST hello");
+      } finally {
+        globalThis.fetch = originalFetch;
+      }
+    },
+  );
+}

@@ -1,11 +1,12 @@
 // Run explicitly: deno test --allow-net packages/ohttp/test/http.integration.ts
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertNotEquals } from "@std/assert";
 import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import { createOhttpClient, createOhttpGateway } from "../mod.ts";
 import {
   createChunkedEncoding,
   createOhttpFetchForwarder,
   createOhttpGatewayHandler,
+  createOhttpRelayHandler,
   createStandardEncoding,
   ohttpFetch,
 } from "../mod.ts";
@@ -114,4 +115,78 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
       },
     );
   }
+}
+
+for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
+  Deno.test(
+    encoding.requestContentType + ": client, relay, gateway and target servers",
+    async () => {
+      const kem = new DhkemX25519HkdfSha256();
+      const kdf = new HkdfSha256();
+      const aead = new Aes128Gcm();
+      const gateway = createOhttpGateway({
+        kem,
+        ...(await kem.generateKeyPair()),
+        keyId: 1,
+        encoding,
+        kdfAeadPairs: [{ kdf, aead }],
+      });
+      const options = { hostname: "127.0.0.1", port: 0, onListen() {} };
+      let gatewayHeaders: Headers | undefined;
+      const target = Deno.serve(
+        options,
+        async (request) =>
+          new Response(`${request.method} ${await request.text()}`),
+      );
+      const gatewayHandler = createOhttpGatewayHandler({
+        gateway,
+        forward: createOhttpFetchForwarder({
+          allowedOrigins: [`http://127.0.0.1:${target.addr.port}`],
+        }),
+      });
+      const gatewayServer = Deno.serve(options, (request) => {
+        gatewayHeaders = request.headers;
+        return gatewayHandler(request);
+      });
+      const relayServer = Deno.serve(
+        options,
+        createOhttpRelayHandler({
+          gatewayUrl: `http://127.0.0.1:${gatewayServer.addr.port}/gateway`,
+          streamingUpload: encoding.incremental,
+        }),
+      );
+      try {
+        const client = createOhttpClient({
+          kem,
+          kdf,
+          aead,
+          encoding,
+          keyConfig: await gateway.publicKeyConfig,
+          relayUrl: `http://127.0.0.1:${relayServer.addr.port}/`,
+        });
+        const payload = "payload".repeat(5000);
+        const response = await ohttpFetch(
+          client,
+          `http://127.0.0.1:${target.addr.port}/`,
+          { method: "POST", body: payload, headers: { cookie: "inner=1" } },
+        );
+        assertEquals(response.status, 200);
+        assertEquals(await response.text(), `POST ${payload}`);
+        assertEquals(
+          gatewayHeaders?.get("content-type"),
+          encoding.requestContentType,
+        );
+        assertEquals(gatewayHeaders?.get("cookie"), null);
+        // The client's own fields, such as its Accept, stop at the relay.
+        assertNotEquals(
+          gatewayHeaders?.get("accept"),
+          encoding.responseContentType,
+        );
+      } finally {
+        await relayServer.shutdown();
+        await gatewayServer.shutdown();
+        await target.shutdown();
+      }
+    },
+  );
 }
