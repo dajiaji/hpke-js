@@ -12,5 +12,8 @@
   "include": [
     "mod.ts",
     "src/**/*"
+  ],
+  "exclude": [
+    "src/node.ts"
   ]
 }

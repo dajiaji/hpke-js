@@ -158,56 +158,22 @@ Runtimes with a Fetch-based server API can serve `handle` directly, for example
 `Deno.serve(handle)`, `Bun.serve({ fetch: handle })` or
 `export default { fetch: handle }` on Cloudflare Workers.
 
-Node.js's `node:http` server does not use Fetch requests and responses, so
-`handle` needs an adapter there. On Node.js 24 or later, you can run the
-following TypeScript example using Node.js's built-in type stripping.
+Node.js's `node:http` server does not use Fetch requests and responses, so wrap
+`handle` with `toNodeListener` from the `@hpke/ohttp/node` entry point. It
+streams request and response bodies and aborts the request's signal when the
+client disconnects.
 
 ```ts
 import { createServer } from "node:http";
-import { Readable } from "node:stream";
-import { pipeline } from "node:stream/promises";
+import { toNodeListener } from "@hpke/ohttp/node";
 
 // `handle` is the Fetch handler defined above.
 import { handle } from "./handle.ts";
 
-const server = createServer(async (incoming, outgoing) => {
-  try {
-    const headers = new Headers();
-    for (const [name, value] of Object.entries(incoming.headers)) {
-      if (value !== undefined) {
-        headers.set(name, Array.isArray(value) ? value.join(", ") : value);
-      }
-    }
-    const response = await handle(
-      new Request(
-        `http://${incoming.headers.host ?? "localhost"}${incoming.url ?? "/"}`,
-        {
-          method: incoming.method,
-          headers,
-          body: incoming.method === "GET" || incoming.method === "HEAD"
-            ? undefined
-            : Readable.toWeb(incoming) as ReadableStream<Uint8Array>,
-          duplex: "half",
-        } as RequestInit,
-      ),
-    );
-
-    outgoing.writeHead(response.status, Object.fromEntries(response.headers));
-    if (response.body) {
-      await pipeline(Readable.fromWeb(response.body), outgoing);
-    } else {
-      outgoing.end();
-    }
-  } catch (error) {
-    console.error(error);
-    if (!outgoing.headersSent) outgoing.writeHead(500);
-    outgoing.end();
-  }
-});
-
-server.listen(3000, () => {
-  console.log("OHTTP gateway listening on http://localhost:3000");
-});
+createServer(toNodeListener(handle, { onError: console.error })).listen(
+  3000,
+  () => console.log("OHTTP gateway listening on http://localhost:3000"),
+);
 ```
 
 ### Streaming
