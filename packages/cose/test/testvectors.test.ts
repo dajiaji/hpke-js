@@ -13,7 +13,6 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 
-import { isDeno } from "@hpke/common";
 import { type AeadInterface, Aes128Gcm, Aes256Gcm } from "@hpke/core";
 import { Chacha20Poly1305 } from "@hpke/chacha20poly1305";
 
@@ -94,16 +93,6 @@ const ALGS: Record<string, AlgConfig> = {
     createKe: createCoseHpke7Ke,
   },
 };
-
-// Non-PSK KE vectors skipped on Deno: they use a 32-byte AES-GCM IV, which
-// Deno's WebCrypto rejects (RFC 9053 fixes the AES-GCM nonce at 96 bits).
-const DENO_SKIP_KE_ALGS = new Set([
-  "HPKE-1-KE",
-  "HPKE-2-KE",
-  "HPKE-5-KE",
-  "HPKE-6-KE",
-  "HPKE-7-KE",
-]);
 
 // Content AEAD for KE: which content encryption each HPKE-X-KE vector uses
 const KE_CONTENT_AEAD: Record<string, () => AeadInterface> = {
@@ -273,7 +262,6 @@ describe("Test vectors (non-PSK)", () => {
     const baseAlgName = section.algName.replace("-KE", "");
     const config = ALGS[baseAlgName];
     if (!config) continue;
-    if (isDeno() && DENO_SKIP_KE_ALGS.has(section.algName)) continue;
 
     const contentAead = KE_CONTENT_AEAD[section.algName];
     if (contentAead === undefined) continue;
