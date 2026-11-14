@@ -2,7 +2,8 @@
   "name": "@hpke/ohttp",
   "version": "0.2.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./node": "./node.ts"
   },
   "publish": {
     "exclude": [

@@ -21,6 +21,8 @@
 - Export `createOhttpFetchForwarder`, a `forward` callback that fetches targets
   on allowed origins only, does not follow redirects, and removes the
   Content-Encoding and Content-Length headers of decoded response bodies.
+- Add the `@hpke/ohttp/node` entry point with `toNodeListener`, which adapts a
+  Web Fetch handler to a `node:http` request listener.
 - Buffer relay uploads by default and allow streaming uploads with
   `streamingUpload: true`, independently of incremental response processing.
 - Report response authentication failures as `OhttpError`, retaining the

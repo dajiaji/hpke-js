@@ -12,7 +12,7 @@ const outDir = "../../npm/packages/ohttp";
 await beforeBuild("ohttp");
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: ["./mod.ts", { name: "./node", path: "./node.ts" }],
   outDir,
   typeCheck: "both",
   test: !Deno.args.includes("--skip-test"),
@@ -70,6 +70,10 @@ await build({
       ".": {
         "import": "./esm/mod.js",
         "types": "./esm/mod.d.ts",
+      },
+      "./node": {
+        "import": "./esm/node.js",
+        "types": "./esm/node.d.ts",
       },
       "./package.json": "./package.json",
     },
