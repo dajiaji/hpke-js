@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 (unreleased)
+## UNreleased
 
 - Change `createOhttpClient` to accept explicit KEM/KDF/AEAD instances and an
   injected `OhttpEncoding`. Replace `createOhttpServer` with
@@ -16,6 +16,11 @@
 - Export `ohttpFetch(client, input, init)` and `createOhttpHandler` from the
   main `@hpke/ohttp` entry point for Web Fetch requests and responses, with
   incremental binary HTTP conversion and cancellation of pending reads.
+- Export `createOhttpKeyConfigHandler` to serve a gateway's key configuration as
+  `application/ohttp-keys` from an independent Web Fetch handler.
+- Export `createOhttpFetchForwarder`, a `forward` callback that fetches targets
+  on allowed origins only, does not follow redirects, and removes the
+  Content-Encoding and Content-Length headers of decoded response bodies.
 - Buffer relay uploads by default and allow streaming uploads with
   `streamingUpload: true`, independently of incremental response processing.
 - Report response authentication failures as `OhttpError`, retaining the
