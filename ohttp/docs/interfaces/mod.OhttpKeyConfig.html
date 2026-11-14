@@ -8,14 +8,15 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
+<li><a href="../modules/mod.html">mod</a></li>
 <li><a href="" aria-current="page">OhttpKeyConfig</a></li></ul>
 <h1>Interface OhttpKeyConfig</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Parsed public key configuration for OHTTP (RFC 9458 Section 3).</p>
 </div></section>
-<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">OhttpKeyConfig</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#ciphersuites">cipherSuites</a><span class="tsd-signature-symbol">:</span> <a href="OhttpCipherSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpCipherSuite</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kem">kem</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#keyid">keyId</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#publickey">publicKey</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">OhttpKeyConfig</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#ciphersuites">cipherSuites</a><span class="tsd-signature-symbol">:</span> <a href="mod.OhttpCipherSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpCipherSuite</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#kem">kem</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#keyid">keyId</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#publickey">publicKey</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/899e81a59d1ffe0c6ef22a9fdc4b369cd696d22a/packages/ohttp/src/keyConfig.ts#L12">packages/ohttp/src/keyConfig.ts:12</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/d4704b66a67b3ff8593969c022a8d91166730308/packages/ohttp/src/keyConfig.ts#L12">packages/ohttp/src/keyConfig.ts:12</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -33,32 +34,32 @@
 <section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="ciphersuites"><span>cipher<wbr/>Suites</span><a href="#ciphersuites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">cipherSuites</span><span class="tsd-signature-symbol">:</span> <a href="OhttpCipherSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpCipherSuite</a><span class="tsd-signature-symbol">[]</span></div>
+<div class="tsd-signature"><span class="tsd-kind-property">cipherSuites</span><span class="tsd-signature-symbol">:</span> <a href="mod.OhttpCipherSuite.html" class="tsd-signature-type tsd-kind-interface">OhttpCipherSuite</a><span class="tsd-signature-symbol">[]</span></div>
 <div class="tsd-comment tsd-typography"><p>KDF/AEAD pairs supported by this key.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/899e81a59d1ffe0c6ef22a9fdc4b369cd696d22a/packages/ohttp/src/keyConfig.ts#L20">packages/ohttp/src/keyConfig.ts:20</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/d4704b66a67b3ff8593969c022a8d91166730308/packages/ohttp/src/keyConfig.ts#L20">packages/ohttp/src/keyConfig.ts:20</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="kem"><span>kem</span><a href="#kem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">kem</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>HPKE KEM identifier.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/899e81a59d1ffe0c6ef22a9fdc4b369cd696d22a/packages/ohttp/src/keyConfig.ts#L16">packages/ohttp/src/keyConfig.ts:16</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/d4704b66a67b3ff8593969c022a8d91166730308/packages/ohttp/src/keyConfig.ts#L16">packages/ohttp/src/keyConfig.ts:16</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="keyid"><span>key<wbr/>Id</span><a href="#keyid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">keyId</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>Key identifier (0–255).</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/899e81a59d1ffe0c6ef22a9fdc4b369cd696d22a/packages/ohttp/src/keyConfig.ts#L14">packages/ohttp/src/keyConfig.ts:14</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/d4704b66a67b3ff8593969c022a8d91166730308/packages/ohttp/src/keyConfig.ts#L14">packages/ohttp/src/keyConfig.ts:14</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="publickey"><span>public<wbr/>Key</span><a href="#publickey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">publicKey</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 <div class="tsd-comment tsd-typography"><p>Serialized public key for the KEM.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/899e81a59d1ffe0c6ef22a9fdc4b369cd696d22a/packages/ohttp/src/keyConfig.ts#L18">packages/ohttp/src/keyConfig.ts:18</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/dajiaji/hpke-js/blob/d4704b66a67b3ff8593969c022a8d91166730308/packages/ohttp/src/keyConfig.ts#L18">packages/ohttp/src/keyConfig.ts:18</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
