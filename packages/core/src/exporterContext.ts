@@ -7,7 +7,6 @@ import {
   toArrayBuffer,
 } from "@hpke/common";
 
-import type { Encapsulator } from "./interfaces/encapsulator.ts";
 import type { EncryptionContext } from "./interfaces/encryptionContext.ts";
 
 // b"sec"
@@ -54,21 +53,5 @@ export class ExporterContextImpl implements EncryptionContext {
     } catch (e: unknown) {
       throw new ExportError(e);
     }
-  }
-}
-
-export class RecipientExporterContextImpl extends ExporterContextImpl {}
-
-export class SenderExporterContextImpl extends ExporterContextImpl
-  implements Encapsulator {
-  public readonly enc: ArrayBuffer;
-
-  public constructor(
-    kdf: KdfInterface,
-    exporterSecret: ArrayBuffer,
-    enc: ArrayBuffer,
-  ) {
-    super(kdf, exporterSecret);
-    this.enc = enc;
   }
 }
