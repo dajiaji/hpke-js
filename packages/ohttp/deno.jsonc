@@ -11,6 +11,7 @@
       "dnt.ts",
       "samples/",
       "test/",
+      "tsconfig.docs.json",
       "tsconfig.json"
     ]
   },
@@ -59,6 +60,6 @@
     "cov": "deno coverage ./coverage --lcov --exclude='test'",
     "npm-build": "deno run --import-map=../../npm/import_map.json -A dnt.ts --skip-test",
     "dnt": "deno run --import-map=../../npm/import_map.json -A dnt.ts",
-    "test:integration": "deno test --allow-net test/http.integration.ts"
+    "test:integration": "deno test --allow-net test/http.integration.ts test/node.integration.ts"
   }
 }

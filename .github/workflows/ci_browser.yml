@@ -108,7 +108,7 @@ jobs:
       - name: Build docs for @hpke/ohttp
         working-directory: ./packages/ohttp
         run: |
-          typedoc --name "@hpke/ohttp $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/ohttp/docs mod.ts
+          typedoc --tsconfig tsconfig.docs.json --name "@hpke/ohttp $(git describe --tags --abbrev=0)" --out ../hpke-js/test/runtimes/browsers/pages/ohttp/docs mod.ts node.ts
       - name: Build docs for @hpke/hpke-js
         working-directory: ./packages/hpke-js
         run: |

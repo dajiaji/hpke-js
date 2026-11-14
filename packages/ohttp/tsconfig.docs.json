@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "typeRoots": ["../../npm/node_modules/@types"],
+    "types": ["node"]
+  },
+  "include": [
+    "mod.ts",
+    "node.ts",
+    "src/**/*"
+  ],
+  "exclude": []
+}
