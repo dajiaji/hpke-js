@@ -1,6 +1,8 @@
 # Changelog
 
-## UNreleased
+## Version 0.2.0
+
+Released 2026-11-14
 
 - Change `createOhttpClient` to accept explicit KEM/KDF/AEAD instances and an
   injected `OhttpEncoding`. Replace `createOhttpServer` with
