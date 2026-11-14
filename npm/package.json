@@ -24,6 +24,7 @@
     "test/**/*/runtimes/fastly"
   ],
   "devDependencies": {
+    "@types/node": "22.20.5",
     "typedoc": "0.28.20"
   }
 }

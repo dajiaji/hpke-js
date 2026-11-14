@@ -26,7 +26,8 @@ await build({
   shims: {
     deno: "dev",
   },
-  testPattern: "test/**/*.test.ts",
+  // node.integration.ts also runs here to exercise the adapter on Node.js.
+  testPattern: "test/**/{*.test,node.integration}.ts",
   postBuild() {
     // Copy runtime test files.
     copySync(

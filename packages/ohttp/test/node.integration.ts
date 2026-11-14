@@ -1,3 +1,5 @@
+// Listens on local ports, so it runs with the integration tests:
+// deno test --allow-net packages/ohttp/test/node.integration.ts
 import { assert, assertEquals } from "@std/assert";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
