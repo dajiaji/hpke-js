@@ -13,8 +13,8 @@
 - Support draft-ietf-ohai-chunked-ohttp-08 with incremental encryption and
   decryption, authenticated final chunks, and configurable receive limits via
   `maxChunkSize` (16384 plaintext bytes per chunk by default).
-- Export `ohttpFetch(client, input, init)` and `createOhttpHandler` from the
-  main `@hpke/ohttp` entry point for Web Fetch requests and responses, with
+- Export `ohttpFetch(client, input, init)` and `createOhttpGatewayHandler` from
+  the main `@hpke/ohttp` entry point for Web Fetch requests and responses, with
   incremental binary HTTP conversion and cancellation of pending reads.
 - Export `createOhttpKeyConfigHandler` to serve a gateway's key configuration as
   `application/ohttp-keys` from an independent Web Fetch handler.

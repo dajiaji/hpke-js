@@ -9,7 +9,7 @@ import {
   createChunkedEncoding,
   createOhttpClient,
   createOhttpGateway,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
   createStandardEncoding,
   ohttpFetch,
@@ -51,7 +51,7 @@ for (const encoding of [createStandardEncoding(), createChunkedEncoding()]) {
         kdfAeadPairs: [{ kdf, aead }],
         encoding,
       });
-      const ohttp = createOhttpHandler({
+      const ohttp = createOhttpGatewayHandler({
         gateway,
         forward: async (request) =>
           new Response(

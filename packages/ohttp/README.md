@@ -101,8 +101,8 @@ console.log(await response.text());
 
 ### Gateway
 
-Use `createOhttpHandler` with the relay's Fetch request. The `forward` callback
-receives the decrypted target request and decides how to answer it.
+Use `createOhttpGatewayHandler` with the relay's Fetch request. The `forward`
+callback receives the decrypted target request and decides how to answer it.
 `createOhttpFetchForwarder` is a ready-made callback that fetches the target: it
 answers 403 for origins outside `allowedOrigins`, returns redirects to the
 client instead of following them, and removes the Content-Encoding and
@@ -121,7 +121,7 @@ import { Aes128Gcm, DhkemX25519HkdfSha256, HkdfSha256 } from "@hpke/core";
 import {
   createOhttpFetchForwarder,
   createOhttpGateway,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
   createStandardEncoding,
 } from "@hpke/ohttp";
@@ -138,7 +138,7 @@ const gateway = createOhttpGateway({
   encoding: createStandardEncoding(),
 });
 
-const ohttp = createOhttpHandler({
+const ohttp = createOhttpGatewayHandler({
   gateway,
   forward: createOhttpFetchForwarder({
     allowedOrigins: ["https://target.example"],

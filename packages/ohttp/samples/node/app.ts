@@ -4,7 +4,7 @@ import {
   createChunkedEncoding,
   createOhttpClient,
   createOhttpGateway,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   type KdfAeadPair,
   type OhttpClient,
   type OhttpEncoding,
@@ -52,7 +52,7 @@ const client: OhttpClient = createOhttpClient({
   keyConfig: await gateway.publicKeyConfig,
   relayUrl: "https://relay.example/ohttp",
 });
-const handle: FetchHandler = createOhttpHandler({
+const handle: FetchHandler = createOhttpGatewayHandler({
   gateway,
   forward(request: Request): Promise<Response> {
     const greeting: Greeting = {

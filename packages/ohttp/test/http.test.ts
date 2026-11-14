@@ -4,7 +4,7 @@ import {
   createOhttpClient,
   createOhttpFetchForwarder,
   createOhttpGateway,
-  createOhttpHandler,
+  createOhttpGatewayHandler,
   createOhttpKeyConfigHandler,
   createStandardEncoding,
   ohttpFetch,
@@ -146,7 +146,7 @@ Deno.test("fetch forwarder rejects invalid allowed origins", () => {
 
 Deno.test("fetch forwarder works behind the OHTTP handler", async () => {
   const gateway = await createGateway();
-  const handle = createOhttpHandler({
+  const handle = createOhttpGatewayHandler({
     gateway,
     forward: createOhttpFetchForwarder({
       allowedOrigins: ["https://target.example"],

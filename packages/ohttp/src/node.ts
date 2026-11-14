@@ -12,7 +12,7 @@ export interface NodeListenerOptions {
 }
 
 /**
- * Adapt a Web Fetch handler, such as the one returned by `createOhttpHandler`,
+ * Adapt a Web Fetch handler, such as the one returned by `createOhttpGatewayHandler`,
  * to a `node:http` request listener.
  *
  * Request and response bodies are streamed. The request's signal is aborted

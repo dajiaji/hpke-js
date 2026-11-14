@@ -81,7 +81,7 @@ export async function ohttpFetch(
 }
 
 /** HTTP gateway adapter parameters. The application controls target authorization. */
-export interface OhttpHandlerParams {
+export interface OhttpGatewayHandlerParams {
   gateway: OhttpGateway;
   /** Return headers that describe the body bytes. Native fetch may decompress
    * a response while retaining Content-Encoding/Content-Length; normalize those
@@ -92,8 +92,8 @@ export interface OhttpHandlerParams {
 }
 
 /** Adapt an explicitly configured gateway to a Web Fetch request handler. */
-export function createOhttpHandler(
-  params: OhttpHandlerParams,
+export function createOhttpGatewayHandler(
+  params: OhttpGatewayHandlerParams,
 ): (request: Request) => Promise<Response> {
   const { gateway, forward } = params;
   return async (outer) => {
@@ -165,7 +165,7 @@ export function createOhttpHandler(
 
 /**
  * Create a Web Fetch handler that serves the gateway's key configuration as
- * `application/ohttp-keys`. It is independent of {@link createOhttpHandler}:
+ * `application/ohttp-keys`. It is independent of {@link createOhttpGatewayHandler}:
  * mount it wherever the deployment publishes key configurations.
  */
 export function createOhttpKeyConfigHandler(
@@ -197,7 +197,7 @@ export interface OhttpFetchForwarderParams {
 }
 
 /**
- * Create a `forward` callback for {@link createOhttpHandler} that fetches the
+ * Create a `forward` callback for {@link createOhttpGatewayHandler} that fetches the
  * target request. Requests to origins outside `allowedOrigins` are answered
  * with 403 without being sent. Redirects are returned to the client instead
  * of being followed, so they cannot leave the allowed origins. Content-Encoding
