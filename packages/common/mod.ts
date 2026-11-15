@@ -5,6 +5,7 @@ export type { DhkemInterface } from "./src/interfaces/dhkemInterface.ts";
 export type { JsonWebKeyExtended } from "./src/interfaces/jsonWebKeyExtended.ts";
 export type { KdfInterface } from "./src/interfaces/kdfInterface.ts";
 export type { KemInterface } from "./src/interfaces/kemInterface.ts";
+export type { OneStageKdfInterface } from "./src/interfaces/oneStageKdfInterface.ts";
 export type { KeyScheduleParams } from "./src/interfaces/keyScheduleParams.ts";
 export type { PreSharedKey } from "./src/interfaces/preSharedKey.ts";
 export type { RecipientContextParams } from "./src/interfaces/recipientContextParams.ts";
@@ -39,6 +40,13 @@ export {
   toArrayBuffer,
   toUint8Array,
 } from "./src/kdfs/hkdf.ts";
+
+export {
+  buildLabeledDeriveIkm,
+  isOneStageKdf,
+  lengthPrefixed,
+  OneStageKdf,
+} from "./src/kdfs/oneStageKdf.ts";
 
 export { AEAD_USAGES } from "./src/interfaces/aeadEncryptionContext.ts";
 export { KEM_USAGES } from "./src/interfaces/dhkemPrimitives.ts";
@@ -82,6 +90,7 @@ export {
 export { hmac } from "./src/hash/hmac.ts";
 export { sha256, sha384, sha512 } from "./src/hash/sha2.ts";
 export {
+  Keccak,
   sha3_256,
   sha3_384,
   sha3_512,

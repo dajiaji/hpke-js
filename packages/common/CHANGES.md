@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add the one-stage KDF framework defined in draft-ietf-hpke-hpke:
+  `OneStageKdfInterface`, the `OneStageKdf` base class, `isOneStageKdf()`,
+  `buildLabeledDeriveIkm()` and `lengthPrefixed()`.
+- Export the `Keccak` class so that extension packages can build XOFs such as
+  TurboSHAKE on top of it.
+
 ## Version 1.13.0
 
 Released 2026-11-08
