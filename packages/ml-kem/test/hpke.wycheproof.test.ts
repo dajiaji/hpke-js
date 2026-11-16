@@ -4,7 +4,6 @@ import {
   Aes128Gcm,
   Aes256Gcm,
   CipherSuite,
-  DhkemX25519HkdfSha256,
   HkdfSha256,
   HkdfSha384,
   HkdfSha512,
@@ -44,7 +43,6 @@ const hex = (b: ArrayBuffer): string =>
 
 function suiteFor(group: TestGroup) {
   const kems = {
-    32: () => new DhkemX25519HkdfSha256(),
     64: () => new MlKem512(),
     65: () => new MlKem768(),
     66: () => new MlKem1024(),
@@ -81,7 +79,7 @@ async function checkResult(result: Result, operation: () => Promise<void>) {
 }
 
 // C2SP/wycheproof at 65ca494727a52944c204441c860b039e6786b99b, Apache-2.0.
-for (const kemName of ["x25519", "mlkem512", "mlkem768", "mlkem1024"]) {
+for (const kemName of ["mlkem512", "mlkem768", "mlkem1024"]) {
   for (const operation of ["decrypt", "encap", "sequence"]) {
     const file = `hpke_${kemName}_${operation}_test.json`;
     const data: { numberOfTests: number; testGroups: TestGroup[] } = JSON.parse(

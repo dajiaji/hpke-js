@@ -1,4 +1,5 @@
 import { build } from "@deno/dnt";
+import { existsSync } from "@std/fs";
 import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
@@ -23,21 +24,22 @@ await build({
   },
   testPattern: "test/**/*.test.ts",
   postBuild() {
-    // Copy test vectors next to the compiled test files so that
+    // Copy test vectors next to the compiled tests so that
     // import.meta.url-based resolution works under Node.js too.
-    try {
-      Deno.mkdirSync(`${outDir}/esm/test/vectors`, { recursive: true });
-      Deno.copyFileSync(
-        "test/vectors/x25519_test.json",
-        `${outDir}/esm/test/vectors/x25519_test.json`,
-      );
-      Deno.mkdirSync(`${outDir}/script/test/vectors`, { recursive: true });
-      Deno.copyFileSync(
-        "test/vectors/x25519_test.json",
-        `${outDir}/script/test/vectors/x25519_test.json`,
-      );
-    } catch {
-      // Test directories not created (--skip-test); skip.
+    for (const module of ["esm", "script"]) {
+      const testDir = `${outDir}/${module}/test`;
+      if (!existsSync(testDir)) continue;
+
+      const vectorsDir = `${testDir}/vectors`;
+      Deno.mkdirSync(vectorsDir, { recursive: true });
+      for (const entry of Deno.readDirSync("test/vectors")) {
+        if (entry.isFile) {
+          Deno.copyFileSync(
+            `test/vectors/${entry.name}`,
+            `${vectorsDir}/${entry.name}`,
+          );
+        }
+      }
     }
   },
   package: {
