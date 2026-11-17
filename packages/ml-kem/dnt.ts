@@ -1,4 +1,5 @@
 import { build } from "@deno/dnt";
+import { existsSync } from "@std/fs";
 import { afterBuild, beforeBuild } from "../../utils/dntCommon.ts";
 
 const denoPkg = JSON.parse(await Deno.readTextFile("./deno.jsonc"));
@@ -21,6 +22,21 @@ await build({
     deno: "dev",
   },
   testPattern: "test/**/*.test.ts",
+  postBuild() {
+    for (const module of ["esm", "script"]) {
+      const dest =
+        `../../npm/packages/ml-kem/${module}/test/vectors/wycheproof`;
+      if (existsSync(`../../npm/packages/ml-kem/${module}/test`)) {
+        Deno.mkdirSync(dest, { recursive: true });
+        for (const entry of Deno.readDirSync("test/vectors/wycheproof")) {
+          Deno.copyFileSync(
+            `test/vectors/wycheproof/${entry.name}`,
+            `${dest}/${entry.name}`,
+          );
+        }
+      }
+    }
+  },
   package: {
     name: denoPkg.name,
     version: denoPkg.version,
